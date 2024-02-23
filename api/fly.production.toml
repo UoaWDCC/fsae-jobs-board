@@ -1,4 +1,4 @@
-app = 'react-template-api'
+app = 'wdcc-fsae-jobs-board-api'
 primary_region = 'syd'
 
 [build]
