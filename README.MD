@@ -13,6 +13,7 @@
 - Claudia Chan (Design)
 - Frank Situ (Back-end, Architecture)
 - Danny Jung (Front-end)
+- Jolin Chen (Front-end)
 
 ## About
 
