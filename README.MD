@@ -11,6 +11,7 @@
 - Jack Haddad (Back-end, Front-end, Architecture)
 - Sienna Nguyen (Front-end, Back-end)
 - Claudia Chan (Design)
+- Frank Situ (Back-end, Architecture)
 - Danny Jung (Front-end)
 
 ## About
