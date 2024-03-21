@@ -6,6 +6,7 @@
 - Yang Qian (Tech Lead)
 
 ## 2024 Team Members
+- Jack Haddad (Back-end, Front-end, Architecture)
 
 - Don Lin (Back end Developer)
 
