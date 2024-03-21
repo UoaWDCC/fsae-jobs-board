@@ -6,7 +6,7 @@
 - Yang Qian (Tech Lead)
 
 ## 2024 Team Members
-- Sienna Nguyen
+- Sienna Nguyen (Frontend, Backend)
 
 ## About
 
