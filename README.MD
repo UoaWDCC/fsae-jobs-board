@@ -14,6 +14,7 @@
 - Frank Situ (Back-end, Architecture)
 - Danny Jung (Front-end)
 - Jolin Chen (Front-end)
+- Jaehoon Oh (Front-end, Back-end)
 
 ## About
 
