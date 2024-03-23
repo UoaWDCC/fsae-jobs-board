@@ -12,7 +12,7 @@
 - Sienna Nguyen (Front-end, Back-end)
 - Claudia Chan (Design)
 - Frank Situ (Back-end, Architecture)
-- Danny Jung (Front-end)
+- Danny Jung (Back-end, Front-end, Architecture)
 - Jolin Chen (Front-end)
 - Jaehoon Oh (Front-end, Back-end)
 
