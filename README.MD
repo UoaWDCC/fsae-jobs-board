@@ -7,7 +7,7 @@
 
 ## 2024 Team Members
 
-- Don Lin (Back end Developer)
+- Don Lin (Back-end, Architecture)
 - Jack Haddad (Back-end, Front-end, Architecture)
 - Sienna Nguyen (Front-end, Back-end)
 - Claudia Chan (Design)
