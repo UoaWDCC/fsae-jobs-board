@@ -26,10 +26,14 @@ const degreeSchema = new Schema({
     graduationYear: {
         type: Number,
         required: [true, 'Graduation year is required'],
+        min: 2024,
+        max: 2050,
     },
     currentYear: {
         type: Number,
         required: [true, 'Current year in program is required'],
+        min: 1,
+        max: 12
     },
 });
 
