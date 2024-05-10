@@ -9,7 +9,6 @@ const userSchema = new Schema({
     trim: true,
     lowercase: true,
     maxLength: [40, 'Email cannot be longer than 40 characters'],
-    match: [/\S+@\S+\.\S+/, 'Please enter a valid email address'],
   },
   password: {
     type: String,
@@ -23,12 +22,6 @@ const userSchema = new Schema({
   },
   phoneNumber: {
     type: String,
-    validate: {
-      validator: function (v) {
-        return /\d{3}-\d{3}-\d{4}/.test(v);
-      },
-      message: 'Phone number must be in the format XXX-XXX-XXXX'
-    },
     required: [false, 'Phone number is not required']
   },
   description: {
@@ -37,7 +30,7 @@ const userSchema = new Schema({
   },
 });
 
-// Middleware to hash the password before saving
+// middleware to hash the password before saving
 userSchema.pre('save', async function (next) {
   if (this.isModified('password')) {
     this.password = await bcrypt.hash(this.password, 12);
