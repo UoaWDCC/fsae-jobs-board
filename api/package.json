@@ -1,36 +1,60 @@
 {
-  "name": "passport-api",
-  "version": "0.0.0",
-  "main": "index.js",
-  "repository": "https://github.com/UoAWDCC/passport",
-  "author": "WDCC Projects <projects@wdcc.co.nz>",
-  "license": "MIT",
+  "name": "fsae-api",
+  "version": "0.0.1",
+  "description": "The backend for FSAE job board",
   "private": true,
+  "author": "fsit869 <62918263+fsit869@users.noreply.github.com>",
+  "license": "UNLICESED",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "engines": {
+    "node": "16 || 18 || 20"
+  },
   "scripts": {
-    "build": "tsc",
-    "start": "node dist/index.js",
-    "dev": "nodemon index.ts",
-    "email": "email dev"
+    "build": "lb-tsc",
+    "build:watch": "lb-tsc --watch",
+    "lint": "npm run eslint && npm run prettier:check",
+    "lint:fix": "npm run eslint:fix && npm run prettier:fix",
+    "prettier:cli": "lb-prettier \"**/*.ts\" \"**/*.js\"",
+    "prettier:check": "npm run prettier:cli -- -l",
+    "prettier:fix": "npm run prettier:cli -- --write",
+    "eslint": "lb-eslint --report-unused-disable-directives .",
+    "eslint:fix": "npm run eslint -- --fix",
+    "pretest": "npm run rebuild",
+    "posttest": "npm run lint",
+    "docker:build": "docker build -t fsae-api .",
+    "docker:run": "docker run -p 3000:3000 -d fsae-api",
+    "premigrate": "npm run build",
+    "migrate": "node ./dist/migrate",
+    "preopenapi-spec": "npm run build",
+    "openapi-spec": "node ./dist/openapi-spec",
+    "prestart": "npm run rebuild",
+    "start": "node -r source-map-support/register .",
+    "clean": "lb-clean dist *.tsbuildinfo .eslintcache",
+    "rebuild": "npm run clean && npm run build"
+  },
+  "files": [
+    "README.md",
+    "dist",
+    "src",
+    "!*/__tests__"
+  ],
+  "dependencies": {
+    "@loopback/boot": "^6.1.0",
+    "@loopback/core": "^5.1.0",
+    "@loopback/repository": "^6.1.0",
+    "@loopback/rest": "^13.1.0",
+    "@loopback/rest-explorer": "^6.1.0",
+    "@loopback/service-proxy": "^6.1.0",
+    "tslib": "^2.6.0"
   },
   "devDependencies": {
-    "@types/jsonwebtoken": "^9.0.5",
-    "@types/node": "^20.11.17",
-    "@types/react": "^18.2.55",
-    "@types/react-dom": "^18.2.18",
-    "nodemon": "^3.0.3",
-    "typescript": "^5.3.3"
-  },
-  "dependencies": {
-    "@types/cors": "^2.8.17",
-    "@types/express": "^4.17.21",
-    "@types/nodemailer": "^6.4.14",
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.1",
-    "express": "^4.19.2",
-    "express-cors": "^0.0.3",
-    "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.1.1",
-    "ts-node": "^10.9.2",
-    "zod": "^3.22.4"
+    "@loopback/build": "^10.1.0",
+    "source-map-support": "^0.5.21",
+    "@loopback/testlab": "^6.1.0",
+    "@types/node": "^18.19.33",
+    "@loopback/eslint-config": "^14.0.1",
+    "eslint": "^8.43.0",
+    "typescript": "~5.1.5"
   }
 }
