@@ -19,7 +19,7 @@ export function LoginPage() {
                 </div>
                 <div className = {classes.formContainer}>
                     <h1>Log In</h1>
-                    <LoginForm />
+                    <LoginForm/>
                     <br/>
                     <p>Don't have an account? <a href="/register">Register</a></p>
                     <p>Forgot your password? <a href="/forgot-password">Reset Password</a></p>

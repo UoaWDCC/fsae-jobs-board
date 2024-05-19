@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import classes from './Login.module.css';
 
 function LoginForm() {
+    const [showPassword, setShowPassword] = useState(false);
+
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -19,20 +21,20 @@ function LoginForm() {
     };
 
     const handleInvalid = (e: React.FormEvent) => {
-        e.preventDefault();
+        e.preventDefault(); 
         console.log(e);
     }
 
     const handleLogin = (e: React.FormEvent) => {
-        // e.preventDefault();
-        
+        e.preventDefault(); // Prevents the form's data from being posted to the server as parameters in the URL 
+
         console.log(formData);
     };
 
     return (
         <form onSubmit={handleLogin}>
             <input type="email" id="email" name="email" placeholder='Enter your email address' value={formData.email} onChange={handleChange} onInvalid={handleInvalid} required/>
-            <input type="password" id="password" name="password" placeholder='Enter your password' value={formData.password} onChange={handleChange} required/>
+            <input type="password" id="password" name="password" placeholder='Enter your password' value={formData.password} onChange={handleChange} onInvalid={handleInvalid} required/>
             <br/>
             <div className={classes.checkboxes}>
                 <input type="checkbox" id="rememberMe" name="rememberMe" checked={formData.rememberMe} onChange={handleChange}/> Remember Me
