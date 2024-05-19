@@ -10,6 +10,8 @@ export function LoginPage() {
         <div className={classes.halvedPage}>
             <div className={classes.leftHalf}>
                 <center>
+                    {/* A placeholder obviously? I'm tired...*/}
+                    <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
                     Image Placeholder
                 </center>
             </div>
