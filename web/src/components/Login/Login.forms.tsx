@@ -1,46 +1,77 @@
 import React, { useState } from 'react';
 import classes from './Login.module.css';
+import { TextInput, PasswordInput, Checkbox, Button } from '@mantine/core';
 
 function LoginForm() {
-    const [showPassword, setShowPassword] = useState(false);
-
     const [formData, setFormData] = useState({
         email: '',
         password: '',
-        rememberMe: false
+        rememberMe: false,
     });
 
-    const handleChange = (e: React.ChangeEvent<any>) => {
-        const { name, value, type, checked } = e.target;
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value, type, checked } = e.currentTarget;
         const newValue = type === 'checkbox' ? checked : value;
 
-        setFormData(prevData => ({
-            ...prevData,
-            [name]: newValue
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            [name]: newValue,
         }));
     };
 
-    const handleInvalid = (e: React.FormEvent) => {
-        e.preventDefault(); 
+    const handleInvalid = (e : React.FormEvent<HTMLInputElement>) => {
+        e.preventDefault();
         console.log(e);
-    }
+        // handle invalid input logic here
+    };
 
-    const handleLogin = (e: React.FormEvent) => {
-        e.preventDefault(); // Prevents the form's data from being posted to the server as parameters in the URL 
-
-        console.log(formData);
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        console.log(e);
+        // handle login logic here
     };
 
     return (
-        <form onSubmit={handleLogin}>
-            <input type="email" id="email" name="email" placeholder='Enter your email address' value={formData.email} onChange={handleChange} onInvalid={handleInvalid} required autoComplete="current-email"/>
-            <input type="password" id="password" name="password" placeholder='Enter your password' value={formData.password} onChange={handleChange} onInvalid={handleInvalid} required autoComplete="current-password"/>
+        <form className={classes.loginForm} onSubmit={handleSubmit}>
+            <TextInput
+                id="email"
+                name="email"
+                type="email"
+                size="md"
+                placeholder="Enter your email address"
+                value={formData.email}
+                onChange={handleChange}
+                onInvalid={handleInvalid}
+                required
+                autoComplete="current-email"
+            />
             <br/>
-            <div className={classes.checkboxes}>
-                <input type="checkbox" id="rememberMe" name="rememberMe" checked={formData.rememberMe} onChange={handleChange}/> Remember Me
+            <PasswordInput
+                id="password"
+                name="password"
+                size="md"
+                placeholder="Enter your password"
+                value={formData.password}
+                onChange={handleChange}
+                onInvalid={handleInvalid}
+                required
+                autoComplete="current-password"
+            />
+            <br/>
+            <div>
+                <Checkbox
+                    id="rememberMe"
+                    name="rememberMe"
+                    size='l'
+                    checked={formData.rememberMe}
+                    onChange={handleChange}
+                    label="Remember Me"
+                />
             </div>
             <br/>
-            <button type="submit">Log In</button>
+            <Button type="submit" color="blue" fullWidth>
+                Log In
+            </Button>
         </form>
     );
 }

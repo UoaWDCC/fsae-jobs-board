@@ -1,32 +1,34 @@
 import classes from './Login.module.css';
 import LoginForm from './Login.forms';
-import { useDocumentTitle, useFavicon } from '@mantine/hooks';
+import { Grid, Image, Title, Text, Anchor} from '@mantine/core';
+import { useDocumentTitle, useFavicon, useMediaQuery} from '@mantine/hooks';
 
 export function LoginPage() {
     useFavicon('/src/images/favicon.png');
     useDocumentTitle('F:SAE:47 Job Board | Login');
+    
+    const isNotMobile = useMediaQuery('(min-width: 769px)');
 
     return (
-        <div className={classes.halvedPage}>
-            <div className={classes.leftHalf}>
-                <center>
-                    {/* A placeholder obviously? I'm tired...*/}
-                    <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
-                    Image Placeholder
-                </center>
-            </div>
-            <div className={classes.rightHalf}>
-                <div className={classes.logo}>
-                    <img src="/src/images/logo.png" alt="logo"/>
-                </div>
-                <div className = {classes.formContainer}>
-                    <h1>Log In</h1>
-                    <LoginForm/>
-                    <br/>
-                    <p>Don't have an account? <a href="/register">Register</a></p>
-                    <p>Forgot your password? <a href="/forgot-password">Reset Password</a></p>
-                </div>
-            </div>
-        </div>
+        <Grid>
+            {isNotMobile && (
+                <Grid.Col className={classes.leftHalf} span={6}>
+                    <Text>Left Half</Text>
+                </Grid.Col>
+            )}
+            <Grid.Col className={classes.rightHalf} span={isNotMobile ? 6 : 12}>
+                <Image src="/src/images/logo.png" alt="logo" className={classes.logo} />
+                <Title className={classes.title}>Log In</Title>
+                <LoginForm />
+                <Text className={classes.registerMessage} ta='center'>
+                    Don't have an account?&nbsp;
+                    <Anchor>Register</Anchor>
+                </Text>
+                <Text className={classes.resetPasswordMessage} ta='center'>
+                    Forgot your password?&nbsp;
+                    <Anchor>Reset Password</Anchor>
+                </Text>
+            </Grid.Col>
+        </Grid>
     );
 }

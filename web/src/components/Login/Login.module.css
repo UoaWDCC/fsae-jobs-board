@@ -1,78 +1,42 @@
-.halvedPage {
-    display: flex;
-    height: 100vh;
-    color: white;
-}
-
 .leftHalf {
-    flex: 1;
-    width: 50%;
+    height: 100vh;
     background-color: #ffffff;
     color: black;
 }
 
+.hideLeft {
+    display: none;
+}
+
 .rightHalf {
-    flex: 1;
-    width: 50%;
+    height: 100vh;
     background-color: #000000;
+    color: #ffffff;
 }
 
 .logo {
     position: absolute;
     top: 20px;
     right: 20px;
-}
-
-.logo img {
     width: 241px;
     height: 32px;
 }
 
-.formContainer {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-}
-
-.formContainer h1 {
+.title {
+    position: relative;
+    top: 20%;
+    text-align: center;
     font-size: 48px;
     font-weight: normal;
     margin-bottom: 20px;
 }
 
-.formContainer form {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    max-width: 400px;
-}
-
-.formContainer input[type="email"],
-.formContainer input[type="password"] {
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #000000;
-    width: 100%;
-    height: 50px;
-    border-radius: 5px;
-}
-
-.checkboxes label {
-    font-size: 20px;
-    display: inline-block;
-    padding-right: 10px;
-    white-space: nowrap;
-}
-
-.checkboxes input {
-    
-    vertical-align: middle;
-}
-
-.checkboxes label span {
-    vertical-align: middle;
+.loginForm {
+    position: relative;
+    width: 80%;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 input[type='checkbox'] {
@@ -81,47 +45,14 @@ input[type='checkbox'] {
     cursor: pointer;
 }
 
-.formContainer button {
-    padding: 10px;
-    font-size: 30px;
-    font-weight: bold;
-    background-color: #0091FF;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+.registerMessage, .resetPasswordMessage {
+    position: relative;
+    top: 22%;
 }
 
-.formContainer button:hover {
-    background-color: #0077CC;
-}
-
-.formContainer p {
-    font: 20px;
-    margin-bottom: 0;
-}
-
-.formContainer a {
-    font: 20px;
-    font-weight: bold;
-    color: #0091FF;
-    text-decoration: none;
-}
-
-.formContainer a:hover {
-    text-decoration: underline;
-}
 
 /* Responsive design for smaller screens */
-@media (max-width: 860px) {
-    .leftHalf {
-        display: none;
-    }
-
-    .rightHalf {
-        position: relative;
-    }
-
+@media (max-width: 768px) {
     .logo {
         position: relative;
         text-align: center;
@@ -130,9 +61,6 @@ input[type='checkbox'] {
         top: 15%;
         left: 50%;
         transform: translate(-50%, -50%);
-    }
-
-    .logo img {
         display: inline-block;
     }
 
