@@ -4,10 +4,6 @@
     color: black;
 }
 
-.hideLeft {
-    display: none;
-}
-
 .rightHalf {
     height: 100vh;
     background-color: #000000;
@@ -50,8 +46,6 @@ input[type='checkbox'] {
     top: 22%;
 }
 
-
-/* Responsive design for smaller screens */
 @media (max-width: 768px) {
     .logo {
         position: relative;
@@ -62,13 +56,5 @@ input[type='checkbox'] {
         left: 50%;
         transform: translate(-50%, -50%);
         display: inline-block;
-    }
-
-    .formContainer {
-        position: absolute;
-        width: 80%;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
     }
 }
