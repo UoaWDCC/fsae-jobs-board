@@ -33,8 +33,8 @@ function LoginForm() {
 
     return (
         <form onSubmit={handleLogin}>
-            <input type="email" id="email" name="email" placeholder='Enter your email address' value={formData.email} onChange={handleChange} onInvalid={handleInvalid} required/>
-            <input type="password" id="password" name="password" placeholder='Enter your password' value={formData.password} onChange={handleChange} onInvalid={handleInvalid} required/>
+            <input type="email" id="email" name="email" placeholder='Enter your email address' value={formData.email} onChange={handleChange} onInvalid={handleInvalid} required autoComplete="current-email"/>
+            <input type="password" id="password" name="password" placeholder='Enter your password' value={formData.password} onChange={handleChange} onInvalid={handleInvalid} required autoComplete="current-password"/>
             <br/>
             <div className={classes.checkboxes}>
                 <input type="checkbox" id="rememberMe" name="rememberMe" checked={formData.rememberMe} onChange={handleChange}/> Remember Me

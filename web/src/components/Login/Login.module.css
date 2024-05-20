@@ -67,6 +67,7 @@
 }
 
 .checkboxes input {
+    
     vertical-align: middle;
 }
 
@@ -77,6 +78,7 @@
 input[type='checkbox'] {
     width:25px;
     height:25px;
+    cursor: pointer;
 }
 
 .formContainer button {
@@ -90,6 +92,10 @@ input[type='checkbox'] {
     cursor: pointer;
 }
 
+.formContainer button:hover {
+    background-color: #0077CC;
+}
+
 .formContainer p {
     font: 20px;
     margin-bottom: 0;
@@ -100,6 +106,10 @@ input[type='checkbox'] {
     font-weight: bold;
     color: #0091FF;
     text-decoration: none;
+}
+
+.formContainer a:hover {
+    text-decoration: underline;
 }
 
 /* Responsive design for smaller screens */
