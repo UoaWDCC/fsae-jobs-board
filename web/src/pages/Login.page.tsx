@@ -12,7 +12,7 @@ export function Login() {
             Sign up
           </Button>
         </NavLink>
-        <NavLink to="/home">
+        <NavLink to="/">
           <Button color="customAzureBlue">Home</Button>
         </NavLink>
       </Flex>

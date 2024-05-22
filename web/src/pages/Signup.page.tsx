@@ -7,7 +7,7 @@ export function SignUp() {
       <>
         {/* Temporary buttons for route testing */}
         <Flex justify="right" gap="md" mt="md" mr="md">
-          <NavLink to="/home">
+          <NavLink to="/">
             <Button variant="filled" color="customPapayaOrange">
               Home
             </Button>
