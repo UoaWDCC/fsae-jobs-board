@@ -11,7 +11,7 @@ import { StudentsBoard } from './pages/StudentsBoard';
 import { SponsorsBoard } from './pages/SponsorsBoard';
 import { AlumniBoard } from './pages/AlumniBoard';
 import ProfileSwitcher from './pages/ProfileSwitcher';
-
+import ProtectedRoute from './components/ProtectedRoute';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -29,11 +29,38 @@ const router = createBrowserRouter([
     path: '/profile',
     element: <ProfileSwitcher />,
     children: [
-      { path: 'student', element: <StudentProfile /> },
-      { path: 'sponsor', element: <SponsorProfile /> },
-      { path: 'alumni', element: <AlumniProfile /> },
-      { path: 'admin', element: <AdminDashboard /> },
-      { path: '', element: <Navigate to="/profile/student" /> }, // Default
+      {
+        path: 'student',
+        element: (
+          <ProtectedRoute allowedRoles={['student']}>
+            <StudentProfile />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'sponsor',
+        element: (
+          <ProtectedRoute allowedRoles={['sponsor']}>
+            <SponsorProfile />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'alumni',
+        element: (
+          <ProtectedRoute allowedRoles={['alumni']}>
+            <AlumniProfile />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'admin',
+        element: (
+          <ProtectedRoute allowedRoles={['admin']}>
+            <AdminDashboard />
+          </ProtectedRoute>
+        ),
+      },
     ],
   },
   {
