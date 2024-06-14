@@ -1,5 +1,5 @@
 import { ColorSchemeToggle } from '../components/ColorSchemeToggle/ColorSchemeToggle';
-import { Button, Flex } from '@mantine/core';
+import { Button, Flex, Title } from '@mantine/core';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setUserType } from '../features/user/userSlice';
@@ -37,6 +37,9 @@ export function Login() {
         <NavLink to="/">
           <Button color="customAzureBlue">Home</Button>
         </NavLink>
+      </Flex>
+      <Flex justify="center" gap="md" mt="md" mr="md">
+        <Title order={1}>Login Page</Title>
       </Flex>
       <Flex justify="center" gap="md" mt="md" mr="md">
         <Button variant="filled" color="green" onClick={() => handleLoginAs('student')}>

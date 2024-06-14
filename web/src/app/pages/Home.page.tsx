@@ -1,6 +1,6 @@
 import { Welcome } from '../components/Welcome/Welcome';
 import { ColorSchemeToggle } from '../components/ColorSchemeToggle/ColorSchemeToggle';
-import { Button, Flex } from '@mantine/core';
+import { Button, Flex, Title } from '@mantine/core';
 import { NavLink } from 'react-router-dom';
 
 export function HomePage() {
@@ -17,7 +17,9 @@ export function HomePage() {
           <Button color="customAzureBlue">Log in</Button>
         </NavLink>
       </Flex>
-
+      <Flex justify="center" gap="md" mt="md" mr="md">
+        <Title order={1}>Home Page</Title>
+      </Flex>
       <Welcome />
       <ColorSchemeToggle />
     </>

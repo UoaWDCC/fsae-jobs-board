@@ -1,8 +1,8 @@
 import { ColorSchemeToggle } from '../components/ColorSchemeToggle/ColorSchemeToggle';
-import { Button, Flex } from '@mantine/core';
+import { Button, Flex, Title } from '@mantine/core';
 import { NavLink } from 'react-router-dom';
 
-export function AlumniProfile() {
+export function SponsorsBoard() {
   return (
     <>
       {/* Temporary buttons for route testing */}
@@ -12,11 +12,16 @@ export function AlumniProfile() {
             Home
           </Button>
         </NavLink>
+        <NavLink to="/Profile/student">
+          <Button color="customAzureBlue">Profile</Button>
+        </NavLink>
         <NavLink to="/login">
           <Button color="customAzureBlue">Log out</Button>
         </NavLink>
       </Flex>
-      <ColorSchemeToggle />
+      <Flex justify="center" gap="md" mt="md" mr="md">
+        <Title order={1}>Sponsors Board</Title>
+      </Flex>
     </>
   );
 }

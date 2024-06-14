@@ -1,5 +1,4 @@
-import { ColorSchemeToggle } from '../components/ColorSchemeToggle/ColorSchemeToggle';
-import { Button, Flex } from '@mantine/core';
+import { Button, Flex, Title } from '@mantine/core';
 import { NavLink } from 'react-router-dom';
 
 export function JobBoard() {
@@ -7,16 +6,18 @@ export function JobBoard() {
     <>
       {/* Temporary buttons for route testing */}
       <Flex justify="right" gap="md" mt="md" mr="md">
-        <NavLink to="/">
+        <NavLink to="/profile/student">
           <Button variant="filled" color="customPapayaOrange">
             Profile
           </Button>
         </NavLink>
-        <NavLink to="/login">
+        <NavLink to="/sponsors">
           <Button color="customAzureBlue">Sponsors</Button>
         </NavLink>
       </Flex>
-      <ColorSchemeToggle />
+      <Flex justify="center" gap="md" mt="md" mr="md">
+        <Title order={1}>Job Board</Title>
+      </Flex>
     </>
   );
 }

@@ -2,16 +2,17 @@ import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
 import { HomePage } from './pages/Home.page';
 import { Login } from './pages/Login.page';
 import { SignUp } from './pages/Signup.page';
-import { StudentProfile } from './pages/StudentProfile';
-import { SponsorProfile } from './pages/SponsorProfile';
-import { AlumniProfile } from './pages/AlumniProfile';
-import { AdminDashboard } from './pages/AdminDashboard';
-import { JobBoard } from './pages/JobBoard';
-import { StudentsBoard } from './pages/StudentsBoard';
-import { SponsorsBoard } from './pages/SponsorsBoard';
-import { AlumniBoard } from './pages/AlumniBoard';
+import { StudentProfile } from './pages/StudentProfile.page';
+import { SponsorProfile } from './pages/SponsorProfile.page';
+import { AlumniProfile } from './pages/AlumniProfile.page';
+import { AdminDashboard } from './pages/AdminDashboard.page';
+import { JobBoard } from './pages/JobBoard.page';
+import { StudentsBoard } from './pages/StudentsBoard.page';
+import { SponsorsBoard } from './pages/SponsorsBoard.page';
+import { AlumniBoard } from './pages/AlumniBoard.page';
 import ProfileSwitcher from './pages/ProfileSwitcher';
 import ProtectedRoute from './components/ProtectedRoute';
+// Protected route is currently commented out. To be enabled once the Authentication Logic has been implemented
 const router = createBrowserRouter([
   {
     path: '/',
@@ -65,19 +66,27 @@ const router = createBrowserRouter([
   },
   {
     path: '/jobs',
+    //  <ProtectedRoute allowedRoles={['student', 'admin']}>
     element: <JobBoard />,
+    //  </ProtectedRoute>
   },
   {
     path: '/students',
+    //  <ProtectedRoute allowedRoles={['sponsor', 'alumni', 'admin']}>
     element: <StudentsBoard />,
+    //  </ProtectedRoute>
   },
   {
     path: '/sponsors',
+    //  <ProtectedRoute allowedRoles={['student', 'admin']}>
     element: <SponsorsBoard />,
+    //  </ProtectedRoute>
   },
   {
     path: '/alumni',
+    //  <ProtectedRoute allowedRoles={['student', 'admin']}>
     element: <AlumniBoard />,
+    //  </ProtectedRoute>
   },
 ]);
 
