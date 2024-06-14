@@ -1,4 +1,3 @@
-import { ColorSchemeToggle } from '../components/ColorSchemeToggle/ColorSchemeToggle';
 import { Button, Flex, Title } from '@mantine/core';
 import { NavLink } from 'react-router-dom';
 
