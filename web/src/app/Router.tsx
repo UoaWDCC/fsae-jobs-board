@@ -32,33 +32,33 @@ const router = createBrowserRouter([
       {
         path: 'student',
         element: (
-          <ProtectedRoute allowedRoles={['student']}>
-            <StudentProfile />
-          </ProtectedRoute>
+          //  <ProtectedRoute allowedRoles={['student']}>
+          <StudentProfile />
+          //</ProtectedRoute>
         ),
       },
       {
         path: 'sponsor',
         element: (
-          <ProtectedRoute allowedRoles={['sponsor']}>
-            <SponsorProfile />
-          </ProtectedRoute>
+          // <ProtectedRoute allowedRoles={['sponsor']}>
+          <SponsorProfile />
+          // </ProtectedRoute>
         ),
       },
       {
         path: 'alumni',
         element: (
-          <ProtectedRoute allowedRoles={['alumni']}>
-            <AlumniProfile />
-          </ProtectedRoute>
+          // <ProtectedRoute allowedRoles={['alumni']}>
+          <AlumniProfile />
+          // </ProtectedRoute>
         ),
       },
       {
         path: 'admin',
         element: (
-          <ProtectedRoute allowedRoles={['admin']}>
-            <AdminDashboard />
-          </ProtectedRoute>
+          // <ProtectedRoute allowedRoles={['admin']}>
+          <AdminDashboard />
+          //  </ProtectedRoute>
         ),
       },
     ],
