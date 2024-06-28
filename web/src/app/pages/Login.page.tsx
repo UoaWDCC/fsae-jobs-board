@@ -1,9 +1,10 @@
-import { ColorSchemeToggle } from '../components/ColorSchemeToggle/ColorSchemeToggle';
 import { Button, Flex, Title } from '@mantine/core';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setUserType } from '../features/user/userSlice';
 import { toast } from 'react-toastify';
+import { LoginForm } from '../components/AuthForms/LoginForm';
+import classes from './page.module.css';
 
 export function Login() {
   const dispatch = useDispatch();
@@ -26,36 +27,12 @@ export function Login() {
     navigate(profilePath, { replace: true });
   };
   return (
-    <>
+    <div className={classes.wrapper}>
       {/* Temporary buttons for protected routes testing purpose*/}
-      <Flex justify="right" gap="md" mt="md" mr="md">
-        <NavLink to="/signup">
-          <Button variant="filled" color="customPapayaOrange">
-            Sign up
-          </Button>
-        </NavLink>
-        <NavLink to="/">
-          <Button color="customAzureBlue">Home</Button>
-        </NavLink>
-      </Flex>
-      <Flex justify="center" gap="md" mt="md" mr="md">
-        <Title order={1}>Login Page</Title>
-      </Flex>
-      <Flex justify="center" gap="md" mt="md" mr="md">
-        <Button variant="filled" color="green" onClick={() => handleLoginAs('student')}>
-          Login as Student
-        </Button>
-        <Button variant="filled" color="blue" onClick={() => handleLoginAs('sponsor')}>
-          Login as Sponsor
-        </Button>
-        <Button variant="filled" color="violet" onClick={() => handleLoginAs('alumni')}>
-          Login as Alumni
-        </Button>
-        <Button variant="filled" color="red" onClick={() => handleLoginAs('admin')}>
-          Login as Admin
-        </Button>
-      </Flex>
-      <ColorSchemeToggle />
-    </>
+      <NavLink to="/" className={classes.banner}>
+        <Button color="customAzureBlue">Home</Button>
+      </NavLink>
+      <LoginForm />
+    </div>
   );
 }
