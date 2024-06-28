@@ -18,10 +18,10 @@ export function LoginForm() {
           Login
         </Title>
 
-        <TextInput placeholder="Enter username or email" size="md" />
-        <PasswordInput placeholder="Enter password" mt="md" size="md" />
+        <TextInput placeholder="Enter username or email" size="lg" />
+        <PasswordInput placeholder="Enter password" mt="md" size="lg" />
         <Checkbox label="Remember Me" mt="xl" size="md" />
-        <Button fullWidth mt="xl" size="md">
+        <Button fullWidth mt="xl" size="lg">
           Login
         </Button>
 
