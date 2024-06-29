@@ -1,12 +1,17 @@
-import { NavLink } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import React, { useState } from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../../app/store';
-import { Button, Flex, Image, Group, ActionIcon } from '@mantine/core';
-import { UserType } from '@/app/features/user/userSlice';
-import { IconSettings, IconUserCircle, IconBell } from '@tabler/icons-react';
+import { Button, Flex, Image, Group, ActionIcon, Menu } from '@mantine/core';
+import { UserType, resetUser } from '@/app/features/user/userSlice';
+import { IconSettings, IconUserCircle, IconBell, IconLogout } from '@tabler/icons-react';
 
 function Navbar() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const userType = useSelector((state: RootState) => state.user.userType);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
 
   const navLinks: { [key in UserType]: { path: string; label: string }[] } = {
     student: [
@@ -28,8 +33,13 @@ function Navbar() {
       { path: '/students', label: 'Students' },
       { path: '/sponsors', label: 'Sponsors' },
       { path: '/alumni', label: 'Alumni' },
-      { path: '/admin', label: 'Admin Dashboard' }, // the url should be changed to something more secure
+      { path: '/profile/admin', label: 'Admin Dashboard' }, // the url should be changed to something more secure
     ],
+  };
+  const handleLogout = () => {
+    dispatch(resetUser()); // Assuming you have an action to reset user state
+    localStorage.removeItem('accessToken');
+    navigate('/login');
   };
 
   return (
@@ -51,15 +61,27 @@ function Navbar() {
           </Group>
         ) : null}
       </Flex>
-      {/* Icons on the Right (when logged in) */}
       {userType && (
         <Group>
-          <ActionIcon size={32} variant="subtle" color="white">
-            <IconUserCircle />
-          </ActionIcon>
-          <ActionIcon size={32} variant="subtle" color="white">
-            <IconSettings />
-          </ActionIcon>
+          <Menu opened={profileMenuOpen} onClose={() => setProfileMenuOpen(false)}>
+            <Menu.Target>
+              <ActionIcon
+                size={32}
+                variant="subtle"
+                color="white"
+                onClick={() => setProfileMenuOpen((o) => !o)}
+              >
+                <IconUserCircle />
+              </ActionIcon>
+            </Menu.Target>
+
+            <Menu.Dropdown>
+              <Menu.Item>Settings</Menu.Item>
+              <Menu.Divider />
+              <Menu.Item onClick={handleLogout}>Logout</Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
+
           <ActionIcon size={32} variant="subtle" color="white">
             <IconBell />
           </ActionIcon>
