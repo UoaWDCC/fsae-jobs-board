@@ -1,5 +1,6 @@
 import { Button, Flex, Title } from '@mantine/core';
 import { NavLink } from 'react-router-dom';
+import SignupForm from '../components/AuthForms/SignupForm';
 
 export function SignUp() {
   return (
@@ -15,9 +16,7 @@ export function SignUp() {
           <Button color="customAzureBlue">Log in</Button>
         </NavLink>
       </Flex>
-      <Flex justify="center" gap="md" mt="md" mr="md">
-        <Title order={1}>Sign Up Page</Title>
-      </Flex>
+      <SignupForm />
     </>
   );
 }
