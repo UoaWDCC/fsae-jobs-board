@@ -1,9 +1,9 @@
-import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../app/store';
-import { Button, Flex, Image, List } from '@mantine/core';
+import { Button, Flex, Image, Group, ActionIcon } from '@mantine/core';
 import { UserType } from '@/app/features/user/userSlice';
+import { IconSettings, IconUserCircle, IconBell } from '@tabler/icons-react';
 
 function Navbar() {
   const userType = useSelector((state: RootState) => state.user.userType);
@@ -14,13 +14,17 @@ function Navbar() {
       { path: '/sponsors', label: 'Sponsors' },
       { path: '/alumni', label: 'Alumni' },
     ],
-    sponsor: [{ path: '/students', label: 'Students' }],
-    alumni: [
+    sponsor: [
       { path: '/students', label: 'Students' },
       { path: '/alumni', label: 'Alumni' },
     ],
+    alumni: [
+      { path: '/students', label: 'Students' },
+      { path: '/sponsors', label: 'Sponsors' },
+      { path: '/alumni', label: 'Alumni' },
+    ],
     admin: [
-      { path: '/jobs', label: 'Jobs' },
+      { path: '/jobs', label: 'Job Board' },
       { path: '/students', label: 'Students' },
       { path: '/sponsors', label: 'Sponsors' },
       { path: '/alumni', label: 'Alumni' },
@@ -29,19 +33,42 @@ function Navbar() {
   };
 
   return (
-    <nav>
-      <Flex gap="md" mt="md" mr="md" justify="space-between" align="center">
-        <Image src="favicon.svg" alt="FSAE Logo" style={{ height: 50 }} />
+    <Flex gap="md" mt="md" mr="md" ml="md" mb="md" justify="space-between" align="center">
+      <NavLink to="/">
+        <Image radius="md" h={30} src="fsae_logo_black.png" alt="FSAE Logo" />
+      </NavLink>
+
+      <Flex justify="center" align="center" style={{ flex: 1 }}>
         {userType ? (
-          <List>
+          <Group>
             {navLinks[userType].map((link) => (
-              <List.Item key={link.path}>
-                <NavLink to={link.path}>{link.label}</NavLink>
-              </List.Item>
+              <NavLink key={link.path} to={link.path}>
+                <Button variant="subtle" color="white">
+                  {link.label}
+                </Button>
+              </NavLink>
             ))}
-          </List>
-        ) : (
-          <Flex gap="md">
+          </Group>
+        ) : null}
+      </Flex>
+      {/* Icons on the Right (when logged in) */}
+      {userType && (
+        <Group>
+          <ActionIcon size={32} variant="subtle" color="white">
+            <IconUserCircle />
+          </ActionIcon>
+          <ActionIcon size={32} variant="subtle" color="white">
+            <IconSettings />
+          </ActionIcon>
+          <ActionIcon size={32} variant="subtle" color="white">
+            <IconBell />
+          </ActionIcon>
+        </Group>
+      )}
+
+      <Flex gap="md">
+        {!userType && ( // Only render if not logged in
+          <>
             <NavLink to="/signup">
               <Button variant="filled" color="customPapayaOrange">
                 Sign Up
@@ -50,10 +77,10 @@ function Navbar() {
             <NavLink to="/login">
               <Button color="customAzureBlue">Log In</Button>
             </NavLink>
-          </Flex>
+          </>
         )}
       </Flex>
-    </nav>
+    </Flex>
   );
 }
 
