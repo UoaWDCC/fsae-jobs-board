@@ -1,9 +1,10 @@
 import { ColorSchemeToggle } from '../components/ColorSchemeToggle/ColorSchemeToggle';
 import { Button, Flex, Title } from '@mantine/core';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setUserType } from '../features/user/userSlice';
 import { toast } from 'react-toastify';
+import Navbar from '../components/Navbar/Navbar';
 
 export function Login() {
   const dispatch = useDispatch();
@@ -27,17 +28,7 @@ export function Login() {
   };
   return (
     <>
-      {/* Temporary buttons for protected routes testing purpose*/}
-      <Flex justify="right" gap="md" mt="md" mr="md">
-        <NavLink to="/signup">
-          <Button variant="filled" color="customPapayaOrange">
-            Sign up
-          </Button>
-        </NavLink>
-        <NavLink to="/">
-          <Button color="customAzureBlue">Home</Button>
-        </NavLink>
-      </Flex>
+      <Navbar />
       <Flex justify="center" gap="md" mt="md" mr="md">
         <Title order={1}>Login Page</Title>
       </Flex>

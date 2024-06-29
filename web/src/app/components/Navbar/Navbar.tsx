@@ -76,12 +76,15 @@ function Navbar() {
             </Menu.Target>
 
             <Menu.Dropdown>
-              <Menu.Item>Settings</Menu.Item>
+              <Menu.Item>Profile</Menu.Item>
               <Menu.Divider />
               <Menu.Item onClick={handleLogout}>Logout</Menu.Item>
             </Menu.Dropdown>
           </Menu>
 
+          <ActionIcon size={32} variant="subtle" color="white">
+            <IconSettings />
+          </ActionIcon>
           <ActionIcon size={32} variant="subtle" color="white">
             <IconBell />
           </ActionIcon>
