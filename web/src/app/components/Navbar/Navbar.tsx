@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../../app/store';
 import { Button, Flex, Image, Group, ActionIcon, Menu } from '@mantine/core';
 import { UserType, resetUser } from '@/app/features/user/userSlice';
-import { IconSettings, IconUserCircle, IconBell, IconLogout } from '@tabler/icons-react';
+import { IconUserCircle, IconBell, IconLogout } from '@tabler/icons-react';
 
 function Navbar() {
   const navigate = useNavigate();
@@ -33,13 +33,12 @@ function Navbar() {
       { path: '/students', label: 'Students' },
       { path: '/sponsors', label: 'Sponsors' },
       { path: '/alumni', label: 'Alumni' },
-      { path: '/profile/admin', label: 'Admin Dashboard' }, // the url should be changed to something more secure
     ],
   };
   const handleLogout = () => {
-    dispatch(resetUser()); // Assuming you have an action to reset user state
+    dispatch(resetUser());
     localStorage.removeItem('accessToken');
-    navigate('/login');
+    navigate('/');
   };
 
   return (
@@ -63,30 +62,20 @@ function Navbar() {
       </Flex>
       {userType && (
         <Group>
-          <Menu opened={profileMenuOpen} onClose={() => setProfileMenuOpen(false)}>
-            <Menu.Target>
-              <ActionIcon
-                size={32}
-                variant="subtle"
-                color="white"
-                onClick={() => setProfileMenuOpen((o) => !o)}
-              >
-                <IconUserCircle />
-              </ActionIcon>
-            </Menu.Target>
-
-            <Menu.Dropdown>
-              <Menu.Item>Profile</Menu.Item>
-              <Menu.Divider />
-              <Menu.Item onClick={handleLogout}>Logout</Menu.Item>
-            </Menu.Dropdown>
-          </Menu>
-
-          <ActionIcon size={32} variant="subtle" color="white">
-            <IconSettings />
+          <ActionIcon
+            size={32}
+            variant="subtle"
+            color="white"
+            onClick={() => setProfileMenuOpen((o) => !o)}
+          >
+            <IconUserCircle />
           </ActionIcon>
+
           <ActionIcon size={32} variant="subtle" color="white">
             <IconBell />
+          </ActionIcon>
+          <ActionIcon size={32} variant="subtle" color="white">
+            <IconLogout onClick={handleLogout} />
           </ActionIcon>
         </Group>
       )}
