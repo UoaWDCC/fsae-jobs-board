@@ -7,7 +7,7 @@ export class Sponsor extends Entity {
     id: true,
     generated: true,
   })
-  userID?: string;
+  sponsorID?: string;
 
   @property({
     type: 'string',

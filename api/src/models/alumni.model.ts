@@ -7,7 +7,7 @@ export class Alumni extends Entity {
     id: true,
     generated: true,
   })
-  userID?: string;
+  alumniID?: string;
 
   @property({
     type: 'string',

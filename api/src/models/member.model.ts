@@ -7,7 +7,7 @@ export class Member extends Entity {
     id: true,
     generated: true,
   })
-  userID?: string;
+  memberID?: string;
 
   @property({
     type: 'string',
