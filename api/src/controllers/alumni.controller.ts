@@ -26,76 +26,7 @@ export class AlumniController {
     public alumniRepository : AlumniRepository,
   ) {}
 
-  @post('/user/sponsor')
-  @response(200, {
-    description: 'Alumni model instance',
-    content: {'application/json': {schema: getModelSchemaRef(Alumni)}},
-  })
-  async create(
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(Alumni, {
-            title: 'NewAlumni',
-            exclude: ['alumniID'],
-          }),
-        },
-      },
-    })
-    alumni: Omit<Alumni, 'alumniID'>,
-  ): Promise<Alumni> {
-    return this.alumniRepository.create(alumni);
-  }
-
-  @get('/user/sponsor/count')
-  @response(200, {
-    description: 'Alumni model count',
-    content: {'application/json': {schema: CountSchema}},
-  })
-  async count(
-    @param.where(Alumni) where?: Where<Alumni>,
-  ): Promise<Count> {
-    return this.alumniRepository.count(where);
-  }
-
-  @get('/user/sponsor')
-  @response(200, {
-    description: 'Array of Alumni model instances',
-    content: {
-      'application/json': {
-        schema: {
-          type: 'array',
-          items: getModelSchemaRef(Alumni, {includeRelations: true}),
-        },
-      },
-    },
-  })
-  async find(
-    @param.filter(Alumni) filter?: Filter<Alumni>,
-  ): Promise<Alumni[]> {
-    return this.alumniRepository.find(filter);
-  }
-
-  @patch('/user/sponsor')
-  @response(200, {
-    description: 'Alumni PATCH success count',
-    content: {'application/json': {schema: CountSchema}},
-  })
-  async updateAll(
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(Alumni, {partial: true}),
-        },
-      },
-    })
-    alumni: Alumni,
-    @param.where(Alumni) where?: Where<Alumni>,
-  ): Promise<Count> {
-    return this.alumniRepository.updateAll(alumni, where);
-  }
-
-  @get('/user/sponsor/{id}')
+  @get('/user/alumni/{id}')
   @response(200, {
     description: 'Alumni model instance',
     content: {
@@ -111,7 +42,7 @@ export class AlumniController {
     return this.alumniRepository.findById(id, filter);
   }
 
-  @patch('/user/sponsor/{id}')
+  @patch('/user/alumni/{id}')
   @response(204, {
     description: 'Alumni PATCH success',
   })
@@ -129,18 +60,7 @@ export class AlumniController {
     await this.alumniRepository.updateById(id, alumni);
   }
 
-  @put('/user/sponsor/{id}')
-  @response(204, {
-    description: 'Alumni PUT success',
-  })
-  async replaceById(
-    @param.path.number('id') id: number,
-    @requestBody() alumni: Alumni,
-  ): Promise<void> {
-    await this.alumniRepository.replaceById(id, alumni);
-  }
-
-  @del('/user/sponsor/{id}')
+  @del('/user/alumni/{id}')
   @response(204, {
     description: 'Alumni DELETE success',
   })

@@ -26,75 +26,6 @@ export class MemberController {
     public memberRepository : MemberRepository,
   ) {}
 
-  @post('/user/member')
-  @response(200, {
-    description: 'Member model instance',
-    content: {'application/json': {schema: getModelSchemaRef(Member)}},
-  })
-  async create(
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(Member, {
-            title: 'NewMember',
-            exclude: ['memberID'],
-          }),
-        },
-      },
-    })
-    member: Omit<Member, 'memberID'>,
-  ): Promise<Member> {
-    return this.memberRepository.create(member);
-  }
-
-  @get('/user/member/count')
-  @response(200, {
-    description: 'Member model count',
-    content: {'application/json': {schema: CountSchema}},
-  })
-  async count(
-    @param.where(Member) where?: Where<Member>,
-  ): Promise<Count> {
-    return this.memberRepository.count(where);
-  }
-
-  @get('/user/member')
-  @response(200, {
-    description: 'Array of Member model instances',
-    content: {
-      'application/json': {
-        schema: {
-          type: 'array',
-          items: getModelSchemaRef(Member, {includeRelations: true}),
-        },
-      },
-    },
-  })
-  async find(
-    @param.filter(Member) filter?: Filter<Member>,
-  ): Promise<Member[]> {
-    return this.memberRepository.find(filter);
-  }
-
-  @patch('/user/member')
-  @response(200, {
-    description: 'Member PATCH success count',
-    content: {'application/json': {schema: CountSchema}},
-  })
-  async updateAll(
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(Member, {partial: true}),
-        },
-      },
-    })
-    member: Member,
-    @param.where(Member) where?: Where<Member>,
-  ): Promise<Count> {
-    return this.memberRepository.updateAll(member, where);
-  }
-
   @get('/user/member/{id}')
   @response(200, {
     description: 'Member model instance',
@@ -127,17 +58,6 @@ export class MemberController {
     member: Member,
   ): Promise<void> {
     await this.memberRepository.updateById(id, member);
-  }
-
-  @put('/user/member/{id}')
-  @response(204, {
-    description: 'Member PUT success',
-  })
-  async replaceById(
-    @param.path.number('id') id: number,
-    @requestBody() member: Member,
-  ): Promise<void> {
-    await this.memberRepository.replaceById(id, member);
   }
 
   @del('/user/member/{id}')

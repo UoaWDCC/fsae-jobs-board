@@ -26,75 +26,6 @@ export class SponsorController {
     public sponsorRepository : SponsorRepository,
   ) {}
 
-  @post('/user/sponsor')
-  @response(200, {
-    description: 'Sponsor model instance',
-    content: {'application/json': {schema: getModelSchemaRef(Sponsor)}},
-  })
-  async create(
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(Sponsor, {
-            title: 'NewSponsor',
-            exclude: ['sponsorID'],
-          }),
-        },
-      },
-    })
-    sponsor: Omit<Sponsor, 'sponsorID'>,
-  ): Promise<Sponsor> {
-    return this.sponsorRepository.create(sponsor);
-  }
-
-  @get('/user/sponsor/count')
-  @response(200, {
-    description: 'Sponsor model count',
-    content: {'application/json': {schema: CountSchema}},
-  })
-  async count(
-    @param.where(Sponsor) where?: Where<Sponsor>,
-  ): Promise<Count> {
-    return this.sponsorRepository.count(where);
-  }
-
-  @get('/user/sponsor')
-  @response(200, {
-    description: 'Array of Sponsor model instances',
-    content: {
-      'application/json': {
-        schema: {
-          type: 'array',
-          items: getModelSchemaRef(Sponsor, {includeRelations: true}),
-        },
-      },
-    },
-  })
-  async find(
-    @param.filter(Sponsor) filter?: Filter<Sponsor>,
-  ): Promise<Sponsor[]> {
-    return this.sponsorRepository.find(filter);
-  }
-
-  @patch('/user/sponsor')
-  @response(200, {
-    description: 'Sponsor PATCH success count',
-    content: {'application/json': {schema: CountSchema}},
-  })
-  async updateAll(
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(Sponsor, {partial: true}),
-        },
-      },
-    })
-    sponsor: Sponsor,
-    @param.where(Sponsor) where?: Where<Sponsor>,
-  ): Promise<Count> {
-    return this.sponsorRepository.updateAll(sponsor, where);
-  }
-
   @get('/user/sponsor/{id}')
   @response(200, {
     description: 'Sponsor model instance',
@@ -127,17 +58,6 @@ export class SponsorController {
     sponsor: Sponsor,
   ): Promise<void> {
     await this.sponsorRepository.updateById(id, sponsor);
-  }
-
-  @put('/user/sponsor/{id}')
-  @response(204, {
-    description: 'Sponsor PUT success',
-  })
-  async replaceById(
-    @param.path.number('id') id: number,
-    @requestBody() sponsor: Sponsor,
-  ): Promise<void> {
-    await this.sponsorRepository.replaceById(id, sponsor);
   }
 
   @del('/user/sponsor/{id}')
