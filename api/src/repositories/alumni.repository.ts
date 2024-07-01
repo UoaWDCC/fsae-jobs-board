@@ -5,7 +5,7 @@ import {Alumni, AlumniRelations} from '../models';
 
 export class AlumniRepository extends DefaultCrudRepository<
   Alumni,
-  typeof Alumni.prototype.userID,
+  typeof Alumni.prototype.alumniID,
   AlumniRelations
 > {
   constructor(

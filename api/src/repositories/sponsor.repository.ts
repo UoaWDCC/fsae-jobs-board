@@ -5,7 +5,7 @@ import {Sponsor, SponsorRelations} from '../models';
 
 export class SponsorRepository extends DefaultCrudRepository<
   Sponsor,
-  typeof Sponsor.prototype.userID,
+  typeof Sponsor.prototype.sponsorID,
   SponsorRelations
 > {
   constructor(

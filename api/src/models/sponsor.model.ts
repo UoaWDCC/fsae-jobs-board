@@ -3,11 +3,11 @@ import {Entity, model, property} from '@loopback/repository';
 @model()
 export class Sponsor extends Entity {
   @property({
-    type: 'string',
+    type: 'number',
     id: true,
     generated: true,
   })
-  sponsorID?: string;
+  sponsorID?: number;
 
   @property({
     type: 'string',
