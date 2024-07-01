@@ -8,3 +8,4 @@ export * from './has-skill.model';
 export * from './degree.model';
 export * from './application.model';
 export * from './alumni.model';
+export * from './user.model';
