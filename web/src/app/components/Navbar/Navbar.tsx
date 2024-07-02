@@ -80,9 +80,11 @@ function Navbar() {
             <IconUserCircle />
           </ActionIcon>
 
-          <ActionIcon size={32} variant="subtle" color="white">
-            <IconBell />
-          </ActionIcon>
+          {userType !== 'student' && (
+            <ActionIcon size={32} variant="subtle" color="white">
+              <IconBell />
+            </ActionIcon>
+          )}
           <ActionIcon size={32} variant="subtle" color="white">
             <IconLogout onClick={handleLogout} />
           </ActionIcon>
