@@ -11,7 +11,6 @@ function Navbar() {
   const dispatch = useDispatch();
 
   const userType = useSelector((state: RootState) => state.user.userType);
-  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
 
   const navLinks: { [key in UserType]: { path: string; label: string }[] } = {
     student: [
@@ -41,6 +40,21 @@ function Navbar() {
     navigate('/');
   };
 
+  const handleProfileClick = () => {
+    if (userType) {
+      const profilePath = {
+        student: '/profile/student',
+        sponsor: '/profile/sponsor',
+        alumni: '/profile/alumni',
+        admin: '/profile/admin',
+      }[userType as UserType];
+      navigate(profilePath);
+    } else {
+      // Handle the case where userType is null
+      navigate('/login');
+    }
+  };
+
   return (
     <Flex gap="md" mt="md" mr="md" ml="md" mb="md" justify="space-between" align="center">
       <NavLink to="/">
@@ -62,12 +76,7 @@ function Navbar() {
       </Flex>
       {userType && (
         <Group>
-          <ActionIcon
-            size={32}
-            variant="subtle"
-            color="white"
-            onClick={() => setProfileMenuOpen((o) => !o)}
-          >
+          <ActionIcon size={32} variant="subtle" color="white" onClick={handleProfileClick}>
             <IconUserCircle />
           </ActionIcon>
 
