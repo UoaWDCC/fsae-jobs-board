@@ -10,27 +10,44 @@ import { JobBoard } from './pages/JobBoard.page';
 import { StudentsBoard } from './pages/StudentsBoard.page';
 import { SponsorsBoard } from './pages/SponsorsBoard.page';
 import { AlumniBoard } from './pages/AlumniBoard.page';
+import { NotFound } from './pages/NotFound.page';
 import ProfileSwitcher from './pages/ProfileSwitcher';
 import { AppLayout } from './Layouts/AppLayout';
 import ProtectedRoute from './components/ProtectedRoute';
-import App from './App';
+
 // Protected route is currently commented out. To be enabled once the Authentication Logic has been implemented
 const router = createBrowserRouter([
   {
     path: '/',
-    element:  <AppLayout><HomePage /></AppLayout>,
+    element: (
+      <AppLayout>
+        <HomePage />
+      </AppLayout>
+    ),
   },
   {
     path: '/login',
-    element: <AppLayout><Login /></AppLayout>,
+    element: (
+      <AppLayout>
+        <Login />
+      </AppLayout>
+    ),
   },
   {
     path: '/signup',
-    element: <AppLayout><SignUp /></AppLayout>,
+    element: (
+      <AppLayout>
+        <SignUp />
+      </AppLayout>
+    ),
   },
   {
     path: '/profile',
-    element: <AppLayout><ProfileSwitcher /></AppLayout>,
+    element: (
+      <AppLayout>
+        <ProfileSwitcher />
+      </AppLayout>
+    ),
     children: [
       {
         path: 'student',
@@ -69,26 +86,50 @@ const router = createBrowserRouter([
   {
     path: '/jobs',
     //  <ProtectedRoute allowedRoles={['student', 'admin']}>
-    element: <AppLayout><JobBoard /></AppLayout>,
+    element: (
+      <AppLayout>
+        <JobBoard />
+      </AppLayout>
+    ),
     //  </ProtectedRoute>
   },
   {
     path: '/students',
     //  <ProtectedRoute allowedRoles={['sponsor', 'alumni', 'admin']}>
-    element: <AppLayout><StudentsBoard /></AppLayout>,
+    element: (
+      <AppLayout>
+        <StudentsBoard />
+      </AppLayout>
+    ),
     //  </ProtectedRoute>
   },
   {
     path: '/sponsors',
     //  <ProtectedRoute allowedRoles={['student', 'admin']}>
-    element: <AppLayout><SponsorsBoard /></AppLayout>,
+    element: (
+      <AppLayout>
+        <SponsorsBoard />
+      </AppLayout>
+    ),
     //  </ProtectedRoute>
   },
   {
     path: '/alumni',
     //  <ProtectedRoute allowedRoles={['student', 'admin']}>
-    element: <AppLayout><AlumniBoard /></AppLayout>,
+    element: (
+      <AppLayout>
+        <AlumniBoard />
+      </AppLayout>
+    ),
     //  </ProtectedRoute>
+  },
+  {
+    path: '*', // Catch-all route
+    element: (
+      <AppLayout>
+        <NotFound />
+      </AppLayout>
+    ),
   },
 ]);
 
