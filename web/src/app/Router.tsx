@@ -11,24 +11,26 @@ import { StudentsBoard } from './pages/StudentsBoard.page';
 import { SponsorsBoard } from './pages/SponsorsBoard.page';
 import { AlumniBoard } from './pages/AlumniBoard.page';
 import ProfileSwitcher from './pages/ProfileSwitcher';
+import { AppLayout } from './Layouts/AppLayout';
 import ProtectedRoute from './components/ProtectedRoute';
+import App from './App';
 // Protected route is currently commented out. To be enabled once the Authentication Logic has been implemented
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <HomePage />,
+    element:  <AppLayout><HomePage /></AppLayout>,
   },
   {
     path: '/login',
-    element: <Login />,
+    element: <AppLayout><Login /></AppLayout>,
   },
   {
     path: '/signup',
-    element: <SignUp />,
+    element: <AppLayout><SignUp /></AppLayout>,
   },
   {
     path: '/profile',
-    element: <ProfileSwitcher />,
+    element: <AppLayout><ProfileSwitcher /></AppLayout>,
     children: [
       {
         path: 'student',
@@ -67,25 +69,25 @@ const router = createBrowserRouter([
   {
     path: '/jobs',
     //  <ProtectedRoute allowedRoles={['student', 'admin']}>
-    element: <JobBoard />,
+    element: <AppLayout><JobBoard /></AppLayout>,
     //  </ProtectedRoute>
   },
   {
     path: '/students',
     //  <ProtectedRoute allowedRoles={['sponsor', 'alumni', 'admin']}>
-    element: <StudentsBoard />,
+    element: <AppLayout><StudentsBoard /></AppLayout>,
     //  </ProtectedRoute>
   },
   {
     path: '/sponsors',
     //  <ProtectedRoute allowedRoles={['student', 'admin']}>
-    element: <SponsorsBoard />,
+    element: <AppLayout><SponsorsBoard /></AppLayout>,
     //  </ProtectedRoute>
   },
   {
     path: '/alumni',
     //  <ProtectedRoute allowedRoles={['student', 'admin']}>
-    element: <AlumniBoard />,
+    element: <AppLayout><AlumniBoard /></AppLayout>,
     //  </ProtectedRoute>
   },
 ]);

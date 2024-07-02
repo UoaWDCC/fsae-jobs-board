@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setUserType } from '../features/user/userSlice';
 import { toast } from 'react-toastify';
-import Navbar from '../components/Navbar/Navbar';
 
 export function Login() {
   const dispatch = useDispatch();
@@ -28,7 +27,6 @@ export function Login() {
   };
   return (
     <>
-      <Navbar />
       <Flex justify="center" gap="md" mt="md" mr="md">
         <Title order={1}>Login Page</Title>
       </Flex>

@@ -1,5 +1,4 @@
-import { Button, Flex, Title } from '@mantine/core';
-import Navbar from '../components/Navbar/Navbar';
+import { Flex, Title } from '@mantine/core';
 
 export function NotFound() {
   return (
