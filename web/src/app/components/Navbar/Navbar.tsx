@@ -2,16 +2,17 @@ import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../../app/store';
-import { Button, Flex, Image, Group, ActionIcon, Menu } from '@mantine/core';
+import { Button, Flex, Image, Group, ActionIcon, Text } from '@mantine/core';
 import { UserType, resetUser } from '@/app/features/user/userSlice';
 import { IconUserCircle, IconBell, IconLogout } from '@tabler/icons-react';
 
 function Navbar() {
+  // Use Redux State Management
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const userType = useSelector((state: RootState) => state.user.userType);
-
+  // Define navigation links based on user type
   const navLinks: { [key in UserType]: { path: string; label: string }[] } = {
     student: [
       { path: '/jobs', label: 'Jobs' },
@@ -39,7 +40,7 @@ function Navbar() {
     localStorage.removeItem('accessToken');
     navigate('/');
   };
-
+  // Redirect to the user's profile page based on their type
   const handleProfileClick = () => {
     if (userType) {
       const profilePath = {
@@ -63,12 +64,23 @@ function Navbar() {
 
       <Flex justify="center" align="center" style={{ flex: 1 }}>
         {userType ? (
-          <Group>
+          <Group gap="xl">
             {navLinks[userType].map((link) => (
-              <NavLink key={link.path} to={link.path}>
-                <Button variant="subtle" color="white">
-                  {link.label}
-                </Button>
+              <NavLink
+                key={link.path}
+                to={link.path}
+                style={({ isActive }) => ({
+                  textDecoration: 'none',
+                  borderBottom: isActive
+                    ? `2px solid var(--mantine-color-customPapayaOrange-5)`
+                    : 'none',
+                  color: isActive
+                    ? 'var(--mantine-color-customMercurySilver-5)'
+                    : 'var(--mantine-color-white)',
+                  paddingBottom: '2px',
+                })}
+              >
+                <Text size="md">{link.label}</Text>
               </NavLink>
             ))}
           </Group>
