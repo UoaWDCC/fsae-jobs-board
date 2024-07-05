@@ -12,13 +12,20 @@ export class JwtService implements TokenService{
     @inject('jwt.secret') private jwtSecret: string
   ) {}
 
-  generateToken(securityUserProfile: UserProfile): Promise<string> {
-    if (!securityUserProfile) {
+  // Note: UserProfile accepts any, bypasses restriction of SecurityIdentityUser. Not ideal.
+  generateToken(userProfile: any): Promise<string> {
+    if (!userProfile) {
       throw new Error('securityUserProfile cannot be null');
     }
 
+    let tokenBody = {
+      "id": userProfile.id,
+      "role": userProfile.fsaeRole,
+      "activated": userProfile.activated
+    }
+
     const token = sign(
-      securityUserProfile,
+      tokenBody,
       this.jwtSecret,
       {
         expiresIn: '24h',

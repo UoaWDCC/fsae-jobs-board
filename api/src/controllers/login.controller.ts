@@ -65,11 +65,8 @@ export class LoginController {
       throw new HttpErrors.Unauthorized('Invalid login credentials');
     }
 
-    // Convert FSAE user
-    let secUserProfile: UserProfile = fsaeUser.convertToSecurityUserProfile()
-
     // Return Jwt Token
-    let token = await this.jwtService.generateToken(secUserProfile)
+    let token = await this.jwtService.generateToken(fsaeUser)
     return {
       userId: fsaeUser.id as string,
       token: token,
