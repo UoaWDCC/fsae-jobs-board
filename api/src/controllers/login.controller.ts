@@ -61,7 +61,7 @@ export class LoginController {
 
     // Verify Credentials
     // Todo: Unhash password if hashed
-    if (fsaeUser.password !== 'blah') {
+    if (fsaeUser.password !== credentials.password) {
       throw new HttpErrors.Unauthorized('Invalid login credentials');
     }
 
