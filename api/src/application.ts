@@ -12,6 +12,13 @@ import {MySequence} from './sequence';
 import {JwtService} from './services';
 import {AuthenticationComponent, registerAuthenticationStrategy} from '@loopback/authentication';
 import {FSAEJwtStrategy} from './auth/auth-strategies/jwt-strategy';
+import {
+  AuthorizationComponent,
+  AuthorizationDecision,
+  AuthorizationOptions,
+  AuthorizationTags,
+} from '@loopback/authorization';
+import {FsaeAuthorizationProvider} from './auth/authorization/FsaeAuthorizationProvider';
 
 export {ApplicationConfig};
 
@@ -39,7 +46,18 @@ export class FsaeApiApplication extends BootMixin(
     this.bind(`services.jwtservice`).toClass(JwtService);
     registerAuthenticationStrategy(this, FSAEJwtStrategy);
 
+    // Authorization
+    const authOptions: AuthorizationOptions = {
+      precedence: AuthorizationDecision.DENY,
+      defaultDecision: AuthorizationDecision.DENY,
+    };
 
+    const Authorizationbinding = this.component(AuthorizationComponent);
+    this.configure(Authorizationbinding.key).to(authOptions);
+    this
+      .bind('authorizationProviders.fsae-authorization-provider')
+      .toProvider(FsaeAuthorizationProvider)
+      .tag(AuthorizationTags.AUTHORIZER);
 
     this.projectRoot = __dirname;
     // Customize @loopback/boot Booter Conventions here

@@ -7,6 +7,8 @@ import {
   ResponseObject,
 } from '@loopback/rest';
 import {authenticate} from '@loopback/authentication';
+import {authorize} from '@loopback/authorization';
+import {FsaeRole} from '../models';
 
 /**
  * OpenAPI response for ping()
@@ -66,4 +68,37 @@ export class PingController {
       headers: Object.assign({}, this.req.headers),
     };
   }
+
+  @get('/protected-ping/admin-only')
+  // @response(200, PING_RESPONSE)
+  @authenticate('fsae-jwt')
+  @authorize({
+    allowedRoles: [FsaeRole.ADMIN],
+  })
+  admin_only_protected_ping(): object {
+    // Reply with a greeting, the current time, the url, and request headers
+    return {
+      greeting: 'Admin only endpoint',
+      date: new Date(),
+      url: this.req.url,
+      headers: Object.assign({}, this.req.headers),
+    };
+  }
+
+  @get('/protected-ping/sponsor-only')
+  // @response(200, PING_RESPONSE)
+  @authenticate('fsae-jwt')
+  @authorize({
+    allowedRoles: [FsaeRole.SPONSOR],
+  })
+  sponsor_only_protected_ping(): object {
+    // Reply with a greeting, the current time, the url, and request headers
+    return {
+      greeting: 'Sponsor only endpoint',
+      date: new Date(),
+      url: this.req.url,
+      headers: Object.assign({}, this.req.headers),
+    };
+  }
+
 }
