@@ -6,6 +6,7 @@ import {
   response,
   ResponseObject,
 } from '@loopback/rest';
+import {authenticate} from '@loopback/authentication';
 
 /**
  * OpenAPI response for ping()
@@ -47,6 +48,19 @@ export class PingController {
     // Reply with a greeting, the current time, the url, and request headers
     return {
       greeting: 'Hello from LoopBack',
+      date: new Date(),
+      url: this.req.url,
+      headers: Object.assign({}, this.req.headers),
+    };
+  }
+
+  @get('/protected-ping')
+  // @response(200, PING_RESPONSE)
+  @authenticate('fsae-jwt')
+  protected_ping(): object {
+    // Reply with a greeting, the current time, the url, and request headers
+    return {
+      greeting: 'This endpoint is protected by JWT',
       date: new Date(),
       url: this.req.url,
       headers: Object.assign({}, this.req.headers),
