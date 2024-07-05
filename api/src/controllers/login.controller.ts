@@ -46,8 +46,7 @@ export class LoginController {
     // Find user Profile
     let userSearchResults = await this.adminRepository.find({
       where: {
-        // email: credentials.email,
-        email: 'blah',
+        email: credentials.email,
       },
     });
 
