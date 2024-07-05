@@ -1,5 +1,5 @@
 import {model, property} from '@loopback/repository';
-import {FsaeUser} from '.';
+import {FsaeUser} from './index';
 
 @model({settings: {strict: false}})
 export class Alumni extends FsaeUser {
