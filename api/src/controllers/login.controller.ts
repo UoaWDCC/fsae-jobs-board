@@ -5,7 +5,7 @@
 
 import {get, HttpErrors, post, requestBody} from '@loopback/rest';
 import {authenticate} from '@loopback/authentication';
-import {loginParams, loginResponse} from './controller-types/auth.controller.types';
+import {loginParams, loginResponse} from './controller-types/login.controller.types';
 import {inject} from '@loopback/core';
 import {repository} from '@loopback/repository';
 import {AdminRepository, AlumniRepository, MemberRepository, SponsorRepository} from '../repositories';
@@ -13,7 +13,7 @@ import {FsaeUser} from '../models';
 import {JwtService} from '../services';
 import {UserProfile} from '@loopback/security';
 
-export class AuthController {
+export class LoginController {
   constructor(
     @repository(AdminRepository) private adminRepository: AdminRepository,
     @repository(AlumniRepository) private alumniRepository: AlumniRepository,
