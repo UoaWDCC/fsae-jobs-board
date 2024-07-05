@@ -71,7 +71,7 @@ export class RegisterController {
         password: createUserDto.password,
         firstName: createUserDto.firstName,
         lastName: createUserDto.lastName,
-        phoneNumber: createUserDto.phoneNumber,
+        phoneNumber: createUserDto.phoneNumber, // Todo: Hash password
         activated: true,
         fsaeRole: FsaeRole.ADMIN,
         desc: createUserDto.desc
