@@ -69,10 +69,6 @@ export abstract class FsaeUser extends Entity {
   // Indexer property to allow additional data
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [prop: string]: any;
-
-  constructor(data?: Partial<FsaeUser>) {
-    super(data);
-  }
 }
 
 export interface FsaeUserRelations {
