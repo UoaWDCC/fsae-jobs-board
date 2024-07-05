@@ -480,7 +480,7 @@
     debug "^4.3.4"
     tslib "^2.6.2"
 
-"@loopback/repository@^6.0.0", "@loopback/repository@^6.1.0", "@loopback/repository@^6.1.5":
+"@loopback/repository@^6.0.0", "@loopback/repository@^6.1.5":
   version "6.1.5"
   resolved "https://registry.npmjs.org/@loopback/repository/-/repository-6.1.5.tgz"
   integrity sha512-JWdescHh/7ucwnjxTaEo45Ce4Cak+m75UO5GFRikH4WsRGtJDr/eWdR/fDnnl7wgVTxca1mvNZhADs21O9ZPzA==
