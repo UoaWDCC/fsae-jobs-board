@@ -1,5 +1,6 @@
 import {Entity, model, property} from '@loopback/repository';
 import {FsaeRole} from './roles';
+import {securityId, UserProfile} from '@loopback/security';
 
 @model({settings: {strict: false}})
 export abstract class FsaeUser extends Entity {
@@ -64,7 +65,13 @@ export abstract class FsaeUser extends Entity {
   })
   desc?: string;
 
-  // Define well-known properties here
+  public convertToSecurityUserProfile(): UserProfile {
+    return {
+      [securityId]: this.id as string,
+      name: this.username,
+      email: this.email,
+    }
+  }
 
   // Indexer property to allow additional data
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
