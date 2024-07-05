@@ -9,6 +9,7 @@ import {RestApplication} from '@loopback/rest';
 import {ServiceMixin} from '@loopback/service-proxy';
 import path from 'node:path';
 import {MySequence} from './sequence';
+import {JwtService} from './services';
 
 export {ApplicationConfig};
 
@@ -29,6 +30,10 @@ export class FsaeApiApplication extends BootMixin(
       path: '/explorer',
     });
     this.component(RestExplorerComponent);
+
+    // Authentication
+    this.bind(`jwt.secret`).to(`9dI8a5D6CkP2Qb3jRx_VwJnGq_8OqbkO`) // TODO: Move to env variable
+    this.bind(`services.jwtservice`).toClass(JwtService);
 
     this.projectRoot = __dirname;
     // Customize @loopback/boot Booter Conventions here
