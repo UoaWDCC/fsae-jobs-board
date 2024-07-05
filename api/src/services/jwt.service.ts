@@ -35,13 +35,14 @@ export class JwtService implements TokenService{
     return Promise.resolve(token);
   }
 
-  verifyToken(token: string): Promise<UserProfile> {
+  verifyToken(token: string): Promise<any> {
     if (!token) {
       throw new Error('Error verifying Token. Token cannot be null');
     }
 
     let securityUserProfile: UserProfile;
 
+    let temp
     try {
       // decode user profile from token
       const decodedToken = verify(token, this.jwtSecret);
@@ -52,12 +53,13 @@ export class JwtService implements TokenService{
         [securityId]: '',
         name: 'Test',
       };
+      temp = decodedToken
 
     } catch (error) {
       throw new HttpErrors.Unauthorized(`Error verifying token: ${error.message}`);
     }
 
-    return Promise.resolve(securityUserProfile);
+    return Promise.resolve(temp);
   }
 
 }
