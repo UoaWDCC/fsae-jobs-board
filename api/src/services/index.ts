@@ -1,2 +1,2 @@
-export * from './fsae-user-service.service';
-export * from './jwt-service.service';
+export * from './fsae-user.service';
+export * from './jwt.service';
