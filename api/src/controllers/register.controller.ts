@@ -84,4 +84,201 @@ export class RegisterController {
 
       return newAdmin;
   }
+
+  @post('/register-member')
+  async registerMember(
+    @requestBody({
+      description: 'The input of register function',
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            required: ['email', 'username', 'password', 'firstName', 'lastName', 'phoneNumber'],
+            properties: {
+              email: {
+                type: 'string',
+              },
+              username: {
+                type: 'string',
+              },
+              password: {
+                type: 'string',
+              },
+              firstName: {
+                type: 'string',
+              },
+              lastName: {
+                type: 'string',
+              },
+              phoneNumber: {
+                type: 'string',
+              },
+              desc: {
+                type: 'string',
+              }
+            },
+          },
+        },
+      }
+    })createUserDto: createFSAEUserDto): Promise<Admin> {
+    // Find user Profile
+    let userSearchResults = await this.memberRepository.find({
+      where: {
+        email: createUserDto.email,
+      },
+    });
+
+    // If no user found, invalid credientials
+    if (userSearchResults.length > 0) {
+      throw new HttpErrors.Conflict('Email already exists')
+    }
+
+    let hashedPassword = await this.passwordHasher.hashPassword(createUserDto.password);
+
+    let newMember = this.memberRepository.create({
+      email: createUserDto.email,
+      username: createUserDto.username,
+      password: hashedPassword,
+      firstName: createUserDto.firstName,
+      lastName: createUserDto.lastName,
+      phoneNumber: createUserDto.phoneNumber,
+      activated: true, // Default activate as all this HTTP body requires validation on required fields.
+      fsaeRole: FsaeRole.MEMBER,
+      desc: createUserDto.desc
+    });
+
+    return newMember;
+  }
+
+  @post('/register-sponsor')
+  async registerSponsor(
+    @requestBody({
+      description: 'The input of register function',
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            required: ['email', 'username', 'password', 'firstName', 'lastName', 'phoneNumber'],
+            properties: {
+              email: {
+                type: 'string',
+              },
+              username: {
+                type: 'string',
+              },
+              password: {
+                type: 'string',
+              },
+              firstName: {
+                type: 'string',
+              },
+              lastName: {
+                type: 'string',
+              },
+              phoneNumber: {
+                type: 'string',
+              },
+              desc: {
+                type: 'string',
+              }
+            },
+          },
+        },
+      }
+    })createUserDto: createFSAEUserDto): Promise<Admin> {
+    // Find user Profile
+    let userSearchResults = await this.sponsorRepository.find({
+      where: {
+        email: createUserDto.email,
+      },
+    });
+
+    // If no user found, invalid credientials
+    if (userSearchResults.length > 0) {
+      throw new HttpErrors.Conflict('Email already exists')
+    }
+
+    let hashedPassword = await this.passwordHasher.hashPassword(createUserDto.password);
+
+    let newMember = this.sponsorRepository.create({
+      email: createUserDto.email,
+      username: createUserDto.username,
+      password: hashedPassword,
+      firstName: createUserDto.firstName,
+      lastName: createUserDto.lastName,
+      phoneNumber: createUserDto.phoneNumber,
+      activated: false,
+      fsaeRole: FsaeRole.SPONSOR,
+      desc: createUserDto.desc
+    });
+
+    return newMember;
+  }
+
+  @post('/register-alumni')
+  async registerAlumni(
+    @requestBody({
+      description: 'The input of register function',
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            required: ['email', 'username', 'password', 'firstName', 'lastName', 'phoneNumber'],
+            properties: {
+              email: {
+                type: 'string',
+              },
+              username: {
+                type: 'string',
+              },
+              password: {
+                type: 'string',
+              },
+              firstName: {
+                type: 'string',
+              },
+              lastName: {
+                type: 'string',
+              },
+              phoneNumber: {
+                type: 'string',
+              },
+              desc: {
+                type: 'string',
+              }
+            },
+          },
+        },
+      }
+    })createUserDto: createFSAEUserDto): Promise<Admin> {
+    // Find user Profile
+    let userSearchResults = await this.alumniRepository.find({
+      where: {
+        email: createUserDto.email,
+      },
+    });
+
+    // If no user found, invalid credientials
+    if (userSearchResults.length > 0) {
+      throw new HttpErrors.Conflict('Email already exists')
+    }
+
+    let hashedPassword = await this.passwordHasher.hashPassword(createUserDto.password);
+
+    let newMember = this.alumniRepository.create({
+      email: createUserDto.email,
+      username: createUserDto.username,
+      password: hashedPassword,
+      firstName: createUserDto.firstName,
+      lastName: createUserDto.lastName,
+      phoneNumber: createUserDto.phoneNumber,
+      activated: false,
+      fsaeRole: FsaeRole.ALUMNI,
+      desc: createUserDto.desc
+    });
+
+    return newMember;
+  }
+
+
 }
