@@ -49,8 +49,12 @@ export class LoginController {
       where: {
         email: credentials.email,
       },
-    });
+    }) as FsaeUser[];
 
+    return this.getUserToken(credentials, userSearchResults);
+  }
+
+  async getUserToken(credentials: loginParams, userSearchResults: FsaeUser[]) : Promise<loginResponse> {
     // If no user found, invalid credientials
     if (userSearchResults.length === 0) {
       throw new HttpErrors.Unauthorized('Invalid login credentials');
@@ -73,5 +77,4 @@ export class LoginController {
       token: token,
     }
   }
-
 }
