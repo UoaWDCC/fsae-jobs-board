@@ -12,9 +12,18 @@ export class FsaeAuthorizationProvider implements Provider<Authorizer> {
     context: AuthorizationContext,
     metadata: AuthorizationMetadata,
   ) {
-    const clientRole = context.principals[0].role;
-    const allowedRoles = metadata.allowedRoles;
+    const jwtBody = context.principals[0]
 
+    // Only allow activated users unless scope includes 'allow-non-activated'
+    if (!jwtBody.activated) {
+      if (!metadata.scopes || !metadata.scopes.includes('allow-non-activated')) {
+        return AuthorizationDecision.DENY;
+      }
+    }
+
+    // Check if role alllowed
+    const clientRole = jwtBody.role;
+    const allowedRoles = metadata.allowedRoles;
     if (allowedRoles === undefined || allowedRoles.length === 0) {
       return AuthorizationDecision.DENY
     } else {

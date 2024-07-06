@@ -101,4 +101,22 @@ export class PingController {
     };
   }
 
+  @get('/protected-ping/allow-inactive-accounts')
+  // @response(200, PING_RESPONSE)
+  @authenticate('fsae-jwt')
+  @authorize({
+    allowedRoles: [FsaeRole.ADMIN, FsaeRole.SPONSOR, FsaeRole.ALUMNI, FsaeRole.ALUMNI],
+    scopes: ['allow-non-activated'],
+  })
+  allow_non_activated_accounts(): object {
+    // Reply with a greeting, the current time, the url, and request headers
+    return {
+      greeting: 'This endpoint allows non activated accounts. ',
+      date: new Date(),
+      url: this.req.url,
+      headers: Object.assign({}, this.req.headers),
+    };
+  }
+
+
 }
