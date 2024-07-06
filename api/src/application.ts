@@ -9,7 +9,7 @@ import {RestApplication} from '@loopback/rest';
 import {ServiceMixin} from '@loopback/service-proxy';
 import path from 'node:path';
 import {MySequence} from './sequence';
-import {JwtService} from './services';
+import {JwtService, PasswordHasherService} from './services';
 import {AuthenticationComponent, registerAuthenticationStrategy} from '@loopback/authentication';
 import {FSAEJwtStrategy} from './auth/auth-strategies/jwt-strategy';
 import {
@@ -44,6 +44,7 @@ export class FsaeApiApplication extends BootMixin(
     this.component(AuthenticationComponent);
     this.bind(`jwt.secret`).to(`9dI8a5D6CkP2Qb3jRx_VwJnGq_8OqbkO`) // TODO: Move to env variable
     this.bind(`services.jwtservice`).toClass(JwtService);
+    this.bind(`services.passwordhasher`).toClass(PasswordHasherService);
     registerAuthenticationStrategy(this, FSAEJwtStrategy);
 
     // Authorization

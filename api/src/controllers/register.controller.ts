@@ -8,6 +8,8 @@ import {AdminRepository, AlumniRepository, MemberRepository, SponsorRepository} 
 import {HttpErrors, post, requestBody} from '@loopback/rest';
 import {createFSAEUserDto} from './controller-types/register.controller.types';
 import {Admin, FsaeRole} from '../models';
+import {inject} from '@loopback/core';
+import {PasswordHasherService} from '../services';
 
 export class RegisterController {
   constructor(
@@ -15,6 +17,7 @@ export class RegisterController {
     @repository(AlumniRepository) private alumniRepository: AlumniRepository,
     @repository(MemberRepository) private memberRepository: MemberRepository,
     @repository(SponsorRepository) private sponsorRepository: SponsorRepository,
+    @inject('services.passwordhasher') private passwordHasher: PasswordHasherService
   ) {}
 
   @post('/register-admin')
@@ -65,13 +68,15 @@ export class RegisterController {
         throw new HttpErrors.Conflict('Email already exists')
       }
 
+      let hashedPassword = await this.passwordHasher.hashPassword(createUserDto.password);
+
       let newAdmin = this.adminRepository.create({
         email: createUserDto.email,
         username: createUserDto.username,
-        password: createUserDto.password,
+        password: hashedPassword,
         firstName: createUserDto.firstName,
         lastName: createUserDto.lastName,
-        phoneNumber: createUserDto.phoneNumber, // Todo: Hash password
+        phoneNumber: createUserDto.phoneNumber,
         activated: true,
         fsaeRole: FsaeRole.ADMIN,
         desc: createUserDto.desc

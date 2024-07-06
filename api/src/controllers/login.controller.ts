@@ -10,7 +10,7 @@ import {inject} from '@loopback/core';
 import {repository} from '@loopback/repository';
 import {AdminRepository, AlumniRepository, MemberRepository, SponsorRepository} from '../repositories';
 import {FsaeUser} from '../models';
-import {JwtService} from '../services';
+import {JwtService, PasswordHasherService} from '../services';
 import {UserProfile} from '@loopback/security';
 
 export class LoginController {
@@ -19,7 +19,8 @@ export class LoginController {
     @repository(AlumniRepository) private alumniRepository: AlumniRepository,
     @repository(MemberRepository) private memberRepository: MemberRepository,
     @repository(SponsorRepository) private sponsorRepository: SponsorRepository,
-    @inject('services.jwtservice') private jwtService: JwtService
+    @inject('services.jwtservice') private jwtService: JwtService,
+    @inject('services.passwordhasher') private passwordHasher: PasswordHasherService
   ) {}
 
   @post('/login-admin')
@@ -60,8 +61,8 @@ export class LoginController {
     let fsaeUser = userSearchResults[0];
 
     // Verify Credentials
-    // Todo: Unhash password if hashed
-    if (fsaeUser.password !== credentials.password) {
+    let passwordsMatched = await this.passwordHasher.comparePassword(credentials.password, fsaeUser.password);
+    if (!passwordsMatched) {
       throw new HttpErrors.Unauthorized('Invalid login credentials');
     }
 
