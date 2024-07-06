@@ -21,6 +21,7 @@ export class RegisterController {
   ) {}
 
   @post('/register-admin')
+  // Todo authorize only admin to register admin
   async registerAdmin(
     @requestBody({
       description: 'The input of register function',
