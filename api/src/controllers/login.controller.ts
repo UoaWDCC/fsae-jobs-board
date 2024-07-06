@@ -24,7 +24,7 @@ export class LoginController {
   ) {}
 
   @post('/login-admin')
-  async login(
+  async loginAdmin(
     @requestBody({
     description: 'The input of login function',
     required: true,
@@ -46,6 +46,99 @@ export class LoginController {
   })credentials: loginParams): Promise<loginResponse> {
     // Find user Profile
     let userSearchResults = await this.adminRepository.find({
+      where: {
+        email: credentials.email,
+      },
+    }) as FsaeUser[];
+
+    return this.getUserToken(credentials, userSearchResults);
+  }
+
+  @post('/login-sponsor')
+  async loginSponsor(
+    @requestBody({
+      description: 'The input of login function',
+      required: true,
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              email: {
+                type: 'string',
+              },
+              password: {
+                type: 'string',
+              }
+            },
+          },
+        },
+      }
+    })credentials: loginParams): Promise<loginResponse> {
+    // Find user Profile
+    let userSearchResults = await this.sponsorRepository.find({
+      where: {
+        email: credentials.email,
+      },
+    }) as FsaeUser[];
+
+    return this.getUserToken(credentials, userSearchResults);
+  }
+
+  @post('/login-member')
+  async loginMember(
+    @requestBody({
+      description: 'The input of login function',
+      required: true,
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              email: {
+                type: 'string',
+              },
+              password: {
+                type: 'string',
+              }
+            },
+          },
+        },
+      }
+    })credentials: loginParams): Promise<loginResponse> {
+    // Find user Profile
+    let userSearchResults = await this.memberRepository.find({
+      where: {
+        email: credentials.email,
+      },
+    }) as FsaeUser[];
+
+    return this.getUserToken(credentials, userSearchResults);
+  }
+
+  @post('/login-alumni')
+  async loginAlumni(
+    @requestBody({
+      description: 'The input of login function',
+      required: true,
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              email: {
+                type: 'string',
+              },
+              password: {
+                type: 'string',
+              }
+            },
+          },
+        },
+      }
+    })credentials: loginParams): Promise<loginResponse> {
+    // Find user Profile
+    let userSearchResults = await this.alumniRepository.find({
       where: {
         email: credentials.email,
       },
