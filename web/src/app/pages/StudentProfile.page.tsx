@@ -7,11 +7,31 @@ import {
   Title,
   Button,
   Grid,
-  GridCol,
+  Modal,
+  Image,
+  ActionIcon,
+  Flex,
+  Center,
 } from '@mantine/core';
 import classes from '../styles/StudentProfile.module.css';
+import { useState } from 'react';
+import { IconXboxX } from '@tabler/icons-react';
+import { IconPencil, IconCamera, IconTrash } from '@tabler/icons-react';
 
 export function StudentProfile() {
+  const [openModal, setOpenModal] = useState(false);
+  const [modalType, setModalType] = useState('')
+
+  const handleAvatarChange = () => {
+    setModalType('avatar')
+    setOpenModal(true);
+  };
+
+  const handleBannerChange = () => {
+    setModalType('banner')
+    setOpenModal(true)
+  }
+
   return (
     <div style={{ backgroundColor: 'var(--mantine-color-background-1)', height: '100vh' }}>
       <Card h={270} className={classes.card}>
@@ -20,8 +40,10 @@ export function StudentProfile() {
           style={{
             backgroundImage:
               'url(https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80)',
+            cursor: 'pointer'
           }}
           className={classes.banner}
+          onClick={handleBannerChange}
         />
         <Text className={classes.name}>John Doe</Text>
         <Text className={classes.member}>2024 Composite Members</Text>
@@ -31,6 +53,8 @@ export function StudentProfile() {
           mt={-80}
           ml={30}
           className={classes.avatar}
+          onClick={handleAvatarChange}
+          style={{ cursor: 'pointer' }}
         />
         <Text mt={-50} ml={200} className={classes.text}>
           Looking for: Internship
@@ -61,7 +85,7 @@ export function StudentProfile() {
         </Grid.Col>
 
         <Grid.Col span={9}>
-          <Box ml={20} mt={20}>
+          <Box mx={20} mt={20}>
             <Title order={6}>About Me</Title>
             <Box pl={15} mt={10} className={classes.box}>
               <Text>
@@ -89,6 +113,64 @@ export function StudentProfile() {
           </Box>
         </Grid.Col>
       </Grid>
+
+{/* Modal - Profile photo or banner */}
+<Modal
+        opened={openModal}
+        onClose={() => setOpenModal(false)}
+        title={modalType === 'avatar' ? 'Profile Photo' : 'Banner Photo'}
+        closeButtonProps={{
+          icon: <IconXboxX size={20} stroke={1.5} />,
+        }}
+        centered
+        className={classes.modal}
+        radius={20}
+      >
+        {modalType === 'avatar' ? (
+          <Box
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              borderBottom: '3px solid var(--mantine-color-customGrey-1)',
+            }}
+            p={10}
+          >
+            <Avatar
+              src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png"
+              size={150}
+            />
+          </Box>
+        ) : (
+          <Box
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              borderBottom: '3px solid var(--mantine-color-customGrey-1)',
+              '.mantine-Modal-body': {
+                width: '100%'
+              }
+            }}
+          >
+            <Image src= 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80'/>
+          </Box>
+        )}
+        <Box display="flex" style={{ justifyContent: 'space-between' }}>
+          <Box display="flex" style={{ justifyContent: 'flex-start', gap: '20px' }}>
+            <Box mt={10} display='flex' style={{flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center'}}>
+              <IconPencil />
+              <Text>Edit</Text>
+            </Box>
+            <Box mt={10} display='flex' style={{flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center'}}>
+              <IconCamera />
+              <Text>Add Photo</Text>
+            </Box>
+          </Box>
+          <Box mt={10} display='flex' style={{flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center'}}>
+            <IconTrash />
+            <Text>Delete</Text>
+          </Box>
+        </Box>
+      </Modal>
     </div>
   );
 }
