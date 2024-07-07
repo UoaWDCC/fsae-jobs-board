@@ -3,8 +3,10 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../../app/store';
 import { Button, Flex, Image, Group, ActionIcon, Text } from '@mantine/core';
-import { UserType, resetUser } from '@/app/features/user/userSlice';
+// import { UserType, resetUser } from '@/app/features/user/userSlice';
 import { IconUserCircle, IconBell, IconLogout } from '@tabler/icons-react';
+import { UserType, resetUser } from '../../features/user/userSlice';
+
 
 function Navbar() {
   // Use Redux State Management

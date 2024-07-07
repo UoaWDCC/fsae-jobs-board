@@ -6,6 +6,7 @@ const customPapayaOrange = colorsTuple('#f78f1f');
 const customElectricOrange = colorsTuple('#ff8400');
 const customCharcoalGrey = colorsTuple('#373737');
 const customMercurySilver = colorsTuple('#a5a5a5');
+const background = colorsTuple('#000000')
 
 export const theme = createTheme({
   colors: {
@@ -15,6 +16,7 @@ export const theme = createTheme({
     customElectricOrange,
     customCharcoalGrey,
     customMercurySilver,
+    background
   },
 
   fontFamily: 'Cerebri Sans, Calibri',
