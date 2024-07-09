@@ -25,13 +25,10 @@ COPY .yarn/ ./.yarn/
 
 # Install node modules
 COPY --link package.json yarn.lock ./
-RUN yarn install --frozen-lockfile
+RUN yarn install --immutable
 
 # Copy application code
 COPY --link . .
-
-# Verify all files are copied
-RUN ls -la /app
 
 # Set build time environment variables
 ENV VITE_API_URL="https://wdcc-fsae-jobs-board-api.fly.dev"
