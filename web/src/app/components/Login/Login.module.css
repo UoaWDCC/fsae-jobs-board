@@ -1,0 +1,60 @@
+.leftHalf {
+    height: 100vh;
+    background-color: #ffffff;
+    color: black;
+}
+
+.rightHalf {
+    height: 100vh;
+    background-color: #000000;
+    color: #ffffff;
+}
+
+.logo {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 241px;
+    height: 32px;
+}
+
+.title {
+    position: relative;
+    top: 20%;
+    text-align: center;
+    font-size: 48px;
+    font-weight: normal;
+    margin-bottom: 20px;
+}
+
+.loginForm {
+    position: relative;
+    width: 80%;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+input[type='checkbox'] {
+    width:25px;
+    height:25px;
+    cursor: pointer;
+}
+
+.registerMessage, .resetPasswordMessage {
+    position: relative;
+    top: 22%;
+}
+
+@media (max-width: 768px) {
+    .logo {
+        position: relative;
+        text-align: center;
+        display: block; 
+        margin: 0 auto; 
+        top: 15%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: inline-block;
+    }
+}

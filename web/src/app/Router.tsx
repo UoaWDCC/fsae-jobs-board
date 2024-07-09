@@ -1,6 +1,6 @@
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
 import { HomePage } from './pages/Home.page';
-import { Login } from './pages/Login.page';
+import { LoginPage } from './pages/Login.page';
 import { SignUp } from './pages/Signup.page';
 import { StudentProfile } from './pages/StudentProfile.page';
 import { SponsorProfile } from './pages/SponsorProfile.page';
@@ -20,7 +20,7 @@ const router = createBrowserRouter([
   },
   {
     path: '/login',
-    element: <Login />,
+    element: <LoginPage />,
   },
   {
     path: '/signup',
