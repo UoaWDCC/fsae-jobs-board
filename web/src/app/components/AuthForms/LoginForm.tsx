@@ -12,8 +12,8 @@ import classes from './authform.module.css';
 
 export function LoginForm() {
   return (
-    <Paper className={classes.formContainer} radius={0} p={30}>
-      <div className={classes.form}>
+    <Paper className={classes.loginFormContainer} radius={0} p={30}>
+      <form className={classes.form}>
         <Title order={5} ta="center" mt="md" mb={50}>
           Login
         </Title>
@@ -37,7 +37,7 @@ export function LoginForm() {
             password?
           </Anchor>
         </Text>
-      </div>
+      </form>
     </Paper>
   );
 }

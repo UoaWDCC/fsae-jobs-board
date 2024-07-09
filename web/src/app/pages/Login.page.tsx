@@ -28,7 +28,7 @@ export function Login() {
     navigate(profilePath, { replace: true });
   };
   return (
-    <div className={classes.wrapper}>
+    <div className={`${classes.wrapper} ${classes.loginWrapper}`}>
       {/* Temporary buttons for protected routes testing purpose*/}
       <div className={classes.banner}>
         <NavLink to="/" className={classes.logo}>

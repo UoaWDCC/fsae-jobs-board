@@ -1,33 +1,75 @@
+import {
+  Anchor,
+  Button,
+  Checkbox,
+  Container,
+  Flex,
+  PasswordInput,
+  Stack,
+  TextInput,
+  Title,
+} from '@mantine/core';
 import { useState } from 'react';
-import { Stepper, Button, Group } from '@mantine/core';
+import classes from './authform.module.css';
 
 const SignupForm = () => {
-  const [active, setActive] = useState(1);
-  const nextStep = () => setActive((current) => (current < 3 ? current + 1 : current));
-  const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
-
+  const [role, setRole] = useState('student');
   return (
-    <>
-      <Stepper active={active} onStepClick={setActive} allowNextStepsSelect={false}>
-        <Stepper.Step label="First step" description="Create an account">
-          Step 1 content: Create an account
-        </Stepper.Step>
-        <Stepper.Step label="Second step" description="Verify email">
-          Step 2 content: Verify email
-        </Stepper.Step>
-        <Stepper.Step label="Final step" description="Get full access">
-          Step 3 content: Get full access
-        </Stepper.Step>
-        <Stepper.Completed>Completed, click back button to get to previous step</Stepper.Completed>
-      </Stepper>
+    <div className={classes.signupFormContainer}>
+      {/* logo */}
+      <Title order={5} ta="center" mt="md" mb={50}>
+        Join the FSAE:47 Job Board Community
+      </Title>
 
-      <Group justify="center" mt="xl">
-        <Button variant="default" onClick={prevStep}>
-          Back
-        </Button>
-        <Button onClick={nextStep}>Next step</Button>
-      </Group>
-    </>
+      {role === 'student' && (
+        <form className={classes.form}>
+          <Stack gap={30}>
+            <TextInput
+              label="First Name"
+              size="lg"
+              required
+              classNames={{ label: classes.formLabel }}
+            />
+            <TextInput
+              label="Last Name"
+              size="lg"
+              required
+              classNames={{ label: classes.formLabel }}
+            />
+            <TextInput label="Email" size="lg" required classNames={{ label: classes.formLabel }} />
+            <Flex justify="space-between">
+              <PasswordInput
+                label="Password"
+                size="lg"
+                required
+                classNames={{ label: classes.formLabel, root: classes.horizontalInput }}
+              />
+              <PasswordInput
+                label="Confirmed Password"
+                size="lg"
+                required
+                classNames={{ label: classes.formLabel, root: classes.horizontalInput }}
+              />
+            </Flex>
+            <Checkbox
+              size="lg"
+              label={
+                <>
+                  I accept{' '}
+                  <Anchor href="https://mantine.dev" target="_blank" inherit>
+                    terms and conditions
+                  </Anchor>
+                </>
+              }
+              required
+            />
+            <Button color="var(--mantine-color-customAzureBlue-1)" size="lg">
+              Confirm
+            </Button>
+          </Stack>
+        </form>
+      )}
+    </div>
   );
 };
 
