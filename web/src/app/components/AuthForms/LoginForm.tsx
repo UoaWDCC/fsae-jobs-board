@@ -9,8 +9,10 @@ import {
   Anchor,
 } from '@mantine/core';
 import classes from './authform.module.css';
+import { useNavigate } from 'react-router-dom';
 
 export function LoginForm() {
+  const navigate = useNavigate();
   return (
     <Paper className={classes.loginFormContainer} radius={0} p={30}>
       <form className={classes.form}>

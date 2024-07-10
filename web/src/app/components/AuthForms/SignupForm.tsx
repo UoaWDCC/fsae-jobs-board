@@ -7,9 +7,11 @@ import {
   Stack,
   TextInput,
   Title,
+  Text,
 } from '@mantine/core';
 import { FormEvent, useState } from 'react';
 import classes from './authform.module.css';
+import { useNavigate } from 'react-router-dom';
 
 interface Field {
   label: string;
@@ -96,6 +98,7 @@ const FormComponent: React.FC<FormComponentProps> = ({ fields, onSubmit }) => (
 
 const SignupForm = () => {
   const [role, setRole] = useState<string>('alumni');
+  const navigate = useNavigate();
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.target as HTMLFormElement);
@@ -112,6 +115,12 @@ const SignupForm = () => {
       </Title>
 
       {role && <FormComponent fields={fieldsByRole[role]} role={role} onSubmit={handleSubmit} />}
+      <Text ta="center" mt="md">
+        Already have an account?{' '}
+        <Anchor<'a'> href="#" fw={700} onClick={(event) => navigate('/login')}>
+          Login
+        </Anchor>
+      </Text>
     </div>
   );
 };
