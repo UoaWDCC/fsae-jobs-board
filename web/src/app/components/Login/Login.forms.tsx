@@ -63,12 +63,8 @@ function LoginForm() {
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        handleLoginAs();
-    };
-
-    const handleLoginAs = () => {
         console.log(formData);
-      };
+    };
 
     return (
         <form className={classes.loginForm} onSubmit={(handleSubmit)}>
