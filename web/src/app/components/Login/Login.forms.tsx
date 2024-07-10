@@ -5,10 +5,8 @@ import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { toTitleCase } from '../../utils/helpers';
-import {UserType} from '../../features/user/userSlice';
-import { setUserType } from '../../features/user/userSlice';
 
-function LoginForm({tryLoginAs}: {tryLoginAs: UserType}) {
+function LoginForm() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
   
@@ -65,25 +63,11 @@ function LoginForm({tryLoginAs}: {tryLoginAs: UserType}) {
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        handleLoginAs(tryLoginAs);
+        handleLoginAs();
     };
 
-    const handleLoginAs = (userType: 'student' | 'sponsor' | 'alumni' | 'admin') => {
-        console.log('Logging in as ' + userType);
-        // // Simulate successful login (to be replaced with the actual authentication logic)
-        const mockToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
-        localStorage.setItem('accessToken', mockToken);
-        // // If authentication is successful: Update Redux store with userType
-        dispatch(setUserType(userType));
-        // // Redirect to the appropriate profile page based on userType
-        const profilePath = {
-          student: '/profile/student',
-          sponsor: '/profile/sponsor',
-          alumni: '/profile/alumni',
-          admin: '/profile/admin',
-        }[userType];
-        toast.success('Logged in as ' + userType);
-        navigate(profilePath, { replace: true });
+    const handleLoginAs = () => {
+        navigate('/dashboard');
       };
 
     return (
