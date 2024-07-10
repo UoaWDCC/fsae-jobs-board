@@ -19,7 +19,7 @@ export function LoginPage() {
             )}
             <Grid.Col className={classes.rightHalf} span={isNotMobile ? 6 : 12}>
                 <Image src="../src/images/logo.png" alt="logo" className={classes.logo} />
-                <Text className={classes.title}>Login</Text>
+                <Title className={classes.title}>Log In</Title>
                 <LoginForm />
                 <Text className={classes.registerMessage} ta='center'>
                     Don't have an account?&nbsp;

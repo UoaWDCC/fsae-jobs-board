@@ -67,7 +67,7 @@ function LoginForm() {
     };
 
     const handleLoginAs = () => {
-        navigate('/dashboard');
+        console.log(formData);
       };
 
     return (
