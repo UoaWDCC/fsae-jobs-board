@@ -1,4 +1,4 @@
-import { MantineColorsTuple, colorsTuple, createTheme, rem } from '@mantine/core';
+import { colorsTuple, createTheme, rem } from '@mantine/core';
 
 const customAzureBlue = colorsTuple('#0091ff');
 const customDarkBlue = colorsTuple('#00467f');
@@ -16,6 +16,7 @@ export const theme = createTheme({
     customCharcoalGrey,
     customMercurySilver,
   },
+
   fontFamily: 'Cerebri Sans, Calibri',
 
   headings: {
