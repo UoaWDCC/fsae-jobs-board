@@ -42,7 +42,7 @@ export class FsaeApiApplication extends BootMixin(
 
     // Authentication - JWT Service
     this.component(AuthenticationComponent);
-    this.bind(`jwt.secret`).to(`9dI8a5D6CkP2Qb3jRx_VwJnGq_8OqbkO`) // TODO: Move to env variable
+    this.bind(`jwt.secret`).to(`process.env.JWT_SECRET`) // TODO: Move to env variable
     this.bind(`services.jwtservice`).toClass(JwtService);
     this.bind(`services.passwordhasher`).toClass(PasswordHasherService);
     registerAuthenticationStrategy(this, FSAEJwtStrategy);
