@@ -1,48 +1,52 @@
 .card {
-    background-color: var(--mantine-color-background-1);
-    position: relative;
+  background-color: var(--mantine-color-background-1);
+  position: relative;
 }
 
 .banner {
-    border-bottom: 3px solid var(--mantine-color-customAzureBlue-1);
-    position: relative;
+  border-bottom: 3px solid var(--mantine-color-customAzureBlue-1);
+  position: relative;
+  opacity: 0.5;
 }
 
 .avatar {
-    /* border-top: 2px solid var(--mantine-color-customAzureBlue-1); */
-    padding: 8px;
-    background-color: black;
-    border-radius: 50%;
-    border-top: 4px solid var(--mantine-color-customAzureBlue-1);
-    overflow: hidden;
-    border-radius: 50%;
-    position: relative;
+  /* border-top: 2px solid var(--mantine-color-customAzureBlue-1); */
+  padding: 8px;
+  background-color: black;
+  border-radius: 50%;
+  border-top: 4px solid var(--mantine-color-customAzureBlue-1);
+  overflow: hidden;
+  border-radius: 50%;
+  position: relative;
 }
 
 .avatar img {
-    border-radius: 50%;
+  border-radius: 50%;
 }
 
 .text {
-    font-style: italic;
-    position: relative;
+  font-style: italic;
+  position: relative;
+  color: var(--mantine-color-customWhite-1);
 }
 
 .name {
-    position: absolute;
-    top: 100px;
-    margin-left: 200px;
-    font-size: 40px;
+  position: absolute;
+  top: 100px;
+  margin-left: 200px;
+  font-size: 40px;
+  /* color: var(--mantine-color-customElectricOrange-1); */
+  color: var(--mantine-color-customWhite-1);
 }
 
 .member {
-    position: absolute;
-    top: 160px;
-    margin-left: 200px;
-    font-style: italic;
+  position: absolute;
+  top: 160px;
+  margin-left: 200px;
+  font-style: italic;
+  color: var(--mantine-color-customWhite-1);
 }
 
 .box {
-    border-left: 2px solid var(--mantine-color-customAzureBlue-1);
+  border-left: 2px solid var(--mantine-color-customAzureBlue-1);
 }
-
