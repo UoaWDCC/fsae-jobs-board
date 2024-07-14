@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../../app/store';
-import { Button, Flex, Image, Group, ActionIcon, Text } from '@mantine/core';
+import { Button, Flex, Image, Group, ActionIcon, Text, Menu } from '@mantine/core';
 import { UserType, resetUser } from '@/app/features/user/userSlice';
 import { IconUserCircle, IconBell, IconLogout } from '@tabler/icons-react';
+import { useScrollIntoView } from '@mantine/hooks';
 
 function Navbar() {
   // Use Redux State Management
@@ -106,11 +107,43 @@ function Navbar() {
       <Flex gap="md">
         {!userType && ( // Only render if not logged in
           <>
-            <NavLink to="/signup">
-              <Button variant="filled" color="customPapayaOrange">
-                Sign Up
-              </Button>
-            </NavLink>
+            <Menu>
+              <Menu.Target>
+                <Button variant="filled" color="customPapayaOrange">
+                  Sign Up
+                </Button>
+              </Menu.Target>
+              <Menu.Dropdown>
+                <NavLink
+                  to="/signup/student"
+                  style={({ isActive }) => ({
+                    textDecoration: 'none',
+                    backgroundColor: isActive ? ' customAzureBlue' : 'none',
+                  })}
+                >
+                  <Menu.Item> Student</Menu.Item>
+                </NavLink>
+                <NavLink
+                  to="/signup/sponsor"
+                  style={({ isActive }) => ({
+                    textDecoration: 'none',
+                    backgroundColor: isActive ? ' customAzureBlue' : 'none',
+                  })}
+                >
+                  <Menu.Item> Sponsor</Menu.Item>
+                </NavLink>
+                <NavLink
+                  to="/signup/alumni"
+                  style={({ isActive }) => ({
+                    textDecoration: 'none',
+                    backgroundColor: isActive ? ' customAzureBlue' : 'none',
+                  })}
+                >
+                  <Menu.Item> Alumni</Menu.Item>
+                </NavLink>
+              </Menu.Dropdown>
+            </Menu>
+
             <NavLink to="/login">
               <Button color="customAzureBlue">Log In</Button>
             </NavLink>

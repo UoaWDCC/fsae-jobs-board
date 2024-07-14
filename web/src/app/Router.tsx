@@ -1,7 +1,6 @@
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
 import { HomePage } from './pages/Home.page';
 import { Login } from './pages/Login.page';
-import { SignUp } from './pages/Signup.page';
 import { StudentProfile } from './pages/StudentProfile.page';
 import { SponsorProfile } from './pages/SponsorProfile.page';
 import { AlumniProfile } from './pages/AlumniProfile.page';
@@ -14,6 +13,11 @@ import { NotFound } from './pages/NotFound.page';
 import ProfileSwitcher from './pages/ProfileSwitcher';
 import { AppLayout } from './Layouts/AppLayout';
 import ProtectedRoute from './components/ProtectedRoute';
+import { StudentSignUp } from './pages/StudentSignup.page';
+import { SponsorSignUp } from './pages/SponsorSignup.page';
+import { AlumniSignUp } from './pages/AlumniSignup.page';
+import { AdminSignUp } from './pages/AdminSignup.page';
+import SignupSwitcher from './pages/SignupSwitcher.page';
 
 // Protected route is currently commented out. To be enabled once the Authentication Logic has been implemented
 const router = createBrowserRouter([
@@ -37,9 +41,43 @@ const router = createBrowserRouter([
     path: '/signup',
     element: (
       <AppLayout>
-        <SignUp />
+        <SignupSwitcher />
       </AppLayout>
     ),
+    children: [
+      {
+        path: 'student',
+        element: (
+          //  <ProtectedRoute allowedRoles={['student']}>
+          <StudentSignUp />
+          //</ProtectedRoute>
+        ),
+      },
+      {
+        path: 'sponsor',
+        element: (
+          // <ProtectedRoute allowedRoles={['sponsor']}>
+          <SponsorSignUp />
+          // </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'alumni',
+        element: (
+          // <ProtectedRoute allowedRoles={['alumni']}>
+          <AlumniSignUp />
+          // </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'admin',
+        element: (
+          // <ProtectedRoute allowedRoles={['admin']}>
+          <AdminSignUp />
+          //  </ProtectedRoute>
+        ),
+      },
+    ],
   },
   {
     path: '/profile',

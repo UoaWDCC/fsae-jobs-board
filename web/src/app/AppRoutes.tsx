@@ -1,7 +1,10 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { HomePage } from './pages/Home.page';
 import { Login } from './pages/Login.page';
-import { SignUp } from './pages/Signup.page';
+import { StudentSignUp } from './pages/StudentSignup.page';
+import { SponsorSignUp } from './pages/SponsorSignup.page';
+import { AlumniSignUp } from './pages/AlumniSignup.page';
+import { AdminSignUp } from './pages/AdminSignup.page';
 import { StudentProfile } from './pages/StudentProfile.page';
 import { SponsorProfile } from './pages/SponsorProfile.page';
 import { AlumniProfile } from './pages/AlumniProfile.page';
@@ -13,6 +16,7 @@ import { AlumniBoard } from './pages/AlumniBoard.page';
 import { NotFound } from './pages/NotFound.page';
 import ProfileSwitcher from './pages/ProfileSwitcher';
 import ProtectedRoute from './components/ProtectedRoute';
+import SignupSwitcher from './pages/SignupSwitcher.page';
 // Protected route is currently commented out. To be enabled once the Authentication Logic has been implemented
 const AppRoutes = createBrowserRouter([
   {
@@ -25,8 +29,27 @@ const AppRoutes = createBrowserRouter([
   },
   {
     path: '/signup',
-    element: <SignUp />,
+    element: <SignupSwitcher />,
+    children: [
+      {
+        path: 'student',
+        element: <StudentSignUp />,
+      },
+      {
+        path: 'sponsor',
+        element: <SponsorSignUp />,
+      },
+      {
+        path: 'alumni',
+        element: <AlumniSignUp />,
+      },
+      {
+        path: 'admin',
+        element: <AdminSignUp />,
+      },
+    ],
   },
+
   {
     path: '/profile',
     element: <ProfileSwitcher />,
@@ -62,6 +85,10 @@ const AppRoutes = createBrowserRouter([
           <AdminDashboard />
           //  </ProtectedRoute>
         ),
+      },
+      {
+        path: '*',
+        element: <NotFound />,
       },
     ],
   },
