@@ -3,6 +3,7 @@
   background-size: cover;
   display: flex;
   flex-direction: column;
+  align-items: flex-end;
 }
 
 .loginWrapper {
