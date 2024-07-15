@@ -47,35 +47,15 @@ const router = createBrowserRouter([
     children: [
       {
         path: 'student',
-        element: (
-          //  <ProtectedRoute allowedRoles={['student']}>
-          <StudentSignUp />
-          //</ProtectedRoute>
-        ),
+        element: <StudentSignUp />,
       },
       {
         path: 'sponsor',
-        element: (
-          // <ProtectedRoute allowedRoles={['sponsor']}>
-          <SponsorSignUp />
-          // </ProtectedRoute>
-        ),
+        element: <SponsorSignUp />,
       },
       {
         path: 'alumni',
-        element: (
-          // <ProtectedRoute allowedRoles={['alumni']}>
-          <AlumniSignUp />
-          // </ProtectedRoute>
-        ),
-      },
-      {
-        path: 'admin',
-        element: (
-          // <ProtectedRoute allowedRoles={['admin']}>
-          <AdminSignUp />
-          //  </ProtectedRoute>
-        ),
+        element: <AlumniSignUp />,
       },
     ],
   },
@@ -123,46 +103,49 @@ const router = createBrowserRouter([
   },
   {
     path: '/jobs',
-    //  <ProtectedRoute allowedRoles={['student', 'admin']}>
+
     element: (
+      // <ProtectedRoute allowedRoles={['student', 'admin']}>
       <AppLayout>
         <JobBoard />
       </AppLayout>
+      // </ProtectedRoute>
     ),
-    //  </ProtectedRoute>
   },
   {
     path: '/students',
-    //  <ProtectedRoute allowedRoles={['sponsor', 'alumni', 'admin']}>
+
     element: (
+      // <ProtectedRoute allowedRoles={['sponsor', 'alumni', 'admin']}>
       <AppLayout>
         <StudentsBoard />
       </AppLayout>
+      //</ProtectedRoute>
     ),
-    //  </ProtectedRoute>
   },
   {
     path: '/sponsors',
-    //  <ProtectedRoute allowedRoles={['student', 'admin']}>
     element: (
+      //<ProtectedRoute allowedRoles={['student', 'admin']}>
       <AppLayout>
         <SponsorsBoard />
       </AppLayout>
+      //</ProtectedRoute>
     ),
-    //  </ProtectedRoute>
   },
   {
     path: '/alumni',
-    //  <ProtectedRoute allowedRoles={['student', 'admin']}>
+
     element: (
+      //<ProtectedRoute allowedRoles={['student', 'admin']}>
       <AppLayout>
         <AlumniBoard />
       </AppLayout>
+      // </ProtectedRoute>
     ),
-    //  </ProtectedRoute>
   },
   {
-    path: '*', // Catch-all route
+    path: '*', // Catch-all undefined routes
     element: (
       <AppLayout>
         <NotFound />
