@@ -19,7 +19,7 @@ jobs:
           node-version-file: "web/.nvmrc"
           cache: "yarn"
           cache-dependency-path: "**/yarn.lock"
-        name: Change directory to web
+      - name: Change directory to web
         run: cd web
       - name: Install dependencies
         run: yarn
