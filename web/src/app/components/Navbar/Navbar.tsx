@@ -1,12 +1,11 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../../app/store';
-import { Button, Flex, Image, Group, ActionIcon, Text } from '@mantine/core';
-// import { UserType, resetUser } from '@/app/features/user/userSlice';
-import { IconUserCircle, IconBell, IconLogout } from '@tabler/icons-react';
-import { UserType, resetUser } from '../../features/user/userSlice';
-
+import { Button, Flex, Image, Group, ActionIcon, Text, Menu, Burger } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { UserType, resetUser } from '@/app/features/user/userSlice';
+import { IconUserCircle, IconBell, IconLogout, IconSettings } from '@tabler/icons-react';
 
 function Navbar() {
   // Use Redux State Management
@@ -57,15 +56,34 @@ function Navbar() {
       navigate('/login');
     }
   };
+  const [opened, { toggle }] = useDisclosure();
+  // Use a media query to determine small screen size for the collapsible menu
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   return (
-    <Flex gap="md" mt="md" mr="md" ml="md" mb="md" justify="space-between" align="center">
+    <Flex
+      gap="md"
+      pt="md"
+      pr="md"
+      pl="md"
+      pb="md"
+      justify="space-between"
+      align="center"
+      style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+    >
       <NavLink to="/">
         <Image radius="md" h={20} src="fsae_white_and_orange_logo.png" alt="FSAE Logo" />
       </NavLink>
 
       <Flex justify="center" align="center" style={{ flex: 1 }}>
-        {userType ? (
+        {!isMobile && userType && (
           <Group gap="xl">
             {navLinks[userType].map((link) => (
               <NavLink
@@ -86,13 +104,23 @@ function Navbar() {
               </NavLink>
             ))}
           </Group>
-        ) : null}
+        )}
       </Flex>
-      {userType && (
+      {!isMobile && userType && (
         <Group>
           <ActionIcon size={32} variant="subtle" color="white" onClick={handleProfileClick}>
             <IconUserCircle />
           </ActionIcon>
+          <Menu>
+            <Menu.Target>
+              <ActionIcon size={32} variant="subtle" color="white">
+                <IconSettings />
+              </ActionIcon>
+            </Menu.Target>
+            <Menu.Dropdown>
+              <Menu.Item> Password </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
 
           {userType !== 'student' && (
             <ActionIcon size={32} variant="subtle" color="white">
@@ -106,19 +134,64 @@ function Navbar() {
       )}
 
       <Flex gap="md">
-        {!userType && ( // Only render if not logged in
-          <>
-            <NavLink to="/signup">
-              <Button variant="filled" color="customPapayaOrange">
-                Sign Up
-              </Button>
-            </NavLink>
-            <NavLink to="/login">
-              <Button color="customAzureBlue">Log In</Button>
-            </NavLink>
-          </>
-        )}
+        {!isMobile &&
+          !userType && ( // Only render if not logged in
+            <>
+              <Menu>
+                <Menu.Target>
+                  <Button variant="filled" color="customPapayaOrange">
+                    Sign Up
+                  </Button>
+                </Menu.Target>
+                <Menu.Dropdown>
+                  <NavLink
+                    to="/signup/student"
+                    style={({ isActive }) => ({
+                      textDecoration: 'none',
+                      backgroundColor: isActive ? ' customAzureBlue' : 'none',
+                    })}
+                  >
+                    <Menu.Item> Student</Menu.Item>
+                  </NavLink>
+                  <NavLink
+                    to="/signup/sponsor"
+                    style={({ isActive }) => ({
+                      textDecoration: 'none',
+                      backgroundColor: isActive ? ' customAzureBlue' : 'none',
+                    })}
+                  >
+                    <Menu.Item> Sponsor</Menu.Item>
+                  </NavLink>
+                  <NavLink
+                    to="/signup/alumni"
+                    style={({ isActive }) => ({
+                      textDecoration: 'none',
+                      backgroundColor: isActive ? ' customAzureBlue' : 'none',
+                    })}
+                  >
+                    <Menu.Item> Alumni</Menu.Item>
+                  </NavLink>
+                </Menu.Dropdown>
+              </Menu>
+
+              <NavLink to="/login">
+                <Button color="customAzureBlue">Log In</Button>
+              </NavLink>
+            </>
+          )}
       </Flex>
+      {/* Burger Menu Button (only visible on mobile) */}
+      {isMobile && (
+        <Flex gap="md">
+          <Burger
+            opened={opened}
+            onClick={toggle}
+            aria-label="Toggle navigation"
+            size="sm"
+            mr="md"
+          />
+        </Flex>
+      )}
     </Flex>
   );
 }
