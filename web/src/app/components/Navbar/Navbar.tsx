@@ -2,7 +2,18 @@ import { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../../app/store';
-import { Button, Flex, Image, Group, ActionIcon, Text, Menu, Burger } from '@mantine/core';
+import {
+  Button,
+  Flex,
+  Image,
+  Group,
+  ActionIcon,
+  Text,
+  Menu,
+  Burger,
+  AppShell,
+  Skeleton,
+} from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { UserType, resetUser } from '@/app/features/user/userSlice';
 import { IconUserCircle, IconBell, IconLogout, IconSettings } from '@tabler/icons-react';
@@ -68,131 +79,161 @@ function Navbar() {
   }, []);
 
   return (
-    <Flex
-      gap="md"
-      pt="md"
-      pr="md"
-      pl="md"
-      pb="md"
-      justify="space-between"
-      align="center"
-      style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
-    >
-      <NavLink to="/">
-        <Image radius="md" h={20} src="fsae_white_and_orange_logo.png" alt="FSAE Logo" />
-      </NavLink>
+    <>
+      {' '}
+      <Flex
+        gap="md"
+        pt="md"
+        pr="md"
+        pl="md"
+        pb="md"
+        justify="space-between"
+        align="center"
+        style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+      >
+        <NavLink to="/">
+          <Image radius="md" h={20} src="fsae_white_and_orange_logo.png" alt="FSAE Logo" />
+        </NavLink>
 
-      <Flex justify="center" align="center" style={{ flex: 1 }}>
+        <Flex justify="center" align="center" style={{ flex: 1 }}>
+          {!isMobile && userType && (
+            <Group gap="xl">
+              {navLinks[userType].map((link) => (
+                <NavLink
+                  key={link.path}
+                  to={link.path}
+                  style={({ isActive }) => ({
+                    textDecoration: 'none',
+                    borderBottom: isActive
+                      ? `2px solid var(--mantine-color-customPapayaOrange-5)`
+                      : 'none',
+                    color: isActive
+                      ? 'var(--mantine-color-customMercurySilver-5)'
+                      : 'var(--mantine-color-white)',
+                    paddingBottom: '2px',
+                  })}
+                >
+                  <Text size="md">{link.label}</Text>
+                </NavLink>
+              ))}
+            </Group>
+          )}
+        </Flex>
         {!isMobile && userType && (
-          <Group gap="xl">
-            {navLinks[userType].map((link) => (
-              <NavLink
-                key={link.path}
-                to={link.path}
-                style={({ isActive }) => ({
-                  textDecoration: 'none',
-                  borderBottom: isActive
-                    ? `2px solid var(--mantine-color-customPapayaOrange-5)`
-                    : 'none',
-                  color: isActive
-                    ? 'var(--mantine-color-customMercurySilver-5)'
-                    : 'var(--mantine-color-white)',
-                  paddingBottom: '2px',
-                })}
-              >
-                <Text size="md">{link.label}</Text>
-              </NavLink>
-            ))}
+          <Group>
+            <ActionIcon size={32} variant="subtle" color="white" onClick={handleProfileClick}>
+              <IconUserCircle />
+            </ActionIcon>
+            <Menu>
+              <Menu.Target>
+                <ActionIcon size={32} variant="subtle" color="white">
+                  <IconSettings />
+                </ActionIcon>
+              </Menu.Target>
+              <Menu.Dropdown>
+                <Menu.Item> Password </Menu.Item>
+              </Menu.Dropdown>
+            </Menu>
+
+            {userType !== 'student' && (
+              <ActionIcon size={32} variant="subtle" color="white">
+                <IconBell />
+              </ActionIcon>
+            )}
+            <ActionIcon size={32} variant="subtle" color="white">
+              <IconLogout onClick={handleLogout} />
+            </ActionIcon>
           </Group>
         )}
-      </Flex>
-      {!isMobile && userType && (
-        <Group>
-          <ActionIcon size={32} variant="subtle" color="white" onClick={handleProfileClick}>
-            <IconUserCircle />
-          </ActionIcon>
-          <Menu>
-            <Menu.Target>
-              <ActionIcon size={32} variant="subtle" color="white">
-                <IconSettings />
-              </ActionIcon>
-            </Menu.Target>
-            <Menu.Dropdown>
-              <Menu.Item> Password </Menu.Item>
-            </Menu.Dropdown>
-          </Menu>
 
-          {userType !== 'student' && (
-            <ActionIcon size={32} variant="subtle" color="white">
-              <IconBell />
-            </ActionIcon>
-          )}
-          <ActionIcon size={32} variant="subtle" color="white">
-            <IconLogout onClick={handleLogout} />
-          </ActionIcon>
-        </Group>
-      )}
-
-      <Flex gap="md">
-        {!isMobile &&
-          !userType && ( // Only render if not logged in
-            <>
-              <Menu>
-                <Menu.Target>
-                  <Button variant="filled" color="customPapayaOrange">
-                    Sign Up
-                  </Button>
-                </Menu.Target>
-                <Menu.Dropdown>
-                  <NavLink
-                    to="/signup/student"
-                    style={({ isActive }) => ({
-                      textDecoration: 'none',
-                      backgroundColor: isActive ? ' customAzureBlue' : 'none',
-                    })}
-                  >
-                    <Menu.Item> Student</Menu.Item>
-                  </NavLink>
-                  <NavLink
-                    to="/signup/sponsor"
-                    style={({ isActive }) => ({
-                      textDecoration: 'none',
-                      backgroundColor: isActive ? ' customAzureBlue' : 'none',
-                    })}
-                  >
-                    <Menu.Item> Sponsor</Menu.Item>
-                  </NavLink>
-                  <NavLink
-                    to="/signup/alumni"
-                    style={({ isActive }) => ({
-                      textDecoration: 'none',
-                      backgroundColor: isActive ? ' customAzureBlue' : 'none',
-                    })}
-                  >
-                    <Menu.Item> Alumni</Menu.Item>
-                  </NavLink>
-                </Menu.Dropdown>
-              </Menu>
-
-              <NavLink to="/login">
-                <Button color="customAzureBlue">Log In</Button>
-              </NavLink>
-            </>
-          )}
-      </Flex>
-      {/* Burger Menu Button (only visible on mobile) */}
-      {isMobile && (
         <Flex gap="md">
-          <Burger
-            opened={opened}
-            onClick={toggle}
-            aria-label="Toggle navigation"
-            size="sm"
-            mr="md"
-          />
+          {!isMobile &&
+            !userType && ( // Only render if not logged in
+              <>
+                <Menu>
+                  <Menu.Target>
+                    <Button variant="filled" color="customPapayaOrange">
+                      Sign Up
+                    </Button>
+                  </Menu.Target>
+                  <Menu.Dropdown>
+                    <NavLink
+                      to="/signup/student"
+                      style={({ isActive }) => ({
+                        textDecoration: 'none',
+                        backgroundColor: isActive ? ' customAzureBlue' : 'none',
+                      })}
+                    >
+                      <Menu.Item> Student</Menu.Item>
+                    </NavLink>
+                    <NavLink
+                      to="/signup/sponsor"
+                      style={({ isActive }) => ({
+                        textDecoration: 'none',
+                        backgroundColor: isActive ? ' customAzureBlue' : 'none',
+                      })}
+                    >
+                      <Menu.Item> Sponsor</Menu.Item>
+                    </NavLink>
+                    <NavLink
+                      to="/signup/alumni"
+                      style={({ isActive }) => ({
+                        textDecoration: 'none',
+                        backgroundColor: isActive ? ' customAzureBlue' : 'none',
+                      })}
+                    >
+                      <Menu.Item> Alumni</Menu.Item>
+                    </NavLink>
+                  </Menu.Dropdown>
+                </Menu>
+
+                <NavLink to="/login">
+                  <Button color="customAzureBlue">Log In</Button>
+                </NavLink>
+              </>
+            )}
         </Flex>
+        {/* Burger Menu Button (only visible on mobile) */}
+        {isMobile && (
+          <Flex gap="md">
+            <Burger
+              opened={opened}
+              onClick={toggle}
+              aria-label="Toggle navigation"
+              size="sm"
+              mr="md"
+            />
+          </Flex>
+        )}
+      </Flex>
+      {/* Mobile Navigation (conditionally rendered based on `opened` state) */}
+      {opened && (
+        <AppShell
+          header={{ height: 60 }}
+          navbar={{ width: 300, breakpoint: 'sm', collapsed: { mobile: !opened } }}
+          padding="md"
+        >
+          {' '}
+          <AppShell.Header>
+            <Burger
+              opened={opened}
+              onClick={toggle}
+              aria-label="Toggle navigation"
+              size="sm"
+              mr="md"
+              p={20}
+            />
+          </AppShell.Header>
+          <AppShell.Navbar p="md">
+            {Array(15)
+              .fill(0)
+              .map((_, index) => (
+                <Skeleton key={index} h={28} mt="sm" animate={false} />
+              ))}
+          </AppShell.Navbar>
+        </AppShell>
       )}
-    </Flex>
+    </>
   );
 }
 
