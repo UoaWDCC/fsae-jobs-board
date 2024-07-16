@@ -1,10 +1,10 @@
 import { Flex, Title } from '@mantine/core';
 
-export function JobBoard() {
+export function AlumniSignUp() {
   return (
     <>
       <Flex justify="center" gap="md" mt="md" mr="md">
-        <Title order={1}>Job Board</Title>
+        <Title order={1}>Alumni Sign Up Page</Title>
       </Flex>
     </>
   );
