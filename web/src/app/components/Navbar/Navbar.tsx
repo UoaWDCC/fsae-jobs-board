@@ -12,7 +12,6 @@ import {
   Menu,
   Burger,
   AppShell,
-  Skeleton,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { UserType, resetUser } from '@/app/features/user/userSlice';
@@ -67,7 +66,7 @@ function Navbar() {
       navigate('/login');
     }
   };
-  const [opened, { toggle }] = useDisclosure();
+  const [opened, { toggle, open, close }] = useDisclosure();
   // Use a media query to determine small screen size for the collapsible menu
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
@@ -224,11 +223,29 @@ function Navbar() {
             />
           </AppShell.Header>
           <AppShell.Navbar p="md">
-            {Array(15)
-              .fill(0)
-              .map((_, index) => (
-                <Skeleton key={index} h={28} mt="sm" animate={false} />
-              ))}
+            {userType && (
+              <Flex justify="center" align="center" gap="xl" direction="column" style={{ flex: 1 }}>
+                {navLinks[userType].map((link) => (
+                  <NavLink
+                    key={link.path}
+                    to={link.path}
+                    onClick={close}
+                    style={({ isActive }) => ({
+                      textDecoration: 'none',
+                      borderBottom: isActive
+                        ? `2px solid var(--mantine-color-customPapayaOrange-5)`
+                        : 'none',
+                      color: isActive
+                        ? 'var(--mantine-color-customMercurySilver-5)'
+                        : 'var(--mantine-color-white)',
+                      paddingBottom: '2px',
+                    })}
+                  >
+                    <Text size="md">{link.label}</Text>
+                  </NavLink>
+                ))}
+              </Flex>
+            )}
           </AppShell.Navbar>
         </AppShell>
       )}
