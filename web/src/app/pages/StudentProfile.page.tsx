@@ -75,12 +75,12 @@ export function StudentProfile() {
           onClick={handleBannerChange}
         />
         {userData?.firstName && (
-          <Text className={classes.name}>
+          <Text className={classes.name} pl={190} pt={100}>
             {userData.firstName} {userData.lastName}
           </Text>
         )}
         {userData?.subgroup && (
-          <Text className={classes.subgroup}>
+          <Text className={classes.subgroup} pl={190} pt={150}>
             {userData.subgroup} since {userData.dateJoined}
           </Text>
         )}
@@ -89,12 +89,12 @@ export function StudentProfile() {
           src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png"
           size={150}
           mt={-80}
-          ml={30}
+          ml={20}
           className={classes.avatar}
           onClick={handleAvatarChange}
           style={{ cursor: 'pointer' }}
         />
-        <Text mt={-50} ml={200} className={classes.text}>
+        <Text mt={-50} ml={190} className={classes.text}>
           Looking for: {userData.jobType}
         </Text>
       </Card>

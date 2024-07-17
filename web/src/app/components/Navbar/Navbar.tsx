@@ -88,7 +88,7 @@ function Navbar() {
         pb="md"
         justify="space-between"
         align="center"
-        style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+        style={{ backgroundColor: 'transparent' }}
       >
         <NavLink to="/">
           <Image radius="md" h={20} src="fsae_white_and_orange_logo.png" alt="FSAE Logo" />
