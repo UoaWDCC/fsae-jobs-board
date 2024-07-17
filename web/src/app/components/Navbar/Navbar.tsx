@@ -325,10 +325,10 @@ function Navbar() {
 
                   <Menu.Item onClick={close}>
                     <NavLink
-                      style={({ isActive }) => ({
+                      style={{
                         textDecoration: 'none',
-                        color: isActive ? ' customAzureBlue' : 'none',
-                      })}
+                        color: ' customAzureBlue',
+                      }}
                       to="/login"
                     >
                       Log In
