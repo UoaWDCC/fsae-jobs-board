@@ -12,6 +12,7 @@ import {
   Menu,
   Burger,
   AppShell,
+  Divider,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { UserType, resetUser } from '@/app/features/user/userSlice';
@@ -122,16 +123,10 @@ function Navbar() {
             <ActionIcon size={32} variant="subtle" color="white" onClick={handleProfileClick}>
               <IconUserCircle />
             </ActionIcon>
-            <Menu>
-              <Menu.Target>
-                <ActionIcon size={32} variant="subtle" color="white">
-                  <IconSettings />
-                </ActionIcon>
-              </Menu.Target>
-              <Menu.Dropdown>
-                <Menu.Item> Password </Menu.Item>
-              </Menu.Dropdown>
-            </Menu>
+
+            <ActionIcon size={32} variant="subtle" color="white">
+              <IconSettings />
+            </ActionIcon>
 
             {userType !== 'student' && (
               <ActionIcon size={32} variant="subtle" color="white">
@@ -211,7 +206,6 @@ function Navbar() {
           navbar={{ width: 300, breakpoint: 'sm', collapsed: { mobile: !opened } }}
           padding="md"
         >
-          {' '}
           <AppShell.Header>
             <Burger
               opened={opened}
@@ -244,6 +238,103 @@ function Navbar() {
                     <Text size="md">{link.label}</Text>
                   </NavLink>
                 ))}
+              </Flex>
+            )}
+
+            {userType && (
+              <Flex
+                justify="center"
+                align="Flex-end"
+                gap="sm"
+                direction="column"
+                style={{ flex: 1 }}
+              >
+                <Divider my="sm" />
+                <Menu>
+                  <Menu.Item
+                    onClick={() => {
+                      handleProfileClick();
+                      close();
+                    }}
+                    leftSection={<IconUserCircle size={30} />}
+                  >
+                    Profile
+                  </Menu.Item>
+
+                  <Menu.Item leftSection={<IconSettings size={30} />}>Settings</Menu.Item>
+
+                  {userType !== 'student' && (
+                    <Menu.Item onClick={close} leftSection={<IconBell size={30} />}>
+                      Notifications
+                    </Menu.Item>
+                  )}
+                  <Menu.Item
+                    onClick={() => {
+                      handleLogout();
+                      close();
+                    }}
+                    leftSection={<IconLogout size={30} />}
+                  >
+                    Logout
+                  </Menu.Item>
+                </Menu>
+              </Flex>
+            )}
+
+            {!userType && ( // Only render if not logged in
+              <Flex
+                justify="center"
+                align="Flex-end"
+                gap="sm"
+                direction="column"
+                style={{ flex: 1 }}
+              >
+                <Menu>
+                  <Menu.Target>
+                    <Menu.Item>Sign Up</Menu.Item>
+                  </Menu.Target>
+                  <Menu.Dropdown>
+                    <NavLink
+                      to="/signup/student"
+                      style={({ isActive }) => ({
+                        textDecoration: 'none',
+                        backgroundColor: isActive ? ' customAzureBlue' : 'none',
+                      })}
+                    >
+                      <Menu.Item> Student</Menu.Item>
+                    </NavLink>
+                    <NavLink
+                      to="/signup/sponsor"
+                      style={({ isActive }) => ({
+                        textDecoration: 'none',
+                        backgroundColor: isActive ? ' customAzureBlue' : 'none',
+                      })}
+                    >
+                      <Menu.Item> Sponsor</Menu.Item>
+                    </NavLink>
+                    <NavLink
+                      to="/signup/alumni"
+                      style={({ isActive }) => ({
+                        textDecoration: 'none',
+                        backgroundColor: isActive ? ' customAzureBlue' : 'none',
+                      })}
+                    >
+                      <Menu.Item> Alumni</Menu.Item>
+                    </NavLink>
+                  </Menu.Dropdown>
+
+                  <Menu.Item onClick={close}>
+                    <NavLink
+                      style={({ isActive }) => ({
+                        textDecoration: 'none',
+                        color: isActive ? ' customAzureBlue' : 'none',
+                      })}
+                      to="/login"
+                    >
+                      Log In
+                    </NavLink>
+                  </Menu.Item>
+                </Menu>
               </Flex>
             )}
           </AppShell.Navbar>

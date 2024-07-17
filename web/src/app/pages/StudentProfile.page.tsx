@@ -1,4 +1,15 @@
-import { Card, Avatar, Text, Box, Title, Button, Grid, ActionIcon, Flex } from '@mantine/core';
+import {
+  Card,
+  Avatar,
+  Text,
+  Box,
+  Title,
+  Button,
+  Grid,
+  ActionIcon,
+  Flex,
+  Loader,
+} from '@mantine/core';
 import classes from '../styles/StudentProfile.module.css';
 import { useEffect, useState } from 'react';
 
@@ -110,7 +121,7 @@ export function StudentProfile() {
             <Box pl={15} mt={10} className={classes.box}>
               {userData?.email && <Text>{userData.email}</Text>}
               {userData?.phone && <Text>{userData.phone}</Text>}
-              {!userData && <Text>Loading contact information...</Text>}
+              {!userData && <Loader color="blue" />}
             </Box>
           </Box>
 
@@ -136,7 +147,7 @@ export function StudentProfile() {
                   )}
                 </>
               )}
-              {!userData.skills && <Text>Loading skills...</Text>}
+              {!userData.skills && <Loader color="blue" />}
             </Box>
           </Box>
         </Grid.Col>
@@ -169,7 +180,7 @@ export function StudentProfile() {
                   ) : null}
                 </>
               )}
-              {!userData.description && <Text>Loading About Me section...</Text>}
+              {!userData.description && <Loader color="blue" />}
             </Box>
           </Box>
           <Box
@@ -205,7 +216,7 @@ export function StudentProfile() {
                     )}
                   </>
                 )}
-                {!userData.education && <Text>Loading Education...</Text>}
+                {!userData.education && <Loader color="blue" />}
               </Box>
             </Box>
 
