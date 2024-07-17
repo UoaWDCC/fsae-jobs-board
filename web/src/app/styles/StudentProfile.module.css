@@ -1,0 +1,46 @@
+.card {
+  background-color: var(--mantine-color-background-1);
+  position: relative;
+}
+
+.banner {
+  border-bottom: 3px solid var(--mantine-color-customAzureBlue-1);
+  position: relative;
+  opacity: 0.5;
+}
+
+.avatar {
+  padding: 8px;
+  background-color: black;
+  border-radius: 50%;
+  border-top: 4px solid var(--mantine-color-customAzureBlue-1);
+  overflow: hidden;
+  border-radius: 50%;
+  position: relative;
+}
+
+.avatar img {
+  border-radius: 50%;
+}
+
+.text {
+  font-style: italic;
+  position: relative;
+  color: var(--mantine-color-customWhite-1);
+}
+
+.name {
+  position: absolute;
+  font-size: 40px;
+  color: var(--mantine-color-customWhite-1);
+}
+
+.subgroup {
+  position: absolute;
+  font-style: italic;
+  color: var(--mantine-color-customWhite-1);
+}
+
+.box {
+  border-left: 2px solid var(--mantine-color-customAzureBlue-1);
+}
