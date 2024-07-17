@@ -80,7 +80,6 @@ function Navbar() {
 
   return (
     <>
-      {' '}
       <Flex
         gap="md"
         pt="md"

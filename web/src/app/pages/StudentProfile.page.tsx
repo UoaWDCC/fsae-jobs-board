@@ -1,23 +1,8 @@
-import {
-  Card,
-  Avatar,
-  Text,
-  UnstyledButton,
-  Box,
-  Title,
-  Button,
-  Grid,
-  Modal,
-  Image,
-  Tabs,
-  TextInput,
-  Textarea,
-  ActionIcon,
-} from '@mantine/core';
+import { Card, Avatar, Text, Box, Title, Button, Grid, ActionIcon, Flex } from '@mantine/core';
 import classes from '../styles/StudentProfile.module.css';
-import { useState } from 'react';
-import { IconXboxX } from '@tabler/icons-react';
-import { IconPencil, IconCamera, IconTrash, IconCertificate } from '@tabler/icons-react';
+import { useEffect, useState } from 'react';
+
+import { IconCertificate } from '@tabler/icons-react';
 
 export function StudentProfile() {
   const [openModal, setOpenModal] = useState(false);
@@ -39,8 +24,32 @@ export function StudentProfile() {
     setOpenProfileModal(true);
   };
 
+  // Dummy data for userData
+  const [userData, setUserData] = useState({
+    email: 'johndoe@example.com',
+    phone: '+1234567890',
+    skills: ['HTML', 'CSS', 'JavaScript', 'React', 'C#', 'Git'],
+    description:
+      ' Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque ut tristique lacus, eget euismod enim. Fusce suscipit at tortor sed pretium. Integer et pretium orci. Integer velit purus, gravida quis tincidunt ac, pretium sed lorem. Sed sagittis neque tincidunt, auctor ante vitae, ultricies risus. Aenean quis sem sed dolor feugiat tincidunt. Etiam purus justo, ullamcorper in cursus volutpat, luctus in dolor. Donec sed purus tristique, rhoncus erat ut, ullamcorper dolor. Pellentesque tincidunt eros id neque egestas, sed luctus sapien elementum. Etiam bibendum ex est, ac consequat turpis facilisis id. Mauris scelerisque purus quis leo fermentum, at semper nisl mattis. Vivamus vel ornare lectus. Nullam dictum felis et commodo lacinia. Etiam tempor placerat sapien quis maximus. Ut pellentesque libero ac sollicitudin accumsan. Sed vel dolor bibendum, egestas metus nec, eleifend mauris. Integer imperdiet eros vitae nibh interdum volutpat. Etiam et ultrices massa. Cras gravida facilisis sapien. Ut eleifend varius risus, eget bibendum dui blandit ac. Vivamus tempor varius massa, sed suscipit mauris interdum eu. Proin sed commodo ex, ac cursus nisl. Integer ut tincidunt augue. Cras molestie libero erat. Nunc justo felis, sodales auctor dapibus sit amet, dapibus ut turpis. Sed nec sagittis nisl. Cras eget condimentum est. Cras nulla lorem, venenatis euismod gravida quis, fermentum vel mauris. Fusce et ipsum et lorem egestas volutpat. Duis nec imperdiet ante. Quisque et ligula accumsan, eleifend urna sit amet, cursus dolor. Nullam ut erat diam. Ut non lacinia erat, eu pretium nisl. Vestibulum mattis sapien in tristique commodo. Integer faucibus leo at turpis rhoncus, eu hendrerit ex dignissim. Nulla facilisi. Donec eget turpis ac odio pretium iaculis. Sed imperdiet sollicitudin viverra. In consequat justo velit, aliquet ultricies leo efficitur laoreet. Nullam quis elementum diam. Sed in sodales est. Integer malesuada semper tortor eu feugiat. Morbi tincidunt turpis bibendum consequat cursus. Aenean faucibus felis sit amet porta interdum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Mauris dui magna, lobortis quis quam non, dictum bibendum libero. ',
+    education: [
+      'Major(s): Master of Software Engineering',
+      'Expected Graduation Date: 2026',
+      'Major(s): Part II Bachelor of Software Engineering',
+      'Graduation Date: 2024',
+      'Major(s): Bachelor of Science',
+      'Graduation Date: 2024',
+    ],
+  });
+  // Add code to fetch data from our database when it will be connected
+
+  useEffect(() => {
+    // Logic to fetch data and setUserData
+  }, []);
+  const [showMoreDescription, setShowMoreDescription] = useState(false);
+  const [showMoreSkills, setShowMoreSkills] = useState(false);
+  const [showMoreEducation, setShowMoreEducation] = useState(false);
   return (
-    <div
+    <Box
       style={{
         backgroundColor: 'var(--mantine-color-background-1)',
         height: '100vh',
@@ -54,11 +63,6 @@ export function StudentProfile() {
           style={{
             backgroundImage:
               'url(https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80)',
-
-            // 'url("https://images.unsplash.com/photo-1579227114347-15d08fc37cae?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2550&q=80")',
-
-            // 'url(https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-8.png)',
-
             cursor: 'pointer',
           }}
           className={classes.banner}
@@ -80,25 +84,44 @@ export function StudentProfile() {
         </Text>
       </Card>
 
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginRight: '20px' }}>
+      <Flex style={{ display: 'flex', justifyContent: 'flex-end', marginRight: '20px' }}>
         <Button onClick={handleProfileChange}>Edit Profile</Button>
-      </div>
+      </Flex>
 
       <Grid>
         <Grid.Col span={{ md: 3, xs: 12 }}>
           <Box ml={20} mt={20}>
             <Title order={6}>Contact</Title>
             <Box pl={15} mt={10} className={classes.box}>
-              <Text>john.doe@fsae.co.nz</Text>
-              <Text>+12345678890</Text>
+              {userData?.email && <Text>{userData.email}</Text>}
+              {userData?.phone && <Text>{userData.phone}</Text>}
+              {!userData && <Text>Loading contact information...</Text>}
             </Box>
           </Box>
 
           <Box ml={20} mt={30}>
             <Title order={6}>Skills</Title>
             <Box pl={15} mt={10} className={classes.box}>
-              <Text>HTML/CSS</Text>
-              <UnstyledButton>View more</UnstyledButton>
+              {userData?.skills && (
+                <>
+                  {showMoreSkills
+                    ? userData.skills.map((skill) => <Text key={skill}>{skill}</Text>)
+                    : userData.skills.slice(0, 5).map((skill) => <Text key={skill}>{skill}</Text>)}
+                  {userData.skills?.length > 5 && (
+                    <Button
+                      variant="subtle"
+                      pl={0}
+                      pr={0}
+                      pt={0}
+                      pb={0}
+                      onClick={() => setShowMoreSkills(!showMoreSkills)}
+                    >
+                      {showMoreSkills ? 'Show less' : 'View more'}
+                    </Button>
+                  )}
+                </>
+              )}
+              {!userData.skills && <Text>Loading skills...</Text>}
             </Box>
           </Box>
         </Grid.Col>
@@ -107,20 +130,31 @@ export function StudentProfile() {
           <Box mx={20} mt={20}>
             <Title order={6}>About Me</Title>
             <Box pl={15} mt={10} className={classes.box}>
-              <Text>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed gravida tellus sed
-                purus facilisis, imperdiet tempus metus fermentum. Proin semper augue ac dolor
-                facilisis rutrum molestie a enim. Praesent cursus nisl quis tincidunt sodales. Class
-                aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos
-                himenaeos. Etiam aliquet pulvinar nibh, id interdum nunc pulvinar finibus. Donec
-                risus eros, euismod posuere malesuada eget, sodales eget metus. Sed faucibus a erat
-                vitae feugiat. Quisque vestibulum dolor eu ligula venenatis, sed placerat nisi
-                interdum. Sed ullamcorper bibendum accumsan. In hac habitasse platea dictumst.
-                Mauris sit amet arcu ligula. Aenean ullamcorper euismod tempor. Fusce non varius
-                sapien. Quisque venenatis a nulla a sagittis. Phasellus cursus libero ut elit
-                fringilla, vel feugiat quam viverra. Etiam a risus vitae ante feugiat scelerisque.
-              </Text>
-              <UnstyledButton>View more</UnstyledButton>
+              {/* Conditionally render the full description based on showMore state */}
+              {userData?.description && (
+                <>
+                  {showMoreDescription ? (
+                    <Text>{userData.description}</Text>
+                  ) : (
+                    <>
+                      <Text>{userData.description.substring(0, 1500)}</Text>
+                    </>
+                  )}
+                  {userData.description?.length > 1500 ? (
+                    <Button
+                      variant="subtle"
+                      pl={0}
+                      pr={0}
+                      pt={0}
+                      pb={0}
+                      onClick={() => setShowMoreDescription(!showMoreDescription)}
+                    >
+                      {showMoreDescription ? 'Show less' : 'View more'}
+                    </Button>
+                  ) : null}
+                </>
+              )}
+              {!userData.description && <Text>Loading About Me section...</Text>}
             </Box>
           </Box>
           <Box
@@ -131,9 +165,32 @@ export function StudentProfile() {
           >
             <Box>
               <Title order={6}>Education</Title>
+
               <Box pl={15} mt={10} className={classes.box}>
-                <Text>Major(s): Part II Bachelor of Software Engineer</Text>
-                <Text>Expected Graduation Date: 2026</Text>
+                {userData?.education && (
+                  <>
+                    {showMoreEducation
+                      ? userData.education.map((education) => (
+                          <Text key={education}>{education}</Text>
+                        ))
+                      : userData.education
+                          .slice(0, 4)
+                          .map((education) => <Text key={education}>{education}</Text>)}
+                    {userData.education?.length > 4 && (
+                      <Button
+                        variant="subtle"
+                        pl={0}
+                        pr={0}
+                        pt={0}
+                        pb={0}
+                        onClick={() => setShowMoreEducation(!showMoreEducation)}
+                      >
+                        {showMoreEducation ? 'Show less' : 'View more'}
+                      </Button>
+                    )}
+                  </>
+                )}
+                {!userData.education && <Text>Loading Education...</Text>}
               </Box>
             </Box>
 
@@ -143,123 +200,6 @@ export function StudentProfile() {
           </Box>
         </Grid.Col>
       </Grid>
-
-      {/* Modal - Profile photo or banner */}
-      <Modal
-        opened={openModal}
-        onClose={() => setOpenModal(false)}
-        title={modalType === 'avatar' ? 'Profile Photo' : 'Banner Photo'}
-        closeButtonProps={{
-          icon: <IconXboxX size={20} stroke={1.5} />,
-        }}
-        centered
-        className={classes.modal}
-        radius={20}
-      >
-        {modalType === 'avatar' ? (
-          <Box
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              borderBottom: '3px solid var(--mantine-color-customGrey-1)',
-            }}
-            p={10}
-          >
-            <Avatar
-              src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png"
-              size={150}
-            />
-          </Box>
-        ) : (
-          <Box
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              borderBottom: '3px solid var(--mantine-color-customGrey-1)',
-              '.mantine-Modal-body': {
-                width: '100%',
-              },
-            }}
-          >
-            <Image src="https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80" />
-          </Box>
-        )}
-        <Box display="flex" style={{ justifyContent: 'space-between' }}>
-          <Box display="flex" style={{ justifyContent: 'flex-start', gap: '20px' }}>
-            <Box
-              mt={10}
-              display="flex"
-              style={{
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-              <IconPencil />
-              <Text>Edit</Text>
-            </Box>
-            <Box
-              mt={10}
-              display="flex"
-              style={{
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-              <IconCamera />
-              <Text>Add Photo</Text>
-            </Box>
-          </Box>
-          <Box
-            mt={10}
-            display="flex"
-            style={{
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}
-          >
-            <IconTrash />
-            <Text>Delete</Text>
-          </Box>
-        </Box>
-      </Modal>
-
-      {/* Modal for edit profile */}
-      <Modal opened={openProfileModal} onClose={() => setOpenProfileModal(false)} centered>
-        {modalType === 'profile' ? (
-          <Tabs color="yellow" defaultValue="about">
-            <Tabs.List>
-              <Tabs.Tab value="about">About Me</Tabs.Tab>
-              <Tabs.Tab value="education">Education</Tabs.Tab>
-              <Tabs.Tab value="skills">Skills</Tabs.Tab>
-              <Tabs.Tab value="cv">CV</Tabs.Tab>
-            </Tabs.List>
-
-            <Tabs.Panel value="about" mt={10}>
-              <Box>
-                <Box display="flex" style={{ gap: '20px' }}>
-                  <Box style={{ flex: 1 }}>
-                    <TextInput label="First Name" />
-                    <TextInput label="Last Name" />
-                    <TextInput label="Email" />
-                  </Box>
-                  <Box style={{ flex: 1 }}>
-                    <TextInput label="Phone Number" />
-                    <TextInput label="Subgroup" />
-                    <TextInput label="Looking For" />
-                  </Box>
-                </Box>
-                <Textarea label="About Me" />
-              </Box>
-            </Tabs.Panel>
-            <Tabs.Panel value="education">Education section</Tabs.Panel>
-            <Tabs.Panel value="skills">Skills section</Tabs.Panel>
-            <Tabs.Panel value="cv">CV section</Tabs.Panel>
-          </Tabs>
-        ) : null}
-      </Modal>
-    </div>
+    </Box>
   );
 }
