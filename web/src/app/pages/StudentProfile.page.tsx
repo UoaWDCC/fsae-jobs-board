@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { IconCertificate } from '@tabler/icons-react';
 
 export function StudentProfile() {
+  // UseState for future modal implementation
   const [openModal, setOpenModal] = useState(false);
   const [modalType, setModalType] = useState('');
   const [openProfileModal, setOpenProfileModal] = useState(false);
@@ -26,6 +27,11 @@ export function StudentProfile() {
 
   // Dummy data for userData
   const [userData, setUserData] = useState({
+    firstName: 'John',
+    lastName: 'Doe',
+    jobType: 'Internship',
+    subgroup: 'Composite',
+    dateJoined: '2024',
     email: 'johndoe@example.com',
     phone: '+1234567890',
     skills: ['HTML', 'CSS', 'JavaScript', 'React', 'C#', 'Git'],
@@ -68,8 +74,17 @@ export function StudentProfile() {
           className={classes.banner}
           onClick={handleBannerChange}
         />
-        <Text className={classes.name}>John Doe</Text>
-        <Text className={classes.member}>2024 Composite Members</Text>
+        {userData?.firstName && (
+          <Text className={classes.name}>
+            {userData.firstName} {userData.lastName}
+          </Text>
+        )}
+        {userData?.subgroup && (
+          <Text className={classes.subgroup}>
+            {userData.subgroup} since {userData.dateJoined}
+          </Text>
+        )}
+
         <Avatar
           src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png"
           size={150}
@@ -80,7 +95,7 @@ export function StudentProfile() {
           style={{ cursor: 'pointer' }}
         />
         <Text mt={-50} ml={200} className={classes.text}>
-          Looking for: Internship
+          Looking for: {userData.jobType}
         </Text>
       </Card>
 
@@ -106,7 +121,7 @@ export function StudentProfile() {
                 <>
                   {showMoreSkills
                     ? userData.skills.map((skill) => <Text key={skill}>{skill}</Text>)
-                    : userData.skills.slice(0, 5).map((skill) => <Text key={skill}>{skill}</Text>)}
+                    : userData.skills.slice(0, 4).map((skill) => <Text key={skill}>{skill}</Text>)}
                   {userData.skills?.length > 5 && (
                     <Button
                       variant="subtle"

@@ -39,7 +39,7 @@
   color: var(--mantine-color-customWhite-1);
 }
 
-.member {
+.subgroup {
   position: absolute;
   top: 160px;
   margin-left: 200px;
