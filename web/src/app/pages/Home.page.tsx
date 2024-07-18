@@ -1,13 +1,13 @@
-import { Welcome } from '../components/Welcome/Welcome';
-import { ColorSchemeToggle } from '../components/ColorSchemeToggle/ColorSchemeToggle';
-import {Image} from '@mantine/core'
+import { RootState } from '../../app/store';
+import { useSelector } from 'react-redux';
+import { Image } from '@mantine/core';
 
 export function HomePage() {
+  const userType = useSelector((state: RootState) => state.user.userType);
+
   return (
     <>
-      <Image src="home_background.jpg" fit="cover" />
-      {/* <Welcome /> */}
-      {/* <ColorSchemeToggle /> */}
+      <Image src="home_background.jpg"/>
     </>
   );
 }

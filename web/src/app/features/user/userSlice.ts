@@ -9,7 +9,7 @@ interface UserState {
 
 // Initial state
 const initialState: UserState = {
-  userType: null,
+  userType: 'student',
 };
 
 const userSlice = createSlice({
