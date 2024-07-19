@@ -1,5 +1,3 @@
-import { Button, Flex, Image, Title } from '@mantine/core';
-import { ColorSchemeToggle } from '../components/ColorSchemeToggle/ColorSchemeToggle';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setUserType } from '../features/user/userSlice';

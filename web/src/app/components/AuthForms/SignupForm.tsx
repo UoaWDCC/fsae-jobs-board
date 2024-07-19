@@ -10,10 +10,10 @@ import {
   Text,
   Image,
 } from '@mantine/core';
-import { FormEvent, useState } from 'react';
+import { FormEvent } from 'react';
 import classes from './authform.module.css';
 import { NavLink, useNavigate } from 'react-router-dom';
-import logo from '../../assets/images/logo.png';
+import { Role } from '../../type/role';
 
 interface Field {
   label: string;
@@ -22,20 +22,20 @@ interface Field {
 
 interface FormComponentProps {
   fields: Field[];
-  role: string;
+  role: Role;
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
 }
 
-const fieldsByRole: { [key: string]: Field[] } = {
-  student: [
+const fieldsByRole: { [key in Role]: Field[] } = {
+  [Role.Student]: [
     { label: 'First Name', name: 'firstName' },
     { label: 'Last Name', name: 'lastName' },
   ],
-  sponsor: [
+  [Role.Sponsor]: [
     { label: 'Company', name: 'company' },
     { label: 'Phone Number', name: 'phoneNumber' },
   ],
-  alumni: [
+  [Role.Alumni]: [
     { label: 'First Name', name: 'firstName' },
     { label: 'Last Name', name: 'lastName' },
     { label: 'Company', name: 'company' },
@@ -98,8 +98,7 @@ const FormComponent: React.FC<FormComponentProps> = ({ fields, onSubmit }) => (
   </form>
 );
 
-const SignupForm = () => {
-  const [role, setRole] = useState<string>('alumni');
+const SignupForm = ({ role }: { role: Role }) => {
   const navigate = useNavigate();
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -114,7 +113,7 @@ const SignupForm = () => {
     <div className={classes.signupFormContainer}>
       <div className={classes.banner} style={{ alignSelf: 'flex-start' }}>
         <NavLink to="/" className={classes.logo}>
-          <Image h={25} src={logo} fit="contain" />
+          <Image h={25} src="fsae_white_and_orange_logo.png" fit="contain" />
         </NavLink>
       </div>
       <Title order={5} ta="center" mt="md" mb={50}>

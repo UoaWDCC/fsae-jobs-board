@@ -1,11 +1,13 @@
-import { Flex, Title } from '@mantine/core';
+import SignupForm from '../components/AuthForms/SignupForm';
+import { Role } from '../type/role';
+import classes from "./page.module.css"
 
 export function AlumniSignUp() {
   return (
     <>
-      <Flex justify="center" gap="md" mt="md" mr="md">
-        <Title order={1}>Alumni Sign Up Page</Title>
-      </Flex>
+      <div className={classes.wrapper}>
+        <SignupForm role={Role.Alumni} />
+      </div>
     </>
   );
 }
