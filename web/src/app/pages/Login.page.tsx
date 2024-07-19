@@ -5,7 +5,6 @@ import { setUserType } from '../features/user/userSlice';
 import { toast } from 'react-toastify';
 import { LoginForm } from '../components/AuthForms/LoginForm';
 import classes from './page.module.css';
-import logo from '../assets/images/logo.png';
 
 export function Login() {
   const dispatch = useDispatch();
@@ -28,13 +27,10 @@ export function Login() {
     navigate(profilePath, { replace: true });
   };
   return (
-    <div className={`${classes.wrapper} ${classes.loginWrapper}`}>
+    <div className={classes.wrapper}>
       {/* Temporary buttons for protected routes testing purpose*/}
-      <div className={classes.banner}>
-        <NavLink to="/" className={classes.logo}>
-          <Image h={25} src={logo} fit="contain" />
-        </NavLink>
-      </div>
+
+      <div className={classes.loginWrapper}></div>
       <LoginForm />
     </div>
   );

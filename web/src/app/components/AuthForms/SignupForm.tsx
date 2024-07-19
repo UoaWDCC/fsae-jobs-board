@@ -8,10 +8,12 @@ import {
   TextInput,
   Title,
   Text,
+  Image,
 } from '@mantine/core';
 import { FormEvent, useState } from 'react';
 import classes from './authform.module.css';
-import { useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
+import logo from '../../assets/images/logo.png';
 
 interface Field {
   label: string;
@@ -110,6 +112,11 @@ const SignupForm = () => {
 
   return (
     <div className={classes.signupFormContainer}>
+      <div className={classes.banner} style={{ alignSelf: 'flex-start' }}>
+        <NavLink to="/" className={classes.logo}>
+          <Image h={25} src={logo} fit="contain" />
+        </NavLink>
+      </div>
       <Title order={5} ta="center" mt="md" mb={50}>
         Join the FSAE:47 Job Board Community
       </Title>

@@ -7,14 +7,21 @@ import {
   Title,
   Text,
   Anchor,
+  Image,
 } from '@mantine/core';
 import classes from './authform.module.css';
-import { useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
+import logo from '../../assets/images/logo.png';
 
 export function LoginForm() {
   const navigate = useNavigate();
   return (
     <Paper className={classes.loginFormContainer} radius={0} p={30}>
+      <div className={classes.banner} style={{ alignSelf: 'flex-end' }}>
+        <NavLink to="/" className={classes.logo}>
+          <Image h={25} src={logo} fit="contain" />
+        </NavLink>
+      </div>
       <form className={classes.form}>
         <Title order={5} ta="center" mt="md" mb={50}>
           Login
