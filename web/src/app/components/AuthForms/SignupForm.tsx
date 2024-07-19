@@ -113,7 +113,7 @@ const SignupForm = ({ role }: { role: Role }) => {
     <div className={classes.signupFormContainer}>
       <div className={classes.banner} style={{ alignSelf: 'flex-start' }}>
         <NavLink to="/" className={classes.logo}>
-          <Image h={25} src="fsae_white_and_orange_logo.png" fit="contain" />
+          <Image h={25} src="/fsae_white_and_orange_logo.png" fit="contain" />
         </NavLink>
       </div>
       <Title order={5} ta="center" mt="md" mb={50}>
