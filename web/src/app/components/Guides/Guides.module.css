@@ -4,11 +4,36 @@
 
 .card {
   border-radius: 10px;
-  height: 10rem;
+  height: 9rem;
   width: 15rem;
   border: 4px solid white;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+.greyCircle {
+  position: absolute;
+  box-shadow: 1px 1px 15px 1px var(--mantine-color-customCharcoalGrey-1);
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  background-image: linear-gradient(
+    to right,
+    var(--mantine-color-customCharcoalGrey-1),
+    var(--mantine-color-customMercurySilver-1)
+  );
+}
+.orangeCircle {
+  position: absolute;
+  box-shadow: 1px 1px 15px 1px var(--mantine-color-customPapayaOrange-1);
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  background-image: linear-gradient(
+    to right,
+    var(--mantine-color-customOrange-1),
+    var(--mantine-color-customPapayaOrange-1)
+  );
 }

@@ -39,24 +39,40 @@ export function Guide({
         <Title ref={targetRef}>{title}</Title>
       </Box>
 
-      <Flex gap="xl" direction={{ base: 'column', sm: 'row' }}>
+      <Flex gap={125} direction={{ base: 'column', sm: 'row' }}>
         <Box className={classes.card}>
-          <Text size="xl" fw={700}>
+          <Box mt={-140} className={classes.greyCircle}>
+            <Title ta="center" order={4} fw={800}>
+              1
+            </Title>
+          </Box>
+
+          <Text ta="center" size="xl" fw={700}>
             {subtitle1}
           </Text>
-          <Text>{description1}</Text>
+          <Text ta="center">{description1}</Text>
         </Box>
         <Box className={classes.card}>
-          <Text size="xl" fw={700}>
+          <Box mt={-140} className={classes.orangeCircle}>
+            <Title ta="center" order={4} fw={800}>
+              2
+            </Title>
+          </Box>
+          <Text ta="center" size="xl" fw={700}>
             {subtitle2}
           </Text>
-          <Text>{description2}</Text>
+          <Text ta="center">{description2}</Text>
         </Box>
         <Box className={classes.card}>
-          <Text size="xl" fw={700}>
+          <Box mt={-140} className={classes.greyCircle}>
+            <Title ta="center" order={4} fw={800}>
+              3
+            </Title>
+          </Box>
+          <Text ta="center" size="xl" fw={700}>
             {subtitle3}
           </Text>
-          <Text>{description3}</Text>
+          <Text ta="center">{description3}</Text>
         </Box>
       </Flex>
 

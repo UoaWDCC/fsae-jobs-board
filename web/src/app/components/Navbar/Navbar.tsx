@@ -155,7 +155,9 @@ function Navbar() {
                       to="/signup/student"
                       style={({ isActive }) => ({
                         textDecoration: 'none',
-                        backgroundColor: isActive ? ' customAzureBlue' : 'none',
+                        backgroundColor: isActive
+                          ? 'var(--mantine-color-customAzureBlue-1)'
+                          : 'none',
                       })}
                     >
                       <Menu.Item> Student</Menu.Item>
@@ -164,7 +166,9 @@ function Navbar() {
                       to="/signup/sponsor"
                       style={({ isActive }) => ({
                         textDecoration: 'none',
-                        backgroundColor: isActive ? ' customAzureBlue' : 'none',
+                        backgroundColor: isActive
+                          ? 'var(--mantine-color-customAzureBlue-1)'
+                          : 'none',
                       })}
                     >
                       <Menu.Item> Sponsor</Menu.Item>
@@ -173,7 +177,9 @@ function Navbar() {
                       to="/signup/alumni"
                       style={({ isActive }) => ({
                         textDecoration: 'none',
-                        backgroundColor: isActive ? ' customAzureBlue' : 'none',
+                        backgroundColor: isActive
+                          ? 'var(--mantine-color-customAzureBlue-1)'
+                          : 'none',
                       })}
                     >
                       <Menu.Item> Alumni</Menu.Item>
@@ -182,7 +188,7 @@ function Navbar() {
                 </Menu>
 
                 <NavLink to="/login">
-                  <Button color="customAzureBlue">Log In</Button>
+                  <Button color="var(--mantine-color-customAzureBlue-1)">Log In</Button>
                 </NavLink>
               </>
             )}
