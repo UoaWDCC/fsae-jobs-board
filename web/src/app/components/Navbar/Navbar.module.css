@@ -1,0 +1,6 @@
+.Navbar {
+  position: absolute;
+  z-index: 2;
+  width: 100vw;
+  background-color: rgba(000, 000, 000, 0.5);
+}

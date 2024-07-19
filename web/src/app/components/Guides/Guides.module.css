@@ -1,0 +1,14 @@
+.wrapper {
+  height: 100vh;
+}
+
+.card {
+  border-radius: 10px;
+  height: 10rem;
+  width: 15rem;
+  border: 4px solid white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
