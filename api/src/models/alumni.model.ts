@@ -1,38 +1,13 @@
-import {Entity, model, property} from '@loopback/repository';
+import {model, property} from '@loopback/repository';
+import {FsaeUser} from './index';
 
-@model()
-export class Alumni extends Entity {
-  @property({
-    type: 'string',
-    id: true,
-    generated: true,
-  })
-  userID?: string;
+@model({settings: {strict: false}})
+export class Alumni extends FsaeUser {
+  // Define well-known properties here
 
-  @property({
-    type: 'string',
-    required: true,
-  })
-  firstName: string;
-
-  @property({
-    type: 'string',
-    required: true,
-  })
-  lastName: string;
-
-  @property({
-    type: 'string',
-    required: true,
-  })
-  subGroup: string;
-
-  @property({
-    type: 'string',
-    required: true,
-  })
-  company: string;
-
+  // Indexer property to allow additional data
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [prop: string]: any;
 
   constructor(data?: Partial<Alumni>) {
     super(data);

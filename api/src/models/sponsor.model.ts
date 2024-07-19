@@ -1,44 +1,13 @@
 import {Entity, model, property} from '@loopback/repository';
+import {FsaeUser} from './fsae-user.model';
 
-@model()
-export class Sponsor extends Entity {
-  @property({
-    type: 'string',
-    id: true,
-    generated: true,
-  })
-  userID?: string;
+@model({settings: {strict: false}})
+export class Sponsor extends FsaeUser {
+  // Define well-known properties here
 
-  @property({
-    type: 'string',
-    required: true,
-  })
-  logo: string;
-
-  @property({
-    type: 'string',
-    required: true,
-  })
-  websiteURL: string;
-
-  @property({
-    type: 'string',
-    required: true,
-  })
-  tier: string;
-
-  @property({
-    type: 'string',
-    required: true,
-  })
-  name: string;
-
-  @property({
-    type: 'string',
-    required: true,
-  })
-  industry: string;
-
+  // Indexer property to allow additional data
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [prop: string]: any;
 
   constructor(data?: Partial<Sponsor>) {
     super(data);

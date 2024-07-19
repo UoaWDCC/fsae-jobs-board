@@ -20,9 +20,12 @@ const userSlice = createSlice({
       // Type-safe payload
       state.userType = action.payload;
     },
+    resetUser() {
+      return initialState;
+    },
     // ... other reducers for user actions (e.g., login, logout, update profile)
   },
 });
 
-export const { setUserType } = userSlice.actions;
+export const { setUserType, resetUser } = userSlice.actions;
 export default userSlice.reducer;

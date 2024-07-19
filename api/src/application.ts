@@ -9,6 +9,16 @@ import {RestApplication} from '@loopback/rest';
 import {ServiceMixin} from '@loopback/service-proxy';
 import path from 'node:path';
 import {MySequence} from './sequence';
+import {JwtService, PasswordHasherService} from './services';
+import {AuthenticationComponent, registerAuthenticationStrategy} from '@loopback/authentication';
+import {FSAEJwtStrategy} from './auth/auth-strategies/jwt-strategy';
+import {
+  AuthorizationComponent,
+  AuthorizationDecision,
+  AuthorizationOptions,
+  AuthorizationTags,
+} from '@loopback/authorization';
+import {FsaeAuthorizationProvider} from './auth/authorization/FsaeAuthorizationProvider';
 
 export {ApplicationConfig};
 
@@ -29,6 +39,26 @@ export class FsaeApiApplication extends BootMixin(
       path: '/explorer',
     });
     this.component(RestExplorerComponent);
+
+    // Authentication - JWT Service
+    this.component(AuthenticationComponent);
+    this.bind(`jwt.secret`).to(`process.env.JWT_SECRET`) // TODO: Move to env variable
+    this.bind(`services.jwtservice`).toClass(JwtService);
+    this.bind(`services.passwordhasher`).toClass(PasswordHasherService);
+    registerAuthenticationStrategy(this, FSAEJwtStrategy);
+
+    // Authorization
+    const authOptions: AuthorizationOptions = {
+      precedence: AuthorizationDecision.DENY,
+      defaultDecision: AuthorizationDecision.DENY,
+    };
+
+    const Authorizationbinding = this.component(AuthorizationComponent);
+    this.configure(Authorizationbinding.key).to(authOptions);
+    this
+      .bind('authorizationProviders.fsae-authorization-provider')
+      .toProvider(FsaeAuthorizationProvider)
+      .tag(AuthorizationTags.AUTHORIZER);
 
     this.projectRoot = __dirname;
     // Customize @loopback/boot Booter Conventions here
