@@ -1,8 +1,8 @@
 .HomePage {
-    height: 100vh;
-  }
-  
-  .BackgroundImage {
-    height: 100vh;
-  }
-  
+  height: 100vh;
+}
+
+.BackgroundImage {
+  height: 100vh;
+  opacity: 0.9;
+}
