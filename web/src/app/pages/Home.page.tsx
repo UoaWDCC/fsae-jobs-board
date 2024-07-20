@@ -1,19 +1,11 @@
 import { BackgroundImage, Box, Title, Flex } from '@mantine/core';
-import classes from '../styles/HomePage.module.css';
+import {Welcome} from "../components/Welcome/Welcome"
 import { Guide } from '../components/Guides/Guide';
 
 export function HomePage() {
   return (
     <>
-      <Box mx="auto" className={classes.HomePage}>
-        <BackgroundImage src="home_background.jpg" className={classes.BackgroundImage}>
-          <Flex justify="center" align="flex-end" style={{ height: '100vh' }}>
-            <Title size="2rem" textWrap="wrap" style={{ color: 'white', fontStyle: 'italic' }}>
-              Welcome to the University of Auckland F:SAE:47 Job Board
-            </Title>
-          </Flex>
-        </BackgroundImage>
-      </Box>
+      <Welcome />
       <Guide
         title="Students"
         subtitle1="Sign-up"
