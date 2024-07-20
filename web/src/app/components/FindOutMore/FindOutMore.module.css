@@ -1,0 +1,17 @@
+.container {
+  height: 100vh;
+}
+
+.backgroundImage {
+  height: 100vh;
+  opacity: 0.5;
+}
+
+.textBox {
+  position: absolute;
+  z-index: 2;
+}
+
+.text {
+  text-align: center;
+}

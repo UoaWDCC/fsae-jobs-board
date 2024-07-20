@@ -66,14 +66,7 @@ export function StudentProfile() {
   const [showMoreSkills, setShowMoreSkills] = useState(false);
   const [showMoreEducation, setShowMoreEducation] = useState(false);
   return (
-    <Box
-      style={{
-        backgroundColor: 'var(--mantine-color-background-1)',
-        height: '100vh',
-        color: 'var(--mantine-color-customWhite-1',
-        overflowY: 'auto',
-      }}
-    >
+    <Box className={classes.container}>
       <Card h={280} className={classes.card}>
         <Card.Section h={250} className={classes.banner} onClick={handleBannerChange} />
         {userData?.firstName && (

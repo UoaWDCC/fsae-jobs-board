@@ -2,6 +2,7 @@ import { Center, Title, Text, Flex, Space, Button, Box } from '@mantine/core';
 import { IconArrowRight } from '@tabler/icons-react';
 import { useScrollIntoView } from '@mantine/hooks';
 import classes from './Guides.module.css';
+import { NavLink } from 'react-router-dom';
 
 type GuideProps = {
   title: string;
@@ -77,17 +78,11 @@ export function Guide({
           <Text ta="center">{description3}</Text>
         </Box>
       </Flex>
-
-      <Button
-        component="a"
-        href={useRef}
-        size="lg"
-        radius={100}
-        fw={0}
-        color="var(--mantine-color-customAzureBlue-1)"
-      >
-        {buttonText} <IconArrowRight></IconArrowRight>
-      </Button>
+      <NavLink to={useRef}>
+        <Button size="lg" radius={100} fw={0} color="var(--mantine-color-customAzureBlue-1)">
+          {buttonText} <IconArrowRight></IconArrowRight>
+        </Button>
+      </NavLink>
     </Flex>
   );
 }

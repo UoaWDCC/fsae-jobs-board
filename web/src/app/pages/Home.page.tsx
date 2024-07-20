@@ -1,11 +1,12 @@
-import { BackgroundImage, Box, Title, Flex } from '@mantine/core';
-import {Welcome} from "../components/Welcome/Welcome"
+import { Welcome } from '../components/Welcome/Welcome';
+import { FindOutMore } from '../components/FindOutMore/FindOutMore';
 import { Guide } from '../components/Guides/Guide';
 
 export function HomePage() {
   return (
     <>
       <Welcome />
+      <FindOutMore />
       <Guide
         title="Students"
         subtitle1="Sign-up"

@@ -6,3 +6,15 @@
   height: 100vh;
   opacity: 0.9;
 }
+
+.titleContainer {
+  height: 100vh;
+}
+
+.title {
+  color: white;
+  font-style: italic;
+  background-color: rgba(000, 000, 000, 0.5);
+  border-radius: 5%;
+  text-align: center;
+}
