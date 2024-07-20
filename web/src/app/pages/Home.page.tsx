@@ -17,6 +17,7 @@ export function HomePage() {
         subtitle3="Find a Job"
         description3="Browse and Apply to Jobs"
         buttonText="Register as a Student"
+        useRef="/signup/student"
       />
       <Guide
         title="Sponsors"
@@ -27,6 +28,7 @@ export function HomePage() {
         subtitle3="Find Students"
         description3="Browse our talents pool"
         buttonText="Register as a Sponsor"
+        useRef="/signup/sponsor"
       />
       <Guide
         title="Alumni"
@@ -37,6 +39,7 @@ export function HomePage() {
         subtitle3="Find Students"
         description3="Browse our talents pool"
         buttonText="Register as an Alumni"
+        useRef="/signup/alumni"
       />
     </>
   );

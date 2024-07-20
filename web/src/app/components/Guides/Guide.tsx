@@ -12,6 +12,7 @@ type GuideProps = {
   subtitle3: string;
   description3: string;
   buttonText: string;
+  useRef: string;
 };
 
 export function Guide({
@@ -23,6 +24,7 @@ export function Guide({
   subtitle3,
   description3,
   buttonText,
+  useRef,
 }: GuideProps) {
   const { scrollIntoView, targetRef } = useScrollIntoView<HTMLDivElement>();
 
@@ -76,7 +78,14 @@ export function Guide({
         </Box>
       </Flex>
 
-      <Button size="lg" radius={100} fw={0}>
+      <Button
+        component="a"
+        href={useRef}
+        size="lg"
+        radius={100}
+        fw={0}
+        color="var(--mantine-color-customAzureBlue-1)"
+      >
         {buttonText} <IconArrowRight></IconArrowRight>
       </Button>
     </Flex>
