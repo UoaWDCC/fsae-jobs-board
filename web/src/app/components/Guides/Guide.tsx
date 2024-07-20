@@ -41,7 +41,7 @@ export function Guide({
         <Title ref={targetRef}>{title}</Title>
       </Box>
 
-      <Flex gap={125} direction={{ base: 'column', sm: 'row' }}>
+      <Flex gap={{ base: '50', sm: '125' }} direction={{ base: 'column', sm: 'row' }}>
         <Box className={classes.card}>
           <Box mt={-140} className={classes.greyCircle}>
             <Title ta="center" order={4} fw={800}>
