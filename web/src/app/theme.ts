@@ -6,9 +6,10 @@ const customPapayaOrange = colorsTuple('#f78f1f');
 const customElectricOrange = colorsTuple('#ff8400');
 const customCharcoalGrey = colorsTuple('#373737');
 const customMercurySilver = colorsTuple('#a5a5a5');
-const background = colorsTuple('#000000')
-const customGrey = colorsTuple('#545454')
-const customWhite = colorsTuple("#ffffff")
+const customOrange = colorsTuple('#f55442');
+const background = colorsTuple('#000000');
+const customGrey = colorsTuple('#545454');
+const customWhite = colorsTuple('#ffffff');
 
 export const theme = createTheme({
   colors: {
@@ -18,9 +19,10 @@ export const theme = createTheme({
     customElectricOrange,
     customCharcoalGrey,
     customMercurySilver,
+    customOrange,
     background,
     customGrey,
-    customWhite
+    customWhite,
   },
 
   fontFamily: 'Cerebri Sans, Calibri',
@@ -41,20 +43,18 @@ export const theme = createTheme({
     TextInput: TextInput.extend({
       styles: (theme) => ({
         input: {
-          backgroundColor: theme.colors.customWhite[0]
-        }
-      })
+          backgroundColor: theme.colors.customWhite[0],
+        },
+      }),
     }),
     Textarea: Textarea.extend({
       styles: (theme) => ({
         input: {
-          backgroundColor: theme.colors.customWhite[0]
-        }
-      })
+          backgroundColor: theme.colors.customWhite[0],
+        },
+      }),
     }),
   },
-
-
 });
 
 /**
