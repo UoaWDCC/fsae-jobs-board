@@ -13,5 +13,6 @@
 }
 
 .text {
+  color: var(--mantine-color-customWhite-1);
   text-align: center;
 }
