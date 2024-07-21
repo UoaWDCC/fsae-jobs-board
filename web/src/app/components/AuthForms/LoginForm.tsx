@@ -1,18 +1,8 @@
-import {
-  Flex,
-  TextInput,
-  PasswordInput,
-  Checkbox,
-  Button,
-  Title,
-  Text,
-  Anchor,
-} from '@mantine/core';
+import { Flex, TextInput, PasswordInput, Checkbox, Button, Title, Text } from '@mantine/core';
 import classes from './authform.module.css';
-import { useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 export function LoginForm() {
-  const navigate = useNavigate();
   return (
     <Flex
       gap="xl"
@@ -35,15 +25,15 @@ export function LoginForm() {
 
         <Text ta="center" mt="xl">
           Don&apos;t have an account?{' '}
-          <Anchor<'a'> href="#" fw={700} onClick={(event) => navigate('/')}>
+          <NavLink to="/" className={classes.link}>
             Sign up
-          </Anchor>
+          </NavLink>
         </Text>
         <Text ta="center" mt="md">
           Forget your{' '}
-          <Anchor<'a'> href="#" fw={700} onClick={(event) => event.preventDefault()}>
+          <NavLink to="/" className={classes.link}>
             password?
-          </Anchor>
+          </NavLink>
         </Text>
       </form>
     </Flex>

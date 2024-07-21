@@ -50,7 +50,7 @@ const FormComponent: React.FC<FormComponentProps> = ({ fields, onSubmit }) => (
           key={field.name}
           label={field.label}
           name={field.name}
-          size="lg"
+          size="md"
           required
           classNames={{ label: classes.formLabel }}
         />
@@ -58,7 +58,7 @@ const FormComponent: React.FC<FormComponentProps> = ({ fields, onSubmit }) => (
       <TextInput
         label="Email"
         name="email"
-        size="lg"
+        size="md"
         required
         classNames={{ label: classes.formLabel }}
       />
@@ -66,32 +66,32 @@ const FormComponent: React.FC<FormComponentProps> = ({ fields, onSubmit }) => (
         <PasswordInput
           label="Password"
           name="password"
-          size="lg"
+          size="md"
           required
           classNames={{ label: classes.formLabel, root: classes.horizontalInput }}
         />
         <PasswordInput
           label="Confirmed Password"
           name="confirmPassword"
-          size="lg"
+          size="md"
           required
           classNames={{ label: classes.formLabel, root: classes.horizontalInput }}
         />
       </Flex>
       <Checkbox
-        size="lg"
+        size="md"
         label={
           <>
             I accept{' '}
-            <Anchor href="https://mantine.dev" target="_blank" inherit>
+            <NavLink to="/" className={classes.link}>
               terms and conditions
-            </Anchor>
+            </NavLink>
           </>
         }
         required
         name="terms"
       />
-      <Button color="var(--mantine-color-customAzureBlue-1)" size="lg" type="submit">
+      <Button color="var(--mantine-color-customAzureBlue-1)" size="md" type="submit">
         Confirm
       </Button>
     </Stack>
@@ -99,7 +99,6 @@ const FormComponent: React.FC<FormComponentProps> = ({ fields, onSubmit }) => (
 );
 
 const SignupForm = ({ role }: { role: Role }) => {
-  const navigate = useNavigate();
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.target as HTMLFormElement);
@@ -110,24 +109,19 @@ const SignupForm = ({ role }: { role: Role }) => {
   };
 
   return (
-    <div className={classes.signupFormContainer}>
-      <div className={classes.banner} style={{ alignSelf: 'flex-start' }}>
-        <NavLink to="/" className={classes.logo}>
-          <Image h={25} src="/fsae_white_and_orange_logo.png" fit="contain" />
-        </NavLink>
-      </div>
-      <Title order={5} ta="center" mt="md" mb={50}>
+    <Flex align="center" justify="center" className={classes.signupFormContainer}>
+      <Title order={5} ta="center" mt="lg" mb="lg" style={{ fontStyle: 'italic' }}>
         Join the FSAE:47 Job Board Community
       </Title>
 
       {role && <FormComponent fields={fieldsByRole[role]} role={role} onSubmit={handleSubmit} />}
-      <Text ta="center" mt="md">
+      <Text ta="center" mt="xs">
         Already have an account?{' '}
-        <Anchor<'a'> href="#" fw={700} onClick={(event) => navigate('/login')}>
+        <NavLink to="/login" className={classes.link}>
           Login
-        </Anchor>
+        </NavLink>
       </Text>
-    </div>
+    </Flex>
   );
 };
 
