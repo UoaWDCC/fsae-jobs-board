@@ -1,23 +1,22 @@
-import { Title, Text, Anchor } from '@mantine/core';
+import { BackgroundImage, Box, Flex, Title } from '@mantine/core';
 import classes from './Welcome.module.css';
 
 export function Welcome() {
   return (
-    <>
-      <Title className={classes.title} ta="center" mt={100} order={3}>
-        Welcome to{' '}
-        <Text inherit variant="gradient" component="span" gradient={{ from: 'pink', to: 'yellow' }}>
-          Mantine
-        </Text>
-      </Title>
-      <Text c="dimmed" ta="center" size="lg" maw={580} mx="auto" mt="xl">
-        This starter Vite project includes a minimal setup, if you want to learn more on Mantine +
-        Vite integration follow{' '}
-        <Anchor href="https://mantine.dev/guides/vite/" size="lg">
-          this guide
-        </Anchor>
-        . To get started edit pages/Home.page.tsx file.
-      </Text>
-    </>
+    <Box mx="auto" className={classes.HomePage}>
+      <BackgroundImage src="home_background.jpg" className={classes.BackgroundImage}>
+        <Flex justify="center" align="flex-end" className={classes.titleContainer}>
+          <Title
+            fz={{ base: '1.5rem', sm: '2rem' }}
+            lh={{ base: 'md', sm: 'xl' }}
+            textWrap="wrap"
+            mb={50}
+            className={classes.title}
+          >
+            Welcome to the University of Auckland F:SAE:47 Job Board
+          </Title>
+        </Flex>
+      </BackgroundImage>
+    </Box>
   );
 }

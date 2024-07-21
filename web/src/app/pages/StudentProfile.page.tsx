@@ -66,32 +66,16 @@ export function StudentProfile() {
   const [showMoreSkills, setShowMoreSkills] = useState(false);
   const [showMoreEducation, setShowMoreEducation] = useState(false);
   return (
-    <Box
-      style={{
-        backgroundColor: 'var(--mantine-color-background-1)',
-        height: '100vh',
-        color: 'var(--mantine-color-customWhite-1',
-        overflowY: 'auto',
-      }}
-    >
-      <Card h={270} className={classes.card}>
-        <Card.Section
-          h={200}
-          style={{
-            backgroundImage:
-              'url(https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80)',
-            cursor: 'pointer',
-          }}
-          className={classes.banner}
-          onClick={handleBannerChange}
-        />
+    <Box className={classes.container}>
+      <Card h={280} className={classes.card}>
+        <Card.Section h={250} className={classes.banner} onClick={handleBannerChange} />
         {userData?.firstName && (
-          <Text className={classes.name} pl={190} pt={100}>
+          <Text className={classes.name} pl={170} pt={130}>
             {userData.firstName} {userData.lastName}
           </Text>
         )}
         {userData?.subgroup && (
-          <Text className={classes.subgroup} pl={190} pt={150}>
+          <Text className={classes.subgroup} pl={170} pt={185}>
             {userData.subgroup} since {userData.dateJoined}
           </Text>
         )}
@@ -99,13 +83,12 @@ export function StudentProfile() {
         <Avatar
           src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png"
           size={150}
-          mt={-80}
-          ml={20}
+          mt={-100}
+          ml={10}
           className={classes.avatar}
           onClick={handleAvatarChange}
-          style={{ cursor: 'pointer' }}
         />
-        <Text mt={-50} ml={190} className={classes.text}>
+        <Text mt={-40} ml={170} className={classes.text}>
           Looking for: {userData.jobType}
         </Text>
       </Card>
@@ -163,10 +146,10 @@ export function StudentProfile() {
                     <Text>{userData.description}</Text>
                   ) : (
                     <>
-                      <Text>{userData.description.substring(0, 1500)}</Text>
+                      <Text>{userData.description.substring(0, 1200)}</Text>
                     </>
                   )}
-                  {userData.description?.length > 1500 ? (
+                  {userData.description?.length > 1200 ? (
                     <Button
                       variant="subtle"
                       pl={0}

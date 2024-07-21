@@ -17,6 +17,7 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import { UserType, resetUser } from '@/app/features/user/userSlice';
 import { IconUserCircle, IconBell, IconLogout, IconSettings } from '@tabler/icons-react';
+import classes from './Navbar.module.css';
 
 function Navbar() {
   // Use Redux State Management
@@ -81,6 +82,7 @@ function Navbar() {
   return (
     <>
       <Flex
+        className={classes.Navbar}
         gap="md"
         pt="md"
         pr="md"
@@ -88,7 +90,6 @@ function Navbar() {
         pb="md"
         justify="space-between"
         align="center"
-        style={{ backgroundColor: 'transparent' }}
       >
         <NavLink to="/">
           <Image radius="md" h={20} src="fsae_white_and_orange_logo.png" alt="FSAE Logo" />
@@ -154,7 +155,9 @@ function Navbar() {
                       to="/signup/student"
                       style={({ isActive }) => ({
                         textDecoration: 'none',
-                        backgroundColor: isActive ? ' customAzureBlue' : 'none',
+                        backgroundColor: isActive
+                          ? 'var(--mantine-color-customAzureBlue-1)'
+                          : 'none',
                       })}
                     >
                       <Menu.Item> Student</Menu.Item>
@@ -163,7 +166,9 @@ function Navbar() {
                       to="/signup/sponsor"
                       style={({ isActive }) => ({
                         textDecoration: 'none',
-                        backgroundColor: isActive ? ' customAzureBlue' : 'none',
+                        backgroundColor: isActive
+                          ? 'var(--mantine-color-customAzureBlue-1)'
+                          : 'none',
                       })}
                     >
                       <Menu.Item> Sponsor</Menu.Item>
@@ -172,7 +177,9 @@ function Navbar() {
                       to="/signup/alumni"
                       style={({ isActive }) => ({
                         textDecoration: 'none',
-                        backgroundColor: isActive ? ' customAzureBlue' : 'none',
+                        backgroundColor: isActive
+                          ? 'var(--mantine-color-customAzureBlue-1)'
+                          : 'none',
                       })}
                     >
                       <Menu.Item> Alumni</Menu.Item>
@@ -181,7 +188,7 @@ function Navbar() {
                 </Menu>
 
                 <NavLink to="/login">
-                  <Button color="customAzureBlue">Log In</Button>
+                  <Button color="var(--mantine-color-customAzureBlue-1)">Log In</Button>
                 </NavLink>
               </>
             )}

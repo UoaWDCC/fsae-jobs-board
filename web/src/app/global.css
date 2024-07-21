@@ -1,7 +1,4 @@
-:root {
-  color-scheme: var(--mantine-color-scheme);
-}
-
 body {
   color: white;
+  background-color: black;
 }

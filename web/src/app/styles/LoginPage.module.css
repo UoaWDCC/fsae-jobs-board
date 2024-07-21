@@ -1,0 +1,17 @@
+.wrapper {
+  height: 100vh;
+  background-size: cover;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+}
+
+.loginWrapper {
+  background-image: url('/loginImg.png');
+  width: 50%;
+  height: 100%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+

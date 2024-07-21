@@ -6,7 +6,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div>
-      {!location.pathname.includes('login') && !location.pathname.includes('signup') && <Navbar />}
+      <Navbar />
 
       <main>{children}</main>
     </div>

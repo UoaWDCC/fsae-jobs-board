@@ -3,11 +3,14 @@ import { useDispatch } from 'react-redux';
 import { setUserType } from '../features/user/userSlice';
 import { toast } from 'react-toastify';
 import { LoginForm } from '../components/AuthForms/LoginForm';
-import classes from './page.module.css';
+import { LoginSideImage } from '../components/LoginSideImage/LoginSideImage';
+import { Grid, GridCol } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 
 export function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const isSmallScreen = useMediaQuery('(max-width: 768px)');
 
   const handleLoginAs = (userType: 'student' | 'sponsor' | 'alumni' | 'admin') => {
     // Simulate successful login (to be replaced with the actual authentication logic)
@@ -26,11 +29,21 @@ export function Login() {
     navigate(profilePath, { replace: true });
   };
   return (
-    <div className={classes.wrapper}>
-      {/* Temporary buttons for protected routes testing purpose*/}
-
-      <div className={classes.loginWrapper}></div>
-      <LoginForm />
-    </div>
+    <Grid>
+      {isSmallScreen ? (
+        <Grid.Col span={12}>
+          <LoginForm />
+        </Grid.Col>
+      ) : (
+        <>
+          <Grid.Col span={6}>
+            <LoginSideImage />
+          </Grid.Col>
+          <Grid.Col span={6}>
+            <LoginForm />
+          </Grid.Col>
+        </>
+      )}
+    </Grid>
   );
 }

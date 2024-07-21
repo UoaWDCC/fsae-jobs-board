@@ -1,15 +1,9 @@
 .loginFormContainer {
-  background-color: black;
-  width: 50%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  height: 100vh;
 }
 
 .form {
-  width: 80%;
+  width: 70%;
   max-width: rem(700px);
 }
 
@@ -20,7 +14,6 @@
 .signupFormContainer {
   width: 100%;
   height: 100%;
-  background-color: black;
   display: flex;
   flex-direction: column;
   align-items: center;
