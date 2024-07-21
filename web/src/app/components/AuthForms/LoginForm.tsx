@@ -36,7 +36,7 @@ export function LoginForm() {
         <Text ta="center" mt="xl">
           Don&apos;t have an account?{' '}
           <Anchor<'a'> href="#" fw={700} onClick={(event) => navigate('/')}>
-            Sign Up
+            Sign up
           </Anchor>
         </Text>
         <Text ta="center" mt="md">
