@@ -112,7 +112,11 @@ const SignupForm = ({ role }: { role: Role }) => {
         Join the F:SAE:47 Job Board Community
       </Title>
 
-      {role && <FormComponent fields={fieldsByRole[role]} role={role} onSubmit={handleSubmit} />}
+      {role ? (
+        <FormComponent fields={fieldsByRole[role]} role={role} onSubmit={handleSubmit} />
+      ) : (
+        <Text ta="center">Please select a role to proceed.</Text>
+      )}
       <Text ta="center" mt="md">
         Already have an account?{' '}
         <NavLink to="/login" className={classes.link}>
