@@ -1,5 +1,4 @@
 import {
-  Anchor,
   Button,
   Checkbox,
   Flex,
@@ -8,11 +7,10 @@ import {
   TextInput,
   Title,
   Text,
-  Image,
 } from '@mantine/core';
 import { FormEvent } from 'react';
 import classes from './authform.module.css';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { Role } from '../../type/role';
 
 interface Field {
@@ -111,11 +109,11 @@ const SignupForm = ({ role }: { role: Role }) => {
   return (
     <Flex align="center" justify="center" className={classes.signupFormContainer}>
       <Title order={5} ta="center" mt="lg" mb="lg" style={{ fontStyle: 'italic' }}>
-        Join the FSAE:47 Job Board Community
+        Join the F:SAE:47 Job Board Community
       </Title>
 
       {role && <FormComponent fields={fieldsByRole[role]} role={role} onSubmit={handleSubmit} />}
-      <Text ta="center" mt="xs">
+      <Text ta="center" mt="md">
         Already have an account?{' '}
         <NavLink to="/login" className={classes.link}>
           Login

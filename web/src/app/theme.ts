@@ -1,4 +1,4 @@
-import { Modal, TextInput, Textarea, colorsTuple, createTheme, rem } from '@mantine/core';
+import { TextInput, Textarea, colorsTuple, createTheme, rem } from '@mantine/core';
 
 const customAzureBlue = colorsTuple('#0091ff');
 const customDarkBlue = colorsTuple('#00467f');
