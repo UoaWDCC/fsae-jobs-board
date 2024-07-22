@@ -1,8 +1,32 @@
 import { Flex, TextInput, PasswordInput, Checkbox, Button, Title, Text } from '@mantine/core';
 import classes from './authform.module.css';
 import { NavLink } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setUserType } from '../../features/user/userSlice';
+import { toast } from 'react-toastify';
 
 export function LoginForm() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLoginAs = (userType: 'student' | 'sponsor' | 'alumni' | 'admin') => {
+    // Simulate successful login (to be replaced with the actual authentication logic)
+    const mockToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
+    localStorage.setItem('accessToken', mockToken);
+    // If authentication is successful: Update Redux store with userType
+    dispatch(setUserType(userType));
+    // Redirect to the appropriate profile page based on userType
+    const profilePath = {
+      student: '/profile/student',
+      sponsor: '/profile/sponsor',
+      alumni: '/profile/alumni',
+      admin: '/profile/admin',
+    }[userType];
+    toast.success('Logged in as ' + userType);
+    navigate(profilePath, { replace: true });
+  };
+
   return (
     <Flex
       gap="xl"
