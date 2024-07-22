@@ -46,7 +46,20 @@ export function LoginForm() {
         <Button fullWidth mt="xl" mb="md" size="lg">
           Login
         </Button>
-
+        <Flex justify="center" gap="md" mt="md" mr="md">
+          <Button variant="filled" color="green" onClick={() => handleLoginAs('student')}>
+            Login as Student
+          </Button>
+          <Button variant="filled" color="blue" onClick={() => handleLoginAs('sponsor')}>
+            Login as Sponsor
+          </Button>
+          <Button variant="filled" color="violet" onClick={() => handleLoginAs('alumni')}>
+            Login as Alumni
+          </Button>
+          <Button variant="filled" color="red" onClick={() => handleLoginAs('admin')}>
+            Login as Admin
+          </Button>
+        </Flex>
         <Text ta="center" mt="xl">
           Don&apos;t have an account?{' '}
           <NavLink to="/" className={classes.link}>
