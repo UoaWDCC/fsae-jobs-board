@@ -23,6 +23,9 @@ function Navbar() {
   // Use Redux State Management
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  function isUserType(value: any): value is UserType {
+    return value === 'student' || value === 'sponsor' || value === 'alumni' || value === 'admin';
+  }
 
   const userType = useSelector((state: RootState) => state.user.userType);
   // Define navigation links based on user type
@@ -96,7 +99,7 @@ function Navbar() {
         </NavLink>
 
         <Flex justify="center" align="center" style={{ flex: 1 }}>
-          {!isMobile && userType && (
+          {!isMobile && userType && isUserType(userType) && (
             <Group gap="xl">
               {navLinks[userType].map((link) => (
                 <NavLink
@@ -224,7 +227,7 @@ function Navbar() {
             />
           </AppShell.Header>
           <AppShell.Navbar p="md">
-            {userType && (
+            {userType && isUserType(userType) && (
               <Flex justify="center" align="center" gap="xl" direction="column" style={{ flex: 1 }}>
                 {navLinks[userType].map((link) => (
                   <NavLink

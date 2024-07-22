@@ -1,4 +1,4 @@
-import { Center, Title, Text, Flex, Space, Button, Box } from '@mantine/core';
+import { Title, Text, Flex, Button, Box } from '@mantine/core';
 import { IconArrowRight } from '@tabler/icons-react';
 import { useScrollIntoView } from '@mantine/hooks';
 import classes from './Guides.module.css';
