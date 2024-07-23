@@ -25,7 +25,7 @@ COPY .yarn/ ./.yarn/
 
 # Install node modules
 COPY --link package.json yarn.lock ./
-RUN yarn install --immutable
+RUN yarn install --immutable --production=false
 
 # Copy application code
 COPY --link . .

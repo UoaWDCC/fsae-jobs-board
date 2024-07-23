@@ -1,7 +1,6 @@
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
 import { HomePage } from './pages/Home.page';
 import { Login } from './pages/Login.page';
-import { SignUp } from './pages/Signup.page';
 import { StudentProfile } from './pages/StudentProfile.page';
 import { SponsorProfile } from './pages/SponsorProfile.page';
 import { AlumniProfile } from './pages/AlumniProfile.page';
@@ -10,25 +9,63 @@ import { JobBoard } from './pages/JobBoard.page';
 import { StudentsBoard } from './pages/StudentsBoard.page';
 import { SponsorsBoard } from './pages/SponsorsBoard.page';
 import { AlumniBoard } from './pages/AlumniBoard.page';
+import { NotFound } from './pages/NotFound.page';
 import ProfileSwitcher from './pages/ProfileSwitcher';
+import { AppLayout } from './Layouts/AppLayout';
 import ProtectedRoute from './components/ProtectedRoute';
+import { StudentSignUp } from './pages/StudentSignup.page';
+import { SponsorSignUp } from './pages/SponsorSignup.page';
+import { AlumniSignUp } from './pages/AlumniSignup.page';
+import { AdminSignUp } from './pages/AdminSignup.page';
+import SignupSwitcher from './pages/SignupSwitcher.page';
+
 // Protected route is currently commented out. To be enabled once the Authentication Logic has been implemented
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <HomePage />,
+    element: (
+      <AppLayout>
+        <HomePage />
+      </AppLayout>
+    ),
   },
   {
     path: '/login',
-    element: <Login />,
+    element: (
+      <AppLayout>
+        <Login />
+      </AppLayout>
+    ),
   },
   {
     path: '/signup',
-    element: <SignUp />,
+    element: (
+      <AppLayout>
+        <SignupSwitcher />
+      </AppLayout>
+    ),
+    children: [
+      {
+        path: 'student',
+        element: <StudentSignUp />,
+      },
+      {
+        path: 'sponsor',
+        element: <SponsorSignUp />,
+      },
+      {
+        path: 'alumni',
+        element: <AlumniSignUp />,
+      },
+    ],
   },
   {
     path: '/profile',
-    element: <ProfileSwitcher />,
+    element: (
+      <AppLayout>
+        <ProfileSwitcher />
+      </AppLayout>
+    ),
     children: [
       {
         path: 'student',
@@ -66,27 +103,54 @@ const router = createBrowserRouter([
   },
   {
     path: '/jobs',
-    //  <ProtectedRoute allowedRoles={['student', 'admin']}>
-    element: <JobBoard />,
-    //  </ProtectedRoute>
+
+    element: (
+      // <ProtectedRoute allowedRoles={['student', 'admin']}>
+      <AppLayout>
+        <JobBoard />
+      </AppLayout>
+      // </ProtectedRoute>
+    ),
   },
   {
     path: '/students',
-    //  <ProtectedRoute allowedRoles={['sponsor', 'alumni', 'admin']}>
-    element: <StudentsBoard />,
-    //  </ProtectedRoute>
+
+    element: (
+      // <ProtectedRoute allowedRoles={['sponsor', 'alumni', 'admin']}>
+      <AppLayout>
+        <StudentsBoard />
+      </AppLayout>
+      //</ProtectedRoute>
+    ),
   },
   {
     path: '/sponsors',
-    //  <ProtectedRoute allowedRoles={['student', 'admin']}>
-    element: <SponsorsBoard />,
-    //  </ProtectedRoute>
+    element: (
+      //<ProtectedRoute allowedRoles={['student', 'admin']}>
+      <AppLayout>
+        <SponsorsBoard />
+      </AppLayout>
+      //</ProtectedRoute>
+    ),
   },
   {
     path: '/alumni',
-    //  <ProtectedRoute allowedRoles={['student', 'admin']}>
-    element: <AlumniBoard />,
-    //  </ProtectedRoute>
+
+    element: (
+      //<ProtectedRoute allowedRoles={['student', 'admin']}>
+      <AppLayout>
+        <AlumniBoard />
+      </AppLayout>
+      // </ProtectedRoute>
+    ),
+  },
+  {
+    path: '*', // Catch-all undefined routes
+    element: (
+      <AppLayout>
+        <NotFound />
+      </AppLayout>
+    ),
   },
 ]);
 

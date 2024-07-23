@@ -1,13 +1,16 @@
-import { ColorSchemeToggle } from '../components/ColorSchemeToggle/ColorSchemeToggle';
-import { Button, Flex, Title } from '@mantine/core';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setUserType } from '../features/user/userSlice';
 import { toast } from 'react-toastify';
+import { LoginForm } from '../components/AuthForms/LoginForm';
+import { LoginSideImage } from '../components/LoginSideImage/LoginSideImage';
+import { Grid, GridCol } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 
 export function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const isSmallScreen = useMediaQuery('(max-width: 768px)');
 
   const handleLoginAs = (userType: 'student' | 'sponsor' | 'alumni' | 'admin') => {
     // Simulate successful login (to be replaced with the actual authentication logic)
@@ -26,36 +29,21 @@ export function Login() {
     navigate(profilePath, { replace: true });
   };
   return (
-    <>
-      {/* Temporary buttons for protected routes testing purpose*/}
-      <Flex justify="right" gap="md" mt="md" mr="md">
-        <NavLink to="/signup">
-          <Button variant="filled" color="customPapayaOrange">
-            Sign up
-          </Button>
-        </NavLink>
-        <NavLink to="/">
-          <Button color="customAzureBlue">Home</Button>
-        </NavLink>
-      </Flex>
-      <Flex justify="center" gap="md" mt="md" mr="md">
-        <Title order={1}>Login Page</Title>
-      </Flex>
-      <Flex justify="center" gap="md" mt="md" mr="md">
-        <Button variant="filled" color="green" onClick={() => handleLoginAs('student')}>
-          Login as Student
-        </Button>
-        <Button variant="filled" color="blue" onClick={() => handleLoginAs('sponsor')}>
-          Login as Sponsor
-        </Button>
-        <Button variant="filled" color="violet" onClick={() => handleLoginAs('alumni')}>
-          Login as Alumni
-        </Button>
-        <Button variant="filled" color="red" onClick={() => handleLoginAs('admin')}>
-          Login as Admin
-        </Button>
-      </Flex>
-      <ColorSchemeToggle />
-    </>
+    <Grid>
+      {isSmallScreen ? (
+        <Grid.Col span={12}>
+          <LoginForm />
+        </Grid.Col>
+      ) : (
+        <>
+          <Grid.Col span={6}>
+            <LoginSideImage />
+          </Grid.Col>
+          <Grid.Col span={6}>
+            <LoginForm />
+          </Grid.Col>
+        </>
+      )}
+    </Grid>
   );
 }

@@ -1,0 +1,56 @@
+.container {
+  background-color: var(--mantine-color-background-1);
+  height: 100vh;
+  color: var(--mantine-color-customWhite-1);
+  overflow-y: auto;
+}
+
+.card {
+  background-color: var(--mantine-color-background-1);
+  position: relative;
+}
+
+.banner {
+  background-image: url(https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80);
+  cursor: pointer;
+  border-bottom: 3px solid var(--mantine-color-customAzureBlue-1);
+  position: relative;
+  opacity: 0.5;
+}
+
+.avatar {
+  padding: 8px;
+  background-color: black;
+  border-radius: 50%;
+  border-top: 3px solid var(--mantine-color-customAzureBlue-1);
+  overflow: hidden;
+  border-radius: 50%;
+  position: relative;
+  cursor: pointer;
+}
+
+.avatar img {
+  border-radius: 50%;
+}
+
+.text {
+  font-style: italic;
+  position: relative;
+  color: var(--mantine-color-customWhite-1);
+}
+
+.name {
+  position: absolute;
+  font-size: 40px;
+  color: var(--mantine-color-customWhite-1);
+}
+
+.subgroup {
+  position: absolute;
+  font-style: italic;
+  color: var(--mantine-color-customWhite-1);
+}
+
+.box {
+  border-left: 2px solid var(--mantine-color-customAzureBlue-1);
+}

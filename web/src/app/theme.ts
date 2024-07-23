@@ -1,4 +1,4 @@
-import { MantineColorsTuple, colorsTuple, createTheme, rem } from '@mantine/core';
+import { TextInput, Textarea, colorsTuple, createTheme, rem } from '@mantine/core';
 
 const customAzureBlue = colorsTuple('#0091ff');
 const customDarkBlue = colorsTuple('#00467f');
@@ -6,6 +6,10 @@ const customPapayaOrange = colorsTuple('#f78f1f');
 const customElectricOrange = colorsTuple('#ff8400');
 const customCharcoalGrey = colorsTuple('#373737');
 const customMercurySilver = colorsTuple('#a5a5a5');
+const customOrange = colorsTuple('#f55442');
+const background = colorsTuple('#000000');
+const customGrey = colorsTuple('#545454');
+const customWhite = colorsTuple('#ffffff');
 
 export const theme = createTheme({
   colors: {
@@ -15,7 +19,12 @@ export const theme = createTheme({
     customElectricOrange,
     customCharcoalGrey,
     customMercurySilver,
+    customOrange,
+    background,
+    customGrey,
+    customWhite,
   },
+
   fontFamily: 'Cerebri Sans, Calibri',
 
   headings: {
@@ -28,6 +37,23 @@ export const theme = createTheme({
       h5: { fontSize: rem(30) },
       h6: { fontSize: rem(20) },
     },
+  },
+
+  components: {
+    TextInput: TextInput.extend({
+      styles: (theme) => ({
+        input: {
+          backgroundColor: theme.colors.customWhite[0],
+        },
+      }),
+    }),
+    Textarea: Textarea.extend({
+      styles: (theme) => ({
+        input: {
+          backgroundColor: theme.colors.customWhite[0],
+        },
+      }),
+    }),
   },
 });
 
