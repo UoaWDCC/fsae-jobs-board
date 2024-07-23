@@ -1,6 +1,6 @@
 import { Carousel } from '@mantine/carousel';
 
-function Demo() {
+export function JobCarousel() {
   return (
     <Carousel
       withIndicators
