@@ -14,12 +14,15 @@ import classes from '../styles/SponsorProfile.module.css';
 import { useEffect, useState } from 'react';
 
 import { IconCertificate } from '@tabler/icons-react';
+import { JobCarousel, JobCarouselProps } from '../components/JobCardCarousel/JobCarousel';
+import { JobCardProps } from '../components/JobCardCarousel/JobCard';
 
 export function SponsorProfile() {
   // UseState for future modal implementation
   const [openModal, setOpenModal] = useState(false);
   const [modalType, setModalType] = useState('');
   const [openProfileModal, setOpenProfileModal] = useState(false);
+  const [showMoreDescription, setShowMoreDescription] = useState(false);
 
   const handleAvatarChange = () => {
     setModalType('avatar');
@@ -49,12 +52,42 @@ export function SponsorProfile() {
   });
   // Add code to fetch data from our database when it will be connected
 
+  const [jobData, setJobData] = useState<JobCardProps[]>([
+    {
+      title: 'Job Title',
+      description: 'Job Description',
+      subtitle: 'Subtitle',
+      jobLink: 'test',
+      jobID: '1234567',
+    },
+    {
+      title: 'Job Title',
+      description: 'Job Description',
+      subtitle: 'Subtitle',
+      jobLink: 'test',
+      jobID: '1234567',
+    },
+    {
+      title: 'Job Title',
+      description: 'Job Description',
+      subtitle: 'Subtitle',
+      jobLink: 'test',
+      jobID: '1234567',
+    },
+    {
+      title: 'Job Title',
+      description: 'Job Description',
+      subtitle: 'Subtitle',
+      jobLink: 'test',
+      jobID: '1234567',
+    },
+  ]);
+  // dummy data for job opportunities
+
   useEffect(() => {
     // Logic to fetch data and setUserData
   }, []);
-  const [showMoreDescription, setShowMoreDescription] = useState(false);
-  const [showMoreSkills, setShowMoreSkills] = useState(false);
-  const [showMoreEducation, setShowMoreEducation] = useState(false);
+
   return (
     <Box className={classes.container}>
       {/* PICTURE AND COMPANY DETAILS */}
@@ -136,8 +169,12 @@ export function SponsorProfile() {
             style={{ justifyContent: 'space-between', alignItems: 'flex-start' }}
           >
             {/* JOB OPPORTUNITIES CAROUSEL */}
-            <Box>
+            <Box style={{ width: '100%', height: '25rem' }}>
               <Title order={6}>Job Opportunities</Title>
+              <Box pl={15} mt={10} className={classes.box}>
+                {/* Add JobCarousel component here */}
+                <JobCarousel jobs={jobData} />
+              </Box>
             </Box>
           </Box>
         </Grid.Col>

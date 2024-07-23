@@ -1,36 +1,48 @@
 import { Card, Image, Text, Badge, Button, Group } from '@mantine/core';
-
+import classes from './JobCard.module.css';
 // dummy data -- change later when we have real data
 export interface JobCardProps {
   title: string;
+  subtitle: string;
   description: string;
-  image: string;
+  jobLink: string;
+  jobID: string;
 }
 
-export function JobCard(data: JobCardProps) {
+export function JobCard({ data }: { data: JobCardProps }) {
   return (
-    <Card shadow="sm" padding="lg" radius="md" withBorder>
-      <Card.Section>
-        <Image
-          src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-8.png"
-          height={160}
-          alt="Norway"
-        />
-      </Card.Section>
-
-      <Group justify="space-between" mt="md" mb="xs">
-        <Text fw={500}>Norway Fjord Adventures</Text>
-        <Badge color="pink">On Sale</Badge>
-      </Group>
-
-      <Text size="sm" c="dimmed">
-        With Fjord Tours you can explore more of the magical fjord landscapes with tours and
-        activities on and around the fjords of Norway
+    <Card shadow="sm" padding="lg" radius="md" withBorder style={{ width: '25rem' }}>
+      {/* Job Title */}
+      <Text fw={500} size="lg" className={classes.text}>
+        {data.title}
       </Text>
 
-      <Button color="blue" fullWidth mt="md" radius="md">
-        Book classic tour now
+      {/* Job Description */}
+      <Text fw={500} size="lg" className={classes.text}>
+        {data.subtitle}
+      </Text>
+
+      {/* Job Description */}
+      <Text fw={700} size="sm" className={classes.text}>
+        {data.description}
+      </Text>
+
+      <Button
+        color="blue"
+        fullWidth
+        mt="md"
+        radius="md"
+        onClick={() => {
+          window.open(data.jobLink, '_blank');
+        }}
+      >
+        View Job
       </Button>
+
+      {/* Job Description */}
+      <Text fw={700} size="sm" className={classes.text}>
+        #{data.jobID}
+      </Text>
     </Card>
   );
 }
