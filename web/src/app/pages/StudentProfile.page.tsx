@@ -12,14 +12,21 @@ import {
 } from '@mantine/core';
 import classes from '../styles/StudentProfile.module.css';
 import { useEffect, useState } from 'react';
-
 import { IconCertificate } from '@tabler/icons-react';
+import EditModal from '../components/Modal/EditModal';
+import {EditStudentProfile} from '../components/Modal/EditStudentProfile'
 
 export function StudentProfile() {
   // UseState for future modal implementation
   const [openModal, setOpenModal] = useState(false);
   const [modalType, setModalType] = useState('');
   const [openProfileModal, setOpenProfileModal] = useState(false);
+  const [modalContent, setModalContent] = useState<React.ReactNode>(null)
+
+
+  const [showMoreDescription, setShowMoreDescription] = useState(false);
+  const [showMoreSkills, setShowMoreSkills] = useState(false);
+  const [showMoreEducation, setShowMoreEducation] = useState(false);
 
   const handleAvatarChange = () => {
     setModalType('avatar');
@@ -33,6 +40,7 @@ export function StudentProfile() {
 
   const handleProfileChange = () => {
     setModalType('profile');
+    setModalContent(<EditStudentProfile />)
     setOpenProfileModal(true);
   };
 
@@ -62,9 +70,7 @@ export function StudentProfile() {
   useEffect(() => {
     // Logic to fetch data and setUserData
   }, []);
-  const [showMoreDescription, setShowMoreDescription] = useState(false);
-  const [showMoreSkills, setShowMoreSkills] = useState(false);
-  const [showMoreEducation, setShowMoreEducation] = useState(false);
+
   return (
     <Box className={classes.container}>
       <Card h={280} className={classes.card}>
@@ -209,6 +215,11 @@ export function StudentProfile() {
           </Box>
         </Grid.Col>
       </Grid>
+
+      <EditModal opened={openProfileModal} close={() => setOpenProfileModal(false)} content={modalContent}>
+      </EditModal>
     </Box>
+
+    
   );
 }
