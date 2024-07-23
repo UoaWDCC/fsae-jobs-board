@@ -1,7 +1,8 @@
-import {Entity, model, property} from '@loopback/repository';
+import {model, property} from '@loopback/repository';
+import {FsaeUser} from './index';
 
-@model()
-export class Alumni extends Entity {
+@model({settings: {strict: false}})
+export class Alumni extends FsaeUser {
   @property({
     type: 'number',
     id: true,
@@ -33,6 +34,9 @@ export class Alumni extends Entity {
   })
   company: string;
 
+  // Indexer property to allow additional data
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [prop: string]: any;
 
   constructor(data?: Partial<Alumni>) {
     super(data);

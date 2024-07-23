@@ -1,7 +1,8 @@
 import {Entity, model, property} from '@loopback/repository';
+import {FsaeUser} from './fsae-user.model';
 
-@model()
-export class Member extends Entity {
+@model({settings: {strict: false}})
+export class Member extends FsaeUser {
   @property({
     type: 'number',
     id: true,
@@ -39,6 +40,9 @@ export class Member extends Entity {
   })
   photo: string;
 
+  // Indexer property to allow additional data
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [prop: string]: any;
 
   constructor(data?: Partial<Member>) {
     super(data);
