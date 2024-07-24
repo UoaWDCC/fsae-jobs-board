@@ -8,16 +8,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     <div>
       <Navbar />
 
-      <main
-        style={{
-          paddingTop: '3rem',
-          flex: 1,
-          width: '100vw',
-          height: '100vh',
-        }}
-      >
-        {children}
-      </main>
+      <main>{children}</main>
     </div>
   );
 }
