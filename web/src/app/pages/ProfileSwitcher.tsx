@@ -11,7 +11,7 @@ function ProfileSwitcher() {
 
   if (!userType) {
     // Handle undefined userType (user not logged in or authentication not yet determined)
-    // return <Navigate to="/login" state={{ from: location }} replace />; // Redirect to login
+    return <Navigate to="/login" state={{ from: location }} replace />; // Redirect to login
   }
 
   return <Outlet />;

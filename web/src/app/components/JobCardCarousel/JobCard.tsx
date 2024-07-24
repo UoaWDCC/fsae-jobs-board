@@ -1,4 +1,16 @@
-import { Card, Image, Text, Badge, Button, Group } from '@mantine/core';
+import {
+  Card,
+  Image,
+  Text,
+  Badge,
+  Button,
+  Group,
+  Paper,
+  Box,
+  Flex,
+  Stack,
+  rem,
+} from '@mantine/core';
 import classes from './JobCard.module.css';
 // dummy data -- change later when we have real data
 export interface JobCardProps {
@@ -11,38 +23,47 @@ export interface JobCardProps {
 
 export function JobCard({ data }: { data: JobCardProps }) {
   return (
-    <Card shadow="sm" padding="lg" radius="md" withBorder style={{ width: '25rem' }}>
-      {/* Job Title */}
-      <Text fw={500} size="lg" className={classes.text}>
-        {data.title}
-      </Text>
+    <Paper p="md" radius="md">
+      <Flex direction="column">
+        {/* Job Title */}
+        <Stack gap="xs">
+          <Text fw={500} size="xl" className={classes.text}>
+            {data.title}
+          </Text>
 
-      {/* Job Description */}
-      <Text fw={500} size="lg" className={classes.text}>
-        {data.subtitle}
-      </Text>
+          {/* Job Subtite */}
+          <Text fw={500} size="xs" className={classes.text}>
+            {data.subtitle}
+          </Text>
 
-      {/* Job Description */}
-      <Text fw={700} size="sm" className={classes.text}>
-        {data.description}
-      </Text>
+          {/* Job Description */}
+          <Text fw={700} size="sm" className={classes.text} lineClamp={3}>
+            {data.description}
+          </Text>
+        </Stack>
 
-      <Button
-        color="blue"
-        fullWidth
-        mt="md"
-        radius="md"
-        onClick={() => {
-          window.open(data.jobLink, '_blank');
-        }}
-      >
-        View Job
-      </Button>
+        <Flex justify="flex-end" mb="xs">
+          <Button
+            color="blue"
+            mt="xs"
+            mr="md"
+            radius="lg"
+            size="compact-md"
+            onClick={() => {
+              window.open(data.jobLink, '_blank');
+            }}
+          >
+            View Job
+          </Button>
+        </Flex>
 
-      {/* Job Description */}
-      <Text fw={700} size="sm" className={classes.text}>
-        #{data.jobID}
-      </Text>
-    </Card>
+        {/* Job ID */}
+        <Flex justify="flex-end">
+          <Text c={'#7C7C7C'} size="sm" className={classes.text}>
+            #{data.jobID}
+          </Text>
+        </Flex>
+      </Flex>
+    </Paper>
   );
 }

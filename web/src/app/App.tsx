@@ -5,6 +5,7 @@ import { theme } from './theme';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './global.css';
+import '@mantine/carousel/styles.css';
 
 export default function App() {
   return (
