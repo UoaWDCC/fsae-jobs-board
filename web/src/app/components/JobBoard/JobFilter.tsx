@@ -2,29 +2,61 @@ import { Checkbox, Stack } from '@mantine/core';
 import classes from './JobBoard.module.css';
 import { useState } from 'react';
 const JobFilter = () => {
-  const [roles, setRoles] = useState<string[]>([]);
-  const [fields, setFields] = useState<string[]>([]);
+  const [filterRoles, setfilterRoles] = useState<string[]>([]);
+  const [filterFields, setfilterFields] = useState<string[]>([]);
+
+  const roles = [
+    { value: 'internship', label: 'Internship' },
+    { value: 'graduate', label: 'Graduate Roles' },
+    { value: 'junior', label: 'Junior Roles' },
+  ];
+
+  const fields = [
+    { value: 'auto', label: 'Automation' },
+    { value: 'electrical', label: 'Electrical' },
+    { value: 'mechanical', label: 'Mechanical' },
+    { value: 'mechatronics', label: 'Mechatronics' },
+    { value: 'software', label: 'Software' },
+    { value: 'other', label: 'Other' },
+  ];
 
   return (
     <Stack className={classes.filterContainer}>
-      <p>Filters</p>
+      <em className={classes.filterHeading}>Filters</em>
       <Stack>
-        <p>Role Type</p>
-        <Checkbox.Group value={roles} onChange={setRoles}>
-          <Checkbox value="internship" label="Internships" />
-          <Checkbox value="graduate" label="Graduate Roles" />
-          <Checkbox value="junior" label="Junior Roles" />
+        <Checkbox.Group
+          value={filterRoles}
+          onChange={setfilterRoles}
+          label="Role Type"
+          classNames={{ label: classes.filterSubheading }}
+        >
+          {roles.map((role) => (
+            <Checkbox
+              key={role.value}
+              value={role.value}
+              label={role.label}
+              color="customAzureBlue.1"
+              className={classes.checkbox}
+            />
+          ))}
         </Checkbox.Group>
       </Stack>
       <Stack>
-        <p>Fields</p>
-        <Checkbox.Group value={fields} onChange={setFields}>
-          <Checkbox value="auto" label="Automation" />
-          <Checkbox value="electrical" label="Electrical" />
-          <Checkbox value="mechanical" label="Mechanical" />
-          <Checkbox value="mechatronics" label="Mechatronics" />
-          <Checkbox value="software" label="Software" />
-          <Checkbox value="other" label="Other" />
+        <Checkbox.Group
+          value={filterFields}
+          onChange={setfilterFields}
+          label="Fields"
+          classNames={{ label: classes.filterSubheading }}
+        >
+          {fields.map((role) => (
+            <Checkbox
+              key={role.value}
+              value={role.value}
+              label={role.label}
+              color="customAzureBlue.1"
+              className={classes.checkbox}
+            />
+          ))}
         </Checkbox.Group>
       </Stack>
     </Stack>

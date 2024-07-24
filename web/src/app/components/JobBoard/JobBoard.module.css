@@ -5,3 +5,16 @@
 .listingContainer {
   flex: 3;
 }
+
+.filterHeading {
+  color: white;
+}
+
+.filterSubheading {
+  color: var(--mantine-color-customAzureBlue-1);
+  font-weight: 700;
+}
+
+.checkbox {
+  margin: 0.8em 0;
+}
