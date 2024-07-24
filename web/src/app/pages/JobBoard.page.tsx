@@ -1,11 +1,14 @@
-import { Flex, Title } from '@mantine/core';
+import { Group } from '@mantine/core';
+import JobFilter from '../components/JobBoard/JobFilter';
+import JobListing from '../components/JobBoard/JobListing';
 
 export function JobBoard() {
   return (
-    <>
-      <Flex justify="center" gap="md" mt="md" mr="md">
-        <Title order={1}>Job Board</Title>
-      </Flex>
-    </>
+    <div style={{ paddingTop: '3rem' }}>
+      <Group>
+        <JobFilter />
+        <JobListing />
+      </Group>
+    </div>
   );
 }
