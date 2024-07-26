@@ -1,6 +1,7 @@
 import { Modal, Button } from '@mantine/core';
 import { IconXboxX } from '@tabler/icons-react';
 import { ReactNode } from 'react';
+import styles from '../../styles/Modal.module.css';
 
 type ModalProp = {
   opened: boolean;
@@ -17,6 +18,7 @@ export default function EditModal({ opened, close, content }: ModalProp) {
         icon: <IconXboxX size={20} stroke={1.5} color="#ffffff" />,
       }}
       centered
+      className={styles.modal}
     >
       {content}
 

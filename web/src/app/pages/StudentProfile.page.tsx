@@ -15,10 +15,11 @@ import { useEffect, useState } from 'react';
 import { IconCertificate } from '@tabler/icons-react';
 import EditModal from '../components/Modal/EditModal';
 import {EditStudentProfile} from '../components/Modal/EditStudentProfile'
+import { EditAvatar } from '../components/Modal/EditAvatar'
+import { EditBannerModal } from '../components/Modal/EditBannerModal'
 
 export function StudentProfile() {
   // UseState for future modal implementation
-  const [openModal, setOpenModal] = useState(false);
   const [modalType, setModalType] = useState('');
   const [openProfileModal, setOpenProfileModal] = useState(false);
   const [modalContent, setModalContent] = useState<React.ReactNode>(null)
@@ -30,12 +31,14 @@ export function StudentProfile() {
 
   const handleAvatarChange = () => {
     setModalType('avatar');
-    setOpenModal(true);
+    setModalContent(<EditAvatar />);
+    setOpenProfileModal(true);
   };
 
   const handleBannerChange = () => {
     setModalType('banner');
-    setOpenModal(true);
+    setModalContent(<EditBannerModal/>)
+    setOpenProfileModal(true);
   };
 
   const handleProfileChange = () => {
