@@ -1,14 +1,15 @@
 import { Box, TextInput } from "@mantine/core";
+import styles from "../../styles/Modal.module.css"
 
 export const EducationTab = () => {
   return (
     <Box>
-      <Box display="flex" style={{ gap: '20px' }}>
-        <Box style={{ flex: 1 }}>
+      <Box className={styles.box}>
+        <Box style={{ flex: 1 }} className={styles.input}>
           <TextInput label="University" />
           <TextInput label="Majors" />
         </Box>
-        <Box style={{ flex: 1 }}>
+        <Box style={{ flex: 1 }} className={styles.input}>
           <TextInput label="Degree" />
           <TextInput label="Graduation Year" />
         </Box>

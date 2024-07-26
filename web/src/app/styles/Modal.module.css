@@ -1,3 +1,101 @@
-.modal {
-    width: 80%;
+.content {
+  height: fit-content;
+  max-height: 100vh;
+  padding: 0 3%;
+  border-radius: 30px;
+  box-shadow:
+    0px 4px 30px 3px #7c7c7c,
+    0px 10px 15px -3px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+}
+
+.body {
+  min-height: 0;
+  max-height: 100vh;
+  padding: 3% 0;
+}
+
+/* ABOUT/EDUCATION TAB */
+.list {
+  display: flex;
+  justify-content: space-between;
+}
+
+.box {
+  display: flex;
+  gap: 20px;
+  flex: 1;
+
+  @media (max-width: 430px) {
+    gap: 5%
+  }
+}
+
+.input > * {
+  margin-bottom: 5%;
+}
+
+.area {
+  /* max-height: 100vh; */
+  height: 15vh;
+  min-height: 0;
+  flex: 1;
+}
+
+.buttonContainer {
+  margin-top: 5%;
+  display: flex;
+  justify-content: flex-end;
+
+  @media (max-width: 430px) {
+    justify-content: space-evenly;
+    align-items: center;
+  }
+}
+
+.buttonContainer > * {
+  width: 100px;
+  border-radius: 10px;
+
+  @media (max-width: 430px) {
+    width: 120px;
+  }
+}
+
+.button1 {
+  margin-right: 20px;
+  background-color: var(--mantine-color-customMercurySilver-1);
+}
+
+.box {
+  display: flex;
+  flex-direction: row;
+
+  @media (max-width: 430px) {
+    flex-direction: column;
+  }
+}
+
+/* SKILLS TAB   */
+.skillRoot {
+    width: 100%;
+}
+
+.wrapper {
+    width: 50vw;
+    max-width: 100%;
+}
+
+.addButton {
+    padding-bottom: 0;
+    background-color: var(--mantine-color-customPapayaOrange-1);
+}
+
+.skillContainer {
+    margin: 0 15vw;
+}
+
+.skillButton {
+    background-color: var(--mantine-color-customDarkGrey-1);
+    border: 2px solid var(--mantine-color-customGrey-1);
 }
