@@ -74,14 +74,17 @@ function Navbar() {
   const [opened, { toggle, open, close }] = useDisclosure();
   // Use a media query to determine small screen size for the collapsible menu
   const [isMobile, setIsMobile] = useState(false);
+
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
     };
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
   return (
     <>
       <Flex
