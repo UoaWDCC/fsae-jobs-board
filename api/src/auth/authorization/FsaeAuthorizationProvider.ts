@@ -33,3 +33,6 @@ export class FsaeAuthorizationProvider implements Provider<Authorizer> {
     }
   }
 }
+
+// Export the authorize function
+export const authorize = new FsaeAuthorizationProvider().authorize;
