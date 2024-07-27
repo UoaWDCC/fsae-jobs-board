@@ -3,14 +3,14 @@
 // import {inject} from '@loopback/core';
 
 
-import {get, HttpErrors, post, requestBody} from '@loopback/rest';
+import {get, HttpErrors, param, post, requestBody} from '@loopback/rest';
 import {authenticate} from '@loopback/authentication';
 import {loginParams, loginResponse} from './controller-types/login.controller.types';
-import {inject} from '@loopback/core';
+import {inject, service} from '@loopback/core';
 import {repository} from '@loopback/repository';
 import {AdminRepository, AlumniRepository, MemberRepository, SponsorRepository} from '../repositories';
 import {FsaeUser} from '../models';
-import {JwtService, PasswordHasherService} from '../services';
+import {FsaeUserService, JwtService, PasswordHasherService} from '../services';
 import {UserProfile} from '@loopback/security';
 
 export class LoginController {
@@ -19,6 +19,7 @@ export class LoginController {
     @repository(AlumniRepository) private alumniRepository: AlumniRepository,
     @repository(MemberRepository) private memberRepository: MemberRepository,
     @repository(SponsorRepository) private sponsorRepository: SponsorRepository,
+    @service(FsaeUserService) private fsaeUserService: FsaeUserService,
     @inject('services.jwtservice') private jwtService: JwtService,
     @inject('services.passwordhasher') private passwordHasher: PasswordHasherService
   ) {}
@@ -145,6 +146,13 @@ export class LoginController {
     }) as FsaeUser[];
 
     return this.getUserToken(credentials, userSearchResults);
+  }
+
+  @get('/user/{userEmail}/role')
+  async getUserRole(
+    @param.path.string('userEmail') userEmail: string
+  ) : Promise<string | null> {
+    return this.fsaeUserService.getUserRole(userEmail);
   }
 
   async getUserToken(credentials: loginParams, userSearchResults: FsaeUser[]) : Promise<loginResponse> {
