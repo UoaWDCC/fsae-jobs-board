@@ -18,21 +18,21 @@ import {
   response,
   HttpErrors,
 } from '@loopback/rest';
-import {Alumni} from '../models';
-import {AlumniRepository} from '../repositories';
+import { Alumni } from '../models';
+import { AlumniRepository } from '../repositories';
 import { authorize } from '@loopback/authorization';
 import { authenticate } from '@loopback/authentication';
 
 export class AlumniController {
   constructor(
     @repository(AlumniRepository)
-    public alumniRepository : AlumniRepository,
-  ) {}
+    public alumniRepository: AlumniRepository,
+  ) { }
 
   @post('/alumni')
   @response(200, {
     description: 'Alumni model instance',
-    content: {'application/json': {schema: getModelSchemaRef(Alumni)}},
+    content: { 'application/json': { schema: getModelSchemaRef(Alumni) } },
   })
   async create(
     @requestBody({
@@ -53,7 +53,7 @@ export class AlumniController {
   @get('/alumni/count')
   @response(200, {
     description: 'Alumni model count',
-    content: {'application/json': {schema: CountSchema}},
+    content: { 'application/json': { schema: CountSchema } },
   })
   async count(
     @param.where(Alumni) where?: Where<Alumni>,
@@ -68,7 +68,7 @@ export class AlumniController {
       'application/json': {
         schema: {
           type: 'array',
-          items: getModelSchemaRef(Alumni, {includeRelations: true}),
+          items: getModelSchemaRef(Alumni, { includeRelations: true }),
         },
       },
     },
@@ -82,13 +82,13 @@ export class AlumniController {
   @patch('/alumni')
   @response(200, {
     description: 'Alumni PATCH success count',
-    content: {'application/json': {schema: CountSchema}},
+    content: { 'application/json': { schema: CountSchema } },
   })
   async updateAll(
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(Alumni, {partial: true}),
+          schema: getModelSchemaRef(Alumni, { partial: true }),
         },
       },
     })
@@ -103,13 +103,13 @@ export class AlumniController {
     description: 'Alumni model instance',
     content: {
       'application/json': {
-        schema: getModelSchemaRef(Alumni, {includeRelations: true}),
+        schema: getModelSchemaRef(Alumni, { includeRelations: true }),
       },
     },
   })
   async findById(
     @param.path.number('id') id: number,
-    @param.filter(Alumni, {exclude: 'where'}) filter?: FilterExcludingWhere<Alumni>
+    @param.filter(Alumni, { exclude: 'where' }) filter?: FilterExcludingWhere<Alumni>
   ): Promise<Alumni> {
     return this.alumniRepository.findById(id, filter);
   }
@@ -123,7 +123,7 @@ export class AlumniController {
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(Alumni, {partial: true}),
+          schema: getModelSchemaRef(Alumni, { partial: true }),
         },
       },
     })
@@ -155,11 +155,11 @@ export class AlumniController {
   @get('/alumni/{id}/is-activated')
   @authenticate('jwt')
   @authorize({
-    allowedRoles: ['ADMIN',], 
+    allowedRoles: ['ADMIN',],
   })
   @response(200, {
     description: 'Check if alumni is activated',
-    content: {'application/json': {schema: {type: 'boolean'}}},
+    content: { 'application/json': { schema: { type: 'boolean' } } },
   })
   async isActivated(@param.path.number('id') id: number): Promise<boolean> {
     const alumni = await this.alumniRepository.findById(id);
@@ -167,5 +167,31 @@ export class AlumniController {
       throw new HttpErrors.NotFound(`Alumni with id ${id} not found.`);
     }
     return alumni.activated;
+  }
+
+  // Method to activate an alumni
+  @patch('/alumni/{id}/activate')
+  @authenticate('jwt')
+  @authorize({
+    allowedRoles: ['ADMIN'],
+  })
+  @response(204, {
+    description: 'Activate alumni',
+  })
+  async activate(@param.path.number('id') id: number): Promise<void> {
+    await this.alumniRepository.updateById(id, { activated: true });
+  }
+
+  // Method to deactivate an alumni
+  @patch('/alumni/{id}/deactivate')
+  @authenticate('jwt')
+  @authorize({
+    allowedRoles: ['ADMIN'],
+  })
+  @response(204, {
+    description: 'Deactivate alumni',
+  })
+  async deactivate(@param.path.number('id') id: number): Promise<void> {
+    await this.alumniRepository.updateById(id, { activated: false });
   }
 }
