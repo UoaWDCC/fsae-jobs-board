@@ -12,6 +12,7 @@ const customGrey = colorsTuple('#545454');
 const customWhite = colorsTuple('#ffffff');
 const customGreyWhite = colorsTuple('#D8D8D8');
 const customDarkGrey = colorsTuple('#8B8B8B');
+const customDarkWhite = colorsTuple('#D9D9D9');
 
 export const theme = createTheme({
   colors: {
@@ -27,6 +28,7 @@ export const theme = createTheme({
     customWhite,
     customGreyWhite,
     customDarkGrey,
+    customDarkWhite
   },
 
   fontFamily: 'Cerebri Sans, Calibri',
