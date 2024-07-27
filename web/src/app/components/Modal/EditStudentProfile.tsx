@@ -1,4 +1,4 @@
-import { Tabs, Box, TextInput, Textarea } from '@mantine/core';
+import { Tabs, Box, TextInput, Textarea, Button } from '@mantine/core';
 import { AboutTab } from '../Tabs/AboutTab';
 import { EducationTab } from '../Tabs/EducationTab';
 import { SkillsTab } from '../Tabs/SkillsTab'
@@ -7,11 +7,15 @@ import styles from "../../styles/Modal.module.css"
 
 export const EditStudentProfile = () => {
   return (
-    <Tabs color="yellow" defaultValue="about" classNames={{
-      root: styles.root,
-      list: styles.list,
-      panel: styles.panel
-    }}>
+    <Tabs
+      color="yellow"
+      defaultValue="about"
+      classNames={{
+        root: styles.root,
+        list: styles.list,
+        panel: styles.panel,
+      }}
+    >
       <Tabs.List>
         <Tabs.Tab value="about">About Me</Tabs.Tab>
         <Tabs.Tab value="education">Education</Tabs.Tab>
@@ -31,6 +35,11 @@ export const EditStudentProfile = () => {
       <Tabs.Panel value="cv" mt={30}>
         <CVTab />
       </Tabs.Panel>
+
+      <Box className={styles.buttonContainer}>
+        <Button className={styles.button1}>Cancel</Button>
+        <Button className={styles.button2}>Save</Button>
+      </Box>
     </Tabs>
   );
 };

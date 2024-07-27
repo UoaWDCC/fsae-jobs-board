@@ -26,7 +26,7 @@ export const theme = createTheme({
     customGrey,
     customWhite,
     customGreyWhite,
-    customDarkGrey
+    customDarkGrey,
   },
 
   fontFamily: 'Cerebri Sans, Calibri',
@@ -49,7 +49,7 @@ export const theme = createTheme({
         input: {
           backgroundColor: theme.colors.customGreyWhite[0],
           borderRadius: rem(10),
-          color: theme.colors.background[0]
+          color: theme.colors.background[0],
         },
       }),
     }),
@@ -58,6 +58,7 @@ export const theme = createTheme({
         input: {
           backgroundColor: theme.colors.customGreyWhite[0],
           borderRadius: rem(10),
+          color: theme.colors.background[0],
         },
       }),
     }),

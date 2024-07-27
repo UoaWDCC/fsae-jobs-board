@@ -23,6 +23,7 @@ export function StudentProfile() {
   const [modalType, setModalType] = useState('');
   const [openProfileModal, setOpenProfileModal] = useState(false);
   const [modalContent, setModalContent] = useState<React.ReactNode>(null)
+  const [modalTitle, setModalTitle] = useState('')
 
 
   const [showMoreDescription, setShowMoreDescription] = useState(false);
@@ -32,12 +33,14 @@ export function StudentProfile() {
   const handleAvatarChange = () => {
     setModalType('avatar');
     setModalContent(<EditAvatar />);
+    setModalTitle("Profile Photo")
     setOpenProfileModal(true);
   };
 
   const handleBannerChange = () => {
     setModalType('banner');
     setModalContent(<EditBannerModal/>)
+    setModalTitle('Banner Photo')
     setOpenProfileModal(true);
   };
 
@@ -219,7 +222,7 @@ export function StudentProfile() {
         </Grid.Col>
       </Grid>
 
-      <EditModal opened={openProfileModal} close={() => setOpenProfileModal(false)} content={modalContent}>
+      <EditModal opened={openProfileModal} close={() => setOpenProfileModal(false)} content={modalContent} title={modalTitle}>
       </EditModal>
     </Box>
 

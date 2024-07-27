@@ -9,7 +9,7 @@ type ModalProp = {
   content: ReactNode;
 };
 
-export default function EditModal({ opened, close, content }: ModalProp) {
+export default function EditModal({ opened, close, content,title }: ModalProp) {
   return (
     <Modal
       opened={opened}
@@ -21,16 +21,12 @@ export default function EditModal({ opened, close, content }: ModalProp) {
       size="100%"
       classNames={{
         content: styles.content,
-        header: styles.header,
         body: styles.body,
+        title: styles.title
       }}
+      title={title}
     >
       {content}
-
-      <Box className={styles.buttonContainer}>
-        <Button className={styles.button1}>Cancel</Button>
-        <Button className={styles.button2}>Save</Button>
-      </Box>
     </Modal>
   );
 }
