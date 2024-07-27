@@ -16,9 +16,12 @@ import {
   del,
   requestBody,
   response,
+  HttpErrors,
 } from '@loopback/rest';
 import {Alumni} from '../models';
 import {AlumniRepository} from '../repositories';
+import { authorize } from '@loopback/authorization';
+import { authenticate } from '@loopback/authentication';
 
 export class AlumniController {
   constructor(
@@ -146,5 +149,23 @@ export class AlumniController {
   })
   async deleteById(@param.path.number('id') id: number): Promise<void> {
     await this.alumniRepository.deleteById(id);
+  }
+
+  // Method to check if an alumni is activated
+  @get('/alumni/{id}/is-activated')
+  @authenticate('jwt')
+  @authorize({
+    allowedRoles: ['ADMIN',], 
+  })
+  @response(200, {
+    description: 'Check if alumni is activated',
+    content: {'application/json': {schema: {type: 'boolean'}}},
+  })
+  async isActivated(@param.path.number('id') id: number): Promise<boolean> {
+    const alumni = await this.alumniRepository.findById(id);
+    if (!alumni) {
+      throw new HttpErrors.NotFound(`Alumni with id ${id} not found.`);
+    }
+    return alumni.activated;
   }
 }
