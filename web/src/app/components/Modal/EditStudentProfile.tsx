@@ -17,7 +17,7 @@ export const EditStudentProfile = () => {
     { value: 'cv', label: 'CV' },
   ];
 
-  const isMobile = useMediaQuery('(max-width: 430px)');
+  const isMobile = useMediaQuery('(max-width: 430px)'); //mobile screen 
 
   const renderContent = () => {
     switch (activeTab) {
@@ -36,7 +36,7 @@ export const EditStudentProfile = () => {
 
   return (
     <Box>
-      {isMobile ? (
+      {isMobile ? ( //conditionally render mobile tab dropdown
         <>
           <Select
             data={tabOptions}
@@ -57,7 +57,7 @@ export const EditStudentProfile = () => {
         </>
       ) : (
         <Tabs
-          color="yellow"
+          color="#ff8400"
           defaultValue="about"
           classNames={{
             root: styles.root,
