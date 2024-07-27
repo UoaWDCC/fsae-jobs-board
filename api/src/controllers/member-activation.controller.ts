@@ -16,15 +16,44 @@ import {
   del,
   requestBody,
   response,
+  HttpErrors,
 } from '@loopback/rest';
 import {FsaeUser} from '../models';
-import {FsaeUserRepository} from '../repositories';
+import {FsaeUserRepository, AdminRepository, AlumniRepository, MemberRepository, SponsorRepository} from '../repositories';
+
+// Import authentication and authorization modules
+import {authenticate} from '@loopback/authentication';
+import {authorize} from '../auth/authorization/FsaeAuthorizationProvider';
+import {inject} from '@loopback/core';
+import {JwtService, PasswordHasherService} from '../services';
 
 export class MemberActivationController {
   constructor(
-    @repository(FsaeUserRepository)
-    public fsaeUserRepository : FsaeUserRepository,
+    @repository(FsaeUserRepository) public fsaeUserRepository: FsaeUserRepository,
+    @repository(AdminRepository) private adminRepository: AdminRepository,
+    @repository(AlumniRepository) private alumniRepository: AlumniRepository,
+    @repository(MemberRepository) private memberRepository: MemberRepository,
+    @repository(SponsorRepository) private sponsorRepository: SponsorRepository,
+    @inject('services.jwtservice') private jwtService: JwtService,
+    @inject('services.passwordhasher') private passwordHasher: PasswordHasherService,
   ) {}
+
+  // Check if a user is active
+  @get('/fsae-users/{id}/activated')
+  @authenticate('jwt')
+  @authorize({
+    allowedRoles: ['ADMIN', 'SPONSOR', 'ALUMNI'], 
+  })
+  @response(200, {
+    description: 'Check if user is activated',
+    content: {'application/json': {schema: {type: 'boolean'}}},
+  })
+  async isActivated(@param.path.number('id') id: number): Promise<boolean> {
+    const user = await this.fsaeUserRepository.findById(id);
+    if (!user) {
+      throw new HttpErrors.NotFound(`User with id ${id} not found.`);
+    }
+    return user.activated;
 
   @post('/fsae-users')
   @response(200, {
