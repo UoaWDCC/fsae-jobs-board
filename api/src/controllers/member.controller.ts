@@ -168,4 +168,30 @@ export class MemberController {
     }
     return member.activated;
   }
+
+  // Method to activate a member
+  @patch('/members/{id}/activate')
+  @authenticate('jwt')
+  @authorize({
+    allowedRoles: ['ADMIN'],
+  })
+  @response(204, {
+    description: 'Activate member',
+  })
+  async activate(@param.path.number('id') id: number): Promise<void> {
+    await this.memberRepository.updateById(id, { activated: true });
+  }
+
+  // Method to deactivate a member
+  @patch('/members/{id}/deactivate')
+  @authenticate('jwt')
+  @authorize({
+    allowedRoles: ['ADMIN'],
+  })
+  @response(204, {
+    description: 'Deactivate member',
+  })
+  async deactivate(@param.path.number('id') id: number): Promise<void> {
+    await this.memberRepository.updateById(id, { activated: false });
+  }
 }
