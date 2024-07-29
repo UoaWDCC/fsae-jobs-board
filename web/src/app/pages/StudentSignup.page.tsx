@@ -1,13 +1,14 @@
 import SignupForm from '../components/AuthForms/SignupForm';
 import { Role } from '../type/role';
 import classes from '../styles/LoginPage.module.css';
+import { Box } from '@mantine/core';
 
 export function StudentSignUp() {
   return (
     <>
-      <div className={classes.wrapper}>
+      <Box className={classes.wrapper}>
         <SignupForm role={Role.Student} />
-      </div>
+      </Box>
     </>
   );
 }
