@@ -12,10 +12,10 @@ import {
 } from '@mantine/core';
 import classes from '../styles/SponsorProfile.module.css';
 import { useEffect, useState } from 'react';
-
-import { IconCertificate } from '@tabler/icons-react';
+import { IconPlus } from '@tabler/icons-react';
 import { JobCarousel, JobCarouselProps } from '../components/JobCardCarousel/JobCarousel';
 import { JobCardProps } from '../components/JobCardCarousel/JobCard';
+import { UserType } from '../features/user/userSlice';
 
 export function SponsorProfile() {
   // UseState for future modal implementation
@@ -23,6 +23,12 @@ export function SponsorProfile() {
   const [modalType, setModalType] = useState('');
   const [openProfileModal, setOpenProfileModal] = useState(false);
   const [showMoreDescription, setShowMoreDescription] = useState(false);
+  // const userType = useSelector((state: RootState) => state.user.userType);
+  const [userType, setUserType] = useState<UserType>('sponsor');
+
+  console.log(
+    'Change this SponsorPage component to use real userType from Redux store once user integration is implemented'
+  );
 
   const handleAvatarChange = () => {
     setModalType('avatar');
@@ -37,6 +43,16 @@ export function SponsorProfile() {
   const handleProfileChange = () => {
     setModalType('profile');
     setOpenProfileModal(true);
+  };
+
+  const handleJobOpportunitiesChange = () => {
+    setModalType('jobOpportunities');
+    setOpenModal(true);
+  };
+
+  const handleDeactivateUserChange = () => {
+    setModalType('deactivateUser');
+    setOpenModal(true);
   };
 
   // Dummy data for company userData
@@ -92,6 +108,84 @@ export function SponsorProfile() {
     // Logic to fetch data and setUserData
   }, []);
 
+  // methods to get elements based on user type
+  const getElementBasedOnUserType = (element: string) => {
+    switch (userType) {
+      case 'sponsor':
+        return getSponsorElements(element);
+      case 'student':
+        return getStudentElements(element);
+      case 'alumni':
+        return getAlumniElements(element);
+      case 'admin':
+        return getAdminElements(element);
+    }
+  };
+
+  const getSponsorElements = (element: string) => {
+    switch (element) {
+      case 'profileBtn':
+        return (
+          <Button
+            onClick={handleProfileChange}
+            classNames={{
+              root: classes.button_root,
+            }}
+          >
+            Edit Profile
+          </Button>
+        );
+      case 'addNewBtn':
+        return (
+          <Button
+            onClick={handleJobOpportunitiesChange}
+            leftSection={<IconPlus stroke={3} size={'1rem'} />}
+            classNames={{
+              root: classes.button_root,
+            }}
+          >
+            Add New
+          </Button>
+        );
+    }
+  };
+
+  const getStudentElements = (element: string) => {
+    switch (element) {
+      case 'profileBtn':
+        return null;
+      case 'addNewBtn':
+        return null;
+    }
+  };
+
+  const getAlumniElements = (element: string) => {
+    switch (element) {
+      case 'profileBtn':
+        return null;
+      case 'addNewBtn':
+        return null;
+    }
+  };
+
+  const getAdminElements = (element: string) => {
+    switch (element) {
+      case 'profileBtn':
+        return (
+          <Button
+            onClick={handleDeactivateUserChange}
+            classNames={{
+              root: classes.button_admin_root,
+            }}
+          >
+            Deactivate User
+          </Button>
+        );
+      case 'addNewBtn':
+        return null;
+    }
+  };
+
   return (
     <Box className={classes.container}>
       {/* PICTURE AND COMPANY DETAILS */}
@@ -120,6 +214,10 @@ export function SponsorProfile() {
           {userData.companyField}
         </Text>
       </Card>
+
+      <Flex style={{ display: 'flex', justifyContent: 'flex-end', marginRight: '20px' }}>
+        {getElementBasedOnUserType('profileBtn')}
+      </Flex>
 
       <Grid>
         <Grid.Col span={{ md: 3, xs: 12 }}>
@@ -178,9 +276,13 @@ export function SponsorProfile() {
           >
             {/* JOB OPPORTUNITIES CAROUSEL */}
             <Box>
-              <Title order={6}>Job Opportunities</Title>
+              <Flex
+                style={{ display: 'flex', justifyContent: 'space-between', marginRight: '20px' }}
+              >
+                <Title order={6}>Job Opportunities</Title>
+                {getElementBasedOnUserType('addNewBtn')}
+              </Flex>
               <Flex mt={10} justify={'center'} align={'center'}>
-                {/* Add JobCarousel component here */}
                 <JobCarousel jobs={jobData} />
               </Flex>
             </Box>
