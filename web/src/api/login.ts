@@ -5,8 +5,11 @@ export async function login(email: string, password: string) {
   try {
     const res = await apiInstance.get(`user/${email}/role`)
     userRole = res.data
+
+    if (userRole == null) {
+      throw Error("Invalid credentials");
+    }
   } catch (e) {
-    console.log(e)
     throw Error("Invalid credentials")
   }
 
@@ -29,10 +32,14 @@ export async function login(email: string, password: string) {
       "email": email,
       "password": password
     })
-    const {userId, token} = res.data; // Todo: Set userId in localStorage or Redux store?
+    const {userId, token} = res.data;
     localStorage.setItem('accessToken', token)
+    console.log(`Successfully logged in as UserID ${userId}`)
   } catch (e) {
-    console.log(e)
     throw Error("Invalid credentials")
   }
+}
+
+export async function logout() {
+  localStorage.removeItem('accessToken')
 }
