@@ -2,7 +2,7 @@ import {apiInstance} from "@/api/ApiInstance";
 import {UserState} from "@/app/features/user/userSlice";
 import {stringToRole} from "@/app/type/role";
 
-interface createFSAEUserDto {
+export interface createFSAEUserDto {
   email: string;
   username: string;
   password: string;
@@ -30,7 +30,7 @@ export async function register_sponsor(createUserDto: createFSAEUserDto): Promis
 
 async function register(url: string, createUserDto: createFSAEUserDto): Promise<UserState> {
   try {
-    const res = await apiInstance.post('register-admin', createUserDto)
+    const res = await apiInstance.post(url, createUserDto)
     return {
       id: res.data.id,
       email: res.data.email,
