@@ -3,7 +3,6 @@ import classes from './authform.module.css';
 import { NavLink } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { setUserType } from '../../features/user/userSlice';
 import { toast } from 'react-toastify';
 import {login} from "@/api/login";
 import {useState} from "react";
