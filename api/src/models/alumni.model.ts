@@ -14,18 +14,6 @@ export class Alumni extends FsaeUser {
     type: 'string',
     required: true,
   })
-  firstName: string;
-
-  @property({
-    type: 'string',
-    required: true,
-  })
-  lastName: string;
-
-  @property({
-    type: 'string',
-    required: true,
-  })
   subGroup: string;
 
   @property({

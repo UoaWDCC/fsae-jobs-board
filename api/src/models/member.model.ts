@@ -11,18 +11,6 @@ export class Member extends FsaeUser {
   memberID?: number;
 
   @property({
-    type: 'number',
-    required: true,
-  })
-  firstName: string;
-
-  @property({
-    type: 'string',
-    required: true,
-  })
-  lastName: string;
-
-  @property({
     type: 'string',
     required: true,
   })
