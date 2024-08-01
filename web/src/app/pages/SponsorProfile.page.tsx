@@ -1,19 +1,8 @@
-import {
-  Card,
-  Avatar,
-  Text,
-  Box,
-  Title,
-  Button,
-  Grid,
-  ActionIcon,
-  Flex,
-  Loader,
-} from '@mantine/core';
+import { Card, Avatar, Text, Box, Title, Button, Grid, Flex, Loader } from '@mantine/core';
 import classes from '../styles/SponsorProfile.module.css';
 import { useEffect, useState } from 'react';
 import { IconPlus } from '@tabler/icons-react';
-import { JobCarousel, JobCarouselProps } from '../components/JobCardCarousel/JobCarousel';
+import { JobCarousel } from '../components/JobCardCarousel/JobCarousel';
 import { JobCardProps } from '../components/JobCardCarousel/JobCard';
 import { UserType } from '../features/user/userSlice';
 

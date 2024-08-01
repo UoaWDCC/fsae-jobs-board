@@ -1,20 +1,6 @@
-import {
-  Card,
-  ActionIcon,
-  Text,
-  Badge,
-  Button,
-  Group,
-  Paper,
-  Box,
-  Flex,
-  Stack,
-  rem,
-} from '@mantine/core';
+import { ActionIcon, Text, Button, Paper, Flex, Stack } from '@mantine/core';
 import classes from './JobCard.module.css';
-import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/app/store';
+import { useState } from 'react';
 import { UserType } from '@/app/features/user/userSlice';
 import { IconTrash } from '@tabler/icons-react';
 // dummy data -- change later when we have real data
@@ -36,6 +22,14 @@ export function JobCard({ data }: { data: JobCardProps }) {
 
   const handleDeleteJob = () => {
     console.log('Delete job with ID: ', data.jobID);
+  };
+
+  const handleEditJob = () => {
+    console.log('Edit job with ID: ', data.jobID);
+  };
+
+  const handleViewJob = () => {
+    console.log('View job with ID: ', data.jobID);
   };
 
   // methods to get elements based on user type
@@ -60,8 +54,19 @@ export function JobCard({ data }: { data: JobCardProps }) {
             <IconTrash />
           </ActionIcon>
         );
-      case 'btnText':
-        return 'Edit Job';
+      case 'jobBtn':
+        return (
+          <Button
+            color="blue"
+            mt="xs"
+            mr="md"
+            radius="lg"
+            size="compact-md"
+            onClick={handleEditJob}
+          >
+            Edit Job
+          </Button>
+        );
     }
   };
 
@@ -69,8 +74,19 @@ export function JobCard({ data }: { data: JobCardProps }) {
     switch (element) {
       case 'deleteBtn':
         return null;
-      case 'btnText':
-        return 'View Job';
+      case 'jobBtn':
+        return (
+          <Button
+            color="blue"
+            mt="xs"
+            mr="md"
+            radius="lg"
+            size="compact-md"
+            onClick={handleViewJob}
+          >
+            View Job
+          </Button>
+        );
     }
   };
 
@@ -78,8 +94,19 @@ export function JobCard({ data }: { data: JobCardProps }) {
     switch (element) {
       case 'deleteBtn':
         return null;
-      case 'btnText':
-        return 'View Job';
+      case 'jobBtn':
+        return (
+          <Button
+            color="blue"
+            mt="xs"
+            mr="md"
+            radius="lg"
+            size="compact-md"
+            onClick={handleViewJob}
+          >
+            View Job
+          </Button>
+        );
     }
   };
 
@@ -107,18 +134,7 @@ export function JobCard({ data }: { data: JobCardProps }) {
         </Stack>
 
         <Flex justify="flex-end" mb="xs">
-          <Button
-            color="blue"
-            mt="xs"
-            mr="md"
-            radius="lg"
-            size="compact-md"
-            onClick={() => {
-              window.open(data.jobLink, '_blank');
-            }}
-          >
-            {getElementBasedOnUserType('btnText')}
-          </Button>
+          {getElementBasedOnUserType('jobBtn')}
         </Flex>
 
         {/* Job ID */}
