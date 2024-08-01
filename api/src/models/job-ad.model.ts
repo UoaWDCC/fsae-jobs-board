@@ -4,6 +4,13 @@ import {Entity, model, property} from '@loopback/repository';
 export class JobAd extends Entity {
   @property({
     type: 'string',
+    id: true,
+    generated: true,
+  })
+  id?: string;
+  
+  @property({
+    type: 'string',
     required: true,
   })
   title: string;
