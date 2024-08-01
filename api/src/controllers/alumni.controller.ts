@@ -19,7 +19,9 @@ import {
 } from '@loopback/rest';
 import {Alumni} from '../models';
 import {AlumniRepository} from '../repositories';
+import { authenticate } from '@loopback/authentication';
 
+@authenticate('fsae-jwt')
 export class AlumniController {
   constructor(
     @repository(AlumniRepository)

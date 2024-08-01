@@ -12,19 +12,19 @@ export class Member extends FsaeUser {
 
   @property({
     type: 'string',
-    required: true,
+    required: false,
   })
   cv: string;
 
   @property({
     type: 'string',
-    required: true,
+    required: false,
   })
   subGroup: string;
 
   @property({
     type: 'string',
-    required: true,
+    required: false,
   })
   photo: string;
 

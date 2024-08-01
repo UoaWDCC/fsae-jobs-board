@@ -19,7 +19,9 @@ import {
 } from '@loopback/rest';
 import {Member} from '../models';
 import {MemberRepository} from '../repositories';
+import { authenticate } from '@loopback/authentication';
 
+@authenticate('fsae-jwt')
 export class MemberController {
   constructor(
     @repository(MemberRepository)

@@ -12,13 +12,13 @@ export class Alumni extends FsaeUser {
 
   @property({
     type: 'string',
-    required: true,
+    required: false,
   })
   subGroup: string;
 
   @property({
     type: 'string',
-    required: true,
+    required: false,
   })
   company: string;
 

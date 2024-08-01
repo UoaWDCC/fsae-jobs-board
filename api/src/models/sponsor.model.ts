@@ -12,31 +12,31 @@ export class Sponsor extends FsaeUser {
 
   @property({
     type: 'string',
-    required: true,
+    required: false,
   })
   logo: string;
 
   @property({
     type: 'string',
-    required: true,
+    required: false,
   })
   websiteURL: string;
 
   @property({
     type: 'string',
-    required: true,
+    required: false,
   })
   tier: string;
 
   @property({
     type: 'string',
-    required: true,
+    required: false,
   })
   name: string;
 
   @property({
     type: 'string',
-    required: true,
+    required: false,
   })
   industry: string;
 

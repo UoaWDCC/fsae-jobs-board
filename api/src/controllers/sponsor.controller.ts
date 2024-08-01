@@ -19,7 +19,9 @@ import {
 } from '@loopback/rest';
 import {Sponsor} from '../models';
 import {SponsorRepository} from '../repositories';
+import { authenticate } from '@loopback/authentication';
 
+@authenticate('fsae-jwt')
 export class SponsorController {
   constructor(
     @repository(SponsorRepository)
