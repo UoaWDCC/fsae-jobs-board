@@ -17,9 +17,10 @@ import {
   requestBody,
   response,
 } from '@loopback/rest';
-import {Sponsor} from '../models';
+import {FsaeRole, Sponsor} from '../models';
 import {SponsorRepository} from '../repositories';
 import { authenticate } from '@loopback/authentication';
+import { authorize } from '@loopback/authorization';
 
 @authenticate('fsae-jwt')
 export class SponsorController {
@@ -28,6 +29,9 @@ export class SponsorController {
     public sponsorRepository : SponsorRepository,
   ) {}
 
+  @authorize({
+    allowedRoles: [FsaeRole.SPONSOR],
+  })
   @get('/user/sponsor/{id}')
   @response(200, {
     description: 'Sponsor model instance',
@@ -44,6 +48,9 @@ export class SponsorController {
     return this.sponsorRepository.findById(id, filter);
   }
 
+  @authorize({
+    allowedRoles: [FsaeRole.SPONSOR],
+  })
   @patch('/user/sponsor/{id}')
   @response(204, {
     description: 'Sponsor PATCH success',
@@ -62,6 +69,9 @@ export class SponsorController {
     await this.sponsorRepository.updateById(id, sponsor);
   }
 
+  @authorize({
+    allowedRoles: [FsaeRole.ADMIN],
+  })
   @del('/user/sponsor/{id}')
   @response(204, {
     description: 'Sponsor DELETE success',

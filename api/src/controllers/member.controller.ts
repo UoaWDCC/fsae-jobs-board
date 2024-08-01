@@ -17,9 +17,10 @@ import {
   requestBody,
   response,
 } from '@loopback/rest';
-import {Member} from '../models';
+import {FsaeRole, Member} from '../models';
 import {MemberRepository} from '../repositories';
 import { authenticate } from '@loopback/authentication';
+import { authorize } from '@loopback/authorization';
 
 @authenticate('fsae-jwt')
 export class MemberController {
@@ -28,6 +29,9 @@ export class MemberController {
     public memberRepository : MemberRepository,
   ) {}
 
+  @authorize({
+    allowedRoles: [FsaeRole.MEMBER],
+  })
   @get('/user/member/{id}')
   @response(200, {
     description: 'Member model instance',
@@ -44,6 +48,9 @@ export class MemberController {
     return this.memberRepository.findById(id, filter);
   }
 
+  @authorize({
+    allowedRoles: [FsaeRole.MEMBER],
+  })
   @patch('/user/member/{id}')
   @response(204, {
     description: 'Member PATCH success',
@@ -62,6 +69,9 @@ export class MemberController {
     await this.memberRepository.updateById(id, member);
   }
 
+  @authorize({
+    allowedRoles: [FsaeRole.ADMIN],
+  })
   @del('/user/member/{id}')
   @response(204, {
     description: 'Member DELETE success',

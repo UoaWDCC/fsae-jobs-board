@@ -17,9 +17,10 @@ import {
   requestBody,
   response,
 } from '@loopback/rest';
-import {Alumni} from '../models';
+import {Alumni, FsaeRole} from '../models';
 import {AlumniRepository} from '../repositories';
 import { authenticate } from '@loopback/authentication';
+import { authorize } from '@loopback/authorization';
 
 @authenticate('fsae-jwt')
 export class AlumniController {
@@ -28,6 +29,9 @@ export class AlumniController {
     public alumniRepository : AlumniRepository,
   ) {}
 
+  @authorize({
+    allowedRoles: [FsaeRole.ALUMNI],
+  })
   @get('/user/alumni/{id}')
   @response(200, {
     description: 'Alumni model instance',
@@ -44,6 +48,9 @@ export class AlumniController {
     return this.alumniRepository.findById(id, filter);
   }
 
+  @authorize({
+    allowedRoles: [FsaeRole.ALUMNI],
+  })
   @patch('/user/alumni/{id}')
   @response(204, {
     description: 'Alumni PATCH success',
@@ -62,6 +69,9 @@ export class AlumniController {
     await this.alumniRepository.updateById(id, alumni);
   }
 
+  @authorize({
+    allowedRoles: [FsaeRole.ADMIN],
+  })
   @del('/user/alumni/{id}')
   @response(204, {
     description: 'Alumni DELETE success',
