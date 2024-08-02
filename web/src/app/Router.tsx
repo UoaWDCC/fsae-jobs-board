@@ -57,6 +57,10 @@ const router = createBrowserRouter([
         path: 'alumni',
         element: <AlumniSignUp />,
       },
+      {
+        path: '*', // Catch-all for unmatched paths under /signup
+        element: <NotFound />,
+      },
     ],
   },
   {
@@ -98,6 +102,10 @@ const router = createBrowserRouter([
           <AdminDashboard />
           //  </ProtectedRoute>
         ),
+      },
+      {
+        path: '*', // Catch-all for unmatched paths under /profile
+        element: <NotFound />,
       },
     ],
   },
