@@ -1,6 +1,6 @@
 import React from 'react'
-import { Box, Avatar, Divider, Flex, ActionIcon, Text, Image } from '@mantine/core';
-import styles from '../../styles/Modal.module.css';
+import { Box, Divider, Flex, ActionIcon, Text, Image } from '@mantine/core';
+import styles from '../../componentStyles/Modal.module.css'
 import { IconPencil } from '@tabler/icons-react';
 import { IconCameraPlus } from '@tabler/icons-react';
 import { IconTrash } from '@tabler/icons-react';

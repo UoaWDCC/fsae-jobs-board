@@ -1,7 +1,7 @@
 import { Modal, Button, Box } from '@mantine/core';
 import { IconXboxX } from '@tabler/icons-react';
 import { ReactNode } from 'react';
-import styles from '../../styles/Modal.module.css';
+import styles from '../../componentStyles/Modal.module.css';
 
 type ModalProp = {
   opened: boolean;

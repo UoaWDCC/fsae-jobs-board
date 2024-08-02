@@ -3,7 +3,7 @@ import { AboutTab } from '../Tabs/AboutTab';
 import { EducationTab } from '../Tabs/EducationTab';
 import { SkillsTab } from '../Tabs/SkillsTab';
 import { CVTab } from '../Tabs/CVTab';
-import styles from '../../styles/Modal.module.css';
+import styles from '../../componentStyles/Modal.module.css';
 import { useMediaQuery } from '@mantine/hooks';
 import {useState} from 'react'
 

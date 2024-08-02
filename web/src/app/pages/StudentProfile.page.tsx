@@ -32,7 +32,7 @@ export function StudentProfile() {
 
   const handleAvatarChange = () => {
     setModalType('avatar');
-    setModalContent(<EditAvatar />);
+    setModalContent(<EditAvatar avatar={userData?.avatar}/>);
     setModalTitle("Profile Photo")
     setOpenProfileModal(true);
   };
@@ -70,6 +70,7 @@ export function StudentProfile() {
       'Major(s): Bachelor of Science',
       'Graduation Date: 2024',
     ],
+    avatar: "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png",
   });
   // Add code to fetch data from our database when it will be connected
 
@@ -93,7 +94,7 @@ export function StudentProfile() {
         )}
 
         <Avatar
-          src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png"
+          src={userData?.avatar}
           size={150}
           mt={-100}
           ml={10}
