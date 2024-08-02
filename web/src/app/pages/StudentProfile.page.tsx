@@ -39,7 +39,7 @@ export function StudentProfile() {
 
   const handleBannerChange = () => {
     setModalType('banner');
-    setModalContent(<EditBannerModal/>)
+    setModalContent(<EditBannerModal banner={userData?.banner}/>)
     setModalTitle('Banner Photo')
     setOpenProfileModal(true);
   };
@@ -47,6 +47,7 @@ export function StudentProfile() {
   const handleProfileChange = () => {
     setModalType('profile');
     setModalContent(<EditStudentProfile />)
+    setModalTitle('Edit Profile');
     setOpenProfileModal(true);
   };
 
@@ -70,7 +71,9 @@ export function StudentProfile() {
       'Major(s): Bachelor of Science',
       'Graduation Date: 2024',
     ],
-    avatar: "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png",
+    avatar:
+      'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png',
+    banner: 'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png',
   });
   // Add code to fetch data from our database when it will be connected
 
@@ -81,7 +84,7 @@ export function StudentProfile() {
   return (
     <Box className={classes.container}>
       <Card h={280} className={classes.card}>
-        <Card.Section h={250} className={classes.banner} onClick={handleBannerChange} />
+        <Card.Section h={250} className={classes.banner} onClick={handleBannerChange} style={{backgroundImage: `url(${userData.banner})`}}/>
         {userData?.firstName && (
           <Text className={classes.name} pl={170} pt={130}>
             {userData.firstName} {userData.lastName}

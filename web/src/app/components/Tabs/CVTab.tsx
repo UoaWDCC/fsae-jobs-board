@@ -2,7 +2,7 @@ import { Dropzone } from '@mantine/dropzone';
 import { IconUpload } from '@tabler/icons-react';
 import { Box, Text, Button, Group, Flex } from '@mantine/core';
 import { useRef } from 'react';
-import styles from "../../styles/Modal.module.css"
+import styles from "../../componentStyles/Modal.module.css"
 
 export const CVTab = () => {
   const openRef = useRef<() => void>(null);

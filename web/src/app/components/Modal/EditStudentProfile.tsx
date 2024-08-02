@@ -60,7 +60,7 @@ export const EditStudentProfile = () => {
           color="#ff8400"
           defaultValue="about"
           classNames={{
-            root: styles.root,
+            root: styles.tabRoot,
             list: styles.list,
             panel: styles.panel,
           }}

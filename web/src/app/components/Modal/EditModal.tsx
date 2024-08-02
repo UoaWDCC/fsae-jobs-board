@@ -15,7 +15,7 @@ export default function EditModal({ opened, close, content,title }: ModalProp) {
       opened={opened}
       onClose={close}
       closeButtonProps={{
-        icon: <IconXboxX size={20} stroke={1.5} color="#ffffff" />,
+        icon: <IconXboxX size={50} stroke={2} color="#ffffff" />,
       }}
       centered
       size="100%"
@@ -24,7 +24,7 @@ export default function EditModal({ opened, close, content,title }: ModalProp) {
         body: styles.body,
         title: styles.title
       }}
-      title={title}
+    title={title}  
     >
       {content}
     </Modal>

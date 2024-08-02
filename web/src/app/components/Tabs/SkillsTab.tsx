@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Button, Flex, TextInput } from '@mantine/core';
-import styles from '../../styles/Modal.module.css';
+import styles from '../../componentStyles/Modal.module.css';
 
 export const SkillsTab = () => {
   const [skills, setSkills] = useState([]);
