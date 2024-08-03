@@ -4,23 +4,20 @@ import {inject} from '@loopback/core';
 import {JwtService} from '../services';
 import {JobAd} from '../models';
 import {JobAdRepository} from '../repositories';
+import { authenticate } from '@loopback/authentication';
+import { authorize } from '@loopback/authorization';
+import {FsaeRole, Member, Alumni, Sponsor} from '../models';
 
+@authenticate('fsae-jwt')
 export class JobController {
   constructor(
     @repository(JobAdRepository) public jobAdRepository : JobAdRepository,
-    @inject('services.jwtService') protected jwtService: JwtService,
-    @inject(RestBindings.Http.REQUEST) private req: Request
   ) {}
 
-  private async authenticate() {
-    const token = this.req.headers.authorization?.replace('Bearer ', '');
-    if (!token) {
-      throw new Error('Authorization token not found');
-    }
-    const user = await this.jwtService.verifyToken(token);
-    return user;
-  }
 
+  @authorize({
+    allowedRoles: [FsaeRole.ALUMNI, FsaeRole.SPONSOR],
+  })
   @post('/job')
   @response(200, {
     description: 'Creating a new job ad',
@@ -39,10 +36,12 @@ export class JobController {
     })
     jobAd: Omit<JobAd, 'id'>,
   ): Promise<JobAd> {
-    await this.authenticate();
     return this.jobAdRepository.create(jobAd);
   }
 
+  @authorize({
+    allowedRoles: [FsaeRole.MEMBER],
+  })
   @get('/job')
   @response(200, {
     description: 'Fetching a list of all job postings',
@@ -58,7 +57,6 @@ export class JobController {
   async find(
     @param.filter(JobAd) filter?: Filter<JobAd>,
   ): Promise<JobAd[]> {
-    await this.authenticate();
     return this.jobAdRepository.find(filter);
   }
 
@@ -75,7 +73,6 @@ export class JobController {
     @param.path.string('id') id: string,
     @param.filter(JobAd, {exclude: 'where'}) filter?: FilterExcludingWhere<JobAd>
   ): Promise<JobAd> {
-    await this.authenticate();
     return this.jobAdRepository.findById(id, filter);
   }
 
@@ -94,11 +91,11 @@ export class JobController {
     })
     jobAd: JobAd,
   ): Promise<void> {
-    const user = await this.authenticate();
+    //const user = await this.authenticate();
     const existingjobAd = await this.jobAdRepository.findById(id);
-    if (existingjobAd.publisherID !== user.id) {
-      throw new Error('You are not authorized to update this job posting');
-    }
+    //if (existingjobAd.publisherID !== user.id) {
+      //throw new Error('You are not authorized to update this job posting');
+    //}
     await this.jobAdRepository.updateById(id, jobAd);
   }
 
@@ -107,11 +104,11 @@ export class JobController {
     description: 'Deleting job postings by ID',
   })
   async deleteById(@param.path.string('id') id: string): Promise<void> {
-    const user = await this.authenticate();
+    //const user = await this.authenticate();
     const existingJobAd = await this.jobAdRepository.findById(id);
-    if (existingJobAd.publisherID !== user.id) {
-      throw new Error('You are not authorized to delete this job posting');
-    }
+    //if (existingJobAd.publisherID !== user.id) {
+      //throw new Error('You are not authorized to delete this job posting');
+    //}
     await this.jobAdRepository.deleteById(id);
   }
 }
