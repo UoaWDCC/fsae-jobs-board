@@ -8,7 +8,7 @@ const JobSearch = () => {
       <div className={classes.spaceContainer}></div>
       <div className={classes.headingContainer}>
         <Title order={4}>FIND JOBS</Title>
-        <TextInput placeholder="Search jobs" rightSection={<IconSearch />} />
+        <TextInput placeholder="Search jobs" rightSection={<IconSearch />} size="md" />
       </div>
     </Flex>
   );
