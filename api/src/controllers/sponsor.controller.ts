@@ -168,30 +168,4 @@ export class SponsorController {
     }
     return sponsor.activated;
   }
-
-  // Method to activate a sponsor
-  @patch('/sponsors/{id}/activate')
-  @authenticate('jwt')
-  @authorize({
-    allowedRoles: ['ADMIN'],
-  })
-  @response(204, {
-    description: 'Activate sponsor',
-  })
-  async activate(@param.path.number('id') id: number): Promise<void> {
-    await this.sponsorRepository.updateById(id, { activated: true });
-  }
-
-  // Method to deactivate a sponsor
-  @patch('/sponsors/{id}/deactivate')
-  @authenticate('jwt')
-  @authorize({
-    allowedRoles: ['ADMIN'],
-  })
-  @response(204, {
-    description: 'Deactivate sponsor',
-  })
-  async deactivate(@param.path.number('id') id: number): Promise<void> {
-    await this.sponsorRepository.updateById(id, { activated: false });
-  }
 }
