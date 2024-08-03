@@ -16,23 +16,20 @@ import {
   del,
   requestBody,
   response,
-  HttpErrors,
 } from '@loopback/rest';
-import { Sponsor } from '../models';
-import { SponsorRepository } from '../repositories';
-import { authenticate } from '@loopback/authentication';
-import { authorize } from '@loopback/authorization';
+import {Sponsor} from '../models';
+import {SponsorRepository} from '../repositories';
 
 export class SponsorController {
   constructor(
     @repository(SponsorRepository)
-    public sponsorRepository: SponsorRepository,
-  ) { }
+    public sponsorRepository : SponsorRepository,
+  ) {}
 
   @post('/sponsors')
   @response(200, {
     description: 'Sponsor model instance',
-    content: { 'application/json': { schema: getModelSchemaRef(Sponsor) } },
+    content: {'application/json': {schema: getModelSchemaRef(Sponsor)}},
   })
   async create(
     @requestBody({
@@ -53,7 +50,7 @@ export class SponsorController {
   @get('/sponsors/count')
   @response(200, {
     description: 'Sponsor model count',
-    content: { 'application/json': { schema: CountSchema } },
+    content: {'application/json': {schema: CountSchema}},
   })
   async count(
     @param.where(Sponsor) where?: Where<Sponsor>,
@@ -68,7 +65,7 @@ export class SponsorController {
       'application/json': {
         schema: {
           type: 'array',
-          items: getModelSchemaRef(Sponsor, { includeRelations: true }),
+          items: getModelSchemaRef(Sponsor, {includeRelations: true}),
         },
       },
     },
@@ -82,13 +79,13 @@ export class SponsorController {
   @patch('/sponsors')
   @response(200, {
     description: 'Sponsor PATCH success count',
-    content: { 'application/json': { schema: CountSchema } },
+    content: {'application/json': {schema: CountSchema}},
   })
   async updateAll(
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(Sponsor, { partial: true }),
+          schema: getModelSchemaRef(Sponsor, {partial: true}),
         },
       },
     })
@@ -103,13 +100,13 @@ export class SponsorController {
     description: 'Sponsor model instance',
     content: {
       'application/json': {
-        schema: getModelSchemaRef(Sponsor, { includeRelations: true }),
+        schema: getModelSchemaRef(Sponsor, {includeRelations: true}),
       },
     },
   })
   async findById(
     @param.path.number('id') id: number,
-    @param.filter(Sponsor, { exclude: 'where' }) filter?: FilterExcludingWhere<Sponsor>
+    @param.filter(Sponsor, {exclude: 'where'}) filter?: FilterExcludingWhere<Sponsor>
   ): Promise<Sponsor> {
     return this.sponsorRepository.findById(id, filter);
   }
@@ -123,7 +120,7 @@ export class SponsorController {
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(Sponsor, { partial: true }),
+          schema: getModelSchemaRef(Sponsor, {partial: true}),
         },
       },
     })
@@ -149,23 +146,5 @@ export class SponsorController {
   })
   async deleteById(@param.path.number('id') id: number): Promise<void> {
     await this.sponsorRepository.deleteById(id);
-  }
-
-  // Method to check if a sponsor is activated
-  @get('/sponsors/{id}/is-activated')
-  @authenticate('jwt')
-  @authorize({
-    allowedRoles: ['ADMIN']
-  })
-  @response(200, {
-    description: 'Check if sponsor is activated',
-    content: { 'application/json': { schema: { type: 'boolean' } } },
-  })
-  async isActivated(@param.path.number('id') id: number): Promise<boolean> {
-    const sponsor = await this.sponsorRepository.findById(id);
-    if (!sponsor) {
-      throw new HttpErrors.NotFound(`Sponsor with id ${id} not found.`);
-    }
-    return sponsor.activated;
   }
 }
