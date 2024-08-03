@@ -3,7 +3,24 @@ import {FsaeUser} from './index';
 
 @model({settings: {strict: false}})
 export class Alumni extends FsaeUser {
-  // Define well-known properties here
+  @property({
+    type: 'number',
+    id: true,
+    generated: true,
+  })
+  alumniID?: number;
+
+  @property({
+    type: 'string',
+    required: false,
+  })
+  subGroup: string;
+
+  @property({
+    type: 'string',
+    required: false,
+  })
+  company: string;
 
   // Indexer property to allow additional data
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
