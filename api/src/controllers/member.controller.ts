@@ -16,23 +16,20 @@ import {
   del,
   requestBody,
   response,
-  HttpErrors,
 } from '@loopback/rest';
-import { Member } from '../models';
-import { MemberRepository } from '../repositories';
-import { authenticate } from '@loopback/authentication';
-import { authorize } from '@loopback/authorization';
+import {Member} from '../models';
+import {MemberRepository} from '../repositories';
 
 export class MemberController {
   constructor(
     @repository(MemberRepository)
-    public memberRepository: MemberRepository,
-  ) { }
+    public memberRepository : MemberRepository,
+  ) {}
 
   @post('/members')
   @response(200, {
     description: 'Member model instance',
-    content: { 'application/json': { schema: getModelSchemaRef(Member) } },
+    content: {'application/json': {schema: getModelSchemaRef(Member)}},
   })
   async create(
     @requestBody({
@@ -53,7 +50,7 @@ export class MemberController {
   @get('/members/count')
   @response(200, {
     description: 'Member model count',
-    content: { 'application/json': { schema: CountSchema } },
+    content: {'application/json': {schema: CountSchema}},
   })
   async count(
     @param.where(Member) where?: Where<Member>,
@@ -68,7 +65,7 @@ export class MemberController {
       'application/json': {
         schema: {
           type: 'array',
-          items: getModelSchemaRef(Member, { includeRelations: true }),
+          items: getModelSchemaRef(Member, {includeRelations: true}),
         },
       },
     },
@@ -82,13 +79,13 @@ export class MemberController {
   @patch('/members')
   @response(200, {
     description: 'Member PATCH success count',
-    content: { 'application/json': { schema: CountSchema } },
+    content: {'application/json': {schema: CountSchema}},
   })
   async updateAll(
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(Member, { partial: true }),
+          schema: getModelSchemaRef(Member, {partial: true}),
         },
       },
     })
@@ -103,13 +100,13 @@ export class MemberController {
     description: 'Member model instance',
     content: {
       'application/json': {
-        schema: getModelSchemaRef(Member, { includeRelations: true }),
+        schema: getModelSchemaRef(Member, {includeRelations: true}),
       },
     },
   })
   async findById(
     @param.path.number('id') id: number,
-    @param.filter(Member, { exclude: 'where' }) filter?: FilterExcludingWhere<Member>
+    @param.filter(Member, {exclude: 'where'}) filter?: FilterExcludingWhere<Member>
   ): Promise<Member> {
     return this.memberRepository.findById(id, filter);
   }
@@ -123,7 +120,7 @@ export class MemberController {
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(Member, { partial: true }),
+          schema: getModelSchemaRef(Member, {partial: true}),
         },
       },
     })
@@ -149,23 +146,5 @@ export class MemberController {
   })
   async deleteById(@param.path.number('id') id: number): Promise<void> {
     await this.memberRepository.deleteById(id);
-  }
-
-  // Method to check if a member is activated
-  @get('/members/{id}/is-activated')
-  @authenticate('jwt')
-  @authorize({
-    allowedRoles: ['ADMIN',]
-  })
-  @response(200, {
-    description: 'Check if member is activated',
-    content: { 'application/json': { schema: { type: 'boolean' } } },
-  })
-  async isActivated(@param.path.number('id') id: number): Promise<boolean> {
-    const member = await this.memberRepository.findById(id);
-    if (!member) {
-      throw new HttpErrors.NotFound(`Member with id ${id} not found.`);
-    }
-    return member.activated;
   }
 }
