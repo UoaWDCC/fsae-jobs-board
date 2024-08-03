@@ -16,135 +16,159 @@ import {
   del,
   requestBody,
   response,
+  HttpErrors,
 } from '@loopback/rest';
-import {FsaeUser} from '../models';
-import {AlumniRepository} from '../repositories';
+import { FsaeRole, FsaeUser } from '../models';
+import {
+  AlumniRepository,
+  SponsorRepository,
+  MemberRepository
+} from '../repositories';
+import { authenticate } from '@loopback/authentication';
+import { authorize } from '@loopback/authorization';
 
 export class MemberActivationController {
   constructor(
     @repository(AlumniRepository)
-    public alumniRepository : AlumniRepository,
-  ) {}
+    public alumniRepository: AlumniRepository,
 
-  @post('/member-activation')
-  @response(200, {
-    description: 'FsaeUser model instance',
-    content: {'application/json': {schema: getModelSchemaRef(FsaeUser)}},
+    @repository(SponsorRepository)
+    public sponsorRepository: SponsorRepository,
+
+    @repository(MemberRepository)
+    public memberRepository: MemberRepository,
+  ) { }
+
+  // Method to check if an alumni is activated
+  @get('/alumni/{id}/is-activated')
+  @authenticate('fsae-jwt')
+  @authorize({
+    allowedRoles: [FsaeRole.ADMIN],
   })
-  async create(
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(FsaeUser, {
-            title: 'NewFsaeUser',
-            exclude: ['id'],
-          }),
-        },
-      },
-    })
-    fsaeUser: Omit<FsaeUser, 'id'>,
-  ): Promise<FsaeUser> {
-    return this.alumniRepository.create(fsaeUser);
+  @response(200, {
+    description: 'Check if alumni is activated',
+    content: { 'application/json': { schema: { type: 'boolean' } } },
+  })
+  async isAlumniActivated(@param.path.number('id') id: string): Promise<boolean> {
+    const alumni = await this.alumniRepository.findById(id);
+    if (!alumni) {
+      throw new HttpErrors.NotFound(`Alumni with id ${id} not found.`);
+    }
+    return alumni.activated;
   }
 
-  @get('/member-activation/count')
-  @response(200, {
-    description: 'FsaeUser model count',
-    content: {'application/json': {schema: CountSchema}},
+  // Method to check if a sponsor is activated
+  @get('/sponsors/{id}/is-activated')
+  @authenticate('fsae-jwt')
+  @authorize({
+    allowedRoles: [FsaeRole.ADMIN],
   })
-  async count(
-    @param.where(FsaeUser) where?: Where<FsaeUser>,
-  ): Promise<Count> {
-    return this.alumniRepository.count(where);
+  @response(200, {
+    description: 'Check if sponsor is activated',
+    content: { 'application/json': { schema: { type: 'boolean' } } },
+  })
+  async isSponsorActivated(@param.path.number('id') id: string): Promise<boolean> {
+    const sponsor = await this.sponsorRepository.findById(id);
+    if (!sponsor) {
+      throw new HttpErrors.NotFound(`Sponsor with id ${id} not found.`);
+    }
+    return sponsor.activated;
   }
 
-  @get('/member-activation')
-  @response(200, {
-    description: 'Array of FsaeUser model instances',
-    content: {
-      'application/json': {
-        schema: {
-          type: 'array',
-          items: getModelSchemaRef(FsaeUser, {includeRelations: true}),
-        },
-      },
-    },
+
+  // Method to check if a member is activated
+  @get('/members/{id}/is-activated')
+  @authenticate('fsae-jwt')
+  @authorize({
+    allowedRoles: [FsaeRole.ADMIN],
   })
-  async find(
-    @param.filter(FsaeUser) filter?: Filter<FsaeUser>,
-  ): Promise<FsaeUser[]> {
-    return this.alumniRepository.find(filter);
+  @response(200, {
+    description: 'Check if member is activated',
+    content: { 'application/json': { schema: { type: 'boolean' } } },
+  })
+  async isMemberActivated(@param.path.number('id') id: string): Promise<boolean> {
+    const member = await this.memberRepository.findById(id);
+    if (!member) {
+      throw new HttpErrors.NotFound(`Member with id ${id} not found.`);
+    }
+    return member.activated;
   }
 
-  @patch('/member-activation')
-  @response(200, {
-    description: 'FsaeUser PATCH success count',
-    content: {'application/json': {schema: CountSchema}},
+  // Method to activate an alumni
+  @patch('/alumni/{id}/activate')
+  @authenticate('fsae-jwt')
+  @authorize({
+    allowedRoles: [FsaeRole.ADMIN],
   })
-  async updateAll(
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(FsaeUser, {partial: true}),
-        },
-      },
-    })
-    fsaeUser: FsaeUser,
-    @param.where(FsaeUser) where?: Where<FsaeUser>,
-  ): Promise<Count> {
-    return this.alumniRepository.updateAll(fsaeUser, where);
-  }
-
-  @get('/member-activation/{id}')
-  @response(200, {
-    description: 'FsaeUser model instance',
-    content: {
-      'application/json': {
-        schema: getModelSchemaRef(FsaeUser, {includeRelations: true}),
-      },
-    },
-  })
-  async findById(
-    @param.path.number('id') id: number,
-    @param.filter(FsaeUser, {exclude: 'where'}) filter?: FilterExcludingWhere<FsaeUser>
-  ): Promise<FsaeUser> {
-    return this.alumniRepository.findById(id, filter);
-  }
-
-  @patch('/member-activation/{id}')
   @response(204, {
-    description: 'FsaeUser PATCH success',
+    description: 'Activate alumni',
   })
-  async updateById(
-    @param.path.number('id') id: number,
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(FsaeUser, {partial: true}),
-        },
-      },
-    })
-    fsaeUser: FsaeUser,
-  ): Promise<void> {
-    await this.alumniRepository.updateById(id, fsaeUser);
+  async activateAlumni(@param.path.number('id') id: string): Promise<void> {
+    await this.alumniRepository.updateById(id, { activated: true });
   }
 
-  @put('/member-activation/{id}')
-  @response(204, {
-    description: 'FsaeUser PUT success',
+  // Method to deactivate an alumni
+  @patch('/alumni/{id}/deactivate')
+  @authenticate('fsae-jwt')
+  @authorize({
+    allowedRoles: [FsaeRole.ADMIN],
   })
-  async replaceById(
-    @param.path.number('id') id: number,
-    @requestBody() fsaeUser: FsaeUser,
-  ): Promise<void> {
-    await this.alumniRepository.replaceById(id, fsaeUser);
+  @response(204, {
+    description: 'Deactivate alumni',
+  })
+  async deactivateAlumni(@param.path.number('id') id: string): Promise<void> {
+    await this.alumniRepository.updateById(id, { activated: false });
   }
 
-  @del('/member-activation/{id}')
-  @response(204, {
-    description: 'FsaeUser DELETE success',
+  // Method to activate a sponsor
+  @patch('/sponsors/{id}/activate')
+  @authenticate('fsae-jwt')
+  @authorize({
+    allowedRoles: [FsaeRole.ADMIN],
   })
-  async deleteById(@param.path.number('id') id: number): Promise<void> {
-    await this.alumniRepository.deleteById(id);
+  @response(204, {
+    description: 'Activate sponsor',
+  })
+  async activateSponsor(@param.path.number('id') id: string): Promise<void> {
+    await this.sponsorRepository.updateById(id, { activated: true });
+  }
+
+  // Method to deactivate a sponsor
+  @patch('/sponsors/{id}/deactivate')
+  @authenticate('fsae-jwt')
+  @authorize({
+    allowedRoles: [FsaeRole.ADMIN],
+  })
+  @response(204, {
+    description: 'Deactivate sponsor',
+  })
+  async deactivateSponsor(@param.path.number('id') id: string): Promise<void> {
+    await this.sponsorRepository.updateById(id, { activated: false });
+  }
+
+  // Method to activate a member
+  @patch('/members/{id}/activate')
+  @authenticate('fsae-jwt')
+  @authorize({
+    allowedRoles: [FsaeRole.ADMIN],
+  })
+  @response(204, {
+    description: 'Activate member',
+  })
+  async activateMember(@param.path.number('id') id: string): Promise<void> {
+    await this.memberRepository.updateById(id, { activated: true });
+  }
+
+  // Method to deactivate a member
+  @patch('/members/{id}/deactivate')
+  @authenticate('fsae-jwt')
+  @authorize({
+    allowedRoles: [FsaeRole.ADMIN],
+  })
+  @response(204, {
+    description: 'Deactivate member',
+  })
+  async deactivateMember(@param.path.number('id') id: string): Promise<void> {
+    await this.memberRepository.updateById(id, { activated: false });
   }
 }
