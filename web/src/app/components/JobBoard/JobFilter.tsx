@@ -37,6 +37,7 @@ const JobFilter = () => {
               label={role.label}
               color="customAzureBlue.1"
               className={classes.checkbox}
+              size="md"
             />
           ))}
         </Checkbox.Group>
@@ -55,6 +56,7 @@ const JobFilter = () => {
               label={role.label}
               color="customAzureBlue.1"
               className={classes.checkbox}
+              size="md"
             />
           ))}
         </Checkbox.Group>

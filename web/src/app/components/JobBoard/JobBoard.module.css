@@ -29,11 +29,13 @@
 
 .filterHeading {
   color: white;
+  font-size: 1.4rem;
 }
 
 .filterSubheading {
   color: var(--mantine-color-customAzureBlue-1);
   font-weight: 700;
+  font-size: 1.2rem;
 }
 
 .checkbox {
