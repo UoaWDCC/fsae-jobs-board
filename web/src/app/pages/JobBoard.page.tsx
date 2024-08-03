@@ -1,21 +1,19 @@
-import { Group } from '@mantine/core';
+import { Divider, Flex, TextInput, Title } from '@mantine/core';
 import JobFilter from '../components/JobBoard/JobFilter';
 import JobListing from '../components/JobBoard/JobListing';
+import classes from '../styles/JobBoardPage.module.css';
+import { IconSearch } from '@tabler/icons-react';
+import JobSearch from '../components/JobBoard/JobSearch';
 
 export function JobBoard() {
   return (
-    <div
-      style={{
-        paddingTop: '3rem',
-        width: '100%',
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-      }}
-    >
-      <JobFilter />
-      <JobListing />
+    <div className={classes.jobBoardContainer}>
+      <JobSearch />
+      <div className={classes.jobBoardInnerContainer}>
+        <JobFilter />
+        <Divider orientation="vertical" />
+        <JobListing />
+      </div>
     </div>
   );
 }

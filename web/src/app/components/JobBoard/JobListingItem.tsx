@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import classes from './JobBoard.module.css';
+import { Text } from '@mantine/core';
 
 interface JobListingItemProps {
   title: string;
@@ -10,12 +11,14 @@ interface JobListingItemProps {
 const JobListingItem: FC<JobListingItemProps> = ({ title, company, location, description }) => {
   return (
     <div className={classes.listItemContainer}>
-      <p className={classes.listItemTitle}>{title}</p>
+      <Text className={classes.listItemTitle}>{title}</Text>
       <div className={classes.listItemCompanyContainer}>
-        <p className={classes.listItemCompanyName}>{company}</p>
+        <Text className={classes.listItemCompanyName}>{company}</Text>
       </div>
-      <p className={classes.listItemLocation}>{location}</p>
-      <p className={classes.listItemDescription}>{description}</p>
+      <Text className={classes.listItemLocation}>{location}</Text>
+      <Text className={classes.listItemDescription} lineClamp={3}>
+        {description}
+      </Text>
     </div>
   );
 };

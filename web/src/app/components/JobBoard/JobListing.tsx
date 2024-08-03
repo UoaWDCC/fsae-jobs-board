@@ -1,5 +1,4 @@
-import { Flex, Grid, Pagination, SimpleGrid, Stack, TextInput, Title } from '@mantine/core';
-import { IconSearch } from '@tabler/icons-react';
+import { Pagination, SimpleGrid, Stack } from '@mantine/core';
 import classes from './JobBoard.module.css';
 import JobListingItem from './JobListingItem';
 import { useState } from 'react';
@@ -60,14 +59,17 @@ const JobListing = () => {
   ));
   return (
     <Stack className={classes.listingContainer}>
-      <Flex justify="center" align="center" gap="md" mt="md" mr="md">
-        <Title order={3}>FIND JOBS</Title>
-        <TextInput placeholder="Search jobs" rightSection={<IconSearch />} />
-      </Flex>
-      <SimpleGrid style={{ width: '100%' }} cols={2}>
+      <SimpleGrid className={classes.listingInnerContainer} cols={2} spacing="xl">
         {jobListingItems}
       </SimpleGrid>
-      <Pagination total={Math.ceil(jobListings.length / 4)} value={activePage} onChange={setPage} />
+      <div className={classes.paginationContainer}>
+        <Pagination
+          total={Math.ceil(jobListings.length / 4)}
+          value={activePage}
+          onChange={setPage}
+          classNames={{ root: classes.pagination }}
+        />
+      </div>
     </Stack>
   );
 };
