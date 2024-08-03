@@ -67,6 +67,7 @@ const JobListing = () => {
           total={Math.ceil(jobListings.length / 4)}
           value={activePage}
           onChange={setPage}
+          size="lg"
           classNames={{ root: classes.pagination }}
         />
       </div>
