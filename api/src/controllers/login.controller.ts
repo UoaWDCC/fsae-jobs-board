@@ -166,7 +166,7 @@ export class LoginController {
   })
   whoAmI(): object {
     throw Error("todo")
-    // Todo:
+    // Todo: Requires usage of UserRepo which is on another ticket.
     // // Reply with a greeting, the current time, the url, and request headers
     // return {
     //   greeting: 'This endpoint allows non activated accounts. ',
