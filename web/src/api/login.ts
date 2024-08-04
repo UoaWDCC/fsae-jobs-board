@@ -35,6 +35,8 @@ export async function login(email: string, password: string) {
     const {userId, token} = res.data;
     localStorage.setItem('accessToken', token)
     console.log(`Successfully logged in as UserID ${userId}`)
+
+    // Todo: After successful login. Create endpoint to get whoami() and link that to redux state.
   } catch (e) {
     throw Error("Invalid credentials")
   }

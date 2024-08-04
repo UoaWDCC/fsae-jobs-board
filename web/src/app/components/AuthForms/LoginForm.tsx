@@ -31,6 +31,7 @@ export function LoginForm() {
     await login(email, password)
       .then((response) => {
         toast.success('Login Successful');
+        // Todo: Do something afterwards.
         // handleLoginAs(response.data.userType);
       }).catch((error) => {
         console.log(error)

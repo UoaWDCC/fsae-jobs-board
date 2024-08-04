@@ -117,10 +117,8 @@ const SignupForm = ({ role }: { role: Role }) => {
     event.preventDefault();
     const formData = new FormData(event.target as HTMLFormElement);
     const data = Object.fromEntries(formData.entries());
-    console.log(data);
 
-
-
+    // Todo: Redirect or do something after successful registration
     if (role === Role.Student) {
       register_member(data as createFSAEUserDto).then((response) => {
         toast.success('Student Registration Successful');
@@ -142,8 +140,6 @@ const SignupForm = ({ role }: { role: Role }) => {
     } else {
       toast.error('Registering Unknown Role');
     }
-
-    // Add form submission logic here
   };
 
   return (
