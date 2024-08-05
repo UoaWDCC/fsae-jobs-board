@@ -1,13 +1,14 @@
-import React from 'react';
-import { Box, Avatar, Divider, Flex, ActionIcon, Text, FileButton, Button } from '@mantine/core';
-import styles from '../../componentStyles/Modal.module.css';
-import { IconPencil } from '@tabler/icons-react';
+import { Box, Avatar, Divider, Flex, ActionIcon, Text, FileButton } from '@mantine/core';
+import styles from './Modal.module.css';
 import { IconCameraPlus } from '@tabler/icons-react';
 import { IconTrash } from '@tabler/icons-react';
-import { Dropzone } from '@mantine/dropzone';
 import { useState } from 'react';
 
-export const EditAvatar = ({ avatar }) => {
+interface EditAvatarProps {
+  avatar: string;
+}
+
+export const EditAvatar = ({ avatar }: EditAvatarProps) => {
   const [file, setFile] = useState<File | null>(null);
 
   return (

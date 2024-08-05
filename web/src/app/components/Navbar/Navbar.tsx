@@ -103,7 +103,7 @@ function Navbar() {
 
         <Flex justify="center" align="center" style={{ flex: 1 }}>
           {!isMobile && userType && isUserType(userType) && (
-            <Group gap="xl">
+            <Group gap={100}>
               {navLinks[userType].map((link) => (
                 <NavLink
                   key={link.path}

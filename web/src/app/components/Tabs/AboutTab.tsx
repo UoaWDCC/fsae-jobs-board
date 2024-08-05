@@ -1,5 +1,5 @@
-import { Tabs, Box, TextInput, Textarea } from '@mantine/core';
-import styles from '../../componentStyles/Modal.module.css'
+import { Box, TextInput, Textarea } from '@mantine/core';
+import styles from '../Modal/Modal.module.css';
 
 export const AboutTab = () => {
   return (

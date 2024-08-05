@@ -1,15 +1,16 @@
-import { Modal, Button, Box } from '@mantine/core';
+import { Modal, Box, Button } from '@mantine/core';
 import { IconXboxX } from '@tabler/icons-react';
 import { ReactNode } from 'react';
-import styles from '../../componentStyles/Modal.module.css';
+import styles from './Modal.module.css';
 
 type ModalProp = {
   opened: boolean;
   close: () => void;
   content: ReactNode;
+  title: string;
 };
 
-export default function EditModal({ opened, close, content,title }: ModalProp) {
+export default function EditModal({ opened, close, content, title }: ModalProp) {
   return (
     <Modal
       opened={opened}
@@ -22,11 +23,17 @@ export default function EditModal({ opened, close, content,title }: ModalProp) {
       classNames={{
         content: styles.content,
         body: styles.body,
-        title: styles.title
+        title: styles.title,
       }}
-    title={title}  
+      title={title}
     >
       {content}
+      <Box className={styles.buttonContainer}>
+        <Button className={styles.button1} onClick={close}>
+          Cancel
+        </Button>
+        <Button className={styles.button2}>Save</Button>
+      </Box>
     </Modal>
   );
 }

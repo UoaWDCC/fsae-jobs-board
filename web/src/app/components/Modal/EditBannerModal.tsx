@@ -1,12 +1,14 @@
-import React from 'react';
 import { Box, Divider, Flex, ActionIcon, Text, Image, FileButton } from '@mantine/core';
-import styles from '../../componentStyles/Modal.module.css';
+import styles from './Modal.module.css';
 import { IconPencil } from '@tabler/icons-react';
-import { IconCameraPlus } from '@tabler/icons-react';
 import { IconTrash } from '@tabler/icons-react';
 import { useState } from 'react';
 
-export const EditBannerModal = ({ banner }) => {
+interface EditBannerModalProps {
+  banner: string;
+}
+
+export const EditBannerModal = ({ banner }: EditBannerModalProps) => {
   const [file, setFile] = useState<File | null>(null);
   return (
     <Box>

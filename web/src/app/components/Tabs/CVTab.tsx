@@ -1,15 +1,17 @@
-import { Dropzone } from '@mantine/dropzone';
+import { Dropzone, FileWithPath } from '@mantine/dropzone';
 import { IconUpload } from '@tabler/icons-react';
 import { Box, Text, Button, Group, Flex } from '@mantine/core';
 import { useRef } from 'react';
-import styles from "../../componentStyles/Modal.module.css"
+import styles from "../Modal/Modal.module.css"
 
 export const CVTab = () => {
   const openRef = useRef<() => void>(null);
   return (
     <Box className={styles.dropContainer}>
       <Flex direction="column" align="center" justify="center" className={styles.dropWrapper}>
-        <Dropzone openRef={openRef} classNames={{ root: styles.dropRoot }}>
+        <Dropzone openRef={openRef} classNames={{ root: styles.dropRoot }} onDrop={function (files: FileWithPath[]): void {
+          throw new Error('Function not implemented.');
+        } }>
           <Flex justify="center" align="center" direction="column">
             <IconUpload stroke={2} className={styles.dropIcon} />
             <Text>Drop you file here</Text>

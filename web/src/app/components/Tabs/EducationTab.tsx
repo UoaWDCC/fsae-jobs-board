@@ -1,5 +1,5 @@
 import { Box, TextInput } from "@mantine/core";
-import styles from "../../componentStyles/Modal.module.css"
+import styles from "../Modal/Modal.module.css"
 
 export const EducationTab = () => {
   return (
