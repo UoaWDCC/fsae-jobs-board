@@ -23,7 +23,7 @@ export function JobCarousel(data: JobCarouselProps) {
       orientation="horizontal"
       withIndicators
       slideSize={{ base: '100%', sm: '50%', md: '33.333333%' }}
-      slideGap={{ base: 0, sm: 'md' }}
+      slideGap={{ base: 'xs', sm: 'md' }}
       controlsOffset="xs"
       nextControlIcon={<IconChevronRight style={{ width: rem(16), height: rem(16) }} />}
       previousControlIcon={<IconChevronLeft style={{ width: rem(16), height: rem(16) }} />}
