@@ -8,10 +8,11 @@ import { useState } from 'react';
 export function JobBoard() {
   const [filterRoles, setFilterRoles] = useState<string[]>([]);
   const [filterFields, setFilterFields] = useState<string[]>([]);
+  const [search, setSearch] = useState<string>('');
 
   return (
     <div className={classes.jobBoardContainer}>
-      <JobSearch />
+      <JobSearch search={search} setSearch={setSearch} />
       <div className={classes.jobBoardInnerContainer}>
         <JobFilter
           filterRoles={filterRoles}
