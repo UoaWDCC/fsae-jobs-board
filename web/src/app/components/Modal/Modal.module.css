@@ -21,6 +21,11 @@
   font-size: xx-large;
 }
 
+/* TABS */
+.tabLabel {
+  font-size: medium;
+}
+
 /* ABOUT/EDUCATION TAB */
 .list {
   display: flex;

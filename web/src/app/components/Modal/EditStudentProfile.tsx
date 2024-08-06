@@ -59,6 +59,7 @@ export const EditStudentProfile = () => {
             root: styles.tabRoot,
             list: styles.list,
             panel: styles.panel,
+            tabLabel: styles.tabLabel
           }}
         >
           <Tabs.List>
