@@ -1,16 +1,24 @@
-import { Divider, Flex, TextInput, Title } from '@mantine/core';
+import { Divider } from '@mantine/core';
 import JobFilter from '../components/JobBoard/JobFilter';
 import JobListing from '../components/JobBoard/JobListing';
 import classes from '../styles/JobBoardPage.module.css';
-import { IconSearch } from '@tabler/icons-react';
 import JobSearch from '../components/JobBoard/JobSearch';
+import { useState } from 'react';
 
 export function JobBoard() {
+  const [filterRoles, setFilterRoles] = useState<string[]>([]);
+  const [filterFields, setFilterFields] = useState<string[]>([]);
+
   return (
     <div className={classes.jobBoardContainer}>
       <JobSearch />
       <div className={classes.jobBoardInnerContainer}>
-        <JobFilter />
+        <JobFilter
+          filterRoles={filterRoles}
+          setFilterRoles={setFilterRoles}
+          filterFields={filterFields}
+          setFilterFields={setFilterFields}
+        />
         <Divider orientation="vertical" />
         <JobListing />
       </div>

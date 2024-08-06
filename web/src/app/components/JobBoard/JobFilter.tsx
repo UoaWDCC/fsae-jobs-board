@@ -1,10 +1,19 @@
 import { Checkbox, Stack } from '@mantine/core';
 import classes from './JobBoard.module.css';
-import { useState } from 'react';
-const JobFilter = () => {
-  const [filterRoles, setfilterRoles] = useState<string[]>([]);
-  const [filterFields, setfilterFields] = useState<string[]>([]);
+import { FC, useState } from 'react';
 
+interface JobFilterProps {
+  filterRoles: string[];
+  setFilterRoles: (filterRoles: string[]) => void;
+  filterFields: string[];
+  setFilterFields: (filterFields: string[]) => void;
+}
+const JobFilter: FC<JobFilterProps> = ({
+  filterRoles,
+  setFilterRoles,
+  filterFields,
+  setFilterFields,
+}) => {
   const roles = [
     { value: 'internship', label: 'Internship' },
     { value: 'graduate', label: 'Graduate Roles' },
@@ -26,7 +35,7 @@ const JobFilter = () => {
       <Stack>
         <Checkbox.Group
           value={filterRoles}
-          onChange={setfilterRoles}
+          onChange={setFilterRoles}
           label="Role Type"
           classNames={{ label: classes.filterSubheading }}
         >
@@ -45,7 +54,7 @@ const JobFilter = () => {
       <Stack>
         <Checkbox.Group
           value={filterFields}
-          onChange={setfilterFields}
+          onChange={setFilterFields}
           label="Fields"
           classNames={{ label: classes.filterSubheading }}
         >
