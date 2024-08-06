@@ -3,7 +3,42 @@ import {FsaeUser} from './fsae-user.model';
 
 @model({settings: {strict: false}})
 export class Sponsor extends FsaeUser {
-  // Define well-known properties here
+  @property({
+    type: 'number',
+    id: true,
+    generated: true,
+  })
+  sponsorID?: number;
+
+  @property({
+    type: 'string',
+    required: false,
+  })
+  logo: string;
+
+  @property({
+    type: 'string',
+    required: false,
+  })
+  websiteURL: string;
+
+  @property({
+    type: 'string',
+    required: false,
+  })
+  tier: string;
+
+  @property({
+    type: 'string',
+    required: false,
+  })
+  name: string;
+
+  @property({
+    type: 'string',
+    required: false,
+  })
+  industry: string;
 
   // Indexer property to allow additional data
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
