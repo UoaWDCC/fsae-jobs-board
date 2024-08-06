@@ -14,8 +14,7 @@ const JobSearch: FC<JobSearchProps> = ({ search, setSearch }) => {
   };
 
   return (
-    <Flex justify="space-between" align="center" gap="md" mt="md" mr="md">
-      <div className={classes.spaceContainer}></div>
+    <Flex justify="space-between" align="center" gap="md" mt="md" mr="md" style={{ width: '100%' }}>
       <div className={classes.headingContainer}>
         <Title order={4}>FIND JOBS</Title>
         <TextInput

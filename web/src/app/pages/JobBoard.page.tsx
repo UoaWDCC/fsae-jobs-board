@@ -8,21 +8,20 @@ import { useState } from 'react';
 export function JobBoard() {
   const [filterRoles, setFilterRoles] = useState<string[]>([]);
   const [filterFields, setFilterFields] = useState<string[]>([]);
-  const [search, setSearch] = useState<string>('');
 
   return (
     <div className={classes.jobBoardContainer}>
-      <JobSearch search={search} setSearch={setSearch} />
-      <div className={classes.jobBoardInnerContainer}>
+      <div className={classes.leftContainer}>
         <JobFilter
           filterRoles={filterRoles}
           setFilterRoles={setFilterRoles}
           filterFields={filterFields}
           setFilterFields={setFilterFields}
         />
-        <Divider orientation="vertical" />
-        <JobListing />
       </div>
+      <Divider orientation="vertical" />
+
+      <JobListing filterRoles={filterRoles} filterFields={filterFields} />
     </div>
   );
 }

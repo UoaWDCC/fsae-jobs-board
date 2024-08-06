@@ -1,16 +1,37 @@
-import { Pagination, SimpleGrid, Stack } from '@mantine/core';
+import { Grid, Pagination, SimpleGrid, Stack } from '@mantine/core';
 import classes from './JobBoard.module.css';
 import JobListingItem from './JobListingItem';
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { chunk } from 'lodash';
+import JobSearch from './JobSearch';
 
 interface JobListingProps {
-  filterRoles: string;
-  filterFields: string;
-  search: string;
+  filterRoles: string[];
+  filterFields: string[];
 }
-const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields, search }) => {
+const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
   const [activePage, setPage] = useState(1);
+  const [search, setSearch] = useState<string>('');
+
+  const [itemsPerPage, setItemsPerPage] = useState<number>(4);
+
+  const updateItemsPerPage = () => {
+    if (window.innerWidth > 1080) {
+      setItemsPerPage(6);
+    } else {
+      setItemsPerPage(4);
+    }
+  };
+
+  useEffect(() => {
+    updateItemsPerPage(); // Set initial value
+    window.addEventListener('resize', updateItemsPerPage);
+
+    // Cleanup listener on component unmount
+    return () => {
+      window.removeEventListener('resize', updateItemsPerPage);
+    };
+  }, []);
 
   // TODO: change this into actual data from backend, and apply filters & search
   const jobListings = [
@@ -52,7 +73,7 @@ const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields, search }) 
   ];
 
   // chunk all listings into four for per page display
-  const chunkedJobListings = chunk(jobListings, 4);
+  const chunkedJobListings = chunk(jobListings, itemsPerPage);
 
   const jobListingItems = chunkedJobListings[activePage - 1].map((jobListingItem) => (
     <JobListingItem
@@ -64,12 +85,11 @@ const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields, search }) 
   ));
   return (
     <Stack className={classes.listingContainer}>
-      <SimpleGrid className={classes.listingInnerContainer} cols={2} spacing="xl">
-        {jobListingItems}
-      </SimpleGrid>
+      <JobSearch search={search} setSearch={setSearch} />
+      <div className={classes.listingInnerContainer}>{jobListingItems}</div>
       <div className={classes.paginationContainer}>
         <Pagination
-          total={Math.ceil(jobListings.length / 4)}
+          total={Math.ceil(jobListings.length / itemsPerPage)}
           value={activePage}
           onChange={setPage}
           size="lg"

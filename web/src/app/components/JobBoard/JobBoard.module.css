@@ -2,6 +2,7 @@
   flex: 1;
   display: flex;
   max-width: 360px;
+  width: 100%;
   flex-direction: column;
 }
 
@@ -17,8 +18,23 @@
 .listingInnerContainer {
   min-height: 85%;
   width: 100%;
+  display: grid;
+  grid-template-columns: repeat(
+    2,
+    1fr
+  ); /* 2 columns, each taking up 1 fraction of available space */
+  grid-template-rows: repeat(2, 1fr); /* 2 rows, each taking up 1 fraction of available space */
+  gap: 1rem;
 }
 
+@media (min-width: 1080px) {
+  .listingInnerContainer {
+    grid-template-columns: repeat(
+      3,
+      1fr
+    ); /* 3 columns, each taking up 1 fraction of available space */
+  }
+}
 .paginationContainer {
   display: flex;
   width: 100%;
@@ -71,10 +87,6 @@
 
 .listItemDescription {
   font-size: 0.8rem;
-}
-
-.spaceContainer {
-  flex: 1;
 }
 
 .headingContainer {
