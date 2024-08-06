@@ -185,11 +185,6 @@ export function SponsorProfile() {
             {userData.companyName}
           </Text>
         )}
-        {userData?.subgroup && (
-          <Text className={classes.subgroup} pl={170} pt={185}>
-            {userData.subgroup}
-          </Text>
-        )}
 
         <Avatar
           src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png"
@@ -199,7 +194,7 @@ export function SponsorProfile() {
           className={classes.avatar}
           onClick={handleAvatarChange}
         />
-        <Text mt={-40} ml={170} className={classes.text}>
+        <Text size="lg" mt={-20} ml={170} className={classes.text}>
           {userData.companyField}
         </Text>
       </Card>
@@ -211,34 +206,35 @@ export function SponsorProfile() {
       <Grid>
         <Grid.Col span={{ md: 3, xs: 12 }}>
           {/* CONTACT */}
-          <Box ml={20} mt={20}>
-            <Title order={6}>Contact</Title>
+          <Box ml={20} mt={15}>
+            <Title order={5}>Contact</Title>
             <Box pl={15} mt={10} className={classes.box}>
-              {userData?.email && <Text>{userData.email}</Text>}
-              {userData?.phone && <Text>{userData.phone}</Text>}
+              {userData?.email && <Text size="lg">{userData.email}</Text>}
+              {userData?.phone && <Text size="lg">{userData.phone}</Text>}
               {!userData && <Loader color="blue" />}
             </Box>
           </Box>
         </Grid.Col>
 
         <Grid.Col span={{ md: 9, xs: 12 }}>
-          <Box mx={20} mt={20}>
+          <Box mx={20} mt={10}>
             {/* ABOUT ME SECTION */}
-            <Title order={6}>About Me</Title>
+            <Title order={5}>About Me</Title>
             <Box pl={15} mt={10} className={classes.box}>
               {/* Conditionally render the full description based on showMore state */}
               {userData?.description && (
                 <>
                   {showMoreDescription ? (
-                    <Text>{userData.description}</Text>
+                    <Text size="lg">{userData.description}</Text>
                   ) : (
                     <>
-                      <Text>{userData.description.substring(0, 1200)}</Text>
+                      <Text size="lg">{userData.description.substring(0, 1200)}</Text>
                     </>
                   )}
                   {userData.description?.length > 1200 ? (
                     <Button
                       variant="subtle"
+                      size="md"
                       pl={0}
                       pr={0}
                       pt={0}
@@ -268,10 +264,10 @@ export function SponsorProfile() {
               <Flex
                 style={{ display: 'flex', justifyContent: 'space-between', marginRight: '20px' }}
               >
-                <Title order={6}>Job Opportunities</Title>
+                <Title order={5}>Job Opportunities</Title>
                 {getElementBasedOnUserType('addNewBtn')}
               </Flex>
-              <Flex mt={10} justify={'center'} align={'center'}>
+              <Flex mt={15} justify={'center'} align={'center'}>
                 <JobCarousel jobs={jobData} />
               </Flex>
             </Box>
