@@ -6,18 +6,19 @@ export const AboutTab = () => {
     <Box>
       <Box className={styles.box}>
         <Box style={{ flex: 1 }} className={styles.input}>
-          <TextInput label="First Name" />
-          <TextInput label="Last Name" />
-          <TextInput label="Email" />
+          <TextInput label="First Name" size="md" />
+          <TextInput label="Last Name" size="md" />
+          <TextInput label="Email" size="md" />
         </Box>
         <Box style={{ flex: 1 }} className={styles.input}>
-          <TextInput label="Phone Number" />
-          <TextInput label="Subgroup" />
-          <TextInput label="Looking For" />
+          <TextInput label="Phone Number" size="md" />
+          <TextInput label="Subgroup" size="md" />
+          <TextInput label="Looking For" size="md" />
         </Box>
       </Box>
       <Textarea
         label="About Me"
+        size="md"
         classNames={{
           input: styles.area,
         }}

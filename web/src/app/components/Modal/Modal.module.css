@@ -8,6 +8,7 @@
     0px 4px 30px 3px #7c7c7c,
     0px 10px 15px -3px rgba(0, 0, 0, 0.1);
   overflow-y: auto;
+  padding-top: 1rem;
 }
 
 .body {
@@ -17,14 +18,15 @@
 }
 
 .title {
-  font-size: x-large;
+  font-size: xx-large;
 }
 
 /* ABOUT/EDUCATION TAB */
 .list {
   display: flex;
   justify-content: space-evenly;
-  gap: 10px
+  gap: 10px;
+  font-size: xx-large;
 }
 
 .box {
@@ -39,10 +41,10 @@
 
 .input > * {
   margin-bottom: 5%;
+  margin-right: 2rem;
 }
 
 .area {
-  /* max-height: 100vh; */
   height: 15vh;
   min-height: 0;
   flex: 1;
@@ -173,14 +175,14 @@
 }
 
 .mobileDrop {
-    display: none;
+  display: none;
 }
-
 
 /* mobile version for CV button */
 @media (max-width: 430px) {
   .dropIcon,
-  .dropRoot, .dropButton {
+  .dropRoot,
+  .dropButton {
     display: none;
   }
 
@@ -202,13 +204,13 @@
 
 /* Mobile Tab Dropdown */
 .selectWrapper {
-    width: 50%;
+  width: 50%;
 }
 
-.selectInput, .selectDropdown {
-    background-color: var(--mantine-color-customDarkWhite-1);
-    color: var(--mantine-color-background-1);
-    border-radius: 10px;
-    border: none;
+.selectInput,
+.selectDropdown {
+  background-color: var(--mantine-color-customDarkWhite-1);
+  color: var(--mantine-color-background-1);
+  border-radius: 10px;
+  border: none;
 }
-

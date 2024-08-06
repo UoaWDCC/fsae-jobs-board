@@ -37,7 +37,8 @@ export const SkillsTab: React.FC = () => {
           value={newSkill}
           onChange={(event) => setNewSkill(event.currentTarget.value)}
           placeholder="Add a skill"
-          label="Your favorite libraries"
+          label="Your Skills"
+          size="md"
           classNames={{ wrapper: styles.wrapper }}
         />
         <Button onClick={handleAddSkill} className={styles.addButton}>
