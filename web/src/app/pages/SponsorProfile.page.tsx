@@ -181,7 +181,7 @@ export function SponsorProfile() {
       <Card h={280} className={classes.card}>
         <Card.Section h={250} className={classes.banner} onClick={handleBannerChange} />
         {userData?.companyName && (
-          <Text className={classes.name} pl={170} pt={130}>
+          <Text className={classes.name} pl={170} pt={140}>
             {userData.companyName}
           </Text>
         )}
@@ -194,7 +194,7 @@ export function SponsorProfile() {
           className={classes.avatar}
           onClick={handleAvatarChange}
         />
-        <Text size="lg" mt={-20} ml={170} className={classes.text}>
+        <Text size="lg" mt={-30} ml={170} className={classes.text}>
           {userData.companyField}
         </Text>
       </Card>
