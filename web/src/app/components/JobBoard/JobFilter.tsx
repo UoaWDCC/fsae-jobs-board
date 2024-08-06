@@ -1,6 +1,6 @@
 import { Checkbox, Stack } from '@mantine/core';
 import classes from './JobBoard.module.css';
-import { FC, useState } from 'react';
+import { FC } from 'react';
 
 interface JobFilterProps {
   filterRoles: string[];

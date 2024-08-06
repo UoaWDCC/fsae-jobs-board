@@ -1,4 +1,4 @@
-import { Grid, Pagination, SimpleGrid, Stack } from '@mantine/core';
+import { Pagination, Stack } from '@mantine/core';
 import classes from './JobBoard.module.css';
 import JobListingItem from './JobListingItem';
 import { FC, useEffect, useState } from 'react';
@@ -73,6 +73,7 @@ const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
   ];
 
   // chunk all listings into four for per page display
+  // TODO: filter the jobListings before chunking
   const chunkedJobListings = chunk(jobListings, itemsPerPage);
 
   const jobListingItems = chunkedJobListings[activePage - 1].map((jobListingItem) => (
