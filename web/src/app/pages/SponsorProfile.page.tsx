@@ -264,7 +264,7 @@ export function SponsorProfile() {
             }}
           >
             {/* JOB OPPORTUNITIES CAROUSEL */}
-            <Box>
+            <Box miw="100%">
               <Flex
                 style={{ display: 'flex', justifyContent: 'space-between', marginRight: '20px' }}
               >
