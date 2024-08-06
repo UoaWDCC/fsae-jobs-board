@@ -1,13 +1,18 @@
 import { Pagination, SimpleGrid, Stack } from '@mantine/core';
 import classes from './JobBoard.module.css';
 import JobListingItem from './JobListingItem';
-import { useState } from 'react';
+import { FC, useState } from 'react';
 import { chunk } from 'lodash';
 
-const JobListing = () => {
+interface JobListingProps {
+  filterRoles: string;
+  filterFields: string;
+  search: string;
+}
+const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields, search }) => {
   const [activePage, setPage] = useState(1);
 
-  // TODO: change this into actual data from backend
+  // TODO: change this into actual data from backend, and apply filters & search
   const jobListings = [
     {
       title: 'Junior Software Developer',
