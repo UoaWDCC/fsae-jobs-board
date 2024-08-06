@@ -46,6 +46,9 @@
   background-color: var(--mantine-color-customCharcoalGrey-1);
   border-radius: 1rem;
   padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
 }
 
 .listItemTitle {
@@ -58,7 +61,6 @@
   width: fit-content;
   padding: 0.2rem 1rem;
   border-radius: 2rem;
-  margin-top: 1rem;
 }
 .listItemCompanyName {
   margin: 0;
