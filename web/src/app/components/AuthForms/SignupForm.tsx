@@ -12,8 +12,6 @@ import { FormEvent } from 'react';
 import classes from './authform.module.css';
 import { NavLink } from 'react-router-dom';
 import { Role } from '../../type/role';
-import {toast} from "react-toastify";
-import {createFSAEUserDto, register_alumni, register_member, register_sponsor} from "@/api/register";
 
 interface Field {
   label: string;
@@ -62,20 +60,6 @@ const FormComponent: React.FC<FormComponentProps> = ({ fields, onSubmit }) => (
         required
         classNames={{ label: classes.formLabel }}
       />
-      <TextInput
-        label="Username"
-        name="username"
-        size="md"
-        required
-        classNames={{ label: classes.formLabel }}
-      />
-      <TextInput
-        label="Phone Number"
-        name="phoneNumber"
-        size="md"
-        required
-        classNames={{ label: classes.formLabel }}
-      />
       <Flex justify="space-between">
         <PasswordInput
           label="Password"
@@ -117,29 +101,9 @@ const SignupForm = ({ role }: { role: Role }) => {
     event.preventDefault();
     const formData = new FormData(event.target as HTMLFormElement);
     const data = Object.fromEntries(formData.entries());
+    console.log(data);
 
-    // Todo: Redirect or do something after successful registration
-    if (role === Role.Student) {
-      register_member(data as createFSAEUserDto).then((response) => {
-        toast.success('Student Registration Successful');
-      }).catch((error) => {
-        toast.error(error.toString());
-      })
-    } else if (role === Role.Sponsor) {
-      register_sponsor(data as createFSAEUserDto).then((response) => {
-        toast.success('Sponsor Registration Successful');
-      }).catch((error) => {
-        toast.error(error.toString());
-      })
-    } else if (role === Role.Alumni) {
-      register_alumni(data as createFSAEUserDto).then((response) => {
-        toast.success('Alumni Registration Successful');
-      }).catch((error) => {
-        toast.error(error.toString());
-      })
-    } else {
-      toast.error('Registering Unknown Role');
-    }
+    // Add form submission logic here
   };
 
   return (

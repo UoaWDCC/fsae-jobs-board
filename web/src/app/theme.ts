@@ -1,4 +1,4 @@
-import { TextInput, Textarea, colorsTuple, createTheme, rem } from '@mantine/core';
+import { TextInput, Textarea, colorsTuple, createTheme, rem, Modal } from '@mantine/core';
 
 const customAzureBlue = colorsTuple('#0091ff');
 const customDarkBlue = colorsTuple('#00467f');
@@ -10,6 +10,9 @@ const customOrange = colorsTuple('#f55442');
 const background = colorsTuple('#000000');
 const customGrey = colorsTuple('#545454');
 const customWhite = colorsTuple('#ffffff');
+const customGreyWhite = colorsTuple('#D8D8D8');
+const customDarkGrey = colorsTuple('#8B8B8B');
+const customDarkWhite = colorsTuple('#D9D9D9');
 
 export const theme = createTheme({
   colors: {
@@ -23,6 +26,9 @@ export const theme = createTheme({
     background,
     customGrey,
     customWhite,
+    customGreyWhite,
+    customDarkGrey,
+    customDarkWhite,
   },
 
   fontFamily: 'Cerebri Sans, Calibri',
@@ -43,14 +49,25 @@ export const theme = createTheme({
     TextInput: TextInput.extend({
       styles: (theme) => ({
         input: {
-          backgroundColor: theme.colors.customWhite[0],
+          backgroundColor: theme.colors.customGreyWhite[0],
+          borderRadius: rem(10),
+          color: theme.colors.background[0],
         },
       }),
     }),
     Textarea: Textarea.extend({
       styles: (theme) => ({
         input: {
-          backgroundColor: theme.colors.customWhite[0],
+          backgroundColor: theme.colors.customGreyWhite[0],
+          borderRadius: rem(10),
+          color: theme.colors.background[0],
+        },
+      }),
+    }),
+    Modal: Modal.extend({
+      styles: (theme) => ({
+        modal: {
+          backgroundColor: theme.colors.customCharcoalGrey[0]
         },
       }),
     }),
