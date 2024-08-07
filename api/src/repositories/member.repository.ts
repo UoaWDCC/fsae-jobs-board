@@ -5,7 +5,7 @@ import {Member, MemberRelations} from '../models';
 
 export class MemberRepository extends DefaultCrudRepository<
   Member,
-  typeof Member.prototype.id,
+  typeof Member.prototype.memberID,
   MemberRelations
 > {
   constructor(

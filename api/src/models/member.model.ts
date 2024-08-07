@@ -3,7 +3,30 @@ import {FsaeUser} from './fsae-user.model';
 
 @model({settings: {strict: false}})
 export class Member extends FsaeUser {
-  // Define well-known properties here
+  @property({
+    type: 'number',
+    id: true,
+    generated: true,
+  })
+  memberID?: number;
+
+  @property({
+    type: 'string',
+    required: false,
+  })
+  cv: string;
+
+  @property({
+    type: 'string',
+    required: false,
+  })
+  subGroup: string;
+
+  @property({
+    type: 'string',
+    required: false,
+  })
+  photo: string;
 
   // Indexer property to allow additional data
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
