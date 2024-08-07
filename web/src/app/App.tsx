@@ -9,7 +9,7 @@ import '@mantine/carousel/styles.css';
 
 export default function App() {
   return (
-    <MantineProvider theme={theme}>
+    <MantineProvider theme={theme} defaultColorScheme="dark">
       <Router />
       <ToastContainer
         position="bottom-right"

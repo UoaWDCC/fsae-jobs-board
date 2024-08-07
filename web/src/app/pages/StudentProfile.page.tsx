@@ -12,27 +12,41 @@ import {
 } from '@mantine/core';
 import classes from '../styles/StudentProfile.module.css';
 import { useEffect, useState } from 'react';
-
 import { IconCertificate } from '@tabler/icons-react';
+import EditModal from '../components/Modal/EditModal';
+import { EditStudentProfile } from '../components/Modal/EditStudentProfile';
+import { EditAvatar } from '../components/Modal/EditAvatar';
+import { EditBannerModal } from '../components/Modal/EditBannerModal';
 
 export function StudentProfile() {
   // UseState for future modal implementation
-  const [openModal, setOpenModal] = useState(false);
   const [modalType, setModalType] = useState('');
   const [openProfileModal, setOpenProfileModal] = useState(false);
+  const [modalContent, setModalContent] = useState<React.ReactNode>(null);
+  const [modalTitle, setModalTitle] = useState('');
+
+  const [showMoreDescription, setShowMoreDescription] = useState(false);
+  const [showMoreSkills, setShowMoreSkills] = useState(false);
+  const [showMoreEducation, setShowMoreEducation] = useState(false);
 
   const handleAvatarChange = () => {
     setModalType('avatar');
-    setOpenModal(true);
+    setModalContent(<EditAvatar avatar={userData?.avatar} />);
+    setModalTitle('Profile Photo');
+    setOpenProfileModal(true);
   };
 
   const handleBannerChange = () => {
     setModalType('banner');
-    setOpenModal(true);
+    setModalContent(<EditBannerModal banner={userData?.banner} />);
+    setModalTitle('Banner Photo');
+    setOpenProfileModal(true);
   };
 
   const handleProfileChange = () => {
     setModalType('profile');
+    setModalContent(<EditStudentProfile />);
+    setModalTitle('Edit Profile');
     setOpenProfileModal(true);
   };
 
@@ -56,69 +70,86 @@ export function StudentProfile() {
       'Major(s): Bachelor of Science',
       'Graduation Date: 2024',
     ],
+    avatar:
+      'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png',
+    banner: 'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png',
   });
   // Add code to fetch data from our database when it will be connected
 
   useEffect(() => {
     // Logic to fetch data and setUserData
   }, []);
-  const [showMoreDescription, setShowMoreDescription] = useState(false);
-  const [showMoreSkills, setShowMoreSkills] = useState(false);
-  const [showMoreEducation, setShowMoreEducation] = useState(false);
+
   return (
     <Box className={classes.container}>
       <Card h={280} className={classes.card}>
-        <Card.Section h={250} className={classes.banner} onClick={handleBannerChange} />
+        <Card.Section
+          h={250}
+          className={classes.banner}
+          onClick={handleBannerChange}
+          style={{ backgroundImage: `url(${userData.banner})` }}
+        />
         {userData?.firstName && (
-          <Text className={classes.name} pl={170} pt={130}>
+          <Text className={classes.name} pl={170} pt={110}>
             {userData.firstName} {userData.lastName}
           </Text>
         )}
         {userData?.subgroup && (
-          <Text className={classes.subgroup} pl={170} pt={185}>
+          <Text size="xl" className={classes.subgroup} pl={170} pt={160}>
             {userData.subgroup} since {userData.dateJoined}
           </Text>
         )}
 
         <Avatar
-          src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png"
+          src={userData?.avatar}
           size={150}
           mt={-100}
           ml={10}
           className={classes.avatar}
           onClick={handleAvatarChange}
         />
-        <Text mt={-40} ml={170} className={classes.text}>
+        <Text size="xl" mt={-40} ml={170} pt={10} className={classes.text}>
           Looking for: {userData.jobType}
         </Text>
       </Card>
 
       <Flex style={{ display: 'flex', justifyContent: 'flex-end', marginRight: '20px' }}>
-        <Button onClick={handleProfileChange}>Edit Profile</Button>
+        <Button size="md" onClick={handleProfileChange}>
+          Edit Profile
+        </Button>
       </Flex>
 
       <Grid>
         <Grid.Col span={{ md: 3, xs: 12 }}>
           <Box ml={20} mt={20}>
-            <Title order={6}>Contact</Title>
+            <Title order={5}>Contact</Title>
             <Box pl={15} mt={10} className={classes.box}>
-              {userData?.email && <Text>{userData.email}</Text>}
-              {userData?.phone && <Text>{userData.phone}</Text>}
+              {userData?.email && <Text size="lg">{userData.email}</Text>}
+              {userData?.phone && <Text size="lg">{userData.phone}</Text>}
               {!userData && <Loader color="blue" />}
             </Box>
           </Box>
 
           <Box ml={20} mt={30}>
-            <Title order={6}>Skills</Title>
+            <Title order={5}>Skills</Title>
             <Box pl={15} mt={10} className={classes.box}>
               {userData?.skills && (
                 <>
                   {showMoreSkills
-                    ? userData.skills.map((skill) => <Text key={skill}>{skill}</Text>)
-                    : userData.skills.slice(0, 4).map((skill) => <Text key={skill}>{skill}</Text>)}
+                    ? userData.skills.map((skill) => (
+                        <Text size="md" key={skill}>
+                          {skill}
+                        </Text>
+                      ))
+                    : userData.skills.slice(0, 4).map((skill) => (
+                        <Text size="md" key={skill}>
+                          {skill}
+                        </Text>
+                      ))}
                   {userData.skills?.length > 5 && (
                     <Button
                       variant="subtle"
+                      size="sm"
                       pl={0}
                       pr={0}
                       pt={0}
@@ -137,20 +168,21 @@ export function StudentProfile() {
 
         <Grid.Col span={{ md: 9, xs: 12 }}>
           <Box mx={20} mt={20}>
-            <Title order={6}>About Me</Title>
+            <Title order={5}>About Me</Title>
             <Box pl={15} mt={10} className={classes.box}>
               {/* Conditionally render the full description based on showMore state */}
               {userData?.description && (
                 <>
                   {showMoreDescription ? (
-                    <Text>{userData.description}</Text>
+                    <Text size="md">{userData.description}</Text>
                   ) : (
                     <>
-                      <Text>{userData.description.substring(0, 1200)}</Text>
+                      <Text size="md">{userData.description.substring(0, 1200)}</Text>
                     </>
                   )}
                   {userData.description?.length > 1200 ? (
                     <Button
+                      size="sm"
                       variant="subtle"
                       pl={0}
                       pr={0}
@@ -173,21 +205,26 @@ export function StudentProfile() {
             style={{ justifyContent: 'space-between', alignItems: 'flex-start' }}
           >
             <Box>
-              <Title order={6}>Education</Title>
+              <Title order={5}>Education</Title>
 
               <Box pl={15} mt={10} className={classes.box}>
                 {userData?.education && (
                   <>
                     {showMoreEducation
                       ? userData.education.map((education) => (
-                          <Text key={education}>{education}</Text>
+                          <Text size="md" key={education}>
+                            {education}
+                          </Text>
                         ))
-                      : userData.education
-                          .slice(0, 4)
-                          .map((education) => <Text key={education}>{education}</Text>)}
+                      : userData.education.slice(0, 4).map((education) => (
+                          <Text size="md" key={education}>
+                            {education}
+                          </Text>
+                        ))}
                     {userData.education?.length > 4 && (
                       <Button
                         variant="subtle"
+                        size="sm"
                         pl={0}
                         pr={0}
                         pt={0}
@@ -209,6 +246,13 @@ export function StudentProfile() {
           </Box>
         </Grid.Col>
       </Grid>
+
+      <EditModal
+        opened={openProfileModal}
+        close={() => setOpenProfileModal(false)}
+        content={modalContent}
+        title={modalTitle}
+      ></EditModal>
     </Box>
   );
 }

@@ -204,12 +204,12 @@ export function SponsorProfile() {
       </Flex>
 
       <Grid>
-        <Grid.Col span={{ md: 3, xs: 12 }}>
+        <Grid.Col span={{ md: 2.5, xs: 12 }}>
           {/* CONTACT */}
           <Box ml={20} mt={15}>
             <Title order={5}>Contact</Title>
             <Box pl={15} mt={10} className={classes.box}>
-              {userData?.email && <Text size="lg">{userData.email}</Text>}
+              {userData?.email && <Text size="md">{userData.email}</Text>}
               {userData?.phone && <Text size="lg">{userData.phone}</Text>}
               {!userData && <Loader color="blue" />}
             </Box>
@@ -225,16 +225,16 @@ export function SponsorProfile() {
               {userData?.description && (
                 <>
                   {showMoreDescription ? (
-                    <Text size="lg">{userData.description}</Text>
+                    <Text size="md">{userData.description}</Text>
                   ) : (
                     <>
-                      <Text size="lg">{userData.description.substring(0, 1200)}</Text>
+                      <Text size="md">{userData.description.substring(0, 1200)}</Text>
                     </>
                   )}
                   {userData.description?.length > 1200 ? (
                     <Button
                       variant="subtle"
-                      size="md"
+                      size="sm"
                       pl={0}
                       pr={0}
                       pt={0}
