@@ -1,0 +1,98 @@
+.filterContainer {
+  flex: 1;
+  display: flex;
+  max-width: 360px;
+  width: 100%;
+  flex-direction: column;
+}
+
+.listingContainer {
+  flex: 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  max-width: 1200px;
+  height: 100%;
+}
+
+.listingInnerContainer {
+  min-height: 85%;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(
+    2,
+    1fr
+  ); /* 2 columns, each taking up 1 fraction of available space */
+  grid-template-rows: repeat(2, 1fr); /* 2 rows, each taking up 1 fraction of available space */
+  gap: 1rem;
+}
+
+@media (min-width: 1080px) {
+  .listingInnerContainer {
+    grid-template-columns: repeat(
+      3,
+      1fr
+    ); /* 3 columns, each taking up 1 fraction of available space */
+  }
+}
+.paginationContainer {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  justify-items: center;
+  align-items: center;
+}
+
+.filterHeading {
+  color: white;
+  font-size: 1.4rem;
+}
+
+.filterSubheading {
+  color: var(--mantine-color-customAzureBlue-1);
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.checkbox {
+  margin: 0.8em 0;
+}
+
+.listItemContainer {
+  background-color: var(--mantine-color-customCharcoalGrey-1);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.listItemTitle {
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+.listItemCompanyContainer {
+  background-color: var(--mantine-color-customAzureBlue-1);
+  width: fit-content;
+  padding: 0.2rem 1rem;
+  border-radius: 2rem;
+}
+.listItemCompanyName {
+  margin: 0;
+}
+.listItemLocation {
+  margin: 0.5rem 0;
+}
+
+.listItemDescription {
+  font-size: 0.8rem;
+}
+
+.headingContainer {
+  flex: 2;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
