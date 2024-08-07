@@ -28,7 +28,7 @@ export const theme = createTheme({
     customWhite,
     customGreyWhite,
     customDarkGrey,
-    customDarkWhite
+    customDarkWhite,
   },
 
   fontFamily: 'Cerebri Sans, Calibri',
@@ -61,6 +61,13 @@ export const theme = createTheme({
           backgroundColor: theme.colors.customGreyWhite[0],
           borderRadius: rem(10),
           color: theme.colors.background[0],
+        },
+      }),
+    }),
+    Modal: Modal.extend({
+      styles: (theme) => ({
+        modal: {
+          backgroundColor: theme.colors.customCharcoalGrey[0]
         },
       }),
     }),
