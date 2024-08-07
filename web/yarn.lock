@@ -9253,6 +9253,7 @@ __metadata:
     identity-obj-proxy: "npm:^3.0.0"
     jsdom: "npm:^24.0.0"
     jwt-decode: "npm:^4.0.0"
+    lodash: "npm:^4.17.21"
     postcss: "npm:^8.4.35"
     postcss-preset-mantine: "npm:1.17.0"
     postcss-simple-vars: "npm:^7.0.1"
