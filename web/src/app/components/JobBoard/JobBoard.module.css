@@ -89,6 +89,11 @@
   justify-content: space-between;
 }
 
+.filterButton {
+  text-decoration: underline;
+  font-size: 1.2rem;
+}
+
 /* larger screen */
 @media (min-width: 1080px) {
   .listingInnerContainer {

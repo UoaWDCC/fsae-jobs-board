@@ -12,6 +12,16 @@
   margin-top: 15vh;
 }
 
+.modal {
+  background-color: var(--mantine-color-customCharcoalGrey-1);
+  padding: 2rem;
+}
+
+.modalHeader {
+  background-color: var(--mantine-color-customCharcoalGrey-1);
+  padding: 0;
+}
+
 @media (max-width: 768px) {
   .jobBoardContainer {
     padding: 3rem;
