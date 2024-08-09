@@ -27,14 +27,6 @@
   gap: 1rem;
 }
 
-@media (min-width: 1080px) {
-  .listingInnerContainer {
-    grid-template-columns: repeat(
-      3,
-      1fr
-    ); /* 3 columns, each taking up 1 fraction of available space */
-  }
-}
 .paginationContainer {
   display: flex;
   width: 100%;
@@ -64,7 +56,7 @@
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  gap: 1rem;
 }
 
 .listItemTitle {
@@ -95,4 +87,29 @@
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+}
+
+/* larger screen */
+@media (min-width: 1080px) {
+  .listingInnerContainer {
+    grid-template-columns: repeat(
+      3,
+      1fr
+    ); /* 3 columns, each taking up 1 fraction of available space */
+  }
+}
+
+/* mobile view */
+@media (max-width: 768px) {
+  .headingContainer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .listingInnerContainer {
+    grid-template-columns: repeat(
+      1,
+      1fr
+    ); /* 3 columns, each taking up 1 fraction of available space */
+  }
 }

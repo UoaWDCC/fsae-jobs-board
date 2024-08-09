@@ -11,3 +11,10 @@
 .leftContainer {
   margin-top: 15vh;
 }
+
+@media (max-width: 768px) {
+  .jobBoardContainer {
+    padding: 3rem;
+    overflow-y: scroll;
+  }
+}
