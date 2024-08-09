@@ -1,9 +1,10 @@
-import { Pagination, Stack } from '@mantine/core';
+import { Modal, Pagination, Stack } from '@mantine/core';
 import classes from './JobBoard.module.css';
 import JobListingItem from './JobListingItem';
 import { FC, useEffect, useState } from 'react';
 import { chunk } from 'lodash';
 import JobSearch from './JobSearch';
+import { useDisclosure } from '@mantine/hooks';
 
 interface JobListingProps {
   filterRoles: string[];
@@ -14,8 +15,11 @@ const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
   const [search, setSearch] = useState<string>('');
 
   const [itemsPerPage, setItemsPerPage] = useState<number>(4);
+  const [isPortrait, setIsPortrait] = useState(window.innerHeight > window.innerWidth);
+  const [opened, { open, close }] = useDisclosure(false);
 
   const updateItemsPerPage = () => {
+    setIsPortrait(window.innerHeight > window.innerWidth);
     if (window.innerWidth > 1080) {
       setItemsPerPage(6);
     } else {
@@ -87,6 +91,7 @@ const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
   return (
     <Stack className={classes.listingContainer}>
       <JobSearch search={search} setSearch={setSearch} />
+      {isPortrait && <p onClick={open}>Filter</p>}
       <div className={classes.listingInnerContainer}>{jobListingItems}</div>
       <div className={classes.paginationContainer}>
         <Pagination
@@ -97,6 +102,9 @@ const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
           classNames={{ root: classes.pagination }}
         />
       </div>
+      <Modal opened={opened} onClose={close} title="Authentication" centered>
+        {/* Modal content */}
+      </Modal>
     </Stack>
   );
 };

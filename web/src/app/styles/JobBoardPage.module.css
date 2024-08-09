@@ -16,5 +16,6 @@
   .jobBoardContainer {
     padding: 3rem;
     overflow-y: scroll;
+    flex-direction: column;
   }
 }

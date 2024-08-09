@@ -24,9 +24,7 @@ export function JobBoard() {
 
   return (
     <div className={classes.jobBoardContainer}>
-      {isPortrait ? (
-        <></>
-      ) : (
+      {!isPortrait && (
         <div className={classes.leftContainer}>
           <JobFilter
             filterRoles={filterRoles}
