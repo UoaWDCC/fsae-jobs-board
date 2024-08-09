@@ -1,6 +1,7 @@
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
 import { HomePage } from './pages/Home.page';
 import { Login } from './pages/Login.page';
+import { Verify } from './pages/Verify.page';
 import { StudentProfile } from './pages/StudentProfile.page';
 import { SponsorProfile } from './pages/SponsorProfile.page';
 import { AlumniProfile } from './pages/AlumniProfile.page';
@@ -62,6 +63,12 @@ const router = createBrowserRouter([
         element: <NotFound />,
       },
     ],
+  },
+  {
+    path: '/verify',
+    element: (
+      <Verify />
+    ),
   },
   {
     path: '/profile',
