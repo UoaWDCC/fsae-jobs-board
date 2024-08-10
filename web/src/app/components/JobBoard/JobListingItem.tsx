@@ -1,25 +1,36 @@
 import { FC } from 'react';
-import classes from './JobBoard.module.css';
-import { Text } from '@mantine/core';
+import styles from './JobBoard.module.css';
+import { Flex, Container, Text, Image } from '@mantine/core';
 
 interface JobListingItemProps {
   title: string;
   company: string;
+  logo: string;
   location: string;
   description: string;
 }
-const JobListingItem: FC<JobListingItemProps> = ({ title, company, location, description }) => {
+const JobListingItem: FC<JobListingItemProps> = ({
+  title,
+  company,
+  location,
+  description,
+  logo,
+}) => {
   return (
-    <div className={classes.listItemContainer}>
-      <Text className={classes.listItemTitle}>{title}</Text>
-      <div className={classes.listItemCompanyContainer}>
-        <Text className={classes.listItemCompanyName}>{company}</Text>
-      </div>
-      <Text className={classes.listItemLocation}>{location}</Text>
-      <Text className={classes.listItemDescription} lineClamp={3}>
+    <Flex
+      gap="md"
+      justify="flex-start"
+      align="flex-start"
+      direction="column"
+      className={styles.jobCard}
+    >
+      <Text className={styles.listItemTitle}>{title}</Text>
+      <Image src={logo} alt={company} h={60} w={60}></Image>
+      <Text className={styles.listItemLocation}>{location}</Text>
+      <Text className={styles.listItemDescription} lineClamp={3}>
         {description}
       </Text>
-    </div>
+    </Flex>
   );
 };
 

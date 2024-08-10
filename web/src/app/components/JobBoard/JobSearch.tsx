@@ -1,4 +1,4 @@
-import { Flex, TextInput, Title } from '@mantine/core';
+import { Grid, TextInput, Title, Container, Group } from '@mantine/core';
 import classes from './JobBoard.module.css';
 import { IconSearch } from '@tabler/icons-react';
 import { FC } from 'react';
@@ -14,9 +14,11 @@ const JobSearch: FC<JobSearchProps> = ({ search, setSearch }) => {
   };
 
   return (
-    <Flex justify="space-between" align="center" gap="md" mt="md" mr="md" style={{ width: '100%' }}>
-      <div className={classes.headingContainer}>
-        <Title order={4}>FIND JOBS</Title>
+    <Grid mt={60} mb="xs">
+      <Grid.Col pl={30} span={5}>
+        <Title order={4}>Job Board</Title>
+      </Grid.Col>
+      <Grid.Col span={6}>
         <TextInput
           placeholder="Search jobs"
           rightSection={<IconSearch />}
@@ -24,8 +26,8 @@ const JobSearch: FC<JobSearchProps> = ({ search, setSearch }) => {
           value={search}
           onChange={handleChange}
         />
-      </div>
-    </Flex>
+      </Grid.Col>
+    </Grid>
   );
 };
 
