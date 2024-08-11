@@ -1,5 +1,4 @@
 import { Grid, TextInput, Title } from '@mantine/core';
-
 import { IconSearch } from '@tabler/icons-react';
 import { FC, useState } from 'react';
 

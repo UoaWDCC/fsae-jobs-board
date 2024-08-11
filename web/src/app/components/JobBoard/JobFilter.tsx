@@ -1,4 +1,4 @@
-import { Checkbox, Title, Button, Stack, Text, Modal, Flex } from '@mantine/core';
+import { Checkbox, Title, Button, Stack, Modal, Flex } from '@mantine/core';
 import classes from './JobBoard.module.css';
 import { FC, useState } from 'react';
 import { IconArrowDown } from '@tabler/icons-react';

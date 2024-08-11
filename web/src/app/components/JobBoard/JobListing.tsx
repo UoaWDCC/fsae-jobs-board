@@ -1,4 +1,4 @@
-import { Pagination, Container, Flex, Button } from '@mantine/core';
+import { Pagination, Container, Flex } from '@mantine/core';
 import styles from './JobBoard.module.css';
 import JobListingItem from './JobListingItem';
 import { FC, useEffect, useState } from 'react';

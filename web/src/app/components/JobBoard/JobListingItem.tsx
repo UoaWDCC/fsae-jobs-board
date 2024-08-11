@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import styles from './JobBoard.module.css';
-import { Flex, Container, Text, Image } from '@mantine/core';
+import { Flex, Text, Image } from '@mantine/core';
 
 interface JobListingItemProps {
   title: string;

@@ -39,7 +39,6 @@ export function JobBoard() {
             <Divider orientation="vertical" size="lg" style={{ height: '90%' }} />
           </Grid.Col>
           <Grid.Col span={9}>
-            {' '}
             <JobSearch search={search} setSearch={setSearch} />
             <JobListing filterRoles={filterRoles} filterFields={filterFields} />
           </Grid.Col>
