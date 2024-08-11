@@ -24,7 +24,7 @@ export function JobBoard() {
   const [search, setSearch] = useState<string>('');
 
   return (
-    <Grid>
+    <Grid justify="center" align="center">
       {!isPortrait ? (
         <>
           <Grid.Col span={2}>
@@ -35,10 +35,11 @@ export function JobBoard() {
               setFilterFields={setFilterFields}
             />
           </Grid.Col>
-          <Grid.Col span={1}>
-            <Divider orientation="vertical" />
+          <Grid.Col span={1} mt={190} pl={40} style={{ alignSelf: 'stretch' }}>
+            <Divider orientation="vertical" size="lg" style={{ height: '90%' }} />
           </Grid.Col>
           <Grid.Col span={9}>
+            {' '}
             <JobSearch search={search} setSearch={setSearch} />
             <JobListing filterRoles={filterRoles} filterFields={filterFields} />
           </Grid.Col>
