@@ -1,6 +1,7 @@
-import { Checkbox, Stack } from '@mantine/core';
+import { Checkbox, Title, Button, Stack, Modal, Flex } from '@mantine/core';
 import classes from './JobBoard.module.css';
-import { FC } from 'react';
+import { FC, useState } from 'react';
+import { IconArrowDown } from '@tabler/icons-react';
 
 interface JobFilterProps {
   filterRoles: string[];
@@ -28,49 +29,119 @@ const JobFilter: FC<JobFilterProps> = ({
     { value: 'software', label: 'Software' },
     { value: 'other', label: 'Other' },
   ];
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+  const [isPortrait, setIsPortrait] = useState(window.innerHeight > window.innerWidth);
 
   return (
-    <Stack className={classes.filterContainer}>
-      <em className={classes.filterHeading}>Filters</em>
-      <Stack>
-        <Checkbox.Group
-          value={filterRoles}
-          onChange={setFilterRoles}
-          label="Role Type"
-          classNames={{ label: classes.filterSubheading }}
-        >
-          {roles.map((role) => (
-            <Checkbox
-              key={role.value}
-              value={role.value}
-              label={role.label}
-              color="customAzureBlue.1"
-              className={classes.checkbox}
-              size="md"
-            />
-          ))}
-        </Checkbox.Group>
-      </Stack>
-      <Stack>
-        <Checkbox.Group
-          value={filterFields}
-          onChange={setFilterFields}
-          label="Fields"
-          classNames={{ label: classes.filterSubheading }}
-        >
-          {fields.map((role) => (
-            <Checkbox
-              key={role.value}
-              value={role.value}
-              label={role.label}
-              color="customAzureBlue.1"
-              className={classes.checkbox}
-              size="md"
-            />
-          ))}
-        </Checkbox.Group>
-      </Stack>
-    </Stack>
+    <>
+      {!isPortrait && (
+        <Stack mt={70} pl={30}>
+          <Title fs="italic" className={classes.filterHeading}>
+            Filters
+          </Title>
+          <Stack>
+            <Checkbox.Group
+              value={filterRoles}
+              onChange={setFilterRoles}
+              label="Role Type"
+              classNames={{ label: classes.filterSubheading }}
+            >
+              {roles.map((role) => (
+                <Checkbox
+                  key={role.value}
+                  value={role.value}
+                  label={role.label}
+                  color="customAzureBlue.1"
+                  className={classes.checkbox}
+                  size="md"
+                />
+              ))}
+            </Checkbox.Group>
+          </Stack>
+          <Stack>
+            <Checkbox.Group
+              value={filterFields}
+              onChange={setFilterFields}
+              label="Fields"
+              classNames={{ label: classes.filterSubheading }}
+            >
+              {fields.map((role) => (
+                <Checkbox
+                  key={role.value}
+                  value={role.value}
+                  label={role.label}
+                  color="customAzureBlue.1"
+                  className={classes.checkbox}
+                  size="md"
+                />
+              ))}
+            </Checkbox.Group>
+          </Stack>
+        </Stack>
+      )}
+      {isPortrait && (
+        <>
+          <Flex justify="flex-end">
+            <Button
+              rightSection={<IconArrowDown size={14} />}
+              variant="transparent"
+              size="lg"
+              onClick={openModal}
+            >
+              Filter
+            </Button>
+          </Flex>
+          <Modal
+            opened={isModalOpen}
+            onClose={closeModal}
+            centered
+            classNames={{ content: classes.modal, header: classes.modalHeader }}
+          >
+            <Stack>
+              <Checkbox.Group
+                value={filterRoles}
+                onChange={setFilterRoles}
+                label="Role Type"
+                classNames={{ label: classes.filterSubheading }}
+              >
+                {roles.map((role) => (
+                  <Checkbox
+                    key={role.value}
+                    value={role.value}
+                    label={role.label}
+                    color="customAzureBlue.1"
+                    className={classes.checkbox}
+                    size="md"
+                  />
+                ))}
+              </Checkbox.Group>
+            </Stack>
+            <Stack>
+              <Checkbox.Group
+                value={filterFields}
+                onChange={setFilterFields}
+                label="Fields"
+                classNames={{ label: classes.filterSubheading }}
+              >
+                {fields.map((role) => (
+                  <Checkbox
+                    key={role.value}
+                    value={role.value}
+                    label={role.label}
+                    color="customAzureBlue.1"
+                    className={classes.checkbox}
+                    size="md"
+                  />
+                ))}
+              </Checkbox.Group>
+            </Stack>
+          </Modal>
+        </>
+      )}
+    </>
   );
 };
 

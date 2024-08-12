@@ -1,9 +1,8 @@
-import { Pagination, Stack } from '@mantine/core';
-import classes from './JobBoard.module.css';
+import { Pagination, Container, Flex } from '@mantine/core';
+import styles from './JobBoard.module.css';
 import JobListingItem from './JobListingItem';
 import { FC, useEffect, useState } from 'react';
 import { chunk } from 'lodash';
-import JobSearch from './JobSearch';
 
 interface JobListingProps {
   filterRoles: string[];
@@ -11,11 +10,12 @@ interface JobListingProps {
 }
 const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
   const [activePage, setPage] = useState(1);
-  const [search, setSearch] = useState<string>('');
 
   const [itemsPerPage, setItemsPerPage] = useState<number>(4);
+  const [isPortrait, setIsPortrait] = useState(window.innerHeight > window.innerWidth);
 
   const updateItemsPerPage = () => {
+    setIsPortrait(window.innerHeight > window.innerWidth);
     if (window.innerWidth > 1080) {
       setItemsPerPage(6);
     } else {
@@ -38,6 +38,7 @@ const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
     {
       title: 'Junior Software Developer',
       company: 'WDCC',
+      logo: 'WDCCLogo.png',
       location: 'Auckland CBD, Auckland',
       description:
         'In this role, you will work to design, develop, and maintain software solutions using .NET, Typescript, and JavaScript.',
@@ -45,6 +46,7 @@ const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
     {
       title: 'Junior Software Developer',
       company: 'WDCC',
+      logo: 'WDCCLogo.png',
       location: 'Auckland CBD, Auckland',
       description:
         'In this role, you will work to design, develop, and maintain software solutions using .NET, Typescript, and JavaScript.',
@@ -52,6 +54,7 @@ const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
     {
       title: 'Junior Software Developer',
       company: 'WDCC',
+      logo: 'WDCCLogo.png',
       location: 'Auckland CBD, Auckland',
       description:
         'In this role, you will work to design, develop, and maintain software solutions using .NET, Typescript, and JavaScript.',
@@ -59,6 +62,7 @@ const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
     {
       title: 'Junior Software Developer',
       company: 'WDCC',
+      logo: 'WDCCLogo.png',
       location: 'Auckland CBD, Auckland',
       description:
         'In this role, you will work to design, develop, and maintain software solutions using .NET, Typescript, and JavaScript.',
@@ -66,6 +70,7 @@ const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
     {
       title: 'Junior Software Developer',
       company: 'WDCC',
+      logo: 'WDCCLogo.png',
       location: 'Auckland CBD, Auckland',
       description:
         'In this role, you will work to design, develop, and maintain software solutions using .NET, Typescript, and JavaScript.',
@@ -82,22 +87,24 @@ const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
       company={jobListingItem.company}
       location={jobListingItem.location}
       description={jobListingItem.description}
+      logo={jobListingItem.logo}
     />
   ));
   return (
-    <Stack className={classes.listingContainer}>
-      <JobSearch search={search} setSearch={setSearch} />
-      <div className={classes.listingInnerContainer}>{jobListingItems}</div>
-      <div className={classes.paginationContainer}>
+    <Flex justify="flex-start" align="flex-start" direction="column" gap="md">
+      <Container className={styles.listingInnerContainer} fluid>
+        {jobListingItems}
+      </Container>
+      <Container className={styles.paginationContainer}>
         <Pagination
           total={Math.ceil(jobListings.length / itemsPerPage)}
           value={activePage}
           onChange={setPage}
           size="lg"
-          classNames={{ root: classes.pagination }}
+          mb="md"
         />
-      </div>
-    </Stack>
+      </Container>
+    </Flex>
   );
 };
 

@@ -1,7 +1,7 @@
-import { Flex, TextInput, Title } from '@mantine/core';
-import classes from './JobBoard.module.css';
+import { Grid, TextInput, Title } from '@mantine/core';
 import { IconSearch } from '@tabler/icons-react';
-import { FC } from 'react';
+import { FC, useState } from 'react';
+import classes from './JobBoard.module.css';
 
 interface JobSearchProps {
   search: string;
@@ -12,20 +12,43 @@ const JobSearch: FC<JobSearchProps> = ({ search, setSearch }) => {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value);
   };
+  const [isPortrait, setIsPortrait] = useState(window.innerHeight > window.innerWidth);
 
   return (
-    <Flex justify="space-between" align="center" gap="md" mt="md" mr="md" style={{ width: '100%' }}>
-      <div className={classes.headingContainer}>
-        <Title order={4}>FIND JOBS</Title>
-        <TextInput
-          placeholder="Search jobs"
-          rightSection={<IconSearch />}
-          size="md"
-          value={search}
-          onChange={handleChange}
-        />
-      </div>
-    </Flex>
+    <Grid mt={70} mb="xs">
+      {!isPortrait ? (
+        <>
+          <Grid.Col pl={30} span={6}>
+            <Title order={4}>Job Board</Title>
+          </Grid.Col>
+          <Grid.Col span={6} pr={30}>
+            <div className={classes.searchInputContainer}>
+              <TextInput
+                placeholder="Search jobs"
+                rightSection={<IconSearch />}
+                size="md"
+                value={search}
+                onChange={handleChange}
+                className={classes.searchInput}
+              />
+            </div>
+          </Grid.Col>
+        </>
+      ) : (
+        <Grid.Col pl={30} span={12}>
+          <Title order={4}>Job Board</Title>
+
+          <TextInput
+            placeholder="Search jobs"
+            rightSection={<IconSearch />}
+            size="md"
+            value={search}
+            onChange={handleChange}
+            pr={20}
+          />
+        </Grid.Col>
+      )}
+    </Grid>
   );
 };
 
