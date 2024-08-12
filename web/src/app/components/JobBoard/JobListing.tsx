@@ -91,8 +91,10 @@ const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
     />
   ));
   return (
-    <Flex justify="flex-start" align="flex-start" direction="column" gap="md" wrap="wrap" w="100%">
-      <Container className={styles.listingInnerContainer}>{jobListingItems}</Container>
+    <Flex justify="flex-start" align="flex-start" direction="column" gap="md">
+      <Container className={styles.listingInnerContainer} fluid>
+        {jobListingItems}
+      </Container>
       <Container className={styles.paginationContainer}>
         <Pagination
           total={Math.ceil(jobListings.length / itemsPerPage)}
