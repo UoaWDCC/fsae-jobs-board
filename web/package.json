@@ -19,10 +19,10 @@
     "storybook:build": "storybook build"
   },
   "dependencies": {
-    "@mantine/carousel": "^7.11.2",
-    "@mantine/core": "7.11.2",
-    "@mantine/dropzone": "^7.11.2",
-    "@mantine/hooks": "^7.11.2",
+    "@mantine/carousel": "^7.12.0",
+    "@mantine/core": "^7.12.0",
+    "@mantine/dropzone": "^7.12.0",
+    "@mantine/hooks": "^7.12.0",
     "@reduxjs/toolkit": "^2.2.5",
     "@tabler/icons-react": "^3.7.0",
     "embla-carousel-react": "^8.1.7",
