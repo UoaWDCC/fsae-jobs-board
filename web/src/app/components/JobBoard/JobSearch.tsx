@@ -1,6 +1,7 @@
 import { Grid, TextInput, Title } from '@mantine/core';
 import { IconSearch } from '@tabler/icons-react';
 import { FC, useState } from 'react';
+import classes from './JobBoard.module.css';
 
 interface JobSearchProps {
   search: string;
@@ -21,13 +22,16 @@ const JobSearch: FC<JobSearchProps> = ({ search, setSearch }) => {
             <Title order={4}>Job Board</Title>
           </Grid.Col>
           <Grid.Col span={6} pr={30}>
-            <TextInput
-              placeholder="Search jobs"
-              rightSection={<IconSearch />}
-              size="md"
-              value={search}
-              onChange={handleChange}
-            />
+            <div className={classes.searchInputContainer}>
+              <TextInput
+                placeholder="Search jobs"
+                rightSection={<IconSearch />}
+                size="md"
+                value={search}
+                onChange={handleChange}
+                className={classes.searchInput}
+              />
+            </div>
           </Grid.Col>
         </>
       ) : (
