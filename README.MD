@@ -10,11 +10,11 @@
 - Don Lin (Back-end, Architecture)
 - Jack Haddad (Back-end, Front-end, Architecture)
 - Sienna Nguyen (Front-end, Back-end)
-- Claudia Chan (Design)
 - Frank Situ (Back-end, Architecture)
 - Danny Jung (Back-end, Front-end, Architecture)
 - Jolin Chen (Front-end)
 - Jaehoon Oh (Front-end, Back-end)
+- Josef Santos (Front-end)
 
 ## About
 
