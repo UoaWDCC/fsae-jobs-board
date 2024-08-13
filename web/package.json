@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@mantine/carousel": "^7.12.0",
-    "@mantine/core": "7.12.0",
+    "@mantine/core": "^7.12.0",
     "@mantine/dropzone": "^7.12.0",
     "@mantine/hooks": "^7.12.0",
     "@reduxjs/toolkit": "^2.2.5",

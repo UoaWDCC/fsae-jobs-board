@@ -66,8 +66,8 @@ export const theme = createTheme({
     }),
     Modal: Modal.extend({
       styles: (theme) => ({
-        modal: {
-          backgroundColor: theme.colors.customCharcoalGrey[0]
+        root: {
+          backgroundColor: theme.colors.customCharcoalGrey[0],
         },
       }),
     }),
