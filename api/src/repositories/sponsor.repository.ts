@@ -1,6 +1,6 @@
 import {inject} from '@loopback/core';
 import {DefaultCrudRepository} from '@loopback/repository';
-import {DevInMemDataSource} from '../datasources';
+import {MongoDbDataSource} from '../datasources';
 import {Sponsor, SponsorRelations} from '../models';
 
 export class SponsorRepository extends DefaultCrudRepository<
@@ -9,7 +9,7 @@ export class SponsorRepository extends DefaultCrudRepository<
   SponsorRelations
 > {
   constructor(
-    @inject('datasources.devInMem') dataSource: DevInMemDataSource,
+    @inject('datasources.mongoDB') dataSource: MongoDbDataSource,
   ) {
     super(Sponsor, dataSource);
   }
