@@ -17,8 +17,9 @@ import {
   requestBody,
   response,
 } from '@loopback/rest';
-import {Application} from '../models';
+import {Application, FsaeRole} from '../models';
 import {ApplicationRepository} from '../repositories';
+import { authorize } from '@loopback/authorization';
 
 export class ApplicationController {
   constructor(
@@ -26,6 +27,9 @@ export class ApplicationController {
     public applicationRepository : ApplicationRepository,
   ) {}
 
+  @authorize({
+    allowedRoles: [FsaeRole.MEMBER],
+  })
   @post('/application')
   @response(200, {
     description: 'Application model instance',
