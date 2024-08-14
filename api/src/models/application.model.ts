@@ -1,6 +1,7 @@
 import {Entity, model, property, belongsTo} from '@loopback/repository';
 import {Member} from './member.model';
 
+// Todo need to add job ad ID in future after job ad ticket is done
 @model()
 export class Application extends Entity {
   @property({
@@ -16,9 +17,13 @@ export class Application extends Entity {
   })
   status?: number;
 
+  // Todo do we need time in date-time or just date?
   @property({
     type: 'date',
     required: true,
+    jsonSchema: {
+      format: 'date',
+    },
   })
   applicationDate: string;
 

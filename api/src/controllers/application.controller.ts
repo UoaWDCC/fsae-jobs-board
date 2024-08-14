@@ -20,7 +20,11 @@ import {
 import {Application, FsaeRole} from '../models';
 import {ApplicationRepository} from '../repositories';
 import { authorize } from '@loopback/authorization';
+import { authenticate, AuthenticationBindings } from '@loopback/authentication';
+import { inject } from '@loopback/core';
+import {UserProfile} from '@loopback/security';
 
+@authenticate('fsae-jwt')
 export class ApplicationController {
   constructor(
     @repository(ApplicationRepository)
@@ -36,6 +40,7 @@ export class ApplicationController {
     content: {'application/json': {schema: getModelSchemaRef(Application)}},
   })
   async create(
+    @inject(AuthenticationBindings.CURRENT_USER) currentUser: UserProfile,
     @requestBody({
       content: {
         'application/json': {
@@ -48,20 +53,14 @@ export class ApplicationController {
     })
     application: Application,
   ): Promise<Application> {
+    const memberId = currentUser.id;
+    application.memberId = memberId;
     return this.applicationRepository.create(application);
   }
 
-  @get('/application/count')
-  @response(200, {
-    description: 'Application model count',
-    content: {'application/json': {schema: CountSchema}},
+  @authorize({
+    allowedRoles: [FsaeRole.ALUMNI, FsaeRole.SPONSOR],
   })
-  async count(
-    @param.where(Application) where?: Where<Application>,
-  ): Promise<Count> {
-    return this.applicationRepository.count(where);
-  }
-
   @get('/application')
   @response(200, {
     description: 'Array of Application model instances',
@@ -80,25 +79,9 @@ export class ApplicationController {
     return this.applicationRepository.find(filter);
   }
 
-  @patch('/application')
-  @response(200, {
-    description: 'Application PATCH success count',
-    content: {'application/json': {schema: CountSchema}},
+  @authorize({
+    allowedRoles: [FsaeRole.ALUMNI, FsaeRole.SPONSOR],
   })
-  async updateAll(
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(Application, {partial: true}),
-        },
-      },
-    })
-    application: Application,
-    @param.where(Application) where?: Where<Application>,
-  ): Promise<Count> {
-    return this.applicationRepository.updateAll(application, where);
-  }
-
   @get('/application/{id}')
   @response(200, {
     description: 'Application model instance',
@@ -115,35 +98,10 @@ export class ApplicationController {
     return this.applicationRepository.findById(id, filter);
   }
 
-  @patch('/application/{id}')
-  @response(204, {
-    description: 'Application PATCH success',
+  // Todo need to ensure that only sponsor/alumni that created the job AD can update it
+  @authorize({
+    allowedRoles: [FsaeRole.ALUMNI, FsaeRole.SPONSOR],
   })
-  async updateById(
-    @param.path.number('id') id: number,
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(Application, {partial: true}),
-        },
-      },
-    })
-    application: Application,
-  ): Promise<void> {
-    await this.applicationRepository.updateById(id, application);
-  }
-
-  @put('/application/{id}')
-  @response(204, {
-    description: 'Application PUT success',
-  })
-  async replaceById(
-    @param.path.number('id') id: number,
-    @requestBody() application: Application,
-  ): Promise<void> {
-    await this.applicationRepository.replaceById(id, application);
-  }
-
   @del('/application/{id}')
   @response(204, {
     description: 'Application DELETE success',
