@@ -1,6 +1,4 @@
-import { Divider, Flex, Grid, Title } from '@mantine/core';
-import SponsorBoardCard from '../components/SponsorBoard/SponsorBoardCard';
-import { SponsorBoardCardProps } from '../components/SponsorBoard/SponsorBoardCard';
+import { Divider, Grid } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import SponsorFilter from '../components/SponsorBoard/SponsorFilter';
 import SponsorSearch from '../components/SponsorBoard/SponsorSearch';

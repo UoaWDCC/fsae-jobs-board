@@ -1,4 +1,4 @@
-import { Text, Button, Paper, Flex, Stack, Container, rem, AspectRatio } from '@mantine/core';
+import { Text, Button, Paper, Flex, Stack, Container, AspectRatio } from '@mantine/core';
 import classes from './SponsorBoard.module.css';
 import { Image } from '@mantine/core';
 

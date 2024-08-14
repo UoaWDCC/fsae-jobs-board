@@ -13,10 +13,8 @@ const SponsorListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
   const [activePage, setPage] = useState(1);
 
   const [itemsPerPage, setItemsPerPage] = useState<number>(4);
-  const [isPortrait, setIsPortrait] = useState(window.innerHeight > window.innerWidth);
 
   const updateItemsPerPage = () => {
-    setIsPortrait(window.innerHeight > window.innerWidth);
     if (window.innerWidth > 1920) {
       setItemsPerPage(8);
     } else if (window.innerWidth > 1080) {
@@ -103,7 +101,7 @@ const SponsorListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
     },
   ];
 
-  // chunk all listings into four for per page display
+  // chunk all listings into respective count according to screen size for per page display
   // TODO: filter the jobListings before chunking
   const chunkedJobListings = chunk(jobListings, itemsPerPage);
 
