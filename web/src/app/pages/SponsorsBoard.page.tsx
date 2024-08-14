@@ -1,23 +1,62 @@
-import { Flex, Title } from '@mantine/core';
+import { Divider, Flex, Grid, Title } from '@mantine/core';
 import SponsorBoardCard from '../components/SponsorBoard/SponsorBoardCard';
-import { SponsorBoardCardProps }  from '../components/SponsorBoard/SponsorBoardCard';
+import { SponsorBoardCardProps } from '../components/SponsorBoard/SponsorBoardCard';
+import { useEffect, useState } from 'react';
+import SponsorFilter from '../components/SponsorBoard/SponsorFilter';
+import SponsorSearch from '../components/SponsorBoard/SponsorSearch';
+import SponsorListing from '../components/SponsorBoard/SponsorListing';
 
 export function SponsorsBoard() {
-  
-  const testSponsorBoardCardProps: SponsorBoardCardProps = {
-    title: 'Company Name',
-    subtitle: 'industry',
-    imageLink: 'https://picsum.photos/200/300',
-    roleTitle: 'Sponsor Role Title',
-    roleLink: 'http://localhost:5173/',
-  };
+  const [filterRoles, setFilterRoles] = useState<string[]>([]);
+  const [filterFields, setFilterFields] = useState<string[]>([]);
+
+  const [isPortrait, setIsPortrait] = useState(window.innerHeight > window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsPortrait(window.innerHeight > window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+  const [search, setSearch] = useState<string>('');
 
   return (
-    <>
-      <Flex justify="center" gap="md" mt="md" mr="md" direction="column">
-        <Title order={1}>Sponsors Board</Title>
-        <SponsorBoardCard data={testSponsorBoardCardProps} />
-      </Flex>
-    </>
+    <Grid justify="center" align="center">
+      {!isPortrait ? (
+        <>
+          <Grid.Col span={2}>
+            <SponsorFilter
+              filterRoles={filterRoles}
+              setFilterRoles={setFilterRoles}
+              filterFields={filterFields}
+              setFilterFields={setFilterFields}
+            />
+          </Grid.Col>
+          <Grid.Col span={1} mt={190} pl={40} style={{ alignSelf: 'stretch' }}>
+            <Divider orientation="vertical" size="lg" style={{ height: '90%' }} />
+          </Grid.Col>
+          <Grid.Col span={9}>
+            <SponsorSearch search={search} setSearch={setSearch} />
+            <SponsorListing filterRoles={filterRoles} filterFields={filterFields} />
+          </Grid.Col>
+        </>
+      ) : (
+        <Grid.Col span={12}>
+          <SponsorSearch search={search} setSearch={setSearch} />
+          <SponsorFilter
+            filterRoles={filterRoles}
+            setFilterRoles={setFilterRoles}
+            filterFields={filterFields}
+            setFilterFields={setFilterFields}
+          />
+          <SponsorListing filterRoles={filterRoles} filterFields={filterFields} />
+        </Grid.Col>
+      )}
+    </Grid>
   );
 }

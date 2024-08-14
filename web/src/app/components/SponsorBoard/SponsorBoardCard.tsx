@@ -1,5 +1,5 @@
 import { ActionIcon, Text, Button, Paper, Flex, Stack } from '@mantine/core';
-import classes from './SponsorBoardCard.module.css';
+import classes from './SponsorBoard.module.css';
 import { useState } from 'react';
 import { UserType } from '@/app/features/user/userSlice';
 import { IconTrash } from '@tabler/icons-react';
@@ -31,7 +31,7 @@ export function SponsorBoardCard({ data }: { data: SponsorBoardCardProps }) {
       <Flex direction="column">
         {/* Job Title */}
         <Stack gap="xs">
-          <Image src={data.imageLink} alt="Company Logo" width={200} height={200} />
+          <Image src={data.imageLink} alt="Company Logo" w={'50%'} h={'50%'} fit="contain" />
 
           <Flex justify={'space-between'}>
             <Text fw={500} size="xl" className={classes.text}>
