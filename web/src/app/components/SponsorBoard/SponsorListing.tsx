@@ -1,4 +1,4 @@
-import { Pagination, Container, Flex } from '@mantine/core';
+import { Pagination, Container, Flex, Grid, SimpleGrid } from '@mantine/core';
 import styles from './SponsorBoard.module.css';
 // import JobListingItem from './JobListingItem';
 import { FC, useEffect, useState } from 'react';
@@ -17,7 +17,9 @@ const SponsorListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
 
   const updateItemsPerPage = () => {
     setIsPortrait(window.innerHeight > window.innerWidth);
-    if (window.innerWidth > 1080) {
+    if (window.innerWidth > 1920) {
+      setItemsPerPage(8);
+    } else if (window.innerWidth > 1080) {
       setItemsPerPage(6);
     } else {
       setItemsPerPage(4);
@@ -35,49 +37,69 @@ const SponsorListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
   }, []);
 
   // TODO: change this into actual data from backend, and apply filters & search
-  const testSponsorBoardCardProps: SponsorBoardCardProps = {
-    title: 'Company Name',
-    subtitle: 'industry',
-    imageLink: 'https://picsum.photos/500/500',
-    roleTitle: 'Sponsor Role Title',
-    roleLink: 'http://localhost:5173/',
-  };
-
   const jobListings: SponsorBoardCardProps[] = [
     {
-      title: 'Company Name',
+      companyTitle: 'Company Name',
       subtitle: 'Industry',
-      imageLink: 'https://picsum.photos/500/500',
-      roleTitle: 'Sponsor Role Title',
-      roleLink: 'http://localhost:5173/',
+      imageLink: '/sponsor_placeholder.png',
+      sponsorTitle: 'Sponsor Role Title',
+      sponsorLink: 'http://localhost:5173/',
     },
     {
-      title: 'Company Name',
+      companyTitle: 'Company Name',
       subtitle: 'Industry',
-      imageLink: 'https://picsum.photos/500/500',
-      roleTitle: 'Sponsor Role Title',
-      roleLink: 'http://localhost:5173/',
+      imageLink: 'https://picsum.photos/128/256',
+      sponsorTitle: 'Sponsor Role Title',
+      sponsorLink: 'http://localhost:5173/',
     },
     {
-      title: 'Company Name',
+      companyTitle: 'Company Name',
       subtitle: 'Industry',
       imageLink: 'https://picsum.photos/500/500',
-      roleTitle: 'Sponsor Role Title',
-      roleLink: 'http://localhost:5173/',
+      sponsorTitle: 'Sponsor Role Title',
+      sponsorLink: 'http://localhost:5173/',
     },
     {
-      title: 'Company Name',
+      companyTitle: 'Company Name',
       subtitle: 'Industry',
-      imageLink: 'https://picsum.photos/500/500',
-      roleTitle: 'Sponsor Role Title',
-      roleLink: 'http://localhost:5173/',
+      imageLink: 'https://picsum.photos/256/256',
+      sponsorTitle: 'Sponsor Role Title',
+      sponsorLink: 'http://localhost:5173/',
     },
     {
-      title: 'Company Name',
+      companyTitle: 'Company Name',
       subtitle: 'Industry',
-      imageLink: 'https://picsum.photos/500/500',
-      roleTitle: 'Sponsor Role Title',
-      roleLink: 'http://localhost:5173/',
+      imageLink: 'https://picsum.photos/1000/1000',
+      sponsorTitle: 'Sponsor Role Title',
+      sponsorLink: 'http://localhost:5173/',
+    },
+    {
+      companyTitle: 'Company Name',
+      subtitle: 'Industry',
+      imageLink: 'https://picsum.photos/422/134',
+      sponsorTitle: 'Sponsor Role Title',
+      sponsorLink: 'http://localhost:5173/',
+    },
+    {
+      companyTitle: 'Company Name',
+      subtitle: 'Industry',
+      imageLink: 'https://picsum.photos/200/200',
+      sponsorTitle: 'Sponsor Role Title',
+      sponsorLink: 'http://localhost:5173/',
+    },
+    {
+      companyTitle: 'Company Name',
+      subtitle: 'Industry',
+      imageLink: 'https://picsum.photos/500/433',
+      sponsorTitle: 'Sponsor Role Title',
+      sponsorLink: 'http://localhost:5173/',
+    },
+    {
+      companyTitle: 'Company Name',
+      subtitle: 'Industry',
+      imageLink: 'https://picsum.photos/250/500',
+      sponsorTitle: 'Sponsor Role Title',
+      sponsorLink: 'http://localhost:5173/',
     },
   ];
 
@@ -86,14 +108,20 @@ const SponsorListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
   const chunkedJobListings = chunk(jobListings, itemsPerPage);
 
   const jobListingItems = chunkedJobListings[activePage - 1].map((jobListingItem) => (
-    // <SponsorBoardCard data={jobListingItem} />
-    <SponsorBoardCard data={jobListingItem} />
+    <div>
+      <SponsorBoardCard data={jobListingItem} />
+    </div>
   ));
   return (
-    <Flex justify="flex-start" align="flex-start" direction="column" gap="md">
-      <Container className={styles.listingInnerContainer} fluid>
+    <Flex justify="flex-start" align="flex-start" direction="column" gap="md" ml="md" mr="md">
+      <SimpleGrid
+        cols={{ base: 1, sm: 2, lg: 3, xl: itemsPerPage > 6 ? 4 : 3 }}
+        spacing={{ base: 10, sm: 'xl' }}
+        verticalSpacing={{ base: 'md', sm: 'xl' }}
+        className={styles.jobListingContainer}
+      >
         {jobListingItems}
-      </Container>
+      </SimpleGrid>
       <Container className={styles.paginationContainer}>
         <Pagination
           total={Math.ceil(jobListings.length / itemsPerPage)}

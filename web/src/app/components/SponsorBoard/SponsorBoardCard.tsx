@@ -1,45 +1,54 @@
-import { ActionIcon, Text, Button, Paper, Flex, Stack } from '@mantine/core';
+import { Text, Button, Paper, Flex, Stack, Container, rem, AspectRatio } from '@mantine/core';
 import classes from './SponsorBoard.module.css';
-import { useState } from 'react';
-import { UserType } from '@/app/features/user/userSlice';
-import { IconTrash } from '@tabler/icons-react';
 import { Image } from '@mantine/core';
 
 // dummy data -- change later when we have real data
 export interface SponsorBoardCardProps {
-  title: string;
+  companyTitle: string;
   subtitle: string;
   imageLink: string;
-  roleTitle: string;
-  roleLink: string;
+  sponsorTitle: string;
+  sponsorLink: string;
 }
 
 export function SponsorBoardCard({ data }: { data: SponsorBoardCardProps }) {
-  // const userType = useSelector((state: RootState) => state.user.userType);
-  const [userType, setUserType] = useState<UserType>('sponsor');
-
   console.log(
     'Change this JobCard component to use real userType from Redux store once user integration is implemented'
   );
 
-  const handleRoleLink = () => {
-    console.log('Edit job with ID: ', data.roleLink);
+  const handleSponsorLink = () => {
+    console.log('Sponsor Link: ', data.sponsorLink);
   };
 
   return (
-    <Paper p="md" radius="md">
-      <Flex direction="column">
-        {/* Job Title */}
-        <Stack gap="xs">
-          <Image src={data.imageLink} alt="Company Logo" w={'50%'} h={'50%'} fit="contain" />
-
+    <Paper p="md" radius="md" w={'100%'} h={'100%'}>
+      <Flex direction="column" w={'100%'} h={'100%'}>
+        {/* Sponsor Title */}
+        <Stack gap="xs" w="100%" h="100%">
+          <Container
+            w={{ base: '100%', sm: '80%', md: '80%', lg: '100%', xl: '100%' }}
+            h="auto"
+            style={{ overflow: 'hidden' }}
+          >
+            <AspectRatio ratio={1}>
+              <Image
+                src={data.imageLink}
+                alt="sponsor image"
+                fallbackSrc="/sponsor_placeholder.png"
+                radius="md"
+                width="100%"
+                height="100%"
+                fit="cover"
+              />
+            </AspectRatio>
+          </Container>
           <Flex justify={'space-between'}>
             <Text fw={500} size="xl" className={classes.text}>
-              {data.title}
+              {data.companyTitle}
             </Text>
           </Flex>
 
-          {/* Job Subtite */}
+          {/* Sponsor Subtite */}
           <Text fw={500} size="md" className={classes.text}>
             {data.subtitle}
           </Text>
@@ -51,9 +60,9 @@ export function SponsorBoardCard({ data }: { data: SponsorBoardCardProps }) {
             mr="md"
             radius="lg"
             size="compact-md"
-            onClick={handleRoleLink}
+            onClick={handleSponsorLink}
           >
-            {data.roleTitle}
+            {data.sponsorTitle}
           </Button>
         </Stack>
       </Flex>
