@@ -6,6 +6,7 @@ import {JobAd} from '../models';
 import {JobAdRepository} from '../repositories';
 import { authenticate } from '@loopback/authentication';
 import { authorize } from '@loopback/authorization';
+import { HttpErrors } from '@loopback/rest';
 import {FsaeRole, Member, Alumni, Sponsor} from '../models';
 
 @authenticate('fsae-jwt')
@@ -39,6 +40,7 @@ export class JobController {
     return this.jobAdRepository.create(jobAd);
   }
 
+
   @authorize({
     allowedRoles: [FsaeRole.MEMBER],
   })
@@ -60,6 +62,10 @@ export class JobController {
     return this.jobAdRepository.find(filter);
   }
 
+
+  @authorize({
+    allowedRoles: [FsaeRole.MEMBER],
+  })
   @get('/job/{id}')
   @response(200, {
     description: 'Retrieving job details by ID',
@@ -73,9 +79,17 @@ export class JobController {
     @param.path.string('id') id: string,
     @param.filter(JobAd, {exclude: 'where'}) filter?: FilterExcludingWhere<JobAd>
   ): Promise<JobAd> {
-    return this.jobAdRepository.findById(id, filter);
+    const jobAd = await this.jobAdRepository.findById(id, filter);
+    if (!jobAd) {
+        throw new HttpErrors.NotFound(`Job ad with id ${id} not found`);
+    }
+    return jobAd;
   }
 
+
+  @authorize({
+    allowedRoles: [FsaeRole.ALUMNI, FsaeRole.SPONSOR],
+  })
   @patch('/job/{id}')
   @response(204, {
     description: 'Updating job details by ID',
@@ -99,6 +113,10 @@ export class JobController {
     await this.jobAdRepository.updateById(id, jobAd);
   }
 
+
+  @authorize({
+    allowedRoles: [FsaeRole.ALUMNI, FsaeRole.SPONSOR],
+  })
   @del('/job/{id}')
   @response(204, {
     description: 'Deleting job postings by ID',
