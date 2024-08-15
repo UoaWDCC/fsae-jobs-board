@@ -40,7 +40,7 @@ export class MemberActivationController {
   ) { }
 
   // Method to check if an alumni is activated
-  @get('/alumni/{id}/is-activated')
+  @get('/alumni/{id}/activate')
   @authenticate('fsae-jwt')
   @authorize({
     allowedRoles: [FsaeRole.ADMIN],
@@ -58,7 +58,7 @@ export class MemberActivationController {
   }
 
   // Method to check if a sponsor is activated
-  @get('/sponsors/{id}/is-activated')
+  @get('/sponsors/{id}/activate')
   @authenticate('fsae-jwt')
   @authorize({
     allowedRoles: [FsaeRole.ADMIN],
@@ -77,7 +77,7 @@ export class MemberActivationController {
 
 
   // Method to check if a member is activated
-  @get('/members/{id}/is-activated')
+  @get('/members/{id}/activate')
   @authenticate('fsae-jwt')
   @authorize({
     allowedRoles: [FsaeRole.ADMIN],
