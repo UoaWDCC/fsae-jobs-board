@@ -1,4 +1,4 @@
-import { Text, Button, Paper, Flex, Stack, Container, AspectRatio } from '@mantine/core';
+import { Text, Button, Paper, Flex, Stack, Container, AspectRatio, rem } from '@mantine/core';
 import classes from './SponsorBoard.module.css';
 import { Image } from '@mantine/core';
 
@@ -21,7 +21,7 @@ export function SponsorBoardCard({ data }: { data: SponsorBoardCardProps }) {
   };
 
   return (
-    <Paper p="md" radius="md" w={'100%'} h={'100%'}>
+    <Paper p="md" radius="md" w={'95%'} h={'100%'}>
       <Flex direction="column" w={'100%'} h={'100%'}>
         {/* Sponsor Title */}
         <Stack gap="xs" w="100%" h="100%">
@@ -43,13 +43,14 @@ export function SponsorBoardCard({ data }: { data: SponsorBoardCardProps }) {
             </AspectRatio>
           </Container>
           <Flex justify={'space-between'}>
-            <Text fw={500} size="xl" className={classes.text}>
+            {/* Sponsor Title */}
+            <Text fw={500} size={rem(30)} className={classes.text}>
               {data.companyTitle}
             </Text>
           </Flex>
 
           {/* Sponsor Subtite */}
-          <Text fw={500} size="md" className={classes.text}>
+          <Text fw={500} size="xl" className={classes.text} fs="italic">
             {data.subtitle}
           </Text>
 
@@ -61,6 +62,7 @@ export function SponsorBoardCard({ data }: { data: SponsorBoardCardProps }) {
             radius="lg"
             size="compact-md"
             onClick={handleSponsorLink}
+            w="100%"
           >
             {data.sponsorTitle}
           </Button>

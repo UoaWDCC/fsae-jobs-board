@@ -24,10 +24,10 @@ export function SponsorsBoard() {
   const [search, setSearch] = useState<string>('');
 
   return (
-    <Grid justify="center" align="center">
+    <Grid justify="center" align="flex-start">
       {!isPortrait ? (
         <>
-          <Grid.Col span={2}>
+          <Grid.Col span={2} mt={'15vh'}>
             <SponsorFilter
               filterRoles={filterRoles}
               setFilterRoles={setFilterRoles}
