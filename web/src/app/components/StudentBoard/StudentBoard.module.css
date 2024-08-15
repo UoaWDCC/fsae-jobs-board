@@ -1,4 +1,69 @@
+.filterContainer {
+    display: flex;
+    align-self: flex-start; 
+}
+
 .searchBar {
     width: 60%;
     align-self: flex-end;
+}
+
+.studentBox {
+    background-color: var(--mantine-color-customCharcoalGrey-1);
+    border-radius: 10px;
+    width: 90%;
+    margin-bottom: 10%;
+}
+
+.avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+}
+
+.studentTitle {
+    background-color: var(--mantine-color-customAzureBlue-1);
+    padding: 5px 7px ;
+    width: fit-content;
+    border-radius: 20px;
+}
+
+.innerText {
+    width: 100%;
+}
+
+.studentRow {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    justify-items: center;
+}
+
+.paginationContainer {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Filter */
+.filterHeading {
+  color: white;
+  font-size: 1.4rem;
+}
+
+.filterSubheading {
+  color: var(--mantine-color-customPapayaOrange-1);
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.checkbox {
+  margin: 0.8em 0;
+}
+
+/* mobile view */
+@media (max-width: 768px) {
+    .studentRow {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }

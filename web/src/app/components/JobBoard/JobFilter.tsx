@@ -8,13 +8,17 @@ interface JobFilterProps {
   setFilterRoles: (filterRoles: string[]) => void;
   filterFields: string[];
   setFilterFields: (filterFields: string[]) => void;
+  color?: string;
 }
+
 const JobFilter: FC<JobFilterProps> = ({
   filterRoles,
   setFilterRoles,
   filterFields,
   setFilterFields,
+  color = '#0091ff',
 }) => {
+
   const roles = [
     { value: 'internship', label: 'Internship' },
     { value: 'graduate', label: 'Graduate Roles' },
@@ -47,6 +51,7 @@ const JobFilter: FC<JobFilterProps> = ({
               value={filterRoles}
               onChange={setFilterRoles}
               label="Role Type"
+              labelProps={{ style: { color: color } }}
               classNames={{ label: classes.filterSubheading }}
             >
               {roles.map((role) => (
@@ -54,7 +59,7 @@ const JobFilter: FC<JobFilterProps> = ({
                   key={role.value}
                   value={role.value}
                   label={role.label}
-                  color="customAzureBlue.1"
+                  color={color}
                   className={classes.checkbox}
                   size="md"
                 />
@@ -66,6 +71,7 @@ const JobFilter: FC<JobFilterProps> = ({
               value={filterFields}
               onChange={setFilterFields}
               label="Fields"
+              labelProps={{ style: { color: color } }}
               classNames={{ label: classes.filterSubheading }}
             >
               {fields.map((role) => (
@@ -73,7 +79,7 @@ const JobFilter: FC<JobFilterProps> = ({
                   key={role.value}
                   value={role.value}
                   label={role.label}
-                  color="customAzureBlue.1"
+                  color={color}
                   className={classes.checkbox}
                   size="md"
                 />
@@ -90,6 +96,7 @@ const JobFilter: FC<JobFilterProps> = ({
               variant="transparent"
               size="lg"
               onClick={openModal}
+              styles={{ color: color }}
             >
               Filter
             </Button>
@@ -112,7 +119,7 @@ const JobFilter: FC<JobFilterProps> = ({
                     key={role.value}
                     value={role.value}
                     label={role.label}
-                    color="customAzureBlue.1"
+                    color={color}
                     className={classes.checkbox}
                     size="md"
                   />
@@ -131,7 +138,7 @@ const JobFilter: FC<JobFilterProps> = ({
                     key={role.value}
                     value={role.value}
                     label={role.label}
-                    color="customAzureBlue.1"
+                    color={color}
                     className={classes.checkbox}
                     size="md"
                   />

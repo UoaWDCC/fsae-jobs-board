@@ -33,7 +33,7 @@
 }
 
 .filterSubheading {
-  color: var(--mantine-color-customAzureBlue-1);
+  /* color: var(--mantine-color-customAzureBlue-1); */
   font-weight: 600;
   font-size: 1.1rem;
 }

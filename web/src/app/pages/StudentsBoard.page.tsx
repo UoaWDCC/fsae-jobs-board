@@ -1,33 +1,80 @@
-import { Button, Flex, Title, Box, Text, Grid, Divider } from '@mantine/core';
+import { Button, Flex, Title, Box, Text, Grid, Divider, useMantineTheme } from '@mantine/core';
+import { useState, useEffect } from 'react';
+import StudentListing from '../components/StudentBoard/StudentListing';
+import classes from '../components/StudentBoard/StudentBoard.module.css';
 import JobFilter from '../components/JobBoard/JobFilter';
-import { useState } from 'react'
-import StudentSearch from '../components/StudentBoard/StudentSearch'
-import StudentListing from '../components/StudentBoard/StudentListing'
+import JobSearch from '../components/JobBoard/JobSearch';
 
 export function StudentsBoard() {
   const [filterRoles, setFilterRoles] = useState<string[]>([]);
   const [filterFields, setFilterFields] = useState<string[]>([]);
   const [search, setSearch] = useState<string>('');
+  const [isPortrait, setIsPortrait] = useState(window.innerHeight > window.innerWidth);
+  const theme = useMantineTheme();
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsPortrait(window.innerHeight > window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   return (
-    <Grid justify="center" align="center" >
-      <>
-        <Grid.Col span={2}>
+    <Grid justify="center" align="center">
+      {!isPortrait ? (
+        <>
+          <Grid.Col span={2} className={classes.filterContainer} mt={120} pl={10}>
+            <JobFilter
+              filterRoles={filterRoles}
+              setFilterRoles={setFilterRoles}
+              filterFields={filterFields}
+              setFilterFields={setFilterFields}
+              className={classes.filter}
+              color={theme.colors.customPapayaOrange[0]}
+            />
+          </Grid.Col>
+          <Grid.Col span={0.5} pl={40} style={{ alignSelf: 'stretch' }}>
+            <Divider
+              orientation="vertical"
+              size="sm"
+              style={{ height: '80%' }}
+              mt={160}
+              color={theme.colors.customWhite[0]}
+            />
+          </Grid.Col>
+          <Grid.Col span={9}>
+            <JobSearch
+              search={search}
+              setSearch={setSearch}
+              title="Student Profiles"
+              placeholder="Search students"
+            />
+            <StudentListing />
+          </Grid.Col>
+        </>
+      ) : (
+        <Grid.Col span={12}>
+          <JobSearch
+            search={search}
+            setSearch={setSearch}
+            title="Student Profiles"
+            placeholder="Search students"
+          />
           <JobFilter
             filterRoles={filterRoles}
             setFilterRoles={setFilterRoles}
             filterFields={filterFields}
             setFilterFields={setFilterFields}
+            color={theme.colors.customPapayaOrange[0]}
           />
-        </Grid.Col>
-        <Grid.Col span={1} pl={40} style={{ alignSelf: 'stretch' }}>
-          <Divider orientation="vertical" size="lg" style={{ height: '90%' }} />
-        </Grid.Col>
-        <Grid.Col span={9}>
-          <StudentSearch search={search} setSearch={setSearch}/>
           <StudentListing />
         </Grid.Col>
-      </>
+      )}
     </Grid>
   );
 }

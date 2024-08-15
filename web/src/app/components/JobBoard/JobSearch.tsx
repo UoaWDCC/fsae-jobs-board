@@ -6,9 +6,11 @@ import classes from './JobBoard.module.css';
 interface JobSearchProps {
   search: string;
   setSearch: (search: string) => void;
+  title: string;
+  placeholder: string
 }
 
-const JobSearch: FC<JobSearchProps> = ({ search, setSearch }) => {
+const JobSearch: FC<JobSearchProps> = ({ search, setSearch, title, placeholder }) => {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value);
   };
@@ -19,12 +21,12 @@ const JobSearch: FC<JobSearchProps> = ({ search, setSearch }) => {
       {!isPortrait ? (
         <>
           <Grid.Col pl={30} span={6}>
-            <Title order={4}>Job Board</Title>
+            <Title order={4}>{title}</Title>
           </Grid.Col>
           <Grid.Col span={6} pr={30}>
             <div className={classes.searchInputContainer}>
               <TextInput
-                placeholder="Search jobs"
+                placeholder={placeholder}
                 rightSection={<IconSearch />}
                 size="md"
                 value={search}
@@ -36,10 +38,10 @@ const JobSearch: FC<JobSearchProps> = ({ search, setSearch }) => {
         </>
       ) : (
         <Grid.Col pl={30} span={12}>
-          <Title order={4}>Job Board</Title>
+          <Title order={4}>{title}</Title>
 
           <TextInput
-            placeholder="Search jobs"
+            placeholder={placeholder}
             rightSection={<IconSearch />}
             size="md"
             value={search}
