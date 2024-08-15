@@ -1,6 +1,6 @@
 import {inject} from '@loopback/core';
 import {DefaultCrudRepository} from '@loopback/repository';
-import {DevInMemDataSource} from '../datasources';
+import {MongoDbDataSource} from '../datasources';
 import {Admin, AdminRelations} from '../models';
 
 export class AdminRepository extends DefaultCrudRepository<
@@ -9,7 +9,7 @@ export class AdminRepository extends DefaultCrudRepository<
   AdminRelations
 > {
   constructor(
-    @inject('datasources.devInMem') dataSource: DevInMemDataSource,
+    @inject('datasources.mongoDB') dataSource: MongoDbDataSource,
   ) {
     super(Admin, dataSource);
   }
