@@ -1,13 +1,13 @@
 import { Box, Avatar, Text, Flex, Title, Container, Pagination } from '@mantine/core';
 import classes from './StudentBoard.module.css';
 import { useState, useEffect } from 'react';
+import Student from './Student';
 
 interface StudentListingProp {}
 
 const StudentListing: FC<StudentListingProp> = ({}) => {
   const [studentPerPage, setStudentPerPage] = useState<number>(4);
   const [activePage, setActivePage] = useState(1);
-
   const [isPortrait, setIsPortrait] = useState(window.innerHeight > window.innerWidth);
 
   const updateItemsPerPage = () => {
@@ -80,21 +80,6 @@ const StudentListing: FC<StudentListingProp> = ({}) => {
         'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png',
     },
   ];
-
-  const Student: FC<(typeof studentList)[0]> = ({ name, role, title, avatar }) => (
-    <Flex direction="column" align="center" py={10} px={10} className={classes.singleStudent}>
-      <Avatar src={avatar} alt={name} className={classes.avatar} />
-      <Box mt={10} px={0} className={classes.innerText}>
-        <Text size="lg">{name}</Text>
-        <Text size="sm" fs="italic">
-          {role}
-        </Text>
-        <Text size="sm" mt={10} className={classes.studentTitle}>
-          {title}
-        </Text>
-      </Box>
-    </Flex>
-  );
 
   // Calculate the indices for slicing the student list
   const startIndex = (activePage - 1) * studentPerPage;

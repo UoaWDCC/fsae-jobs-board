@@ -45,22 +45,6 @@
   align-items: center;
 }
 
-/* Filter */
-.filterHeading {
-  color: white;
-  font-size: 1.4rem;
-}
-
-.filterSubheading {
-  color: var(--mantine-color-customPapayaOrange-1);
-  font-weight: 600;
-  font-size: 1.1rem;
-}
-
-.checkbox {
-  margin: 0.8em 0;
-}
-
 /* mobile view */
 @media (max-width: 768px) {
     .studentRow {

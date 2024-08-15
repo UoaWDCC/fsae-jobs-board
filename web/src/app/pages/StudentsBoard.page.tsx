@@ -1,9 +1,9 @@
-import { Button, Flex, Title, Box, Text, Grid, Divider, useMantineTheme } from '@mantine/core';
+import { Grid, Divider, useMantineTheme } from '@mantine/core';
 import { useState, useEffect } from 'react';
 import StudentListing from '../components/StudentBoard/StudentListing';
-import classes from '../components/StudentBoard/StudentBoard.module.css';
 import JobFilter from '../components/JobBoard/JobFilter';
 import JobSearch from '../components/JobBoard/JobSearch';
+import classes from '../components/StudentBoard/StudentBoard.module.css';
 
 export function StudentsBoard() {
   const [filterRoles, setFilterRoles] = useState<string[]>([]);
@@ -34,7 +34,6 @@ export function StudentsBoard() {
               setFilterRoles={setFilterRoles}
               filterFields={filterFields}
               setFilterFields={setFilterFields}
-              className={classes.filter}
               color={theme.colors.customPapayaOrange[0]}
             />
           </Grid.Col>
