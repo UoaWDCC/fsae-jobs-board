@@ -106,7 +106,7 @@ const SponsorListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
   const chunkedJobListings = chunk(jobListings, itemsPerPage);
 
   const jobListingItems = chunkedJobListings[activePage - 1].map((jobListingItem) => (
-    <div>
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
       <SponsorBoardCard data={jobListingItem} />
     </div>
   ));
