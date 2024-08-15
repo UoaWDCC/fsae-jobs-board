@@ -44,13 +44,13 @@ export function SponsorBoardCard({ data }: { data: SponsorBoardCardProps }) {
           </Container>
           <Flex justify={'space-between'}>
             {/* Sponsor Title */}
-            <Text fw={500} size={rem(30)} className={classes.text}>
+            <Text fw={500} size={rem(24)} className={classes.text}>
               {data.companyTitle}
             </Text>
           </Flex>
 
           {/* Sponsor Subtite */}
-          <Text fw={500} size="xl" className={classes.text} fs="italic">
+          <Text fw={500} size={rem(16)} className={classes.text} fs="italic">
             {data.subtitle}
           </Text>
 
