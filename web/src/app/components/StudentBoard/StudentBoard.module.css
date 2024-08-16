@@ -34,7 +34,7 @@
 
 .studentRow {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     justify-items: center;
 }
 
@@ -48,6 +48,6 @@
 /* mobile view */
 @media (max-width: 768px) {
     .studentRow {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(3, 1fr);
     }
 }

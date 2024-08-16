@@ -1,6 +1,6 @@
 import { Box, Avatar, Text, Flex, Title, Container, Pagination } from '@mantine/core';
 import styles from './StudentBoard.module.css';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, FC } from 'react';
 import Student from './Student';
 
 interface StudentListingProp {}
