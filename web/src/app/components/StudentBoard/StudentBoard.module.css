@@ -48,6 +48,26 @@
 /* mobile view */
 @media (max-width: 768px) {
     .studentRow {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: 1fr;
+    }
+
+    .singleStudent {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 1rem;
+        align-items: center;
+        margin-bottom: 0;
+    }
+    
+    .studentBox {
+        margin-bottom: 1%
+    }
+
+    .avatar {
+        max-width: 6rem;
+    }
+
+    .innerText {
+        min-height: 100%;
     }
 }
