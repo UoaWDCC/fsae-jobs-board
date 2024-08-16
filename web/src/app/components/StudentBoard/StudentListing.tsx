@@ -1,5 +1,5 @@
 import { Box, Flex, Container, Pagination } from '@mantine/core';
-import classes from './StudentBoard.module.css';
+import styles from './StudentBoard.module.css';
 import { useState, useEffect, FC } from 'react';
 import Student from './Student';
 
@@ -90,9 +90,9 @@ const StudentListing: FC<StudentListingProp> = ({}) => {
 
   return (
     <>
-      <Flex gap="md" mt={30} className={classes.studentRow}>
+      <Flex gap="md" mt={30} className={styles.studentRow}>
         {paginatedStudents.map((student, index) => (
-          <Box key={index} className={classes.studentBox}>
+          <Box key={index} className={styles.studentBox}>
             <Student
               name={student.name}
               role={student.role}
@@ -102,7 +102,7 @@ const StudentListing: FC<StudentListingProp> = ({}) => {
           </Box>
         ))}
       </Flex>
-      <Container className={classes.paginationContainer}>
+      <Container className={styles.paginationContainer}>
         <Pagination
           total={Math.ceil(studentList.length / studentPerPage)}
           value={activePage}

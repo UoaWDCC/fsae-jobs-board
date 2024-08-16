@@ -9,7 +9,7 @@ import {
   Text,
 } from '@mantine/core';
 import { FormEvent } from 'react';
-import classes from './authform.module.css';
+import styles from './authform.module.css';
 import { NavLink } from 'react-router-dom';
 import { Role } from '../../type/role';
 
@@ -41,7 +41,7 @@ const fieldsByRole: { [key in Role]: Field[] } = {
 };
 
 const FormComponent: React.FC<FormComponentProps> = ({ fields, onSubmit }) => (
-  <form className={classes.form} onSubmit={onSubmit}>
+  <form className={styles.form} onSubmit={onSubmit}>
     <Stack gap={30}>
       {fields.map((field) => (
         <TextInput
@@ -50,7 +50,7 @@ const FormComponent: React.FC<FormComponentProps> = ({ fields, onSubmit }) => (
           name={field.name}
           size="md"
           required
-          classNames={{ label: classes.formLabel }}
+          classNames={{ label: styles.formLabel }}
         />
       ))}
       <TextInput
@@ -58,7 +58,7 @@ const FormComponent: React.FC<FormComponentProps> = ({ fields, onSubmit }) => (
         name="email"
         size="md"
         required
-        classNames={{ label: classes.formLabel }}
+        classNames={{ label: styles.formLabel }}
       />
       <Flex justify="space-between">
         <PasswordInput
@@ -66,14 +66,14 @@ const FormComponent: React.FC<FormComponentProps> = ({ fields, onSubmit }) => (
           name="password"
           size="md"
           required
-          classNames={{ label: classes.formLabel, root: classes.horizontalInput }}
+          classNames={{ label: styles.formLabel, root: styles.horizontalInput }}
         />
         <PasswordInput
           label="Confirmed Password"
           name="confirmPassword"
           size="md"
           required
-          classNames={{ label: classes.formLabel, root: classes.horizontalInput }}
+          classNames={{ label: styles.formLabel, root: styles.horizontalInput }}
         />
       </Flex>
       <Checkbox
@@ -81,7 +81,7 @@ const FormComponent: React.FC<FormComponentProps> = ({ fields, onSubmit }) => (
         label={
           <>
             I accept{' '}
-            <NavLink to="/" className={classes.link}>
+            <NavLink to="/" className={styles.link}>
               terms and conditions
             </NavLink>
           </>
@@ -107,7 +107,7 @@ const SignupForm = ({ role }: { role: Role }) => {
   };
 
   return (
-    <Flex align="center" justify="center" className={classes.signupFormContainer}>
+    <Flex align="center" justify="center" className={styles.signupFormContainer}>
       <Title order={5} ta="center" mt="lg" mb="lg" style={{ fontStyle: 'italic' }}>
         Join the F:SAE:47 Job Board Community
       </Title>
@@ -119,7 +119,7 @@ const SignupForm = ({ role }: { role: Role }) => {
       )}
       <Text ta="center" mt="md">
         Already have an account?{' '}
-        <NavLink to="/login" className={classes.link}>
+        <NavLink to="/login" className={styles.link}>
           Login
         </NavLink>
       </Text>

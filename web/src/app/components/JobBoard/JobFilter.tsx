@@ -1,5 +1,5 @@
 import { Checkbox, Title, Button, Stack, Modal, Flex } from '@mantine/core';
-import classes from './JobBoard.module.css';
+import styles from './JobBoard.module.css';
 import { FC, useState } from 'react';
 import { IconArrowDown } from '@tabler/icons-react';
 
@@ -18,7 +18,6 @@ const JobFilter: FC<JobFilterProps> = ({
   setFilterFields,
   color = '#0091ff',
 }) => {
-
   const roles = [
     { value: 'internship', label: 'Internship' },
     { value: 'graduate', label: 'Graduate Roles' },
@@ -43,7 +42,7 @@ const JobFilter: FC<JobFilterProps> = ({
     <>
       {!isPortrait && (
         <Stack mt={70} pl={30}>
-          <Title fs="italic" className={classes.filterHeading}>
+          <Title fs="italic" className={styles.filterHeading}>
             Filters
           </Title>
           <Stack>
@@ -52,7 +51,7 @@ const JobFilter: FC<JobFilterProps> = ({
               onChange={setFilterRoles}
               label="Role Type"
               labelProps={{ style: { color: color } }}
-              classNames={{ label: classes.filterSubheading }}
+              classNames={{ label: styles.filterSubheading }}
             >
               {roles.map((role) => (
                 <Checkbox
@@ -60,7 +59,7 @@ const JobFilter: FC<JobFilterProps> = ({
                   value={role.value}
                   label={role.label}
                   color={color}
-                  className={classes.checkbox}
+                  className={styles.checkbox}
                   size="md"
                 />
               ))}
@@ -72,7 +71,7 @@ const JobFilter: FC<JobFilterProps> = ({
               onChange={setFilterFields}
               label="Fields"
               labelProps={{ style: { color: color } }}
-              classNames={{ label: classes.filterSubheading }}
+              classNames={{ label: styles.filterSubheading }}
             >
               {fields.map((role) => (
                 <Checkbox
@@ -80,7 +79,7 @@ const JobFilter: FC<JobFilterProps> = ({
                   value={role.value}
                   label={role.label}
                   color={color}
-                  className={classes.checkbox}
+                  className={styles.checkbox}
                   size="md"
                 />
               ))}
@@ -96,7 +95,6 @@ const JobFilter: FC<JobFilterProps> = ({
               variant="transparent"
               size="lg"
               onClick={openModal}
-              styles={{ color: color }}
             >
               Filter
             </Button>
@@ -105,14 +103,14 @@ const JobFilter: FC<JobFilterProps> = ({
             opened={isModalOpen}
             onClose={closeModal}
             centered
-            classNames={{ content: classes.modal, header: classes.modalHeader }}
+            classNames={{ content: styles.modal, header: styles.modalHeader }}
           >
             <Stack>
               <Checkbox.Group
                 value={filterRoles}
                 onChange={setFilterRoles}
                 label="Role Type"
-                classNames={{ label: classes.filterSubheading }}
+                classNames={{ label: styles.filterSubheading }}
               >
                 {roles.map((role) => (
                   <Checkbox
@@ -120,7 +118,7 @@ const JobFilter: FC<JobFilterProps> = ({
                     value={role.value}
                     label={role.label}
                     color={color}
-                    className={classes.checkbox}
+                    className={styles.checkbox}
                     size="md"
                   />
                 ))}
@@ -131,7 +129,7 @@ const JobFilter: FC<JobFilterProps> = ({
                 value={filterFields}
                 onChange={setFilterFields}
                 label="Fields"
-                classNames={{ label: classes.filterSubheading }}
+                classNames={{ label: styles.filterSubheading }}
               >
                 {fields.map((role) => (
                   <Checkbox
@@ -139,7 +137,7 @@ const JobFilter: FC<JobFilterProps> = ({
                     value={role.value}
                     label={role.label}
                     color={color}
-                    className={classes.checkbox}
+                    className={styles.checkbox}
                     size="md"
                   />
                 ))}

@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import StudentListing from '../../components/StudentBoard/StudentListing';
 import JobFilter from '../../components/JobBoard/JobFilter';
 import JobSearch from '../../components/JobBoard/JobSearch';
-import classes from '../../components/StudentBoard/StudentBoard.module.css';
+import styles from '../../components/StudentBoard/StudentBoard.module.css';
 
 export function StudentsBoard() {
   const [filterRoles, setFilterRoles] = useState<string[]>([]);
@@ -28,7 +28,7 @@ export function StudentsBoard() {
     <Grid justify="center" align="center">
       {!isPortrait ? (
         <>
-          <Grid.Col span={2} className={classes.filterContainer} mt={120} pl={10}>
+          <Grid.Col span={2} className={styles.filterContainer} mt={120} pl={10}>
             <JobFilter
               filterRoles={filterRoles}
               setFilterRoles={setFilterRoles}
