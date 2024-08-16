@@ -1,0 +1,13 @@
+/* larger screen */
+@media (min-width: 1080px) {
+  .searchInputContainer {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .searchInput {
+    width: 60%;
+    align-self: flex-end;
+  }
+}
