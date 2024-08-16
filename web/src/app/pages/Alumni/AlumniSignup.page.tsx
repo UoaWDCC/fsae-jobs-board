@@ -1,12 +1,12 @@
 import SignupForm from '../../components/AuthForms/SignupForm';
 import { Role } from '../../type/role';
-import classes from '../../styles/LoginPage.module.css';
+import styles from '../../styles/LoginPage.module.css';
 import { Box } from '@mantine/core';
 
 export function AlumniSignUp() {
   return (
     <>
-      <Box className={classes.wrapper}>
+      <Box className={styles.wrapper}>
         <SignupForm role={Role.Alumni} />
       </Box>
     </>

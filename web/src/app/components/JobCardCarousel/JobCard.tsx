@@ -1,5 +1,5 @@
 import { ActionIcon, Text, Button, Paper, Flex, Stack } from '@mantine/core';
-import classes from './JobCard.module.css';
+import styles from './JobCard.module.css';
 import { useState } from 'react';
 import { UserType } from '@/app/features/user/userSlice';
 import { IconTrash } from '@tabler/icons-react';
@@ -116,19 +116,19 @@ export function JobCard({ data }: { data: JobCardProps }) {
         {/* Job Title */}
         <Stack gap="xs">
           <Flex justify={'space-between'}>
-            <Text fw={500} size="xl" className={classes.text}>
+            <Text fw={500} size="xl" className={styles.text}>
               {data.title}
             </Text>
             {getElementBasedOnUserType('deleteBtn')}
           </Flex>
 
           {/* Job Subtite */}
-          <Text fw={500} size="md" className={classes.text}>
+          <Text fw={500} size="md" className={styles.text}>
             {data.subtitle}
           </Text>
 
           {/* Job Description */}
-          <Text fw={700} size="sm" className={classes.text} lineClamp={3}>
+          <Text fw={700} size="sm" className={styles.text} lineClamp={3}>
             {data.description}
           </Text>
         </Stack>
@@ -139,7 +139,7 @@ export function JobCard({ data }: { data: JobCardProps }) {
 
         {/* Job ID */}
         <Flex justify="flex-end">
-          <Text c={'#7C7C7C'} size="sm" className={classes.text}>
+          <Text c={'#7C7C7C'} size="sm" className={styles.text}>
             #{data.jobID}
           </Text>
         </Flex>

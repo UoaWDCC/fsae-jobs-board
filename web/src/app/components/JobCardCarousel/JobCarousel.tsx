@@ -1,6 +1,6 @@
 import { Carousel } from '@mantine/carousel';
 import { JobCard, JobCardProps } from './JobCard';
-import classes from './JobCarousel.module.css';
+import styles from './JobCarousel.module.css';
 import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import { rem } from '@mantine/core';
 
@@ -29,7 +29,7 @@ export function JobCarousel(data: JobCarouselProps) {
       previousControlIcon={<IconChevronLeft style={{ width: rem(16), height: rem(16) }} />}
       align="start"
       w="95%"
-      classNames={classes}
+      classNames={styles}
     >
       {/* Render each JobCard as a slide */}
       {slides}

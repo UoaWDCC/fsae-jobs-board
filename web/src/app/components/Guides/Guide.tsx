@@ -1,7 +1,7 @@
 import { Title, Text, Flex, Button, Box } from '@mantine/core';
 import { IconArrowRight } from '@tabler/icons-react';
 import { useScrollIntoView } from '@mantine/hooks';
-import classes from './Guides.module.css';
+import styles from './Guides.module.css';
 import { NavLink } from 'react-router-dom';
 
 type GuideProps = {
@@ -36,15 +36,15 @@ export function Guide({
       align="center"
       direction="column"
       wrap="wrap"
-      className={classes.wrapper}
+      className={styles.wrapper}
     >
       <Box>
         <Title ref={targetRef}>{title}</Title>
       </Box>
 
       <Flex gap={{ base: '50', sm: '125' }} direction={{ base: 'column', sm: 'row' }}>
-        <Box className={classes.card}>
-          <Box mt={-140} className={classes.greyCircle}>
+        <Box className={styles.card}>
+          <Box mt={-140} className={styles.greyCircle}>
             <Title ta="center" order={4} fw={800}>
               1
             </Title>
@@ -55,8 +55,8 @@ export function Guide({
           </Text>
           <Text ta="center">{description1}</Text>
         </Box>
-        <Box className={classes.card}>
-          <Box mt={-140} className={classes.orangeCircle}>
+        <Box className={styles.card}>
+          <Box mt={-140} className={styles.orangeCircle}>
             <Title ta="center" order={4} fw={800}>
               2
             </Title>
@@ -66,8 +66,8 @@ export function Guide({
           </Text>
           <Text ta="center">{description2}</Text>
         </Box>
-        <Box className={classes.card}>
-          <Box mt={-140} className={classes.greyCircle}>
+        <Box className={styles.card}>
+          <Box mt={-140} className={styles.greyCircle}>
             <Title ta="center" order={4} fw={800}>
               3
             </Title>
