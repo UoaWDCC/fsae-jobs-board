@@ -1943,21 +1943,21 @@ __metadata:
   linkType: hard
 
 "@floating-ui/core@npm:^1.6.0":
-  version: 1.6.6
-  resolution: "@floating-ui/core@npm:1.6.6"
+  version: 1.6.7
+  resolution: "@floating-ui/core@npm:1.6.7"
   dependencies:
-    "@floating-ui/utils": "npm:^0.2.6"
-  checksum: 10c0/c94f6d0a800185b1839b879231ef65f8dc7736a52c0297ed042f23624519748ed1145469f3aa7f864474f3dccd9ec3bedeaba891f409464a176c8f3416b60619
+    "@floating-ui/utils": "npm:^0.2.7"
+  checksum: 10c0/5c9ae274854f87ed09a61de758377d444c2b13ade7fd1067d74287b3e66de5340ae1281e48604b631c540855a2595cfc717adf9a2331eaadc4fa6d28e8571f64
   languageName: node
   linkType: hard
 
 "@floating-ui/dom@npm:^1.0.0":
-  version: 1.6.9
-  resolution: "@floating-ui/dom@npm:1.6.9"
+  version: 1.6.10
+  resolution: "@floating-ui/dom@npm:1.6.10"
   dependencies:
     "@floating-ui/core": "npm:^1.6.0"
-    "@floating-ui/utils": "npm:^0.2.6"
-  checksum: 10c0/71ab68e6880446835a865d05db0889e5cd40a6007e97325624d7ce57b50e7f8533934cdab667365219020e9c8ae840c1e1bd37b1e4cd6937ac48ca2e2f11e333
+    "@floating-ui/utils": "npm:^0.2.7"
+  checksum: 10c0/ed7d7b400e00b2f31f1b8f11863af2cb95d0d3cd84635186ca31b41d8d9fe7fe12c85e4985617d7df7ed365abad48b327d0bae35934842007b4e1052d9780576
   languageName: node
   linkType: hard
 
@@ -1974,23 +1974,23 @@ __metadata:
   linkType: hard
 
 "@floating-ui/react@npm:^0.26.9":
-  version: 0.26.21
-  resolution: "@floating-ui/react@npm:0.26.21"
+  version: 0.26.22
+  resolution: "@floating-ui/react@npm:0.26.22"
   dependencies:
     "@floating-ui/react-dom": "npm:^2.1.1"
-    "@floating-ui/utils": "npm:^0.2.6"
+    "@floating-ui/utils": "npm:^0.2.7"
     tabbable: "npm:^6.0.0"
   peerDependencies:
     react: ">=16.8.0"
     react-dom: ">=16.8.0"
-  checksum: 10c0/13a6c458d9316a969fbb93840fdd3f23ca6a5ecd68a6069dc8e7384f1097f13d6221e2fdf211dd265d19b80a95e02bc97e0f77cfb408bea01eff7c4a9b49f5ea
+  checksum: 10c0/7eea7bef4fb98d13873752c5cabcf61216dbf00d748027450cdd0ff5c7a51328f8800fa012ecd87bef8e1abedcc7703d5298a604843ec031dc88a18233548623
   languageName: node
   linkType: hard
 
-"@floating-ui/utils@npm:^0.2.6":
-  version: 0.2.6
-  resolution: "@floating-ui/utils@npm:0.2.6"
-  checksum: 10c0/8de3108e7862ca756be501dbe6ff49996ff15f545a282acf39bf268ae2977ceb14298bb155c5c7e6f7885df7fdcc6abb136eb94cde61a3b5a7d96f6dc5b74ad4
+"@floating-ui/utils@npm:^0.2.7":
+  version: 0.2.7
+  resolution: "@floating-ui/utils@npm:0.2.7"
+  checksum: 10c0/0559ea5df2dc82219bad26e3509e9d2b70f6987e552dc8ddf7d7f5923cfeb7c44bf884567125b1f9cdb122a4c7e6e7ddbc666740bc30b0e4091ccbca63c6fb1c
   languageName: node
   linkType: hard
 
@@ -2109,22 +2109,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mantine/carousel@npm:^7.11.2":
-  version: 7.11.2
-  resolution: "@mantine/carousel@npm:7.11.2"
+"@mantine/carousel@npm:^7.12.0":
+  version: 7.12.0
+  resolution: "@mantine/carousel@npm:7.12.0"
   peerDependencies:
-    "@mantine/core": 7.11.2
-    "@mantine/hooks": 7.11.2
+    "@mantine/core": 7.12.0
+    "@mantine/hooks": 7.12.0
     embla-carousel-react: ">=7.0.0"
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: 10c0/560c10bb4fa9cd270f4f74c74feb5fdcf3a3f03593e179f4aa8504ebaf99b6408e1d517e7f51842b3c5a79d80cff4461510a3393d95ff765148c0d3aa78bb46b
+  checksum: 10c0/cfc2645deff12318d016de0cc5a9dc53e0e925e575241be1fa36081fb0bf3e9fddf63099de170860f7682ab7b35db80300834c1db78cefcba63059d9cee74934
   languageName: node
   linkType: hard
 
-"@mantine/core@npm:7.11.2":
-  version: 7.11.2
-  resolution: "@mantine/core@npm:7.11.2"
+"@mantine/core@npm:^7.12.0":
+  version: 7.12.0
+  resolution: "@mantine/core@npm:7.12.0"
   dependencies:
     "@floating-ui/react": "npm:^0.26.9"
     clsx: "npm:^2.1.1"
@@ -2133,14 +2133,14 @@ __metadata:
     react-textarea-autosize: "npm:8.5.3"
     type-fest: "npm:^4.12.0"
   peerDependencies:
-    "@mantine/hooks": 7.11.2
+    "@mantine/hooks": 7.12.0
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: 10c0/ca13547e9961d908701c8c1825c4b99eb4a757060c22fc5a6c681a32ec58ec33fa58951978d395f5054f8823cdcaae3562f88631ef2ad6cd1d22414fa167d327
+  checksum: 10c0/afd39a0202375aa709bf8e147326cabee65eaa8cd8a9c70830377f5f2612de58e0812837a4064ce346950e1406a5cd02147cac591f0f043ff2b464c69628004d
   languageName: node
   linkType: hard
 
-"@mantine/dropzone@npm:^7.11.2":
+"@mantine/dropzone@npm:^7.12.0":
   version: 7.12.0
   resolution: "@mantine/dropzone@npm:7.12.0"
   dependencies:
@@ -2154,7 +2154,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mantine/hooks@npm:^7.11.2":
+"@mantine/hooks@npm:^7.12.0":
   version: 7.12.0
   resolution: "@mantine/hooks@npm:7.12.0"
   peerDependencies:
@@ -7561,12 +7561,12 @@ __metadata:
   linkType: hard
 
 "foreground-child@npm:^3.1.0":
-  version: 3.2.1
-  resolution: "foreground-child@npm:3.2.1"
+  version: 3.3.0
+  resolution: "foreground-child@npm:3.3.0"
   dependencies:
     cross-spawn: "npm:^7.0.0"
     signal-exit: "npm:^4.0.1"
-  checksum: 10c0/9a53a33dbd87090e9576bef65fb4a71de60f6863a8062a7b11bc1cbe3cc86d428677d7c0b9ef61cdac11007ac580006f78bd5638618d564cfd5e6fd713d6878f
+  checksum: 10c0/028f1d41000553fcfa6c4bb5c372963bf3d9bf0b1f25a87d1a6253014343fb69dfb1b42d9625d7cf44c8ba429940f3d0ff718b62105d4d4a4f6ef8ca0a53faa2
   languageName: node
   linkType: hard
 
@@ -9234,10 +9234,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "mantine-vite-template@workspace:."
   dependencies:
-    "@mantine/carousel": "npm:^7.11.2"
-    "@mantine/core": "npm:7.11.2"
-    "@mantine/dropzone": "npm:^7.11.2"
-    "@mantine/hooks": "npm:^7.11.2"
+    "@mantine/carousel": "npm:^7.12.0"
+    "@mantine/core": "npm:^7.12.0"
+    "@mantine/dropzone": "npm:^7.12.0"
+    "@mantine/hooks": "npm:^7.12.0"
     "@reduxjs/toolkit": "npm:^2.2.5"
     "@storybook/addon-essentials": "npm:^8.0.0"
     "@storybook/addon-interactions": "npm:^8.0.0"
@@ -12415,9 +12415,9 @@ __metadata:
   linkType: hard
 
 "type-fest@npm:^4.12.0":
-  version: 4.23.0
-  resolution: "type-fest@npm:4.23.0"
-  checksum: 10c0/c42bb14e99329ab37983d1f188e307bf0cc705a23807d9b2268d8fb2ae781d610ac6e2058dde8f9ea2b1b8ddc77ceb578d157fa81f69f8f70aef1d42fb002996
+  version: 4.24.0
+  resolution: "type-fest@npm:4.24.0"
+  checksum: 10c0/9770471a397733b17b5a9ce48ee5a4d6c042c84a4858ff4e15abd126f351c61b5fea8b7b5e55bfa34840098a920b915d5ff878db1b3c007a2512a6a9c7f21579
   languageName: node
   linkType: hard
 
