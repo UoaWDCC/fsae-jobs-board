@@ -1,16 +1,14 @@
-import { Grid, Divider, useMantineTheme } from '@mantine/core';
-import { useState, useEffect } from 'react';
-import StudentListing from '../components/StudentBoard/StudentListing';
-import JobFilter from '../components/JobBoard/JobFilter';
-import JobSearch from '../components/JobBoard/JobSearch';
-import classes from '../components/StudentBoard/StudentBoard.module.css';
+import { Divider, Grid } from '@mantine/core';
+import JobFilter from '../../components/JobBoard/JobFilter';
+import JobListing from '../../components/JobBoard/JobListing';
+import { useEffect, useState } from 'react';
+import JobSearch from '../../components/JobBoard/JobSearch';
 
-export function StudentsBoard() {
+export function JobBoard() {
   const [filterRoles, setFilterRoles] = useState<string[]>([]);
   const [filterFields, setFilterFields] = useState<string[]>([]);
-  const [search, setSearch] = useState<string>('');
+
   const [isPortrait, setIsPortrait] = useState(window.innerHeight > window.innerWidth);
-  const theme = useMantineTheme();
 
   useEffect(() => {
     const handleResize = () => {
@@ -23,55 +21,43 @@ export function StudentsBoard() {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
+  const [search, setSearch] = useState<string>('');
 
   return (
     <Grid justify="center" align="center">
       {!isPortrait ? (
         <>
-          <Grid.Col span={2} className={classes.filterContainer} mt={120} pl={10}>
+          <Grid.Col span={2}>
             <JobFilter
               filterRoles={filterRoles}
               setFilterRoles={setFilterRoles}
               filterFields={filterFields}
               setFilterFields={setFilterFields}
-              color={theme.colors.customPapayaOrange[0]}
             />
           </Grid.Col>
-          <Grid.Col span={0.5} pl={40} style={{ alignSelf: 'stretch' }}>
-            <Divider
-              orientation="vertical"
-              size="sm"
-              style={{ height: '80%' }}
-              mt={160}
-              color={theme.colors.customWhite[0]}
-            />
+          <Grid.Col span={1} mt={190} pl={40} style={{ alignSelf: 'stretch' }}>
+            <Divider orientation="vertical" size="lg" style={{ height: '90%' }} />
           </Grid.Col>
           <Grid.Col span={9}>
             <JobSearch
               search={search}
               setSearch={setSearch}
-              title="Student Profiles"
-              placeholder="Search students"
+              title="Job Board"
+              placeholder="Search jobs"
             />
-            <StudentListing />
+            <JobListing filterRoles={filterRoles} filterFields={filterFields} />
           </Grid.Col>
         </>
       ) : (
         <Grid.Col span={12}>
-          <JobSearch
-            search={search}
-            setSearch={setSearch}
-            title="Student Profiles"
-            placeholder="Search students"
-          />
+          <JobSearch search={search} setSearch={setSearch} title={''} placeholder={''} />
           <JobFilter
             filterRoles={filterRoles}
             setFilterRoles={setFilterRoles}
             filterFields={filterFields}
             setFilterFields={setFilterFields}
-            color={theme.colors.customPapayaOrange[0]}
           />
-          <StudentListing />
+          <JobListing filterRoles={filterRoles} filterFields={filterFields} />
         </Grid.Col>
       )}
     </Grid>

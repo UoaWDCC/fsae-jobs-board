@@ -1,6 +1,6 @@
-import { Box, Avatar, Text, Flex, Title, Container, Pagination } from '@mantine/core';
+import { Box, Flex, Container, Pagination } from '@mantine/core';
 import classes from './StudentBoard.module.css';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, FC } from 'react';
 import Student from './Student';
 
 interface StudentListingProp {}
@@ -39,7 +39,7 @@ const StudentListing: FC<StudentListingProp> = ({}) => {
     },
     {
       name: 'John Doe2',
-      role: 'Software Engineer',
+      role: ' Business Team Lead',
       title: 'Graduate Mechatronics Engineer',
       avatar:
         'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png',
