@@ -1,4 +1,4 @@
-import { useLocation, Outlet, Navigate } from 'react-router-dom';
+import { useLocation, Outlet } from 'react-router-dom';
 
 function SignupSwitcher() {
   // Not directly used here, but could be for future enhancements (e.g., conditional redirects)

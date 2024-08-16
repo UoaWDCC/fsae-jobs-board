@@ -10,13 +10,13 @@ import {
   Flex,
   Loader,
 } from '@mantine/core';
-import classes from '../styles/StudentProfile.module.css';
+import classes from '../../styles/StudentProfile.module.css';
 import { useEffect, useState } from 'react';
 import { IconCertificate } from '@tabler/icons-react';
-import EditModal from '../components/Modal/EditModal';
-import { EditStudentProfile } from '../components/Modal/EditStudentProfile';
-import { EditAvatar } from '../components/Modal/EditAvatar';
-import { EditBannerModal } from '../components/Modal/EditBannerModal';
+import EditModal from '../../components/Modal/EditModal';
+import { EditStudentProfile } from '../../components/Modal/EditStudentProfile';
+import { EditAvatar } from '../../components/Modal/EditAvatar';
+import { EditBannerModal } from '../../components/Modal/EditBannerModal';
 
 export function StudentProfile() {
   // UseState for future modal implementation
