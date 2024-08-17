@@ -1,4 +1,4 @@
-import { Box, Flex, Container, Pagination } from '@mantine/core';
+import { Grid, Flex, Pagination } from '@mantine/core';
 import styles from './StudentBoard.module.css';
 import { useState, useEffect, FC } from 'react';
 import Student from './Student';
@@ -6,16 +6,16 @@ import Student from './Student';
 interface StudentListingProp {}
 
 const StudentListing: FC<StudentListingProp> = ({}) => {
-  const [studentPerPage, setStudentPerPage] = useState<number>(4);
+  const [studentPerPage, setStudentPerPage] = useState<number>(16);
   const [activePage, setActivePage] = useState(1);
   const [isPortrait, setIsPortrait] = useState(window.innerHeight > window.innerWidth);
 
   const updateItemsPerPage = () => {
     setIsPortrait(window.innerHeight > window.innerWidth);
     if (window.innerWidth > 1080) {
-      setStudentPerPage(6);
+      setStudentPerPage(16);
     } else {
-      setStudentPerPage(4);
+      setStudentPerPage(10);
     }
   };
 
@@ -29,57 +29,22 @@ const StudentListing: FC<StudentListingProp> = ({}) => {
     };
   }, []);
 
-  const studentList = [
-    {
-      name: 'John Doe1',
-      role: 'Race Engineer',
-      title: 'Graduate Mechatronics Engineer',
-      avatar:
-        'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png',
-    },
-    {
-      name: 'John Doe2',
-      role: ' Business Team Lead',
-      title: 'Graduate Mechatronics Engineer',
-      avatar:
-        'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png',
-    },
-    {
-      name: 'John Doe3',
-      role: 'Student',
-      title: 'Graduate Mechatronics Engineer',
-      avatar:
-        'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png',
-    },
-    {
-      name: 'John Doe4',
-      role: 'Student',
-      title: 'Graduate Mechatronics Engineer',
-      avatar:
-        'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png',
-    },
-    {
-      name: 'John Doe5',
-      role: 'Student',
-      title: 'Graduate Mechatronics Engineer',
-      avatar:
-        'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png',
-    },
-    {
-      name: 'John Doe6',
-      role: 'Student',
-      title: 'Graduate Mechatronics Engineer',
-      avatar:
-        'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png',
-    },
-    {
-      name: 'John Doe7',
-      role: 'Student',
-      title: 'Graduate Mechatronics Engineer',
-      avatar:
-        'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png',
-    },
-  ];
+  const baseStudent = {
+    name: '',
+    role: '',
+    degree: '',
+    year: '',
+    avatar:
+      'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png',
+  };
+
+  const studentList = Array.from({ length: 70 }, (_, index) => ({
+    ...baseStudent,
+    name: index < 10 ? `John Doe${index + 1}` : `Student ${index + 1}`,
+    role: index < 10 ? `Race Engineer${index + 1}` : ` Research & development Leader`,
+    degree: index < 10 ? ` BEng. Software` : ` BSc. Computer Science`,
+    year: index < 10 ? `Year ${index + 1}` : ` Year 2`,
+  }));
 
   // Calculate the indices for slicing the student list
   const startIndex = (activePage - 1) * studentPerPage;
@@ -90,19 +55,28 @@ const StudentListing: FC<StudentListingProp> = ({}) => {
 
   return (
     <>
-      <Flex gap="md" mt={30} className={styles.studentRow}>
+      <Grid
+        gutter={{ base: 5, xs: 'md', md: 'xl', xl: 50 }}
+        justify="center"
+        className={styles.studentCardContainer}
+      >
         {paginatedStudents.map((student, index) => (
-          <Box key={index} className={styles.studentBox}>
+          <Grid.Col
+            span={{ base: 12, sm: 4, md: 3, lg: 2.5 }}
+            key={index}
+            className={styles.studentCard}
+          >
             <Student
               name={student.name}
               role={student.role}
-              title={student.title}
+              degree={student.degree}
+              year={student.year}
               avatar={student.avatar}
             />
-          </Box>
+          </Grid.Col>
         ))}
-      </Flex>
-      <Container className={styles.paginationContainer}>
+      </Grid>
+      <Flex align="flex-end" justify="center">
         <Pagination
           total={Math.ceil(studentList.length / studentPerPage)}
           value={activePage}
@@ -110,7 +84,7 @@ const StudentListing: FC<StudentListingProp> = ({}) => {
           size="lg"
           mb="md"
         />
-      </Container>
+      </Flex>
     </>
   );
 };

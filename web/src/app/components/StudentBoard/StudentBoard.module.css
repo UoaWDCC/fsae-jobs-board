@@ -1,73 +1,70 @@
 .filterContainer {
-    display: flex;
-    align-self: flex-start; 
+  display: flex;
+  align-self: flex-start;
 }
 
 .searchBar {
-    width: 60%;
-    align-self: flex-end;
+  width: 60%;
+  align-self: flex-end;
 }
 
-.studentBox {
-    background-color: var(--mantine-color-customCharcoalGrey-1);
-    border-radius: 10px;
-    width: 90%;
-    margin-bottom: 10%;
+.studentCard {
+  background-color: var(--mantine-color-customCharcoalGrey-1);
+  border-radius: 10px;
+  margin: 0.5rem;
 }
 
 .avatar {
-    width: 100%;
-    height: 100%;
-    border-radius: 10px;
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
 }
 
 .studentTitle {
-    background-color: var(--mantine-color-customAzureBlue-1);
-    padding: 5px 7px ;
-    width: fit-content;
-    border-radius: 20px;
+  background-color: var(--mantine-color-customAzureBlue-1);
+  padding: 5px 7px;
+  width: fit-content;
+  border-radius: 20px;
+}
+
+.studentCardContainer {
+  height: auto;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
 }
 
 .innerText {
-    width: 100%;
-}
-
-.studentRow {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    justify-items: center;
-}
-
-.paginationContainer {
-  display: flex;
   width: 100%;
-  flex-direction: column;
-  align-items: center;
+}
+
+.studentCardRoleText{
+  color: var(--mantine-color-customAzureBlue-1);
+  font-style: italic;
 }
 
 /* mobile view */
 @media (max-width: 768px) {
-    .studentRow {
-        grid-template-columns: 1fr;
-    }
+  .studentRow {
+    grid-template-columns: 1fr;
+  }
 
-    .singleStudent {
-        display: grid;
-        grid-template-columns: auto 1fr;
-        gap: 1rem;
-        align-items: center;
-        margin-bottom: 0;
-    }
-    
-    .studentBox {
-        margin-bottom: 1%
-    }
+  .singleStudent {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 0;
+  }
 
-    .avatar {
-        max-width: 6rem;
-    }
+  .studentBox {
+    margin-bottom: 1%;
+  }
 
-    .innerText {
-        min-height: 100%;
-    }
+  .avatar {
+    max-width: 6rem;
+  }
+
+  .innerText {
+    min-height: 100%;
+  }
 }

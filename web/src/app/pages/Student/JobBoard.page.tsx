@@ -1,14 +1,15 @@
-import { Divider, Grid } from '@mantine/core';
+import { Divider, Grid, useMantineTheme } from '@mantine/core';
 import Filter from '../../components/Filter/Filter';
 import JobListing from '../../components/JobBoard/JobListing';
 import { useEffect, useState } from 'react';
 import SearchBar from '../../components/SearchBar/SearchBar';
+import { ToTopButton } from '../../components/BackToTopButton/BackToTopButton';
 
 export function JobBoard() {
   const [filterRoles, setFilterRoles] = useState<string[]>([]);
   const [filterFields, setFilterFields] = useState<string[]>([]);
-
   const [isPortrait, setIsPortrait] = useState(window.innerHeight > window.innerWidth);
+  const theme = useMantineTheme();
 
   useEffect(() => {
     const handleResize = () => {
@@ -27,6 +28,7 @@ export function JobBoard() {
     <Grid justify="center" align="center">
       {!isPortrait ? (
         <>
+          <ToTopButton />
           <Grid.Col span={2}>
             <Filter
               filterRoles={filterRoles}
@@ -35,8 +37,14 @@ export function JobBoard() {
               setFilterFields={setFilterFields}
             />
           </Grid.Col>
-          <Grid.Col span={1} mt={190} pl={40} style={{ alignSelf: 'stretch' }}>
-            <Divider orientation="vertical" size="lg" style={{ height: '90%' }} />
+          <Grid.Col span={0.5} pl={40} style={{ alignSelf: 'stretch' }}>
+            <Divider
+              orientation="vertical"
+              size="sm"
+              style={{ height: '80%' }}
+              mt={160}
+              color={theme.colors.customWhite[0]}
+            />
           </Grid.Col>
           <Grid.Col span={9}>
             <SearchBar
