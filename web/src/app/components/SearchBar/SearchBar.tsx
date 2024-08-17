@@ -1,16 +1,16 @@
 import { Grid, TextInput, Title } from '@mantine/core';
 import { IconSearch } from '@tabler/icons-react';
 import { FC, useState } from 'react';
-import styles from './JobBoard.module.css';
+import styles from './SearchBar.module.css';
 
-interface JobSearchProps {
+interface SearchBarProps {
   search: string;
   setSearch: (search: string) => void;
   title: string;
   placeholder: string;
 }
 
-const JobSearch: FC<JobSearchProps> = ({ search, setSearch, title, placeholder }) => {
+const SearchBar: FC<SearchBarProps> = ({ search, setSearch, title, placeholder }) => {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value);
   };
@@ -54,4 +54,4 @@ const JobSearch: FC<JobSearchProps> = ({ search, setSearch, title, placeholder }
   );
 };
 
-export default JobSearch;
+export default SearchBar;

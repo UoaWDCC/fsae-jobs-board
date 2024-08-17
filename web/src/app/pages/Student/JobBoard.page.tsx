@@ -1,8 +1,8 @@
 import { Divider, Grid } from '@mantine/core';
-import JobFilter from '../../components/JobBoard/JobFilter';
+import Filter from '../../components/Filter/Filter';
 import JobListing from '../../components/JobBoard/JobListing';
 import { useEffect, useState } from 'react';
-import JobSearch from '../../components/JobBoard/JobSearch';
+import SearchBar from '../../components/SearchBar/SearchBar';
 
 export function JobBoard() {
   const [filterRoles, setFilterRoles] = useState<string[]>([]);
@@ -28,7 +28,7 @@ export function JobBoard() {
       {!isPortrait ? (
         <>
           <Grid.Col span={2}>
-            <JobFilter
+            <Filter
               filterRoles={filterRoles}
               setFilterRoles={setFilterRoles}
               filterFields={filterFields}
@@ -39,7 +39,7 @@ export function JobBoard() {
             <Divider orientation="vertical" size="lg" style={{ height: '90%' }} />
           </Grid.Col>
           <Grid.Col span={9}>
-            <JobSearch
+            <SearchBar
               search={search}
               setSearch={setSearch}
               title="Job Board"
@@ -50,8 +50,8 @@ export function JobBoard() {
         </>
       ) : (
         <Grid.Col span={12}>
-          <JobSearch search={search} setSearch={setSearch} title={''} placeholder={''} />
-          <JobFilter
+          <SearchBar search={search} setSearch={setSearch} title={''} placeholder={''} />
+          <Filter
             filterRoles={filterRoles}
             setFilterRoles={setFilterRoles}
             filterFields={filterFields}

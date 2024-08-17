@@ -1,9 +1,9 @@
 import { Checkbox, Title, Button, Stack, Modal, Flex } from '@mantine/core';
-import styles from './JobBoard.module.css';
+import styles from './Filter.module.css';
 import { FC, useState } from 'react';
 import { IconArrowDown } from '@tabler/icons-react';
 
-interface JobFilterProps {
+interface FilterProps {
   filterRoles: string[];
   setFilterRoles: (filterRoles: string[]) => void;
   filterFields: string[];
@@ -11,7 +11,7 @@ interface JobFilterProps {
   color?: string;
 }
 
-const JobFilter: FC<JobFilterProps> = ({
+const Filter: FC<FilterProps> = ({
   filterRoles,
   setFilterRoles,
   filterFields,
@@ -150,4 +150,4 @@ const JobFilter: FC<JobFilterProps> = ({
   );
 };
 
-export default JobFilter;
+export default Filter;

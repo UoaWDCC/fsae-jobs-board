@@ -1,8 +1,8 @@
 import { Grid, Divider, useMantineTheme } from '@mantine/core';
 import { useState, useEffect } from 'react';
 import StudentListing from '../../components/StudentBoard/StudentListing';
-import JobFilter from '../../components/JobBoard/JobFilter';
-import JobSearch from '../../components/JobBoard/JobSearch';
+import Filter from '../../components/Filter/Filter';
+import SearchBar from '../../components/SearchBar/SearchBar';
 import styles from '../../components/StudentBoard/StudentBoard.module.css';
 
 export function StudentsBoard() {
@@ -29,7 +29,7 @@ export function StudentsBoard() {
       {!isPortrait ? (
         <>
           <Grid.Col span={2} className={styles.filterContainer} mt={120} pl={10}>
-            <JobFilter
+            <Filter
               filterRoles={filterRoles}
               setFilterRoles={setFilterRoles}
               filterFields={filterFields}
@@ -47,7 +47,7 @@ export function StudentsBoard() {
             />
           </Grid.Col>
           <Grid.Col span={9}>
-            <JobSearch
+            <SearchBar
               search={search}
               setSearch={setSearch}
               title="Student Profiles"
@@ -58,13 +58,13 @@ export function StudentsBoard() {
         </>
       ) : (
         <Grid.Col span={12}>
-          <JobSearch
+          <SearchBar
             search={search}
             setSearch={setSearch}
             title="Student Profiles"
             placeholder="Search students"
           />
-          <JobFilter
+          <Filter
             filterRoles={filterRoles}
             setFilterRoles={setFilterRoles}
             filterFields={filterFields}
