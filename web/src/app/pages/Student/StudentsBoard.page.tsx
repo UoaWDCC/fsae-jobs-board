@@ -34,7 +34,6 @@ export function StudentsBoard() {
               setFilterRoles={setFilterRoles}
               filterFields={filterFields}
               setFilterFields={setFilterFields}
-              color={theme.colors.customPapayaOrange[0]}
             />
           </Grid.Col>
           <Grid.Col span={0.5} pl={40} style={{ alignSelf: 'stretch' }}>
