@@ -15,7 +15,7 @@ export function ToTopButton() {
               style={transitionStyles}
               onClick={() => scrollTo({ y: 0 })}
             >
-              <IconChevronsUp color="red" size={40} stroke={5}/>
+              <IconChevronsUp color="white" size={40} stroke={2} />
             </Button>
           )}
         </Transition>

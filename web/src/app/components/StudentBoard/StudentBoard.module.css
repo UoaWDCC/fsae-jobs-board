@@ -37,7 +37,7 @@
   width: 100%;
 }
 
-.studentCardRoleText{
+.studentCardRoleText {
   color: var(--mantine-color-customAzureBlue-1);
   font-style: italic;
 }

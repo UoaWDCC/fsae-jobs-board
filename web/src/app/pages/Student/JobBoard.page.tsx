@@ -3,7 +3,6 @@ import Filter from '../../components/Filter/Filter';
 import JobListing from '../../components/JobBoard/JobListing';
 import { useEffect, useState } from 'react';
 import SearchBar from '../../components/SearchBar/SearchBar';
-import { ToTopButton } from '../../components/BackToTopButton/BackToTopButton';
 
 export function JobBoard() {
   const [filterRoles, setFilterRoles] = useState<string[]>([]);
@@ -28,7 +27,6 @@ export function JobBoard() {
     <Grid justify="center" align="center">
       {!isPortrait ? (
         <>
-          <ToTopButton />
           <Grid.Col span={2}>
             <Filter
               filterRoles={filterRoles}
@@ -55,6 +53,7 @@ export function JobBoard() {
             />
             <JobListing filterRoles={filterRoles} filterFields={filterFields} />
           </Grid.Col>
+          
         </>
       ) : (
         <Grid.Col span={12}>

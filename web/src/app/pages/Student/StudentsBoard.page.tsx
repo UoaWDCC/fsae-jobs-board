@@ -4,6 +4,7 @@ import StudentListing from '../../components/StudentBoard/StudentListing';
 import Filter from '../../components/Filter/Filter';
 import SearchBar from '../../components/SearchBar/SearchBar';
 import styles from '../../components/StudentBoard/StudentBoard.module.css';
+import { ToTopButton } from '../../components/BackToTopButton/BackToTopButton';
 
 export function StudentsBoard() {
   const [filterRoles, setFilterRoles] = useState<string[]>([]);
@@ -54,6 +55,7 @@ export function StudentsBoard() {
             />
             <StudentListing />
           </Grid.Col>
+          <ToTopButton />
         </>
       ) : (
         <Grid.Col span={12}>
