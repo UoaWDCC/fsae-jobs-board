@@ -1,10 +1,10 @@
 import { Card, Avatar, Text, Box, Title, Button, Grid, Flex, Loader } from '@mantine/core';
-import classes from '../styles/SponsorProfile.module.css';
+import styles from '../../styles/SponsorProfile.module.css';
 import { useEffect, useState } from 'react';
 import { IconPlus } from '@tabler/icons-react';
-import { JobCarousel } from '../components/JobCardCarousel/JobCarousel';
-import { JobCardProps } from '../components/JobCardCarousel/JobCard';
-import { UserType } from '../features/user/userSlice';
+import { JobCarousel } from '../../components/JobCardCarousel/JobCarousel';
+import { JobCardProps } from '../../components/JobCardCarousel/JobCard';
+import { UserType } from '../../features/user/userSlice';
 
 export function SponsorProfile() {
   // UseState for future modal implementation
@@ -118,7 +118,7 @@ export function SponsorProfile() {
           <Button
             onClick={handleProfileChange}
             classNames={{
-              root: classes.button_root,
+              root: styles.button_root,
             }}
           >
             Edit Profile
@@ -130,7 +130,7 @@ export function SponsorProfile() {
             onClick={handleJobOpportunitiesChange}
             leftSection={<IconPlus stroke={3} size={'1rem'} />}
             classNames={{
-              root: classes.button_root,
+              root: styles.button_root,
             }}
           >
             Add New
@@ -164,7 +164,7 @@ export function SponsorProfile() {
           <Button
             onClick={handleDeactivateUserChange}
             classNames={{
-              root: classes.button_admin_root,
+              root: styles.button_admin_root,
             }}
           >
             Deactivate User
@@ -176,12 +176,12 @@ export function SponsorProfile() {
   };
 
   return (
-    <Box className={classes.container}>
+    <Box className={styles.container}>
       {/* PICTURE AND COMPANY DETAILS */}
-      <Card h={280} className={classes.card}>
-        <Card.Section h={250} className={classes.banner} onClick={handleBannerChange} />
+      <Card h={280} className={styles.card}>
+        <Card.Section h={250} className={styles.banner} onClick={handleBannerChange} />
         {userData?.companyName && (
-          <Text className={classes.name} pl={170} pt={140}>
+          <Text className={styles.name} pl={170} pt={140}>
             {userData.companyName}
           </Text>
         )}
@@ -191,10 +191,10 @@ export function SponsorProfile() {
           size={150}
           mt={-100}
           ml={10}
-          className={classes.avatar}
+          className={styles.avatar}
           onClick={handleAvatarChange}
         />
-        <Text size="lg" mt={-30} ml={170} className={classes.text}>
+        <Text size="lg" mt={-30} ml={170} className={styles.text}>
           {userData.companyField}
         </Text>
       </Card>
@@ -208,7 +208,7 @@ export function SponsorProfile() {
           {/* CONTACT */}
           <Box ml={20} mt={15}>
             <Title order={5}>Contact</Title>
-            <Box pl={15} mt={10} className={classes.box}>
+            <Box pl={15} mt={10} className={styles.box}>
               {userData?.email && <Text size="md">{userData.email}</Text>}
               {userData?.phone && <Text size="lg">{userData.phone}</Text>}
               {!userData && <Loader color="blue" />}
@@ -220,7 +220,7 @@ export function SponsorProfile() {
           <Box mx={20} mt={10}>
             {/* ABOUT ME SECTION */}
             <Title order={5}>About Me</Title>
-            <Box pl={15} mt={10} className={classes.box}>
+            <Box pl={15} mt={10} className={styles.box}>
               {/* Conditionally render the full description based on showMore state */}
               {userData?.description && (
                 <>

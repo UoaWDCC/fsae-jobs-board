@@ -1,5 +1,5 @@
-import { LoginForm } from '../components/AuthForms/LoginForm';
-import { LoginSideImage } from '../components/LoginSideImage/LoginSideImage';
+import { LoginForm } from '../../components/AuthForms/LoginForm';
+import { LoginSideImage } from '../../components/LoginSideImage/LoginSideImage';
 import { Grid } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 

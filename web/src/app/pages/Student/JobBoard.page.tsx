@@ -1,14 +1,14 @@
-import { Divider, Grid } from '@mantine/core';
-import JobFilter from '../components/JobBoard/JobFilter';
-import JobListing from '../components/JobBoard/JobListing';
+import { Divider, Grid, useMantineTheme } from '@mantine/core';
+import Filter from '../../components/Filter/Filter';
+import JobListing from '../../components/JobBoard/JobListing';
 import { useEffect, useState } from 'react';
-import JobSearch from '../components/JobBoard/JobSearch';
+import SearchBar from '../../components/SearchBar/SearchBar';
 
 export function JobBoard() {
   const [filterRoles, setFilterRoles] = useState<string[]>([]);
   const [filterFields, setFilterFields] = useState<string[]>([]);
-
   const [isPortrait, setIsPortrait] = useState(window.innerHeight > window.innerWidth);
+  const theme = useMantineTheme();
 
   useEffect(() => {
     const handleResize = () => {
@@ -28,25 +28,37 @@ export function JobBoard() {
       {!isPortrait ? (
         <>
           <Grid.Col span={2}>
-            <JobFilter
+            <Filter
               filterRoles={filterRoles}
               setFilterRoles={setFilterRoles}
               filterFields={filterFields}
               setFilterFields={setFilterFields}
             />
           </Grid.Col>
-          <Grid.Col span={1} mt={190} pl={40} style={{ alignSelf: 'stretch' }}>
-            <Divider orientation="vertical" size="lg" style={{ height: '90%' }} />
+          <Grid.Col span={0.5} pl={40} style={{ alignSelf: 'stretch' }}>
+            <Divider
+              orientation="vertical"
+              size="sm"
+              style={{ height: '80%' }}
+              mt={160}
+              color={theme.colors.customWhite[0]}
+            />
           </Grid.Col>
           <Grid.Col span={9}>
-            <JobSearch search={search} setSearch={setSearch} />
+            <SearchBar
+              search={search}
+              setSearch={setSearch}
+              title="Job Board"
+              placeholder="Search jobs"
+            />
             <JobListing filterRoles={filterRoles} filterFields={filterFields} />
           </Grid.Col>
+          
         </>
       ) : (
         <Grid.Col span={12}>
-          <JobSearch search={search} setSearch={setSearch} />
-          <JobFilter
+          <SearchBar search={search} setSearch={setSearch} title={''} placeholder={''} />
+          <Filter
             filterRoles={filterRoles}
             setFilterRoles={setFilterRoles}
             filterFields={filterFields}
