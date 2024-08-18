@@ -1,5 +1,5 @@
 import { useLocation, Outlet, Navigate } from 'react-router-dom';
-import { RootState } from '../store';
+import { RootState } from '../../store';
 import { useSelector } from 'react-redux';
 
 function ProfileSwitcher() {
