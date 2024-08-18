@@ -9,6 +9,7 @@ interface FilterProps {
   filterFields: string[];
   setFilterFields: (filterFields: string[]) => void;
   color?: string;
+  useRoles?: boolean;
 }
 
 const Filter: FC<FilterProps> = ({
@@ -17,6 +18,7 @@ const Filter: FC<FilterProps> = ({
   filterFields,
   setFilterFields,
   color = '#0091ff',
+  useRoles = true,
 }) => {
   const roles = [
     { value: 'internship', label: 'Internship' },
@@ -37,6 +39,7 @@ const Filter: FC<FilterProps> = ({
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
   const [isPortrait, setIsPortrait] = useState(window.innerHeight > window.innerWidth);
+  const [useRolesFilter, setUseRolesFilter] = useState(useRoles);
 
   return (
     <>
@@ -45,31 +48,33 @@ const Filter: FC<FilterProps> = ({
           <Title fs="italic" className={styles.filterHeading}>
             Filters
           </Title>
-          <Stack>
-            <Checkbox.Group
-              value={filterRoles}
-              onChange={setFilterRoles}
-              label="Role Type"
-              labelProps={{ style: { color: color } }}
-              classNames={{ label: styles.filterSubheading }}
-            >
-              {roles.map((role) => (
-                <Checkbox
-                  key={role.value}
-                  value={role.value}
-                  label={role.label}
-                  color={color}
-                  className={styles.checkbox}
-                  size="md"
-                />
-              ))}
-            </Checkbox.Group>
-          </Stack>
+          {useRolesFilter ? (
+            <Stack>
+              <Checkbox.Group
+                value={filterRoles}
+                onChange={setFilterRoles}
+                label="Role Type"
+                labelProps={{ style: { color: color } }}
+                classNames={{ label: styles.filterSubheading }}
+              >
+                {roles.map((role) => (
+                  <Checkbox
+                    key={role.value}
+                    value={role.value}
+                    label={role.label}
+                    color={color}
+                    className={styles.checkbox}
+                    size="md"
+                  />
+                ))}
+              </Checkbox.Group>
+            </Stack>
+          ) : null}
           <Stack>
             <Checkbox.Group
               value={filterFields}
               onChange={setFilterFields}
-              label="Fields"
+              label={useRoles ? 'Fields' : 'Industry'}
               labelProps={{ style: { color: color } }}
               classNames={{ label: styles.filterSubheading }}
             >

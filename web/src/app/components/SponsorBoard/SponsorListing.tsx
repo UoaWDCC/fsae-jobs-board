@@ -37,7 +37,7 @@ const SponsorListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
   // TODO: change this into actual data from backend, and apply filters & search
   const jobListings: SponsorBoardCardProps[] = [
     {
-      sponsorTitle: 'Company Name',
+      sponsorTitle: 'Sponsor',
       sponsorIndsutry: 'Industry',
       imageLink: '/sponsor_placeholder.png',
       sponsorLink: 'http://localhost:5173/',
