@@ -17,7 +17,7 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import { UserType, resetUser } from '@/app/features/user/userSlice';
 import { IconUserCircle, IconBell, IconLogout, IconSettings } from '@tabler/icons-react';
-import classes from './Navbar.module.css';
+import styles from './Navbar.module.css';
 
 function Navbar() {
   // Use Redux State Management
@@ -88,7 +88,7 @@ function Navbar() {
   return (
     <>
       <Flex
-        className={classes.Navbar}
+        className={styles.Navbar}
         gap="md"
         pt="md"
         pr="md"
