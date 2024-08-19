@@ -1,18 +1,19 @@
 import {Filter, FilterExcludingWhere, repository} from '@loopback/repository';
-import {post, param, get, getModelSchemaRef, patch, del, requestBody, response, Request, RestBindings} from '@loopback/rest';
+import {post, param, get, getModelSchemaRef, patch, del, requestBody, response} from '@loopback/rest';
 import {inject} from '@loopback/core';
-import {JwtService} from '../services';
 import {JobAd} from '../models';
 import {JobAdRepository} from '../repositories';
-import { authenticate } from '@loopback/authentication';
-import { authorize } from '@loopback/authorization';
-import { HttpErrors } from '@loopback/rest';
-import {FsaeRole, Member, Alumni, Sponsor} from '../models';
+import {UserProfile} from '@loopback/security';
+import {authenticate, AuthenticationBindings} from '@loopback/authentication';
+import {authorize} from '@loopback/authorization';
+import {HttpErrors} from '@loopback/rest';
+import {FsaeRole} from '../models';
 
 @authenticate('fsae-jwt')
 export class JobController {
   constructor(
     @repository(JobAdRepository) public jobAdRepository : JobAdRepository,
+    @inject(AuthenticationBindings.CURRENT_USER) private currentUserProfile: UserProfile,
   ) {}
 
 
@@ -105,11 +106,11 @@ export class JobController {
     })
     jobAd: JobAd,
   ): Promise<void> {
-    //const user = await this.authenticate();
+    // Check if the user is the publisher of the job ad
     const existingjobAd = await this.jobAdRepository.findById(id);
-    //if (existingjobAd.publisherID !== user.id) {
-      //throw new Error('You are not authorized to update this job posting');
-    //}
+    if (existingjobAd.publisherID !== this.currentUserProfile.id) {
+      throw new HttpErrors.Unauthorized('You are not authorized to update this job posting');
+    }
     await this.jobAdRepository.updateById(id, jobAd);
   }
 
@@ -122,11 +123,11 @@ export class JobController {
     description: 'Deleting job postings by ID',
   })
   async deleteById(@param.path.string('id') id: string): Promise<void> {
-    //const user = await this.authenticate();
+    // Check if the user is the publisher of the job ad
     const existingJobAd = await this.jobAdRepository.findById(id);
-    //if (existingJobAd.publisherID !== user.id) {
-      //throw new Error('You are not authorized to delete this job posting');
-    //}
+    if (existingJobAd.publisherID !== this.currentUserProfile.id) {
+      throw new HttpErrors.Unauthorized('You are not authorized to delete this job posting');
+    }
     await this.jobAdRepository.deleteById(id);
   }
 }
