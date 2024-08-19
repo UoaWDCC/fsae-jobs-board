@@ -25,7 +25,7 @@ export function SponsorBoardCard({ data }: { data: SponsorBoardCardProps }) {
             h="auto"
             style={{ overflow: 'hidden' }}
           >
-            <AspectRatio ratio={1}>
+            <AspectRatio ratio={4 / 3}>
               <Image
                 src={data.imageLink}
                 alt="sponsor image"
