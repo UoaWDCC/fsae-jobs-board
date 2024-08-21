@@ -1,19 +1,24 @@
 import { Checkbox, Title, Button, Stack, Modal, Flex } from '@mantine/core';
-import classes from './SponsorBoard.module.css';
+import styles from './Filter.module.css';
 import { FC, useState } from 'react';
 import { IconArrowDown } from '@tabler/icons-react';
 
-interface JobFilterProps {
+interface FilterProps {
   filterRoles: string[];
   setFilterRoles: (filterRoles: string[]) => void;
   filterFields: string[];
   setFilterFields: (filterFields: string[]) => void;
+  color?: string;
+  useRoles?: boolean;
 }
-const SponsorFilter: FC<JobFilterProps> = ({
+
+const Filter: FC<FilterProps> = ({
   filterRoles,
   setFilterRoles,
   filterFields,
   setFilterFields,
+  color = '#0091ff',
+  useRoles = true,
 }) => {
   const roles = [
     { value: 'internship', label: 'Internship' },
@@ -34,47 +39,52 @@ const SponsorFilter: FC<JobFilterProps> = ({
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
   const [isPortrait, setIsPortrait] = useState(window.innerHeight > window.innerWidth);
+  const [useRolesFilter, setUseRolesFilter] = useState(useRoles);
 
   return (
     <>
       {!isPortrait && (
         <Stack mt={70} pl={30}>
-          <Title fs="italic" className={classes.filterHeading}>
+          <Title fs="italic" className={styles.filterHeading}>
             Filters
           </Title>
-          <Stack>
-            <Checkbox.Group
-              value={filterRoles}
-              onChange={setFilterRoles}
-              label="Role Type"
-              classNames={{ label: classes.filterSubheading }}
-            >
-              {roles.map((role) => (
-                <Checkbox
-                  key={role.value}
-                  value={role.value}
-                  label={role.label}
-                  color="customPapayaOrange.1"
-                  className={classes.checkbox}
-                  size="md"
-                />
-              ))}
-            </Checkbox.Group>
-          </Stack>
+          {useRolesFilter ? (
+            <Stack>
+              <Checkbox.Group
+                value={filterRoles}
+                onChange={setFilterRoles}
+                label="Role Type"
+                labelProps={{ style: { color: color } }}
+                classNames={{ label: styles.filterSubheading }}
+              >
+                {roles.map((role) => (
+                  <Checkbox
+                    key={role.value}
+                    value={role.value}
+                    label={role.label}
+                    color={color}
+                    className={styles.checkbox}
+                    size="md"
+                  />
+                ))}
+              </Checkbox.Group>
+            </Stack>
+          ) : null}
           <Stack>
             <Checkbox.Group
               value={filterFields}
               onChange={setFilterFields}
-              label="Fields"
-              classNames={{ label: classes.filterSubheading }}
+              label={useRoles ? 'Fields' : 'Industry'}
+              labelProps={{ style: { color: color } }}
+              classNames={{ label: styles.filterSubheading }}
             >
               {fields.map((role) => (
                 <Checkbox
                   key={role.value}
                   value={role.value}
                   label={role.label}
-                  color="customPapayaOrange.1"
-                  className={classes.checkbox}
+                  color={color}
+                  className={styles.checkbox}
                   size="md"
                 />
               ))}
@@ -98,22 +108,22 @@ const SponsorFilter: FC<JobFilterProps> = ({
             opened={isModalOpen}
             onClose={closeModal}
             centered
-            classNames={{ content: classes.modal, header: classes.modalHeader }}
+            classNames={{ content: styles.modal, header: styles.modalHeader }}
           >
             <Stack>
               <Checkbox.Group
                 value={filterRoles}
                 onChange={setFilterRoles}
                 label="Role Type"
-                classNames={{ label: classes.filterSubheading }}
+                classNames={{ label: styles.filterSubheading }}
               >
                 {roles.map((role) => (
                   <Checkbox
                     key={role.value}
                     value={role.value}
                     label={role.label}
-                    color="customPapayaOrange.1"
-                    className={classes.checkbox}
+                    color={color}
+                    className={styles.checkbox}
                     size="md"
                   />
                 ))}
@@ -124,15 +134,15 @@ const SponsorFilter: FC<JobFilterProps> = ({
                 value={filterFields}
                 onChange={setFilterFields}
                 label="Fields"
-                classNames={{ label: classes.filterSubheading }}
+                classNames={{ label: styles.filterSubheading }}
               >
                 {fields.map((role) => (
                   <Checkbox
                     key={role.value}
                     value={role.value}
                     label={role.label}
-                    color="customPapayaOrange.1"
-                    className={classes.checkbox}
+                    color={color}
+                    className={styles.checkbox}
                     size="md"
                   />
                 ))}
@@ -145,4 +155,4 @@ const SponsorFilter: FC<JobFilterProps> = ({
   );
 };
 
-export default SponsorFilter;
+export default Filter;

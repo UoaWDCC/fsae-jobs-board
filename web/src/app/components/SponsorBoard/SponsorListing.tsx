@@ -16,11 +16,11 @@ const SponsorListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
 
   const updateItemsPerPage = () => {
     if (window.innerWidth > 1920) {
-      setItemsPerPage(8);
+      setItemsPerPage(15);
     } else if (window.innerWidth > 1080) {
-      setItemsPerPage(6);
+      setItemsPerPage(12);
     } else {
-      setItemsPerPage(4);
+      setItemsPerPage(6);
     }
   };
 
@@ -37,66 +37,147 @@ const SponsorListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
   // TODO: change this into actual data from backend, and apply filters & search
   const jobListings: SponsorBoardCardProps[] = [
     {
-      companyTitle: 'Company Name',
-      subtitle: 'Industry',
+      sponsorTitle: 'Sponsor',
+      sponsorIndsutry: 'Industry',
       imageLink: '/sponsor_placeholder.png',
-      sponsorTitle: 'Sponsor Role Title',
       sponsorLink: 'http://localhost:5173/',
     },
     {
-      companyTitle: 'Company Name',
-      subtitle: 'Industry',
-      imageLink: 'https://picsum.photos/128/256',
-      sponsorTitle: 'Sponsor Role Title',
+      sponsorTitle: '3M',
+      sponsorIndsutry: 'Industry',
+      imageLink: '/sponsors_placeholder/3m.png',
       sponsorLink: 'http://localhost:5173/',
     },
     {
-      companyTitle: 'Company Name',
-      subtitle: 'Industry',
-      imageLink: 'https://picsum.photos/500/500',
-      sponsorTitle: 'Sponsor Role Title',
+      sponsorTitle: 'Ace Motorsport Karting',
+      sponsorIndsutry: 'Industry',
+      imageLink: '/sponsors_placeholder/ace_motorsport_karting.png',
       sponsorLink: 'http://localhost:5173/',
     },
     {
-      companyTitle: 'Company Name',
-      subtitle: 'Industry',
-      imageLink: 'https://picsum.photos/256/256',
-      sponsorTitle: 'Sponsor Role Title',
+      sponsorTitle: 'Altair',
+      sponsorIndsutry: 'Industry',
+      imageLink: '/sponsors_placeholder/altair.png',
       sponsorLink: 'http://localhost:5173/',
     },
     {
-      companyTitle: 'Company Name',
-      subtitle: 'Industry',
-      imageLink: 'https://picsum.photos/1000/1000',
-      sponsorTitle: 'Sponsor Role Title',
+      sponsorTitle: 'Altium',
+      sponsorIndsutry: 'Industry',
+      imageLink: '/sponsors_placeholder/altium.png',
       sponsorLink: 'http://localhost:5173/',
     },
     {
-      companyTitle: 'Company Name',
-      subtitle: 'Industry',
-      imageLink: 'https://picsum.photos/422/134',
-      sponsorTitle: 'Sponsor Role Title',
+      sponsorTitle: 'AMK',
+      sponsorIndsutry: 'Industry',
+      imageLink: '/sponsors_placeholder/AMK.png',
       sponsorLink: 'http://localhost:5173/',
     },
     {
-      companyTitle: 'Company Name',
-      subtitle: 'Industry',
-      imageLink: 'https://picsum.photos/200/200',
-      sponsorTitle: 'Sponsor Role Title',
+      sponsorTitle: 'Ansys',
+      sponsorIndsutry: 'Industry',
+      imageLink: '/sponsors_placeholder/ansys.png',
       sponsorLink: 'http://localhost:5173/',
     },
     {
-      companyTitle: 'Company Name',
-      subtitle: 'Industry',
-      imageLink: 'https://picsum.photos/500/433',
-      sponsorTitle: 'Sponsor Role Title',
+      sponsorTitle: 'C-Tech',
+      sponsorIndsutry: 'Industry',
+      imageLink: '/sponsors_placeholder/c-tech.png',
       sponsorLink: 'http://localhost:5173/',
     },
     {
-      companyTitle: 'Company Name',
-      subtitle: 'Industry',
-      imageLink: 'https://picsum.photos/250/500',
-      sponsorTitle: 'Sponsor Role Title',
+      sponsorTitle: 'Cadpro',
+      sponsorIndsutry: 'Industry',
+      imageLink: '/sponsors_placeholder/cadpro.png',
+      sponsorLink: 'http://localhost:5173/',
+    },
+    {
+      sponsorTitle: 'Crown',
+      sponsorIndsutry: 'Industry',
+      imageLink: '/sponsors_placeholder/crown.png',
+      sponsorLink: 'http://localhost:5173/',
+    },
+    {
+      sponsorTitle: 'Tengtools',
+      sponsorIndsutry: 'Industry',
+      imageLink: '/sponsors_placeholder/tengtools.png',
+      sponsorLink: 'http://localhost:5173/',
+    },
+    {
+      sponsorTitle: 'CompanyZone',
+      sponsorIndsutry: 'Industry',
+      imageLink: '/sponsors_placeholder/tradezone.png',
+      sponsorLink: 'http://localhost:5173/',
+    },
+    {
+      sponsorTitle: 'Company Name',
+      sponsorIndsutry: 'Industry',
+      imageLink: '/sponsor_placeholder.png',
+      sponsorLink: 'http://localhost:5173/',
+    },
+    {
+      sponsorTitle: '3M',
+      sponsorIndsutry: 'Industry',
+      imageLink: '/sponsors_placeholder/3m.png',
+      sponsorLink: 'http://localhost:5173/',
+    },
+    {
+      sponsorTitle: 'Ace Motorsport Karting',
+      sponsorIndsutry: 'Industry',
+      imageLink: '/sponsors_placeholder/ace_motorsport_karting.png',
+      sponsorLink: 'http://localhost:5173/',
+    },
+    {
+      sponsorTitle: 'Altair',
+      sponsorIndsutry: 'Industry',
+      imageLink: '/sponsors_placeholder/altair.png',
+      sponsorLink: 'http://localhost:5173/',
+    },
+    {
+      sponsorTitle: 'Altium',
+      sponsorIndsutry: 'Industry',
+      imageLink: '/sponsors_placeholder/altium.png',
+      sponsorLink: 'http://localhost:5173/',
+    },
+    {
+      sponsorTitle: 'AMK',
+      sponsorIndsutry: 'Industry',
+      imageLink: '/sponsors_placeholder/AMK.png',
+      sponsorLink: 'http://localhost:5173/',
+    },
+    {
+      sponsorTitle: 'Ansys',
+      sponsorIndsutry: 'Industry',
+      imageLink: '/sponsors_placeholder/ansys.png',
+      sponsorLink: 'http://localhost:5173/',
+    },
+    {
+      sponsorTitle: 'C-Tech',
+      sponsorIndsutry: 'Industry',
+      imageLink: '/sponsors_placeholder/c-tech.png',
+      sponsorLink: 'http://localhost:5173/',
+    },
+    {
+      sponsorTitle: 'Cadpro',
+      sponsorIndsutry: 'Industry',
+      imageLink: '/sponsors_placeholder/cadpro.png',
+      sponsorLink: 'http://localhost:5173/',
+    },
+    {
+      sponsorTitle: 'Crown',
+      sponsorIndsutry: 'Industry',
+      imageLink: '/sponsors_placeholder/crown.png',
+      sponsorLink: 'http://localhost:5173/',
+    },
+    {
+      sponsorTitle: 'Tengtools',
+      sponsorIndsutry: 'Industry',
+      imageLink: '/sponsors_placeholder/tengtools.png',
+      sponsorLink: 'http://localhost:5173/',
+    },
+    {
+      sponsorTitle: 'CompanyZone',
+      sponsorIndsutry: 'Industry',
+      imageLink: '/sponsors_placeholder/tradezone.png',
       sponsorLink: 'http://localhost:5173/',
     },
   ];
@@ -113,7 +194,7 @@ const SponsorListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
   return (
     <Flex justify="flex-start" align="flex-start" direction="column" gap="md" ml="md" mr="md">
       <SimpleGrid
-        cols={{ base: 1, sm: 2, lg: 3, xl: itemsPerPage > 6 ? 4 : 3 }}
+        cols={{ base: 1, sm: 2, lg: 3, xl: itemsPerPage > 14 ? 5 : itemsPerPage > 9 ? 4 : 3 }}
         spacing={rem(60)}
         verticalSpacing={rem(40)}
         className={styles.jobListingContainer}

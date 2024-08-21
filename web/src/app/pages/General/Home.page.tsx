@@ -1,6 +1,6 @@
-import { Welcome } from '../components/Welcome/Welcome';
-import { FindOutMore } from '../components/FindOutMore/FindOutMore';
-import { Guide } from '../components/Guides/Guide';
+import { Welcome } from '../../components/Welcome/Welcome';
+import { FindOutMore } from '../../components/FindOutMore/FindOutMore';
+import { Guide } from '../../components/Guides/Guide';
 
 export function HomePage() {
   return (

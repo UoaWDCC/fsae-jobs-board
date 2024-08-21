@@ -4,18 +4,13 @@ import { Image } from '@mantine/core';
 
 // dummy data -- change later when we have real data
 export interface SponsorBoardCardProps {
-  companyTitle: string;
-  subtitle: string;
-  imageLink: string;
   sponsorTitle: string;
+  imageLink: string;
+  sponsorIndsutry: string;
   sponsorLink: string;
 }
 
 export function SponsorBoardCard({ data }: { data: SponsorBoardCardProps }) {
-  console.log(
-    'Change this JobCard component to use real userType from Redux store once user integration is implemented'
-  );
-
   const handleSponsorLink = () => {
     console.log('Sponsor Link: ', data.sponsorLink);
   };
@@ -24,13 +19,13 @@ export function SponsorBoardCard({ data }: { data: SponsorBoardCardProps }) {
     <Paper p="md" radius="md" w={'95%'} h={'100%'}>
       <Flex direction="column" w={'100%'} h={'100%'}>
         {/* Sponsor Title */}
-        <Stack gap="xs" w="100%" h="100%">
+        <Stack gap="xs" w="100%" h="100%" justify="space-between">
           <Container
             w={{ base: '100%', sm: '80%', md: '80%', lg: '100%', xl: '100%' }}
             h="auto"
             style={{ overflow: 'hidden' }}
           >
-            <AspectRatio ratio={1}>
+            <AspectRatio ratio={4 / 3}>
               <Image
                 src={data.imageLink}
                 alt="sponsor image"
@@ -38,21 +33,16 @@ export function SponsorBoardCard({ data }: { data: SponsorBoardCardProps }) {
                 radius="md"
                 width="100%"
                 height="100%"
-                fit="cover"
+                fit="contain"
               />
             </AspectRatio>
           </Container>
           <Flex justify={'space-between'}>
             {/* Sponsor Title */}
             <Text fw={500} size={rem(24)} className={classes.text}>
-              {data.companyTitle}
+              {data.sponsorTitle}
             </Text>
           </Flex>
-
-          {/* Sponsor Subtite */}
-          <Text fw={500} size={rem(16)} className={classes.text} fs="italic">
-            {data.subtitle}
-          </Text>
 
           {/* Button */}
           <Button
@@ -64,7 +54,7 @@ export function SponsorBoardCard({ data }: { data: SponsorBoardCardProps }) {
             onClick={handleSponsorLink}
             w="100%"
           >
-            {data.sponsorTitle}
+            {data.sponsorIndsutry}
           </Button>
         </Stack>
       </Flex>
