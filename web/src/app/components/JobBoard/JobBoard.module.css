@@ -1,0 +1,101 @@
+.listingContainer {
+  flex: 3;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  height: 100%;
+}
+
+.listingInnerContainer {
+  flex: 1;
+  min-height: 85%;
+  width: 100%;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(
+    2,
+    1fr
+  ); /* 2 columns, each taking up 1 fraction of available space */
+  grid-template-rows: repeat(2, 1fr); /* 2 rows, each taking up 1 fraction of available space */
+  gap: 1rem;
+}
+
+.paginationContainer {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+}
+
+.filterHeading {
+  color: white;
+  font-size: 1.4rem;
+}
+
+.filterSubheading {
+  /* color: var(--mantine-color-customAzureBlue-1); */
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.checkbox {
+  margin: 0.8em 0;
+}
+
+.jobCard {
+  background-color: var(--mantine-color-customCharcoalGrey-1);
+  border-radius: 1rem;
+  padding: 1.5rem;
+}
+
+.listItemTitle {
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+.listItemCompanyName {
+  margin: 0;
+}
+.listItemLocation {
+  margin: 0.5rem 0;
+}
+
+.listItemDescription {
+  font-size: 0.8rem;
+}
+
+.filterButton {
+  text-decoration: underline;
+  font-size: 1.2rem;
+}
+
+/* larger screen */
+@media (min-width: 1080px) {
+  .listingInnerContainer {
+    grid-template-columns: repeat(
+      3,
+      1fr
+    ); /* 3 columns, each taking up 1 fraction of available space */
+  }
+
+  .searchInputContainer {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .searchInput {
+    width: 60%;
+    align-self: flex-end;
+  }
+}
+
+/* mobile view */
+@media (max-width: 768px) {
+  .listingInnerContainer {
+    grid-template-columns: repeat(
+      1,
+      1fr
+    ); /* 3 columns, each taking up 1 fraction of available space */
+  }
+}

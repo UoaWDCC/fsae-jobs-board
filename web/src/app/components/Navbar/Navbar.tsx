@@ -17,7 +17,7 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import { UserType, resetUser } from '@/app/features/user/userSlice';
 import { IconUserCircle, IconBell, IconLogout, IconSettings } from '@tabler/icons-react';
-import classes from './Navbar.module.css';
+import styles from './Navbar.module.css';
 
 function Navbar() {
   // Use Redux State Management
@@ -88,7 +88,7 @@ function Navbar() {
   return (
     <>
       <Flex
-        className={classes.Navbar}
+        className={styles.Navbar}
         gap="md"
         pt="md"
         pr="md"
@@ -103,7 +103,7 @@ function Navbar() {
 
         <Flex justify="center" align="center" style={{ flex: 1 }}>
           {!isMobile && userType && isUserType(userType) && (
-            <Group gap="xl">
+            <Group gap={100}>
               {navLinks[userType].map((link) => (
                 <NavLink
                   key={link.path}
@@ -119,29 +119,29 @@ function Navbar() {
                     paddingBottom: '2px',
                   })}
                 >
-                  <Text size="md">{link.label}</Text>
+                  <Text size="lg">{link.label}</Text>
                 </NavLink>
               ))}
             </Group>
           )}
         </Flex>
         {!isMobile && userType && (
-          <Group>
-            <ActionIcon size={32} variant="subtle" color="white" onClick={handleProfileClick}>
-              <IconUserCircle />
+          <Group gap={20}>
+            <ActionIcon size={35} variant="subtle" color="white" onClick={handleProfileClick}>
+              <IconUserCircle size={35} />
             </ActionIcon>
 
-            <ActionIcon size={32} variant="subtle" color="white">
-              <IconSettings />
+            <ActionIcon size={35} variant="subtle" color="white">
+              <IconSettings size={35} />
             </ActionIcon>
 
             {userType !== 'student' && (
-              <ActionIcon size={32} variant="subtle" color="white">
-                <IconBell />
+              <ActionIcon size={35} variant="subtle" color="white">
+                <IconBell size={35} />
               </ActionIcon>
             )}
-            <ActionIcon size={32} variant="subtle" color="white">
-              <IconLogout onClick={handleLogout} />
+            <ActionIcon size={35} variant="subtle" color="white">
+              <IconLogout size={35} onClick={handleLogout} />
             </ActionIcon>
           </Group>
         )}

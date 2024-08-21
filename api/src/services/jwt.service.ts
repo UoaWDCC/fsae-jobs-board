@@ -37,7 +37,7 @@ export class JwtService implements TokenService{
 
   verifyToken(token: string): Promise<any> {
     if (!token) {
-      throw new Error('Error verifying Token. Token cannot be null');
+      throw new HttpErrors.Unauthorized('Error verifying Token. Token cannot be null');
     }
 
     let securityUserProfile: UserProfile;
