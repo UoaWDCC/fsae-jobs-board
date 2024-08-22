@@ -58,6 +58,7 @@ export class ApplicationController {
     return this.applicationRepository.create(application);
   }
 
+  // Todo need to ensure that only sponsor/alumni that created the job AD can get it
   @authorize({
     allowedRoles: [FsaeRole.ALUMNI, FsaeRole.SPONSOR],
   })
@@ -79,6 +80,7 @@ export class ApplicationController {
     return this.applicationRepository.find(filter);
   }
 
+  // Todo need to ensure that only sponsor/alumni that created the job AD can update it
   @authorize({
     allowedRoles: [FsaeRole.ALUMNI, FsaeRole.SPONSOR],
   })
