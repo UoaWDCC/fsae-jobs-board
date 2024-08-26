@@ -208,7 +208,7 @@ const SponsorListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
           onChange={setPage}
           size="lg"
           mb="md"
-          color={'customPapayaOrange.1'}
+          color={'customAzureBlue.1'}
         />
       </Container>
     </Flex>

@@ -34,7 +34,7 @@ export function SponsorsBoard() {
               setFilterRoles={setFilterRoles}
               filterFields={filterFields}
               setFilterFields={setFilterFields}
-              color={theme.colors.customPapayaOrange[1]}
+              color={theme.colors.customAzureBlue[1]}
               useRoles={false}
             />
           </Grid.Col>
@@ -70,7 +70,7 @@ export function SponsorsBoard() {
             setFilterRoles={setFilterRoles}
             filterFields={filterFields}
             setFilterFields={setFilterFields}
-            color={theme.colors.customPapayaOrange[1]}
+            color={theme.colors.customAzureBlue[1]}
           />
           <SponsorListing filterRoles={filterRoles} filterFields={filterFields} />
         </Grid.Col>
