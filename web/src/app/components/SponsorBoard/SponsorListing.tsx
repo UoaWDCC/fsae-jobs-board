@@ -1,6 +1,5 @@
-import { Pagination, Container, Flex, Grid, SimpleGrid, rem } from '@mantine/core';
+import { Pagination, Container, Flex, SimpleGrid, rem } from '@mantine/core';
 import styles from './SponsorBoard.module.css';
-// import JobListingItem from './JobListingItem';
 import { FC, useEffect, useState } from 'react';
 import { chunk } from 'lodash';
 import SponsorBoardCard, { SponsorBoardCardProps } from './SponsorBoardCard';
@@ -205,7 +204,6 @@ const SponsorListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
         cols={{ base: 1, sm: 2, lg: 3, xl: itemsPerPage > 14 ? 5 : itemsPerPage > 9 ? 4 : 3 }}
         spacing={{ base: rem(20), sm: rem(25), lg: rem(30), xl: rem(40) }}
         verticalSpacing={{ base: rem(15), sm: rem(25), lg: rem(30), xl: rem(40) }}
-        className={styles.jobListingContainer}
       >
         {jobListingItems}
       </SimpleGrid>

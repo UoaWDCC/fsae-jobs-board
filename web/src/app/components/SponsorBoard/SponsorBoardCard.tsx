@@ -1,16 +1,5 @@
-import {
-  Text,
-  Button,
-  Paper,
-  Flex,
-  Stack,
-  Container,
-  AspectRatio,
-  rem,
-  Group,
-  Box,
-} from '@mantine/core';
-import classes from './SponsorBoard.module.css';
+import { Text, Button, Paper, Flex, Container, AspectRatio } from '@mantine/core';
+import styles from './SponsorBoard.module.css';
 import { Image } from '@mantine/core';
 
 // dummy data -- change later when we have real data
@@ -45,6 +34,7 @@ export function SponsorBoardCard({
           w={{ base: '100%', sm: '80%', md: '80%', lg: '100%', xl: '100%' }}
           h="auto"
           style={{ overflow: 'hidden', flex: isOneColumn ? 1 : 'auto' }}
+          pl={isOneColumn ? '0' : 'auto'}
         >
           <AspectRatio ratio={4 / 3}>
             <Image
@@ -66,7 +56,7 @@ export function SponsorBoardCard({
         >
           <Flex justify={'space-between'}>
             {/* Sponsor Title */}
-            <Text fw={500} size="xl" className={classes.text}>
+            <Text fw={500} size="xl" className={styles.text} ml={isOneColumn ? 'auto': 'xs'}>
               {data.sponsorTitle}
             </Text>
           </Flex>
