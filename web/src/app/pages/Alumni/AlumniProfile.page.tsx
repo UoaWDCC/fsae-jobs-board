@@ -13,7 +13,7 @@ export function AlumniProfile() {
   const [openProfileModal, setOpenProfileModal] = useState(false);
   const [showMoreDescription, setShowMoreDescription] = useState(false);
   // const userType = useSelector((state: RootState) => state.user.userType);
-  const [userType, setUserType] = useState<UserType>('sponsor');
+  const [userType, setUserType] = useState<UserType>('alumni');
 
   console.log(
     'Change this SponsorPage component to use real userType from Redux store once user integration is implemented'
@@ -44,13 +44,13 @@ export function AlumniProfile() {
     setOpenModal(true);
   };
 
-  // Dummy data for company userData
+  // Dummy data for alumni userData
   const [userData, setUserData] = useState({
-    companyName: 'Company Name',
-    companyField: 'Field of Specialization',
+    alumniName: 'Eliza Smith',
+    companyField: 'Company',
     subgroup: 'Subgroup',
     dateJoined: '2024',
-    email: 'johndoe@example.com',
+    email: 'elizasmith@example.com',
     phone: '+1234567890',
     description:
       ' Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque ut tristique lacus, eget euismod enim. Fusce suscipit at tortor sed pretium. Integer et pretium orci. Integer velit purus, gravida quis tincidunt ac, pretium sed lorem. Sed sagittis neque tincidunt, auctor ante vitae, ultricies risus. Aenean quis sem sed dolor feugiat tincidunt. Etiam purus justo, ullamcorper in cursus volutpat, luctus in dolor. Donec sed purus tristique, rhoncus erat ut, ullamcorper dolor. Pellentesque tincidunt eros id neque egestas, sed luctus sapien elementum. Etiam bibendum ex est, ac consequat turpis facilisis id. Mauris scelerisque purus quis leo fermentum, at semper nisl mattis. Vivamus vel ornare lectus. Nullam dictum felis et commodo lacinia. Etiam tempor placerat sapien quis maximus. Ut pellentesque libero ac sollicitudin accumsan. Sed vel dolor bibendum, egestas metus nec, eleifend mauris. Integer imperdiet eros vitae nibh interdum volutpat. Etiam et ultrices massa. Cras gravida facilisis sapien. Ut eleifend varius risus, eget bibendum dui blandit ac. Vivamus tempor varius massa, sed suscipit mauris interdum eu. Proin sed commodo ex, ac cursus nisl. Integer ut tincidunt augue. Cras molestie libero erat. Nunc justo felis, sodales auctor dapibus sit amet, dapibus ut turpis. Sed nec sagittis nisl. Cras eget condimentum est. Cras nulla lorem, venenatis euismod gravida quis, fermentum vel mauris. Fusce et ipsum et lorem egestas volutpat. Duis nec imperdiet ante. Quisque et ligula accumsan, eleifend urna sit amet, cursus dolor. Nullam ut erat diam. Ut non lacinia erat, eu pretium nisl. Vestibulum mattis sapien in tristique commodo. Integer faucibus leo at turpis rhoncus, eu hendrerit ex dignissim. Nulla facilisi. Donec eget turpis ac odio pretium iaculis. Sed imperdiet sollicitudin viverra. In consequat justo velit, aliquet ultricies leo efficitur laoreet. Nullam quis elementum diam. Sed in sodales est. Integer malesuada semper tortor eu feugiat. Morbi tincidunt turpis bibendum consequat cursus. Aenean faucibus felis sit amet porta interdum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Mauris dui magna, lobortis quis quam non, dictum bibendum libero. ',
@@ -114,6 +114,24 @@ export function AlumniProfile() {
   const getSponsorElements = (element: string) => {
     switch (element) {
       case 'profileBtn':
+        return null;
+      case 'addNewBtn':
+        return null;
+    }
+  };
+
+  const getStudentElements = (element: string) => {
+    switch (element) {
+      case 'profileBtn':
+        return null;
+      case 'addNewBtn':
+        return null;
+    }
+  };
+
+  const getAlumniElements = (element: string) => {
+    switch (element) {
+      case 'profileBtn':
         return (
           <Button
             onClick={handleProfileChange}
@@ -136,24 +154,6 @@ export function AlumniProfile() {
             Add New
           </Button>
         );
-    }
-  };
-
-  const getStudentElements = (element: string) => {
-    switch (element) {
-      case 'profileBtn':
-        return null;
-      case 'addNewBtn':
-        return null;
-    }
-  };
-
-  const getAlumniElements = (element: string) => {
-    switch (element) {
-      case 'profileBtn':
-        return null;
-      case 'addNewBtn':
-        return null;
     }
   };
 
@@ -180,9 +180,9 @@ export function AlumniProfile() {
       {/* PICTURE AND COMPANY DETAILS */}
       <Card h={280} className={styles.card}>
         <Card.Section h={250} className={styles.banner} onClick={handleBannerChange} />
-        {userData?.companyName && (
+        {userData?.alumniName && (
           <Text className={styles.name} pl={170} pt={140}>
-            {userData.companyName}
+            {userData.alumniName}
           </Text>
         )}
 
