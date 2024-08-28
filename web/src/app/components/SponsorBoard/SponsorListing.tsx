@@ -4,6 +4,7 @@ import styles from './SponsorBoard.module.css';
 import { FC, useEffect, useState } from 'react';
 import { chunk } from 'lodash';
 import SponsorBoardCard, { SponsorBoardCardProps } from './SponsorBoardCard';
+import { useMediaQuery } from '@mantine/hooks';
 
 interface JobListingProps {
   filterRoles: string[];
@@ -11,8 +12,9 @@ interface JobListingProps {
 }
 const SponsorListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
   const [activePage, setPage] = useState(1);
-
   const [itemsPerPage, setItemsPerPage] = useState<number>(4);
+  const isBase = useMediaQuery('(max-width: 48em)'); // check if screen size is base
+  const [isOneColumn, setIsOneColumn] = useState<boolean>(false);
 
   const updateItemsPerPage = () => {
     if (window.innerWidth > 1920) {
@@ -33,6 +35,12 @@ const SponsorListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
       window.removeEventListener('resize', updateItemsPerPage);
     };
   }, []);
+
+  // just checks if SimpleGrid has to be one column or not
+  useEffect(() => {
+    if (isBase === undefined) setIsOneColumn(false);
+    else setIsOneColumn(isBase);
+  }, [isBase]);
 
   // TODO: change this into actual data from backend, and apply filters & search
   const jobListings: SponsorBoardCardProps[] = [
@@ -186,17 +194,17 @@ const SponsorListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
   // TODO: filter the jobListings before chunking
   const chunkedJobListings = chunk(jobListings, itemsPerPage);
 
-  const jobListingItems = chunkedJobListings[activePage - 1].map((jobListingItem) => (
+  const jobListingItems = chunkedJobListings[activePage - 1].map((item, idx) => (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-      <SponsorBoardCard data={jobListingItem} />
+      <SponsorBoardCard data={item} isOneColumn={isOneColumn} />
     </div>
   ));
   return (
     <Flex justify="flex-start" align="flex-start" direction="column" gap="md" ml="md" mr="md">
       <SimpleGrid
         cols={{ base: 1, sm: 2, lg: 3, xl: itemsPerPage > 14 ? 5 : itemsPerPage > 9 ? 4 : 3 }}
-        spacing={rem(60)}
-        verticalSpacing={rem(40)}
+        spacing={{ base: rem(20), sm: rem(25), lg: rem(30), xl: rem(40) }}
+        verticalSpacing={{ base: rem(20), sm: rem(25), lg: rem(30), xl: rem(40) }}
         className={styles.jobListingContainer}
       >
         {jobListingItems}

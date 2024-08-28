@@ -1,4 +1,15 @@
-import { Text, Button, Paper, Flex, Stack, Container, AspectRatio, rem } from '@mantine/core';
+import {
+  Text,
+  Button,
+  Paper,
+  Flex,
+  Stack,
+  Container,
+  AspectRatio,
+  rem,
+  Group,
+  Box,
+} from '@mantine/core';
 import classes from './SponsorBoard.module.css';
 import { Image } from '@mantine/core';
 
@@ -10,36 +21,52 @@ export interface SponsorBoardCardProps {
   sponsorLink: string;
 }
 
-export function SponsorBoardCard({ data }: { data: SponsorBoardCardProps }) {
+export function SponsorBoardCard({
+  data,
+  isOneColumn,
+}: {
+  data: SponsorBoardCardProps;
+  isOneColumn?: boolean;
+}) {
   const handleSponsorLink = () => {
     console.log('Sponsor Link: ', data.sponsorLink);
   };
 
   return (
     <Paper p="md" radius="md" w={'95%'} h={'100%'}>
-      <Flex direction="column" w={'100%'} h={'100%'}>
+      <Flex
+        direction={isOneColumn ? 'row' : 'column'}
+        w={'100%'}
+        h={'100%'}
+        justify={'space-between'}
+      >
         {/* Sponsor Title */}
-        <Stack gap="xs" w="100%" h="100%" justify="space-between">
-          <Container
-            w={{ base: '100%', sm: '80%', md: '80%', lg: '100%', xl: '100%' }}
-            h="auto"
-            style={{ overflow: 'hidden' }}
-          >
-            <AspectRatio ratio={4 / 3}>
-              <Image
-                src={data.imageLink}
-                alt="sponsor image"
-                fallbackSrc="/sponsor_placeholder.png"
-                radius="md"
-                width="100%"
-                height="100%"
-                fit="contain"
-              />
-            </AspectRatio>
-          </Container>
+        <Container
+          w={{ base: '100%', sm: '80%', md: '80%', lg: '100%', xl: '100%' }}
+          h="auto"
+          style={{ overflow: 'hidden', flex: isOneColumn ? 1 : 'auto' }}
+        >
+          <AspectRatio ratio={4 / 3}>
+            <Image
+              src={data.imageLink}
+              alt="sponsor image"
+              fallbackSrc="/sponsor_placeholder.png"
+              radius="md"
+              width="100%"
+              height="100%"
+              fit="contain"
+            />
+          </AspectRatio>
+        </Container>
+        {/* Right Container (on one column layout) */}
+        <Flex
+          direction={'column'}
+          justify={isOneColumn ? 'space-evenly' : 'space-between'}
+          style={{ flex: isOneColumn ? 2 : 'auto' }}
+        >
           <Flex justify={'space-between'}>
             {/* Sponsor Title */}
-            <Text fw={500} size={rem(24)} className={classes.text}>
+            <Text fw={500} size="xl" className={classes.text}>
               {data.sponsorTitle}
             </Text>
           </Flex>
@@ -56,7 +83,7 @@ export function SponsorBoardCard({ data }: { data: SponsorBoardCardProps }) {
           >
             {data.sponsorIndsutry}
           </Button>
-        </Stack>
+        </Flex>
       </Flex>
     </Paper>
   );
