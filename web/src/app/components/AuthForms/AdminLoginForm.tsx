@@ -71,18 +71,6 @@ export function AdminLoginForm() {
             Temp Admin Login
           </Button>
         </Flex>
-        <Text ta="center" mt="xl">
-          Don&apos;t have an account?{' '}
-          <NavLink to="/" className={styles.link}>
-            Sign up
-          </NavLink>
-        </Text>
-        <Text ta="center" mt="md">
-          Forget your{' '}
-          <NavLink to="/" className={styles.link}>
-            password?
-          </NavLink>
-        </Text>
       </form>
     </Flex>
   );
