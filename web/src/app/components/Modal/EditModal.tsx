@@ -28,12 +28,6 @@ export default function EditModal({ opened, close, content, title }: ModalProp) 
       title={title}
     >
       {content}
-      <Box className={styles.buttonContainer}>
-        <Button className={styles.button1} onClick={close}>
-          Cancel
-        </Button>
-        <Button className={styles.button2}>Save</Button>
-      </Box>
     </Modal>
   );
 }
