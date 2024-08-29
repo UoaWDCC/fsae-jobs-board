@@ -18,6 +18,7 @@ import { SponsorSignUp } from './pages/Sponsor/SponsorSignup.page';
 import { AlumniSignUp } from './pages/Alumni/AlumniSignup.page';
 import { AdminSignUp } from './pages/Admin/AdminSignup.page';
 import SignupSwitcher from './pages/General/SignupSwitcher.page';
+import { AdminLogin } from './pages/Admin/AdminLogin.page';
 
 // Protected route is currently commented out. To be enabled once the Authentication Logic has been implemented
 const router = createBrowserRouter([
@@ -34,6 +35,14 @@ const router = createBrowserRouter([
     element: (
       <AppLayout>
         <Login />
+      </AppLayout>
+    ),
+  },
+  {
+    path: '/adminlogin',
+    element: (
+      <AppLayout>
+        <AdminLogin />
       </AppLayout>
     ),
   },
