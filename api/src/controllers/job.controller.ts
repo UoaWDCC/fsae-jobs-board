@@ -127,7 +127,7 @@ export class JobController {
   async deleteById(@param.path.string('id') id: string): Promise<void> {
     // Check if the user is the publisher of the job ad
     const existingJobAd = await this.jobAdRepository.findById(id);
-    if (existingJobAd.publisherID !== this.currentUserProfile.id.toString()) {
+    if (existingJobAd.publisherID.toString() !== this.currentUserProfile.id.toString()) {
       throw new HttpErrors.Unauthorized('You are not authorized to delete this job posting');
     }
     await this.jobAdRepository.deleteById(id);
