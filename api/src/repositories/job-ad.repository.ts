@@ -1,6 +1,6 @@
 import {inject} from '@loopback/core';
 import {DefaultCrudRepository} from '@loopback/repository';
-import {DevInMemDataSource} from '../datasources';
+import {MongoDbDataSource} from '../datasources';
 import {JobAd, JobAdRelations} from '../models';
 
 export class JobAdRepository extends DefaultCrudRepository<
@@ -9,7 +9,7 @@ export class JobAdRepository extends DefaultCrudRepository<
   JobAdRelations
 > {
   constructor(
-    @inject('datasources.devInMem') dataSource: DevInMemDataSource,
+    @inject('datasources.mongoDB') dataSource: MongoDbDataSource,
   ) {
     super(JobAd, dataSource);
   }

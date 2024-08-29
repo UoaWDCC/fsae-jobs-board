@@ -31,13 +31,15 @@ export class JobController {
         'application/json': {
           schema: getModelSchemaRef(JobAd, {
             title: 'NewJobAd',
-            exclude: ['id'],
+            exclude: ['id', 'publisherID'],
           }),
         },
       },
     })
-    jobAd: Omit<JobAd, 'id'>,
+    jobAdData: Omit<JobAd, 'id' | 'publisherID'>,
   ): Promise<JobAd> {
+    const jobAd = new JobAd(jobAdData);
+    jobAd.publisherID = this.currentUserProfile.id.toString();
     return this.jobAdRepository.create(jobAd);
   }
 
@@ -108,7 +110,7 @@ export class JobController {
   ): Promise<void> {
     // Check if the user is the publisher of the job ad
     const existingjobAd = await this.jobAdRepository.findById(id);
-    if (existingjobAd.publisherID !== this.currentUserProfile.id) {
+    if (existingjobAd.publisherID !== this.currentUserProfile.id.toString()) {
       throw new HttpErrors.Unauthorized('You are not authorized to update this job posting');
     }
     await this.jobAdRepository.updateById(id, jobAd);
@@ -125,7 +127,7 @@ export class JobController {
   async deleteById(@param.path.string('id') id: string): Promise<void> {
     // Check if the user is the publisher of the job ad
     const existingJobAd = await this.jobAdRepository.findById(id);
-    if (existingJobAd.publisherID !== this.currentUserProfile.id) {
+    if (existingJobAd.publisherID !== this.currentUserProfile.id.toString()) {
       throw new HttpErrors.Unauthorized('You are not authorized to delete this job posting');
     }
     await this.jobAdRepository.deleteById(id);
