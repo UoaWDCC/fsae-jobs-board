@@ -12,10 +12,23 @@ const PasswordTab: FC<PasswordTabProp> = ({ password }) => {
 
   return (
     <Flex direction="column" align="center" justify="center">
-      <Stack className={styles.container}>
-        <PasswordInput label="Current Password" defaultValue={password} classNames={{label: styles.label}}></PasswordInput>
-        <PasswordInput label="New Password" placeholder="New Password"></PasswordInput>
-        <PasswordInput label="Retype New Password" placeholder="Retype New Password"></PasswordInput>
+      <Stack className={styles.container} justify="center" align="center" w="100%">
+        <PasswordInput
+          label="Current Password"
+          defaultValue={password}
+          classNames={{ label: styles.label }}
+          style={{ width: isPortrait ? '90%' : '60%' }}
+        ></PasswordInput>
+        <PasswordInput
+          label="New Password"
+          placeholder="New Password"
+          style={{ width: isPortrait ? '90%' : '60%' }}
+        ></PasswordInput>
+        <PasswordInput
+          label="Retype New Password"
+          placeholder="Retype New Password"
+          style={{ width: isPortrait ? '90%' : '60%' }}
+        ></PasswordInput>
       </Stack>
     </Flex>
   );

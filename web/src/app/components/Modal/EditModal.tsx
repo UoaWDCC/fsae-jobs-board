@@ -24,6 +24,7 @@ export default function EditModal({ opened, close, content, title }: ModalProp) 
         content: styles.content,
         body: styles.body,
         title: styles.title,
+        header: styles.modalHeader
       }}
       title={title}
     >

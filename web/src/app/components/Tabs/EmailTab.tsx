@@ -7,19 +7,23 @@ interface EmailTabProp {
 }
 
 const EmailTab: FC<EmailTabProp> = ({ email }) => {
+  const [isPortrait, setIsPortrait] = useState(window.innerHeight > window.innerWidth);
+
 
   return (
     <Flex direction="column" align="center" justify="center">
-      <Stack className={styles.container}>
+      <Stack className={styles.container} w="100%" justify="center" align="center">
         <TextInput
           label="Current Email"
           placeholder="Current Email"
           classNames={{ input: styles.input, label: styles.inputLabel }}
+          style={{ width: isPortrait ? '90%' : '60%' }}
         ></TextInput>
         <TextInput
           label="New Email"
           placeholder="New Email"
           classNames={{ input: styles.input, label: styles.inputLabel }}
+          style={{ width: isPortrait ? '90%' : '60%' }}
         ></TextInput>
       </Stack>
     </Flex>

@@ -86,7 +86,7 @@ export const EditSetting = ({close}) => {
           </Tabs.Panel>
         </Tabs>
       )}
-      <Box className={settingStyles.buttonContainer}>
+      <Box className={settingStyles.buttonContainer} mb={20} mt={40}>
         <Button className={settingStyles.button1} onClick={close}>
           Cancel
         </Button>
