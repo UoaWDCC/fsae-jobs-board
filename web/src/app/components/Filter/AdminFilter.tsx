@@ -2,9 +2,8 @@ import { Checkbox, Title, Button, Stack, Modal, Flex } from '@mantine/core';
 import styles from './Filter.module.css';
 import { FC, useState } from 'react';
 import { IconArrowDown } from '@tabler/icons-react';
-import { Role, roleToString, stringsToRoles, stringToRole } from '@/app/type/role';
-import { Status } from '@/app/type/status';
-import { UserType } from '../../features/user/userSlice';
+import { Role, roleToString, stringsToRoles } from '@/app/type/role';
+import { Status, statusToString, stringsToStatuses } from '@/app/type/status';
 
 interface Props {
   filterUserTypes: Role[];
@@ -71,11 +70,9 @@ const AdminFilter: FC<Props> = ({
 
           <Stack>
             <Checkbox.Group
-              value={filterStatus.map((status) => status.toString())} // Convert enums to strings
+              value={filterStatus.map((status) => statusToString(status))} // Convert enums to strings
               onChange={(selectedValues: string[]) => {
-                setFilterStatus(
-                  selectedValues.map((value) => Status[value as keyof typeof Status])
-                );
+                setFilterStatus(stringsToStatuses(selectedValues));
               }}
               label="Status"
               labelProps={{ style: { color: 'customAzureBlue.1' } }}
@@ -137,11 +134,9 @@ const AdminFilter: FC<Props> = ({
             </Stack>
             <Stack>
               <Checkbox.Group
-                value={filterStatus.map((status) => status.toString())} // Convert enums to strings
+                value={filterStatus.map((status) => statusToString(status))} // Convert enums to strings
                 onChange={(selectedValues: string[]) => {
-                  setFilterStatus(
-                    selectedValues.map((value) => Status[value as keyof typeof Status])
-                  ); // Convert strings back to Status enums
+                  setFilterStatus(stringsToStatuses(selectedValues));
                 }}
                 label="Status"
                 classNames={{ label: styles.filterSubheading }}
