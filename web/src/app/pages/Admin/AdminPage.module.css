@@ -2,15 +2,19 @@
 .tableContainer {
   padding: 1rem;
   background-color: black;
+  width: 80%;
+  max-width: 800px;
 }
 
 .table {
   border-collapse: separate;
   border-spacing: 0 1rem;
+  background-color: black;
 }
 
 .tableHeader {
   border: none;
+  background-color: black;
   border-bottom: 1px solid white;
   padding: 1rem;
 }
