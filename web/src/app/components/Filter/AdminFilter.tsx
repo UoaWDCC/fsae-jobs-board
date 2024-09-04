@@ -2,7 +2,7 @@ import { Checkbox, Title, Button, Stack, Modal, Flex } from '@mantine/core';
 import styles from './Filter.module.css';
 import { FC, useState } from 'react';
 import { IconArrowDown } from '@tabler/icons-react';
-import { Role } from '@/app/type/role';
+import { Role, roleToString, stringsToRoles, stringToRole } from '@/app/type/role';
 import { Status } from '@/app/type/status';
 import { UserType } from '../../features/user/userSlice';
 
@@ -33,10 +33,10 @@ const AdminFilter: FC<Props> = ({
   ];
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPortrait, setIsPortrait] = useState(window.innerHeight > window.innerWidth);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
-  const [isPortrait, setIsPortrait] = useState(window.innerHeight > window.innerWidth);
 
   return (
     <>
@@ -48,9 +48,9 @@ const AdminFilter: FC<Props> = ({
 
           <Stack>
             <Checkbox.Group
-              value={filterUserTypes.map((role) => role as unknown as string)} // Convert enums to strings
+              value={filterUserTypes.map((role) => roleToString(role))} // Convert enums to strings
               onChange={(selectedValues: string[]) => {
-                setFilterUserTypes(selectedValues.map((value) => value as Role)); // Convert strings back to RoleType
+                setFilterUserTypes(stringsToRoles(selectedValues)); // Convert strings back to RoleType
               }}
               label="User Type"
               labelProps={{ style: { color: 'customAzureBlue.1' } }}
@@ -59,7 +59,7 @@ const AdminFilter: FC<Props> = ({
               {roles.map((role) => (
                 <Checkbox
                   key={role.value}
-                  value={role.value as unknown as string}
+                  value={role.value.toString()}
                   label={role.label}
                   color="customAzureBlue.1"
                   className={styles.checkbox}
@@ -71,9 +71,11 @@ const AdminFilter: FC<Props> = ({
 
           <Stack>
             <Checkbox.Group
-              value={filterStatus.map((status) => status as unknown as string)} // Convert enums to strings
+              value={filterStatus.map((status) => status.toString())} // Convert enums to strings
               onChange={(selectedValues: string[]) => {
-                setFilterStatus(selectedValues.map((value) => value as Status)); // Convert strings back to Status enums
+                setFilterStatus(
+                  selectedValues.map((value) => Status[value as keyof typeof Status])
+                );
               }}
               label="Status"
               labelProps={{ style: { color: 'customAzureBlue.1' } }}
@@ -113,17 +115,20 @@ const AdminFilter: FC<Props> = ({
           >
             <Stack>
               <Checkbox.Group
-                value={filterRoles}
-                onChange={setFilterRoles}
-                label="Role Type"
+                value={filterUserTypes.map((role) => roleToString(role))} // Convert enums to strings
+                onChange={(selectedValues: string[]) => {
+                  setFilterUserTypes(stringsToRoles(selectedValues)); // Convert strings back to RoleType
+                }}
+                label="User Type"
+                labelProps={{ style: { color: 'customAzureBlue.1' } }}
                 classNames={{ label: styles.filterSubheading }}
               >
                 {roles.map((role) => (
                   <Checkbox
                     key={role.value}
-                    value={role.value}
+                    value={role.value.toString()}
                     label={role.label}
-                    color={color}
+                    color="customAzureBlue.1"
                     className={styles.checkbox}
                     size="md"
                   />
@@ -132,17 +137,21 @@ const AdminFilter: FC<Props> = ({
             </Stack>
             <Stack>
               <Checkbox.Group
-                value={filterFields}
-                onChange={setFilterFields}
-                label="Fields"
+                value={filterStatus.map((status) => status.toString())} // Convert enums to strings
+                onChange={(selectedValues: string[]) => {
+                  setFilterStatus(
+                    selectedValues.map((value) => Status[value as keyof typeof Status])
+                  ); // Convert strings back to Status enums
+                }}
+                label="Status"
                 classNames={{ label: styles.filterSubheading }}
               >
-                {fields.map((role) => (
+                {statusOptions.map((status) => (
                   <Checkbox
-                    key={role.value}
-                    value={role.value}
-                    label={role.label}
-                    color={color}
+                    key={status.value}
+                    value={status.value.toString()}
+                    label={status.label}
+                    color="customAzureBlue.1"
                     className={styles.checkbox}
                     size="md"
                   />
