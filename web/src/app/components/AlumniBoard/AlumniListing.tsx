@@ -74,13 +74,25 @@ const AlumniListing: FC<AlumniListingProp> = ({}) => {
         ))}
       </Grid>
       <Flex align="flex-end" justify="center">
-        <Pagination
-          total={Math.ceil(alumniList.length / alumniPerPage)} // automatically show elipse when pages > 8
-          value={activePage}
-          onChange={setActivePage}
-          size="lg"
-          mb="md"
-        />
+        {!isPortrait ? (
+          <Pagination
+            total={Math.ceil(alumniList.length / alumniPerPage)}
+            value={activePage}
+            onChange={setActivePage}
+            size="lg"
+            mb="md"
+          />
+        ) : (
+          <Pagination
+            total={Math.ceil(alumniList.length / alumniPerPage)}
+            boundaries={1}
+            siblings={0}
+            value={activePage}
+            onChange={setActivePage}
+            size="lg"
+            mb="md"
+          />
+        )}
       </Flex>
     </>
   );
