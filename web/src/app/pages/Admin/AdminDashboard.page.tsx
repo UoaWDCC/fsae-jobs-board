@@ -3,6 +3,7 @@ import { Status } from '@/app/type/status';
 import { AdminReview } from '@/app/models/adminReview';
 import { date2string } from '@/app/features/date/dateConverter';
 import styles from './AdminPage.module.css';
+import BlackNavbarPlaceholder from '@/app/components/BlackNavbarPlaceholder';
 
 const mockReview: AdminReview[] = [
   {
@@ -117,19 +118,7 @@ export function AdminDashboard() {
 
   return (
     <>
-      <Box
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          backgroundColor: 'black',
-          padding: '1rem',
-          width: '100%',
-          height: '12vh',
-        }}
-      ></Box>
-
+      <BlackNavbarPlaceholder />
       <Stack justify="center" align="center" gap="md" mt="md" mr="md">
         <Text mt={120}>Welcome to the admin dashboard. You have 12 requests pending review</Text>
         <div className={styles.tableContainer}>
