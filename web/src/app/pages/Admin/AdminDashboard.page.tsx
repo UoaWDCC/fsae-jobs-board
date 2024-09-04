@@ -108,7 +108,7 @@ export function AdminDashboard() {
               <Divider orientation="vertical" size="sm" style={{ height: '80%' }} mt={160} />
             </Grid.Col>
             <Grid.Col span={9}>
-              <AdminDashboardTable data={mockReview} />
+              <AdminDashboardTable data={filteredReview} />
             </Grid.Col>
           </>
         ) : (
