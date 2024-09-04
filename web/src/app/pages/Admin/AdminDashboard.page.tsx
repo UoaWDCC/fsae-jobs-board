@@ -1,7 +1,8 @@
-import { Container, Flex, Group, Stack, Table, Text } from '@mantine/core';
+import { Stack, Table, Text } from '@mantine/core';
 import { Status } from '@/app/type/status';
 import { AdminReview } from '@/app/models/adminReview';
 import { date2string } from '@/app/features/date/dateConverter';
+import styles from './AdminPage.module.css';
 
 const mockReview: AdminReview[] = [
   {
@@ -57,24 +58,25 @@ const mockReview: AdminReview[] = [
 
 export function AdminDashboard() {
   const rows = mockReview.map((review) => (
-    <Table.Tr key={review.id}>
-      <Table.Td>{review.name}</Table.Td>
+    <Table.Tr key={review.id} className={styles.tableRow}>
+      <Table.Td className={styles.leftRoundedCell}>{review.name}</Table.Td>
       <Table.Td>{review.userType}</Table.Td>
       <Table.Td>{date2string(review.date)}</Table.Td>
-      <Table.Td>{review.status}</Table.Td>
+      <Table.Td className={styles.rightRoundedCell}>{review.status}</Table.Td>
     </Table.Tr>
   ));
+
   return (
     <Stack justify="center" gap="md" mt="md" mr="md">
       <Text mt={120}>Welcome to the admin dashboard. You have 12 requests pending review</Text>
-      <div c>
-        <Table stickyHeader stickyHeaderOffset={60}>
+      <div className={styles.tableContainer}>
+        <Table className={styles.table}>
           <Table.Thead>
             <Table.Tr>
-              <Table.Th>Name</Table.Th>
-              <Table.Th>User Type</Table.Th>
-              <Table.Th>Date</Table.Th>
-              <Table.Th>Status</Table.Th>
+              <Table.Th className={styles.tableHeader}>Name</Table.Th>
+              <Table.Th className={styles.tableHeader}>User Type</Table.Th>
+              <Table.Th className={styles.tableHeader}>Date</Table.Th>
+              <Table.Th className={styles.tableHeader}>Status</Table.Th>
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>{rows}</Table.Tbody>
