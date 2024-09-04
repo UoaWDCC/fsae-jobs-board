@@ -85,6 +85,7 @@ function Navbar() {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
+
   return (
     <>
       <Flex
