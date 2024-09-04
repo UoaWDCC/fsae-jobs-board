@@ -39,7 +39,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: '/adminlogin',
+    path: '/fsae-administrator-login',
     element: (
       <AppLayout>
         <AdminLogin />
