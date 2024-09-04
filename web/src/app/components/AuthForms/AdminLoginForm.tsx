@@ -5,7 +5,6 @@ import {
   Checkbox,
   Button,
   Title,
-  Text,
   useMantineTheme,
 } from '@mantine/core';
 import styles from './authform.module.css';
