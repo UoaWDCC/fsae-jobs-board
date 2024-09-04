@@ -3,6 +3,7 @@ import { Status } from '@/app/type/status';
 import { AdminReview } from '@/app/models/adminReview';
 import BlackNavbarPlaceholder from '@/app/components/BlackNavbarPlaceholder';
 import AdminDashboardTable from '@/app/components/AdminDashboard/AdminDashboardTable';
+import Filter from '@/app/components/Filter/Filter';
 
 const mockReview: AdminReview[] = [
   {
@@ -109,10 +110,19 @@ export function AdminDashboard() {
   return (
     <>
       <BlackNavbarPlaceholder />
-      <Stack justify="center" align="center" gap="md" mt="md" mr="md">
-        <Text mt={120}>Welcome to the admin dashboard. You have 12 requests pending review</Text>
+      <div>
+        <Filter
+          filterRoles={[]}
+          setFilterRoles={function (filterRoles: string[]): void {
+            throw new Error('Function not implemented.');
+          }}
+          filterFields={[]}
+          setFilterFields={function (filterFields: string[]): void {
+            throw new Error('Function not implemented.');
+          }}
+        />
         <AdminDashboardTable data={mockReview} />
-      </Stack>
+      </div>
     </>
   );
 }
