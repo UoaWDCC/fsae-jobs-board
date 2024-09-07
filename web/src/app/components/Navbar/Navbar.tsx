@@ -18,6 +18,8 @@ import { useDisclosure } from '@mantine/hooks';
 import { UserType, resetUser } from '@/app/features/user/userSlice';
 import { IconUserCircle, IconBell, IconLogout, IconSettings } from '@tabler/icons-react';
 import styles from './Navbar.module.css';
+import SettingModal from '../Modal/EditModal';
+import { EditSetting } from '../Modal/EditSetting';
 
 function Navbar() {
   // Use Redux State Management
@@ -75,6 +77,13 @@ function Navbar() {
   // Use a media query to determine small screen size for the collapsible menu
   const [isMobile, setIsMobile] = useState(false);
 
+  // Setting modals
+  const [openModal, setOpenModal] = useState(false);
+
+  const handleSetting = () => {
+    setOpenModal(true);
+  };
+
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
@@ -85,6 +94,7 @@ function Navbar() {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
+
   return (
     <>
       <Flex
@@ -131,7 +141,7 @@ function Navbar() {
               <IconUserCircle size={35} />
             </ActionIcon>
 
-            <ActionIcon size={35} variant="subtle" color="white">
+            <ActionIcon size={35} variant="subtle" color="white" onClick={handleSetting}>
               <IconSettings size={35} />
             </ActionIcon>
 
@@ -353,6 +363,13 @@ function Navbar() {
           </AppShell.Navbar>
         </AppShell>
       )}
+
+      <SettingModal
+        opened={openModal}
+        close={() => setOpenModal(false)}
+        content={<EditSetting close={() => setOpenModal(false)} />}
+        title="Settings"
+      ></SettingModal>
     </>
   );
 }
