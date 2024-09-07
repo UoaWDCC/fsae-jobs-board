@@ -1,6 +1,6 @@
-import { Stack, TextInput, PasswordInput, Flex } from '@mantine/core';
+import { Stack, TextInput, Flex } from '@mantine/core';
 import styles from '../Tabs/Settings.module.css';
-import { useState } from 'react';
+import { useState, FC } from 'react';
 
 interface EmailTabProp {
   email: string;
@@ -8,7 +8,6 @@ interface EmailTabProp {
 
 const EmailTab: FC<EmailTabProp> = ({ email }) => {
   const [isPortrait, setIsPortrait] = useState(window.innerHeight > window.innerWidth);
-
 
   return (
     <Flex direction="column" align="center" justify="center">
