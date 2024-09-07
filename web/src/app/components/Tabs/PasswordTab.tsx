@@ -1,6 +1,6 @@
-import { Stack, TextInput, PasswordInput, Flex } from '@mantine/core';
+import { Stack, PasswordInput, Flex } from '@mantine/core';
 import styles from '../Tabs/Settings.module.css';
-import { useState } from 'react';
+import { useState, FC } from 'react';
 
 interface PasswordTabProp {
   password: string;
