@@ -7,7 +7,7 @@ import styles from './Modal.module.css';
 import { useMediaQuery } from '@mantine/hooks';
 import { useState } from 'react';
 
-export const EditStudentProfile = () => {
+export const EditStudentProfile = ({close}) => {
   const [activeTab, setActiveTab] = useState('about');
   const [isModalOpen, setIsModalOpen] = useState(true);
   const tabOptions = [
@@ -59,7 +59,7 @@ export const EditStudentProfile = () => {
             root: styles.tabRoot,
             list: styles.list,
             panel: styles.panel,
-            tabLabel: styles.tabLabel
+            tabLabel: styles.tabLabel,
           }}
         >
           <Tabs.List>
@@ -84,6 +84,12 @@ export const EditStudentProfile = () => {
           </Tabs.Panel>
         </Tabs>
       )}
+      <Box className={styles.buttonContainer}>
+        <Button className={styles.button1} onClick={close}>
+          Cancel
+        </Button>
+        <Button>Save</Button>
+      </Box>
     </Box>
   );
 };
