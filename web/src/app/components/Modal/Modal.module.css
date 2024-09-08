@@ -21,6 +21,10 @@
   font-size: xx-large;
 }
 
+.modalHeader {
+  padding-left: 0;
+}
+
 /* TABS */
 .tabLabel {
   font-size: large;

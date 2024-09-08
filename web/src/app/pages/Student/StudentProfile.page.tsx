@@ -10,13 +10,13 @@ import {
   Flex,
   Loader,
 } from '@mantine/core';
-import classes from '../styles/StudentProfile.module.css';
+import styles from '../../styles/StudentProfile.module.css';
 import { useEffect, useState } from 'react';
 import { IconCertificate } from '@tabler/icons-react';
-import EditModal from '../components/Modal/EditModal';
-import { EditStudentProfile } from '../components/Modal/EditStudentProfile';
-import { EditAvatar } from '../components/Modal/EditAvatar';
-import { EditBannerModal } from '../components/Modal/EditBannerModal';
+import EditModal from '../../components/Modal/EditModal';
+import { EditStudentProfile } from '../../components/Modal/EditStudentProfile';
+import { EditAvatar } from '../../components/Modal/EditAvatar';
+import { EditBannerModal } from '../../components/Modal/EditBannerModal';
 
 export function StudentProfile() {
   // UseState for future modal implementation
@@ -45,7 +45,7 @@ export function StudentProfile() {
 
   const handleProfileChange = () => {
     setModalType('profile');
-    setModalContent(<EditStudentProfile />);
+    setModalContent(<EditStudentProfile close={() => setOpenProfileModal(false)} />);
     setModalTitle('Edit Profile');
     setOpenProfileModal(true);
   };
@@ -81,21 +81,21 @@ export function StudentProfile() {
   }, []);
 
   return (
-    <Box className={classes.container}>
-      <Card h={280} className={classes.card}>
+    <Box className={styles.container}>
+      <Card h={280} className={styles.card}>
         <Card.Section
           h={250}
-          className={classes.banner}
+          className={styles.banner}
           onClick={handleBannerChange}
           style={{ backgroundImage: `url(${userData.banner})` }}
         />
         {userData?.firstName && (
-          <Text className={classes.name} pl={170} pt={110}>
+          <Text className={styles.name} pl={170} pt={110}>
             {userData.firstName} {userData.lastName}
           </Text>
         )}
         {userData?.subgroup && (
-          <Text size="xl" className={classes.subgroup} pl={170} pt={160}>
+          <Text size="xl" className={styles.subgroup} pl={170} pt={160}>
             {userData.subgroup} since {userData.dateJoined}
           </Text>
         )}
@@ -105,10 +105,10 @@ export function StudentProfile() {
           size={150}
           mt={-100}
           ml={10}
-          className={classes.avatar}
+          className={styles.avatar}
           onClick={handleAvatarChange}
         />
-        <Text size="xl" mt={-40} ml={170} pt={10} className={classes.text}>
+        <Text size="xl" mt={-40} ml={170} pt={10} className={styles.text}>
           Looking for: {userData.jobType}
         </Text>
       </Card>
@@ -123,7 +123,7 @@ export function StudentProfile() {
         <Grid.Col span={{ md: 3, xs: 12 }}>
           <Box ml={20} mt={20}>
             <Title order={5}>Contact</Title>
-            <Box pl={15} mt={10} className={classes.box}>
+            <Box pl={15} mt={10} className={styles.box}>
               {userData?.email && <Text size="lg">{userData.email}</Text>}
               {userData?.phone && <Text size="lg">{userData.phone}</Text>}
               {!userData && <Loader color="blue" />}
@@ -132,7 +132,7 @@ export function StudentProfile() {
 
           <Box ml={20} mt={30}>
             <Title order={5}>Skills</Title>
-            <Box pl={15} mt={10} className={classes.box}>
+            <Box pl={15} mt={10} className={styles.box}>
               {userData?.skills && (
                 <>
                   {showMoreSkills
@@ -169,7 +169,7 @@ export function StudentProfile() {
         <Grid.Col span={{ md: 9, xs: 12 }}>
           <Box mx={20} mt={20}>
             <Title order={5}>About Me</Title>
-            <Box pl={15} mt={10} className={classes.box}>
+            <Box pl={15} mt={10} className={styles.box}>
               {/* Conditionally render the full description based on showMore state */}
               {userData?.description && (
                 <>
@@ -207,7 +207,7 @@ export function StudentProfile() {
             <Box>
               <Title order={5}>Education</Title>
 
-              <Box pl={15} mt={10} className={classes.box}>
+              <Box pl={15} mt={10} className={styles.box}>
                 {userData?.education && (
                   <>
                     {showMoreEducation

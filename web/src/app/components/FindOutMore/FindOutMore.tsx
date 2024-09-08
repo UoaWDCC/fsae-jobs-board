@@ -1,10 +1,10 @@
 import { Flex, Box, Text, Button, BackgroundImage, Center, Anchor, Space } from '@mantine/core';
-import classes from './FindOutMore.module.css';
+import styles from './FindOutMore.module.css';
 
 export function FindOutMore() {
   return (
-    <Box className={classes.container}>
-      <BackgroundImage className={classes.backgroundImage} src="E47.jpg" />
+    <Box className={styles.container}>
+      <BackgroundImage className={styles.backgroundImage} src="E47.jpg" />
       <Flex
         align="Center"
         justify="Center"
@@ -13,9 +13,9 @@ export function FindOutMore() {
         mt={{ base: '-35rem', sm: '-25rem' }}
         ml={{ base: '50', sm: '200' }}
         mr={{ base: '50', sm: '200' }}
-        className={classes.textBox}
+        className={styles.textBox}
       >
-        <Text fz={{ base: 'md', sm: 'xl' }} lh={{ base: 'md', sm: 'xl' }} className={classes.text}>
+        <Text fz={{ base: 'md', sm: 'xl' }} lh={{ base: 'md', sm: 'xl' }} className={styles.text}>
           Your one-stop shop for connecting F:SAE:47 members, sponsors, and alumni! Whether you're a
           student seeking your dream internship or graduate role, a sponsor, or an alumnus looking
           to connect your company with the next generation of innovators, this platform is designed
