@@ -67,14 +67,14 @@ const FormComponent: React.FC<FormComponentProps> = ({ fields, onSubmit }) => (
         name="username"
         size="md"
         required
-        classNames={{ label: classes.formLabel }}
+        classNames={{ label: styles.formLabel }}
       />
       <TextInput
         label="Phone Number"
         name="phoneNumber"
         size="md"
         required
-        classNames={{ label: classes.formLabel }}
+        classNames={{ label: styles.formLabel }}
       />
       <Flex justify="space-between">
         <PasswordInput
