@@ -1,7 +1,7 @@
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
 import { HomePage } from './pages/General/Home.page';
 import { Login } from './pages/General/Login.page';
-import { Verify } from './pages/Verify.page';
+import { Verify } from './pages/General/Verify.page';
 import { StudentProfile } from './pages/Student/StudentProfile.page';
 import { SponsorProfile } from './pages/Sponsor/SponsorProfile.page';
 import { AlumniProfile } from './pages/Alumni/AlumniProfile.page';
