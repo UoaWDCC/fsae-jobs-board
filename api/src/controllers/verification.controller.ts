@@ -1,3 +1,4 @@
+import { inject } from '@loopback/core';
 import {
     repository,
 } from '@loopback/repository';
@@ -14,6 +15,7 @@ import {
     SponsorRepository,
     AdminRepository,
 } from '../repositories';
+import { TwilioService } from '../services';
 
 export class VerificationController {
     constructor(
@@ -31,6 +33,9 @@ export class VerificationController {
 
         @repository(AdminRepository)
         public adminRepository: AdminRepository,
+
+        @inject('services.twilioService') private twilioService: TwilioService
+
     ) {}
 
     @get('/verify')
@@ -60,6 +65,7 @@ export class VerificationController {
 
         await roleRepository.updateById(user.id, { verified: true });
         await this.verificationRepository.deleteById(verification.id);
+        await this.twilioService.verifyUser(verification.twilioId);
 
         return true;
     }

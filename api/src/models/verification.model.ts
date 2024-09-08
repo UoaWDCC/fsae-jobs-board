@@ -27,6 +27,12 @@ export class Verification extends Entity {
   })
   fsaeRole: string;
 
+  @property({
+    type: 'string',
+    required: true,
+  })
+  twilioId: string;
+
   constructor(data?: Partial<Verification>) {
     super(data);
   }
