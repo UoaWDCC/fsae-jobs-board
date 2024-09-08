@@ -5,3 +5,4 @@ export * from './member.model';
 export * from './admin.model';
 export * from './sponsor.model';
 export * from './alumni.model';
+export * from './job-ad.model';

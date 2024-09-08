@@ -1,5 +1,5 @@
 import { Flex, TextInput, PasswordInput, Checkbox, Button, Title, Text } from '@mantine/core';
-import classes from './authform.module.css';
+import styles from './authform.module.css';
 import { NavLink } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
@@ -45,9 +45,9 @@ export function LoginForm() {
       justify="center"
       align="center"
       direction="column"
-      className={classes.loginFormContainer}
+      className={styles.loginFormContainer}
     >
-      <form className={classes.form}>
+      <form className={styles.form}>
         <Title order={3} ta="center" mt="md" mb={50}>
           Login
         </Title>
@@ -60,13 +60,13 @@ export function LoginForm() {
         </Button>
         <Text ta="center" mt="xl">
           Don&apos;t have an account?{' '}
-          <NavLink to="/" className={classes.link}>
+          <NavLink to="/" className={styles.link}>
             Sign up
           </NavLink>
         </Text>
         <Text ta="center" mt="md">
           Forget your{' '}
-          <NavLink to="/" className={classes.link}>
+          <NavLink to="/" className={styles.link}>
             password?
           </NavLink>
         </Text>

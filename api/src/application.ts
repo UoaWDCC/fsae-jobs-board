@@ -30,7 +30,27 @@ export class FsaeApiApplication extends BootMixin(
 
     // Set up the custom sequence
     this.sequence(MySequence);
-
+    // Add the security scheme to the OpenAPI specification
+    this.api({
+      openapi: '3.0.0',
+      info: {title: 'MyApp', version: '1.0.0'},
+      paths: {},
+      components: {
+        securitySchemes: {
+          // Define the security scheme (e.g., JWT bearer token)
+          bearerAuth: {
+            type: 'http',
+            scheme: 'bearer',
+            bearerFormat: 'JWT',
+          },
+        },
+      },
+      security: [
+        {
+          bearerAuth: [],
+        },
+      ],
+    });
     // Set up default home page
     this.static('/', path.join(__dirname, '../public'));
 

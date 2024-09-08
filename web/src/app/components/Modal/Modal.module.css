@@ -1,0 +1,225 @@
+/* MODAL */
+.content {
+  height: fit-content;
+  max-height: 100vh;
+  padding: 0 3%;
+  border-radius: 30px;
+  box-shadow:
+    0px 4px 30px 3px #7c7c7c,
+    0px 10px 15px -3px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  padding-top: 1rem;
+}
+
+.body {
+  min-height: 0;
+  max-height: 100vh;
+  padding: 3% 0;
+}
+
+.title {
+  font-size: xx-large;
+}
+
+.modalHeader {
+  padding-left: 0;
+}
+
+/* TABS */
+.tabLabel {
+  font-size: large;
+}
+
+/* ABOUT/EDUCATION TAB */
+.list {
+  display: flex;
+  justify-content: space-evenly;
+  gap: 10px;
+  font-size: xx-large;
+}
+
+.box {
+  display: flex;
+  gap: 20px;
+  flex: 1;
+
+  @media (max-width: 430px) {
+    gap: 5%;
+  }
+}
+
+.input > * {
+  margin-bottom: 5%;
+  margin-right: 2rem;
+}
+
+.area {
+  height: 15vh;
+  min-height: 0;
+  flex: 1;
+}
+
+.buttonContainer {
+  margin-top: 5%;
+  display: flex;
+  justify-content: flex-end;
+
+  @media (max-width: 430px) {
+    justify-content: space-evenly;
+    align-items: center;
+  }
+}
+
+.buttonContainer > * {
+  width: 100px;
+  border-radius: 10px;
+
+  @media (max-width: 430px) {
+    width: 120px;
+  }
+}
+
+.button1 {
+  margin-right: 20px;
+  background-color: var(--mantine-color-customMercurySilver-1);
+}
+
+.box {
+  display: flex;
+  flex-direction: row;
+
+  @media (max-width: 430px) {
+    flex-direction: column;
+  }
+}
+
+/* SKILLS TAB   */
+.skillRoot {
+  width: 100%;
+}
+
+.wrapper {
+  width: 50vw;
+  max-width: 100%;
+}
+
+.addButton {
+  padding-bottom: 0;
+  background-color: var(--mantine-color-customPapayaOrange-1);
+}
+
+.skillContainer {
+  margin: 0 15vw;
+}
+
+.skillButton {
+  background-color: var(--mantine-color-customDarkGrey-1);
+  border: 2px solid var(--mantine-color-customGrey-1);
+}
+
+/* AVATAR */
+.avatar {
+  width: 100%;
+  height: 100%;
+  max-width: 30vw;
+  max-width: 30vw;
+  border-radius: 50%;
+}
+
+.icon {
+  color: var(--mantine-color-customWhite-1);
+}
+
+.bannerWrapper {
+  width: 100%;
+  height: 50vh;
+  margin-bottom: 5%;
+}
+
+.banner {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.modalButton {
+  border: none;
+  background-color: transparent;
+  cursor: cursor;
+  margin-top: 20px;
+}
+
+/* CV TAB */
+.dropContainer {
+  color: black;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.dropWrapper {
+  background-color: var(--mantine-color-customWhite-1);
+  width: 60%;
+  height: 50vh;
+  border: 3px dashed var(--mantine-color-customGrey-1);
+  border-radius: 10px;
+}
+
+.dropRoot {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dropIcon {
+  width: 60%;
+  height: 60%;
+  color: var(--mantine-color-customAzureBlue-1);
+}
+
+.dropButton {
+  background-color: var(--mantine-color-customAzureBlue-1);
+}
+
+.mobileDrop {
+  display: none;
+}
+
+/* mobile version for CV button */
+@media (max-width: 430px) {
+  .dropIcon,
+  .dropRoot,
+  .dropButton {
+    display: none;
+  }
+
+  .dropWrapper {
+    border: none;
+    background-color: transparent;
+  }
+
+  .mobileDrop {
+    display: block;
+  }
+
+  .mobileButton {
+    background-color: var(--mantine-color-customElectricOrange-1);
+    width: 140px;
+    border-radius: 10px;
+  }
+}
+
+/* Mobile Tab Dropdown */
+.selectWrapper {
+  width: 50%;
+}
+
+.selectInput,
+.selectDropdown {
+  background-color: var(--mantine-color-customDarkWhite-1);
+  color: var(--mantine-color-background-1);
+  border-radius: 10px;
+  border: none;
+}

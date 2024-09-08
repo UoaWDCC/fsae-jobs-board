@@ -1,23 +1,24 @@
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
-import { HomePage } from './pages/Home.page';
-import { Login } from './pages/Login.page';
-import { StudentProfile } from './pages/StudentProfile.page';
-import { SponsorProfile } from './pages/SponsorProfile.page';
-import { AlumniProfile } from './pages/AlumniProfile.page';
-import { AdminDashboard } from './pages/AdminDashboard.page';
-import { JobBoard } from './pages/JobBoard.page';
-import { StudentsBoard } from './pages/StudentsBoard.page';
-import { SponsorsBoard } from './pages/SponsorsBoard.page';
-import { AlumniBoard } from './pages/AlumniBoard.page';
-import { NotFound } from './pages/NotFound.page';
-import ProfileSwitcher from './pages/ProfileSwitcher';
+import { HomePage } from './pages/General/Home.page';
+import { Login } from './pages/General/Login.page';
+import { StudentProfile } from './pages/Student/StudentProfile.page';
+import { SponsorProfile } from './pages/Sponsor/SponsorProfile.page';
+import { AlumniProfile } from './pages/Alumni/AlumniProfile.page';
+import { AdminDashboard } from './pages/Admin/AdminDashboard.page';
+import { JobBoard } from './pages/Student/JobBoard.page';
+import { StudentsBoard } from './pages/Student/StudentsBoard.page';
+import { SponsorsBoard } from './pages/Sponsor/SponsorsBoard.page';
+import { AlumniBoard } from './pages/Alumni/AlumniBoard.page';
+import { NotFound } from './pages/General/NotFound.page';
+import ProfileSwitcher from './pages/General/ProfileSwitcher';
 import { AppLayout } from './Layouts/AppLayout';
 import ProtectedRoute from './components/ProtectedRoute';
-import { StudentSignUp } from './pages/StudentSignup.page';
-import { SponsorSignUp } from './pages/SponsorSignup.page';
-import { AlumniSignUp } from './pages/AlumniSignup.page';
-import { AdminSignUp } from './pages/AdminSignup.page';
-import SignupSwitcher from './pages/SignupSwitcher.page';
+import { StudentSignUp } from './pages/Student/StudentSignup.page';
+import { SponsorSignUp } from './pages/Sponsor/SponsorSignup.page';
+import { AlumniSignUp } from './pages/Alumni/AlumniSignup.page';
+import { AdminSignUp } from './pages/Admin/AdminSignup.page';
+import SignupSwitcher from './pages/General/SignupSwitcher.page';
+import { AdminLogin } from './pages/Admin/AdminLogin.page';
 
 // Protected route is currently commented out. To be enabled once the Authentication Logic has been implemented
 const router = createBrowserRouter([
@@ -34,6 +35,14 @@ const router = createBrowserRouter([
     element: (
       <AppLayout>
         <Login />
+      </AppLayout>
+    ),
+  },
+  {
+    path: '/fsae-administrator-login',
+    element: (
+      <AppLayout>
+        <AdminLogin />
       </AppLayout>
     ),
   },
