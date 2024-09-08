@@ -1,8 +1,12 @@
+import React from 'react';
 import { Welcome } from '../../components/Welcome/Welcome';
 import { FindOutMore } from '../../components/FindOutMore/FindOutMore';
 import { Guide } from '../../components/Guides/Guide';
+import { useScroll, ScrollProvider } from '../../contexts/ScrollContext'; // Adjust the path as needed
 
 export function HomePage() {
+  const { refs } = useScroll();
+  
   return (
     <>
       <Welcome />
@@ -17,6 +21,7 @@ export function HomePage() {
         description3="Browse and Apply to Jobs"
         buttonText="Register as a Student"
         useRef="/signup/student"
+        ref={refs.student}
       />
       <Guide
         title="Sponsors"
@@ -28,6 +33,7 @@ export function HomePage() {
         description3="Browse our talents pool"
         buttonText="Register as a Sponsor"
         useRef="/signup/sponsor"
+        ref={refs.sponsor}
       />
       <Guide
         title="Alumni"
@@ -39,6 +45,7 @@ export function HomePage() {
         description3="Browse our talents pool"
         buttonText="Register as an Alumni"
         useRef="/signup/alumni"
+      ref={refs.alumni}
       />
     </>
   );

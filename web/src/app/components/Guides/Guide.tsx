@@ -1,6 +1,6 @@
+import React, { forwardRef } from 'react';
 import { Title, Text, Flex, Button, Box } from '@mantine/core';
 import { IconArrowRight } from '@tabler/icons-react';
-import { useScrollIntoView } from '@mantine/hooks';
 import styles from './Guides.module.css';
 import { NavLink } from 'react-router-dom';
 
@@ -16,7 +16,8 @@ type GuideProps = {
   useRef: string;
 };
 
-export function Guide({
+// Forward ref to the Guide component
+export const Guide = forwardRef<HTMLDivElement, GuideProps>(({
   title,
   subtitle1,
   description1,
@@ -26,9 +27,7 @@ export function Guide({
   description3,
   buttonText,
   useRef,
-}: GuideProps) {
-  const { scrollIntoView, targetRef } = useScrollIntoView<HTMLDivElement>();
-
+}, ref) => {
   return (
     <Flex
       gap={{ base: 20, sm: 150 }}
@@ -37,9 +36,10 @@ export function Guide({
       direction="column"
       wrap="wrap"
       className={styles.wrapper}
+      ref={ref} // Attach ref to the Flex container
     >
       <Box>
-        <Title ref={targetRef}>{title}</Title>
+        <Title>{title}</Title>
       </Box>
 
       <Flex gap={{ base: '50', sm: '125' }} direction={{ base: 'column', sm: 'row' }}>
@@ -80,9 +80,9 @@ export function Guide({
       </Flex>
       <NavLink to={useRef}>
         <Button size="lg" radius={100} fw={0} color="var(--mantine-color-customAzureBlue-1)">
-          {buttonText} <IconArrowRight></IconArrowRight>
+          {buttonText} <IconArrowRight />
         </Button>
       </NavLink>
     </Flex>
   );
-}
+});
