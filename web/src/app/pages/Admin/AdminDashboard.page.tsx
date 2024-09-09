@@ -1,13 +1,13 @@
 import { Status } from '@/app/type/status';
 import { AdminReview } from '@/app/models/adminReview';
-import BlackNavbarPlaceholder from '@/app/components/BlackNavbarPlaceholder';
 import AdminDashboardTable from '@/app/components/AdminDashboard/AdminDashboardTable';
-import { useState, FormEvent, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Role } from '@/app/type/role';
 import AdminFilter from '@/app/components/Filter/AdminFilter';
-import { Divider, Flex, Grid, Stack } from '@mantine/core';
+import { Divider, Grid } from '@mantine/core';
 import SearchBar from '@/app/components/SearchBar/SearchBar';
 
+// TODO: remove once integration is completed
 const mockReview: AdminReview[] = [
   {
     id: '1',

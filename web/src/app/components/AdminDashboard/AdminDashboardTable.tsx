@@ -1,4 +1,4 @@
-import { Stack, Table, Text } from '@mantine/core';
+import { Stack, Table } from '@mantine/core';
 import styles from './AdminDashboard.module.css';
 import { AdminReview } from '@/app/models/adminReview';
 import { FC } from 'react';
