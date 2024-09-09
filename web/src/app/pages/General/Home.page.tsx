@@ -1,8 +1,8 @@
-import React from 'react';
 import { Welcome } from '../../components/Welcome/Welcome';
 import { FindOutMore } from '../../components/FindOutMore/FindOutMore';
 import { Guide } from '../../components/Guides/Guide';
-import { useScroll, ScrollProvider } from '../../contexts/ScrollContext'; // Adjust the path as needed
+import { useScroll} from '../../contexts/ScrollContext';
+import { ToTopButton } from '@/app/components/BackToTopButton/BackToTopButton';
 
 export function HomePage() {
   const { refs } = useScroll();
@@ -47,6 +47,7 @@ export function HomePage() {
         useRef="/signup/alumni"
       ref={refs.alumni}
       />
+      <ToTopButton/>
     </>
   );
 }
