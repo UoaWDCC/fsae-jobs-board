@@ -3,12 +3,13 @@ import {UserProfile} from '@loopback/security';
 import {HttpErrors, RedirectRoute, Request} from '@loopback/rest';
 import {inject} from '@loopback/core';
 import {JwtService} from '../../services';
+import { BindingKeys } from '../../constants/binding-keys';
 
 export class FSAEJwtStrategy implements AuthenticationStrategy {
   name = 'fsae-jwt';
 
   constructor(
-    @inject('services.JwtService') public JwtService: JwtService
+    @inject(BindingKeys.JWT_SERVICE) public JwtService: JwtService
   ) {}
 
   authenticate(request: Request): Promise<UserProfile | RedirectRoute | undefined> {

@@ -10,6 +10,7 @@ import {createFSAEUserDto} from './controller-types/register.controller.types';
 import {Admin, FsaeRole} from '../models';
 import {inject, service} from '@loopback/core';
 import {FsaeUserService, PasswordHasherService} from '../services';
+import { BindingKeys } from '../constants/binding-keys';
 
 export class RegisterController {
   constructor(
@@ -18,7 +19,7 @@ export class RegisterController {
     @repository(MemberRepository) private memberRepository: MemberRepository,
     @repository(SponsorRepository) private sponsorRepository: SponsorRepository,
     @service(FsaeUserService) private fsaeUserService: FsaeUserService,
-    @inject('services.passwordhasher') private passwordHasher: PasswordHasherService
+    @inject(BindingKeys.PASSWORD_HASHER) private passwordHasher: PasswordHasherService
   ) {}
 
   @post('/register-admin')

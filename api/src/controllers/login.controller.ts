@@ -13,6 +13,7 @@ import {FsaeRole, FsaeUser} from '../models';
 import {FsaeUserService, JwtService, PasswordHasherService} from '../services';
 import {UserProfile} from '@loopback/security';
 import {authorize} from '@loopback/authorization';
+import { BindingKeys } from '../constants/binding-keys';
 
 export class LoginController {
   constructor(
@@ -22,8 +23,8 @@ export class LoginController {
     @repository(SponsorRepository) private sponsorRepository: SponsorRepository,
     @service(FsaeUserService) private fsaeUserService: FsaeUserService,
     @inject(RestBindings.Http.REQUEST) private req: Request,
-    @inject('services.jwtservice') private jwtService: JwtService,
-    @inject('services.passwordhasher') private passwordHasher: PasswordHasherService
+    @inject(BindingKeys.JWT_SERVICE) private jwtService: JwtService,
+    @inject(BindingKeys.PASSWORD_HASHER) private passwordHasher: PasswordHasherService
   ) {}
 
   @post('/login-admin')
