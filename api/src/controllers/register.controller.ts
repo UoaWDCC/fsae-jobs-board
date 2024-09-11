@@ -8,8 +8,8 @@ import {AdminRepository, AlumniRepository, MemberRepository, SponsorRepository} 
 import {HttpErrors, post, requestBody} from '@loopback/rest';
 import {createFSAEUserDto} from './controller-types/register.controller.types';
 import {Admin, FsaeRole} from '../models';
-import {inject} from '@loopback/core';
-import {PasswordHasherService} from '../services';
+import {inject, service} from '@loopback/core';
+import {FsaeUserService, PasswordHasherService} from '../services';
 import { BindingKeys } from '../constants/binding-keys';
 
 export class RegisterController {
@@ -18,6 +18,7 @@ export class RegisterController {
     @repository(AlumniRepository) private alumniRepository: AlumniRepository,
     @repository(MemberRepository) private memberRepository: MemberRepository,
     @repository(SponsorRepository) private sponsorRepository: SponsorRepository,
+    @service(FsaeUserService) private fsaeUserService: FsaeUserService,
     @inject(BindingKeys.PASSWORD_HASHER) private passwordHasher: PasswordHasherService
   ) {}
 
@@ -58,15 +59,8 @@ export class RegisterController {
         },
       }
     })createUserDto: createFSAEUserDto): Promise<Admin> {
-      // Find user Profile
-      let userSearchResults = await this.adminRepository.find({
-        where: {
-          email: createUserDto.email,
-        },
-      });
-
-      // If no user found, invalid credientials
-      if (userSearchResults.length > 0) {
+      // Prevent duplicate user by email
+      if (await this.fsaeUserService.doesUserExist(createUserDto.email)) {
         throw new HttpErrors.Conflict('Email already exists')
       }
 
@@ -123,15 +117,8 @@ export class RegisterController {
         },
       }
     })createUserDto: createFSAEUserDto): Promise<Admin> {
-    // Find user Profile
-    let userSearchResults = await this.memberRepository.find({
-      where: {
-        email: createUserDto.email,
-      },
-    });
-
-    // If no user found, invalid credientials
-    if (userSearchResults.length > 0) {
+    // Prevent duplicate user by email
+    if (await this.fsaeUserService.doesUserExist(createUserDto.email)) {
       throw new HttpErrors.Conflict('Email already exists')
     }
 
@@ -188,15 +175,8 @@ export class RegisterController {
         },
       }
     })createUserDto: createFSAEUserDto): Promise<Admin> {
-    // Find user Profile
-    let userSearchResults = await this.sponsorRepository.find({
-      where: {
-        email: createUserDto.email,
-      },
-    });
-
-    // If no user found, invalid credientials
-    if (userSearchResults.length > 0) {
+    // Prevent duplicate user by email
+    if (await this.fsaeUserService.doesUserExist(createUserDto.email)) {
       throw new HttpErrors.Conflict('Email already exists')
     }
 
@@ -253,15 +233,8 @@ export class RegisterController {
         },
       }
     })createUserDto: createFSAEUserDto): Promise<Admin> {
-    // Find user Profile
-    let userSearchResults = await this.alumniRepository.find({
-      where: {
-        email: createUserDto.email,
-      },
-    });
-
-    // If no user found, invalid credientials
-    if (userSearchResults.length > 0) {
+    // Prevent duplicate user by email
+    if (await this.fsaeUserService.doesUserExist(createUserDto.email)) {
       throw new HttpErrors.Conflict('Email already exists')
     }
 

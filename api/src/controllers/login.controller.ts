@@ -3,15 +3,16 @@
 // import {inject} from '@loopback/core';
 
 
-import {get, HttpErrors, post, requestBody} from '@loopback/rest';
+import {get, HttpErrors, param, post, Request, requestBody, RestBindings} from '@loopback/rest';
 import {authenticate} from '@loopback/authentication';
 import {loginParams, loginResponse} from './controller-types/login.controller.types';
-import {inject} from '@loopback/core';
+import {inject, service} from '@loopback/core';
 import {repository} from '@loopback/repository';
 import {AdminRepository, AlumniRepository, MemberRepository, SponsorRepository} from '../repositories';
-import {FsaeUser} from '../models';
-import {JwtService, PasswordHasherService} from '../services';
+import {FsaeRole, FsaeUser} from '../models';
+import {FsaeUserService, JwtService, PasswordHasherService} from '../services';
 import {UserProfile} from '@loopback/security';
+import {authorize} from '@loopback/authorization';
 import { BindingKeys } from '../constants/binding-keys';
 
 export class LoginController {
@@ -20,6 +21,8 @@ export class LoginController {
     @repository(AlumniRepository) private alumniRepository: AlumniRepository,
     @repository(MemberRepository) private memberRepository: MemberRepository,
     @repository(SponsorRepository) private sponsorRepository: SponsorRepository,
+    @service(FsaeUserService) private fsaeUserService: FsaeUserService,
+    @inject(RestBindings.Http.REQUEST) private req: Request,
     @inject(BindingKeys.JWT_SERVICE) private jwtService: JwtService,
     @inject(BindingKeys.PASSWORD_HASHER) private passwordHasher: PasswordHasherService
   ) {}
@@ -146,6 +149,32 @@ export class LoginController {
     }) as FsaeUser[];
 
     return this.getUserToken(credentials, userSearchResults);
+  }
+
+  @get('/user/{userEmail}/role')
+  async getUserRole(
+    @param.path.string('userEmail') userEmail: string
+  ) : Promise<string | null> {
+    return this.fsaeUserService.getUserRole(userEmail);
+  }
+
+  @get('/user/whoami')
+  // @response(200, PING_RESPONSE)
+  @authenticate('fsae-jwt')
+  @authorize({
+    allowedRoles: [FsaeRole.ADMIN, FsaeRole.SPONSOR, FsaeRole.ALUMNI, FsaeRole.ALUMNI],
+    scopes: ['allow-non-activated'],
+  })
+  whoAmI(): object {
+    throw Error("todo")
+    // Todo: Requires usage of UserRepo which is on another ticket.
+    // // Reply with a greeting, the current time, the url, and request headers
+    // return {
+    //   greeting: 'This endpoint allows non activated accounts. ',
+    //   date: new Date(),
+    //   url: this.req.url,
+    //   headers: Object.assign({}, this.req.headers),
+    // };
   }
 
   async getUserToken(credentials: loginParams, userSearchResults: FsaeUser[]) : Promise<loginResponse> {
