@@ -33,13 +33,15 @@ const fieldsByRole: { [key in Role]: Field[] } = {
   ],
   [Role.Sponsor]: [
     { label: 'Company', name: 'company' },
-    { label: 'Phone Number', name: 'phoneNumber' },
   ],
   [Role.Alumni]: [
     { label: 'First Name', name: 'firstName' },
     { label: 'Last Name', name: 'lastName' },
     { label: 'Company', name: 'company' },
   ],
+  [Role.Admin]: [],
+  [Role.Member]: [],
+  [Role.Unknown]: []
 };
 
 const FormComponent: React.FC<FormComponentProps> = ({ fields, onSubmit }) => (
@@ -58,13 +60,6 @@ const FormComponent: React.FC<FormComponentProps> = ({ fields, onSubmit }) => (
       <TextInput
         label="Email"
         name="email"
-        size="md"
-        required
-        classNames={{ label: styles.formLabel }}
-      />
-      <TextInput
-        label="Username"
-        name="username"
         size="md"
         required
         classNames={{ label: styles.formLabel }}
@@ -120,19 +115,19 @@ const SignupForm = ({ role }: { role: Role }) => {
 
     // Todo: Redirect or do something after successful registration
     if (role === Role.Student) {
-      register_member(data as createFSAEUserDto).then((response) => {
+      register_member(data as unknown as createFSAEUserDto).then((response) => {
         toast.success('Student Registration Successful');
       }).catch((error) => {
         toast.error(error.toString());
       })
     } else if (role === Role.Sponsor) {
-      register_sponsor(data as createFSAEUserDto).then((response) => {
+      register_sponsor(data as unknown as createFSAEUserDto).then((response) => {
         toast.success('Sponsor Registration Successful');
       }).catch((error) => {
         toast.error(error.toString());
       })
     } else if (role === Role.Alumni) {
-      register_alumni(data as createFSAEUserDto).then((response) => {
+      register_alumni(data as unknown as createFSAEUserDto).then((response) => {
         toast.success('Alumni Registration Successful');
       }).catch((error) => {
         toast.error(error.toString());
