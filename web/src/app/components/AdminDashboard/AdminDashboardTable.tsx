@@ -1,13 +1,39 @@
 import { Stack, Table, Text } from '@mantine/core';
+import 'mantine-datatable/styles.css';
 import styles from './AdminDashboard.module.css';
 import { AdminReview } from '@/app/models/adminReview';
 import { FC } from 'react';
 import { date2string } from '@/app/features/date/dateConverter';
+import { DataTable } from 'mantine-datatable';
 
 interface Props {
   data: AdminReview[];
 }
 const AdminDashboardTable: FC<Props> = ({ data }) => {
+  // id: '1',
+  // name: 'Google',
+  // userType: Role.Alumni,
+  // date: new Date(),
+  // status: Status.Approved,
+  const columns = [
+    {
+      accessor: 'name',
+      cellsClassName: styles.leftRoundedCell,
+    },
+    {
+      accessor: 'userType',
+      cellsClassName: styles.tableRow,
+    },
+    {
+      accessor: 'date',
+      render: ({ date }) => date2string(date),
+      cellsClassName: styles.tableRow,
+    },
+    {
+      accessor: 'status',
+      cellsClassName: styles.rightRoundedCell,
+    },
+  ];
   return (
     <Stack justify="center" align="center" gap="md" mt="md" mr="md">
       <Text mt={120}>Welcome to the admin dashboard. You have 12 requests pending review</Text>
@@ -34,6 +60,17 @@ const AdminDashboardTable: FC<Props> = ({ data }) => {
             </Table.Tbody>
           </Table>
         </Table.ScrollContainer>
+        {data && (
+          <DataTable
+            records={data}
+            columns={columns}
+            backgroundColor="transparent"
+            rowBorderColor="black"
+            verticalSpacing="lg"
+            c="white"
+            rowClassName={styles.tableRow}
+          />
+        )}
       </div>
     </Stack>
   );
