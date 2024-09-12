@@ -5,15 +5,18 @@ import { IconPlus } from '@tabler/icons-react';
 import { JobCarousel } from '../../components/JobCardCarousel/JobCarousel';
 import { JobCardProps } from '../../components/JobCardCarousel/JobCard';
 import { UserType } from '../../features/user/userSlice';
+import EditModal from '../../components/Modal/EditModal';
+import EditAlumniProfile from '../../components/Modal/EditAlumniProfile';
 
 export function AlumniProfile() {
   // UseState for future modal implementation
   const [openModal, setOpenModal] = useState(false);
   const [modalType, setModalType] = useState('');
   const [openProfileModal, setOpenProfileModal] = useState(false);
+  const [modalContent, setModalContent] = useState<React.ReactNode>(null);
   const [showMoreDescription, setShowMoreDescription] = useState(false);
-  // const userType = useSelector((state: RootState) => state.user.userType);
   const [userType, setUserType] = useState<UserType>('alumni');
+  const [modalTitle, setModalTitle] = useState('');
 
   console.log(
     'Change this SponsorPage component to use real userType from Redux store once user integration is implemented'
@@ -30,8 +33,11 @@ export function AlumniProfile() {
   };
 
   const handleProfileChange = () => {
-    setModalType('profile');
     setOpenProfileModal(true);
+    setModalContent(
+      <EditAlumniProfile userData={userData} close={() => setOpenProfileModal(false)} />
+    );
+    setModalTitle('Edit Profile');
   };
 
   const handleJobOpportunitiesChange = () => {
@@ -274,6 +280,13 @@ export function AlumniProfile() {
           </Box>
         </Grid.Col>
       </Grid>
+
+      <EditModal
+        opened={openProfileModal}
+        close={() => setOpenProfileModal(false)}
+        content={modalContent}
+        title={modalTitle}
+      ></EditModal>
     </Box>
   );
 }
