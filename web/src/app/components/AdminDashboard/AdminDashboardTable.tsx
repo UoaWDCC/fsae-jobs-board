@@ -35,8 +35,7 @@ const AdminDashboardTable: FC<Props> = ({ data }) => {
     },
   ];
   return (
-    <Stack justify="center" align="center" gap="md" mt="md" mr="md">
-      <Text mt={120}>Welcome to the admin dashboard. You have 12 requests pending review</Text>
+    <Stack justify="center" align="center" gap="md" mt="md">
       <div className={styles.tableContainer}>
         <Table.ScrollContainer minWidth={500} h={500}>
           <Table className={styles.table} stickyHeader stickyHeaderOffset={0}>

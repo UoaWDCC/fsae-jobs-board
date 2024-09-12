@@ -17,7 +17,7 @@ const SearchBar: FC<SearchBarProps> = ({ search, setSearch, title, placeholder }
   const [isPortrait, setIsPortrait] = useState(window.innerHeight > window.innerWidth);
 
   return (
-    <Grid mt={70} mb="xs">
+    <Grid mt={90} mb="xs">
       {!isPortrait ? (
         <>
           <Grid.Col pl={30} span={6}>
