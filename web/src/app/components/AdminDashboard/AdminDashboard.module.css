@@ -2,14 +2,9 @@
 .tableContainer {
   background-color: black;
   width: 90%;
+  height: 100%;
   max-width: 1000px;
-  margin-bottom: 2rem;
-}
-
-.table {
-  border-collapse: separate;
-  border-spacing: 0 1rem;
-  background-color: black;
+  margin-top: 1rem;
 }
 
 .tableHeader {
@@ -17,6 +12,8 @@
   background-color: transparent;
   border-bottom: 1px solid white;
   padding: 1rem;
+  font-size: 1rem;
+  color: white;
 }
 
 .tableRow {
@@ -24,6 +21,7 @@
   color: white;
   border-radius: 0.1rem;
   margin: 1rem;
+  font-size: 1rem;
 }
 
 .tableRow:hover {
@@ -42,4 +40,27 @@
   border-top-right-radius: 0.5rem;
   border-bottom-right-radius: 0.5rem;
   margin: 1rem;
+}
+
+.pagination {
+  background: transparent;
+  color: white;
+  border-top: none;
+  margin-top: 2rem;
+  button {
+    background: transparent;
+    color: white;
+    border-color: transparent;
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1.2rem;
+    &[data-active='true'] {
+      color: white;
+      border: transparent;
+      background: var(--mantine-color-customDarkBlue-1);
+    }
+  }
+  button:hover {
+    background-color: var(--mantine-color-customAzureBlue-1);
+  }
 }
