@@ -19,25 +19,32 @@ const AdminDashboardTable: FC<Props> = ({ data }) => {
     {
       accessor: 'name',
       cellsClassName: styles.leftRoundedCell,
+      width: 60,
     },
     {
       accessor: 'userType',
       cellsClassName: styles.tableRow,
+      textAlign: 'center',
+      width: 40,
     },
     {
       accessor: 'date',
       render: ({ date }) => date2string(date),
       cellsClassName: styles.tableRow,
+      textAlign: 'center',
+      width: 40,
     },
     {
       accessor: 'status',
       cellsClassName: styles.rightRoundedCell,
+      textAlign: 'center',
+      width: 40,
     },
   ];
   return (
     <Stack justify="center" align="center" gap="md" mt="md">
       <div className={styles.tableContainer}>
-        <Table.ScrollContainer minWidth={500} h={500}>
+        {/* <Table.ScrollContainer minWidth={500} h={500}>
           <Table className={styles.table} stickyHeader stickyHeaderOffset={0}>
             <Table.Thead>
               <Table.Tr>
@@ -58,7 +65,7 @@ const AdminDashboardTable: FC<Props> = ({ data }) => {
               ))}
             </Table.Tbody>
           </Table>
-        </Table.ScrollContainer>
+        </Table.ScrollContainer> */}
         {data && (
           <DataTable
             records={data}
