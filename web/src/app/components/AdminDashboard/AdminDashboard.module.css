@@ -20,14 +20,10 @@
 }
 
 .tableRow {
-  background-color: black;
+  background-color: var(--mantine-color-customCharcoalGrey-1);
   color: white;
   border-radius: 0.1rem;
   margin: 1rem;
-}
-
-.tableRow:hover {
-  background-color: var(--mantine-color-customCharcoalGrey-1);
 }
 
 .leftRoundedCell {
