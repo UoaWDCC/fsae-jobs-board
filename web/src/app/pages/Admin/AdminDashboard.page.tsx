@@ -58,48 +58,6 @@ const mockReview: AdminReview[] = [
     date: new Date(),
     status: Status.Approved,
   },
-  {
-    id: '12345671',
-    name: 'Google',
-    userType: Role.Sponsor,
-    date: new Date(),
-    status: Status.Approved,
-  },
-  {
-    id: '12345672',
-    name: 'Google',
-    userType: Role.Sponsor,
-    date: new Date(),
-    status: Status.Approved,
-  },
-  {
-    id: '12345673',
-    name: 'Google',
-    userType: Role.Sponsor,
-    date: new Date(),
-    status: Status.Approved,
-  },
-  {
-    id: '12345674',
-    name: 'Google',
-    userType: Role.Sponsor,
-    date: new Date(),
-    status: Status.Approved,
-  },
-  {
-    id: '12345675',
-    name: 'Google',
-    userType: Role.Sponsor,
-    date: new Date(),
-    status: Status.Approved,
-  },
-  {
-    id: '12345677',
-    name: 'Google',
-    userType: Role.Sponsor,
-    date: new Date(),
-    status: Status.Approved,
-  },
 ];
 
 export function AdminDashboard() {
@@ -135,7 +93,7 @@ export function AdminDashboard() {
 
   return (
     <>
-      <Grid justify="center" align="flex-start" w="100%">
+      <Grid justify="center" align="flex-start">
         {!isPortrait ? (
           <>
             <Grid.Col span={2} mt={120} pl={10}>

@@ -1,0 +1,37 @@
+/* table */
+.tableContainer {
+  background-color: black;
+  width: 80%;
+  max-width: 800px;
+}
+
+.table {
+  border-collapse: separate;
+  border-spacing: 0 1rem;
+  background-color: black;
+  height: 80%;
+}
+
+.tableHeader {
+  border: none;
+  background-color: black;
+  border-bottom: 1px solid white;
+  padding: 1rem;
+}
+
+.tableRow {
+  background-color: var(--mantine-color-customCharcoalGrey-1);
+  color: white;
+}
+
+.leftRoundedCell {
+  padding: 1rem;
+  border-top-left-radius: 0.5rem;
+  border-bottom-left-radius: 0.5rem;
+}
+
+.rightRoundedCell {
+  padding: 1rem;
+  border-top-right-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+}
