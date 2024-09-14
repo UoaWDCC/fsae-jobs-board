@@ -19,13 +19,31 @@ export class Verification extends Entity {
     type: 'string',
     required: true,
   })
-  verification_code: string;
+  verificationCode: string;
+
+  @property({
+    type: 'number',
+    required: true,
+  })
+  createdAt: number;
+
+  @property({
+    type: 'number',
+    required: true,
+  })
+  expiresAt: number;
 
   @property({
     type: 'string',
     required: true,
   })
   fsaeRole: string;
+
+  @property({
+    type: 'boolean',
+    required: true,
+  })
+  resentOnce: boolean;
 
   @property({
     type: 'string',

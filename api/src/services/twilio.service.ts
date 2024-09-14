@@ -15,7 +15,7 @@ export class TwilioService {
         this.client = twilio(this.accountSid, this.authToken);
     }
 
-    async sendVerificationEmail(email: string, firstName: string, verification_code: string) {
+    async sendVerificationEmail(email: string, firstName: string, verificationCode: string) {
         if (!this.verificationServiceId) {
             throw new Error('Verification Service ID is not defined');
         }
@@ -26,7 +26,7 @@ export class TwilioService {
             channelConfiguration: {
                 substitutions: {
                     first_name: firstName,
-                    verification_code: verification_code,
+                    verification_code: verificationCode,
                 }
             }
         });

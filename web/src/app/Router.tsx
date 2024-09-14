@@ -77,7 +77,7 @@ const router = createBrowserRouter([
     path: '/verify',
     element: (
       <AppLayout>
-        <Verify />
+        <Verify email='jackhaddad395@gmail.com'/>
       </AppLayout>
     ),
   },

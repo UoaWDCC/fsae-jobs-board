@@ -101,7 +101,7 @@ export function VerifyForm({ email }: VerifyFormProps) {
       localStorage.setItem('timerStartTime', Date.now().toString()); // Save timer start time
 
       try {
-        const response = await fetch('http://localhost:3000/resend-code', {
+        const response = await fetch('http://localhost:3000/resend-verification', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

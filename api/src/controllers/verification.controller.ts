@@ -14,27 +14,17 @@ import {
     SponsorRepository,
     AdminRepository,
 } from '../repositories';
-import { TwilioService } from '../services';
+import { TwilioService, CodeGeneratorService } from '../services';
 
 export class VerificationController {
     constructor(
-        @repository(VerificationRepository)
-        public verificationRepository: VerificationRepository,
-
-        @repository(MemberRepository)
-        public memberRepository: MemberRepository,
-
-        @repository(AlumniRepository)
-        public alumniRepository: AlumniRepository,
-
-        @repository(SponsorRepository)
-        public sponsorRepository: SponsorRepository,
-
-        @repository(AdminRepository)
-        public adminRepository: AdminRepository,
-
+        @repository(AdminRepository) private adminRepository: AdminRepository,
+        @repository(AlumniRepository) private alumniRepository: AlumniRepository,
+        @repository(MemberRepository) private memberRepository: MemberRepository,
+        @repository(SponsorRepository) private sponsorRepository: SponsorRepository,
+        @repository(VerificationRepository) private verificationRepository: VerificationRepository,
+        @inject('services.codegenerator') private codeGenerator: CodeGeneratorService,
         @inject('services.twilioService') private twilioService: TwilioService
-
     ) { }
 
     @post('/verify')
@@ -65,7 +55,12 @@ export class VerificationController {
             throw new HttpErrors.NotFound('Verification not found');
         }
 
-        if (verification.verification_code !== verification_code) {
+        if (verification.expiresAt < Date.now()) {
+            this.resendVerification({ email }); // Resend verification email
+            throw new HttpErrors.BadRequest('Verification code expired, new code sent to email');
+        }
+
+        if (verification.verificationCode !== verification_code) {
             throw new HttpErrors.BadRequest('Verification code invalid');
         }
 
@@ -86,7 +81,85 @@ export class VerificationController {
 
         return true;
     }
-    
+
+    @post('/resend-verification')
+    async resendVerification(
+        @requestBody({
+            content: {
+                'application/json': {
+                    schema: {
+                        type: 'object',
+                        properties: {
+                            email: { type: 'string' },
+                        },
+                        required: ['email'],
+                    },
+                },
+            },
+        })
+        verificationDto: { email: string }
+    ): Promise<boolean> {
+        const { email } = verificationDto;
+
+        // Find the existing verification entry
+        const verification = await this.verificationRepository.findOne({ where: { email } });
+
+        if (!verification) {
+            throw new HttpErrors.NotFound('Verification record not found');
+        }
+
+        const roleRepository = this.repositoryMap[verification.fsaeRole as 'student' | 'alumni' | 'sponsor' | 'admin'];
+        if (!roleRepository) {
+            throw new HttpErrors.InternalServerError('Role repository not found');
+        }
+
+        const user = await roleRepository.findOne({ where: { email } });
+        
+        if (!user) {
+            throw new HttpErrors.NotFound('User not found');
+        }
+
+        // Check if the verification code is still valid
+        if (Date.now() < Date.now() - 1000*60*2) {
+            if (verification.resentOnce) {
+                throw new HttpErrors.BadRequest('Rate limit exceeded');
+            }
+        }
+
+        // Check if properties are defined
+        if (!verification.email || !user.firstName || !verification.verificationCode) {
+            throw new HttpErrors.InternalServerError('Required properties are missing');
+        }
+
+        // Delete the old verification record and notify Twilio to invalidate the old verification code on their end
+        await this.verificationRepository.deleteById(verification.id);
+        await this.twilioService.verifyUser(verification.twilioId);
+
+        const verificationCode = await this.codeGenerator.generateCode();
+
+        // Send a new verification email
+        const newVerification = await this.twilioService.sendVerificationEmail(verification.email, user.firstName, verificationCode);
+        
+        // Create a new verification record
+        await this.verificationRepository.create({
+            email: verification.email,
+            fsaeRole: verification.fsaeRole,
+            createdAt: Date.now(),
+            expiresAt: Date.now() + 1000 * 60 * 10,
+            verificationCode: verificationCode,
+            twilioId: newVerification.sid,
+            resentOnce: true
+        });
+
+        return true;
+    }
+
+    async sendVerificationEmail(email: string, firstName: string) {
+        var verificationCode = await this.codeGenerator.generateCode();
+        var verification = await this.twilioService.sendVerificationEmail(email, firstName, verificationCode);
+        return { verification, verificationCode };
+    }
+
     private get repositoryMap() {
     return {
         student: this.memberRepository,
