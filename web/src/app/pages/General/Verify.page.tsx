@@ -1,22 +1,20 @@
-import React, { useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { VerifyForm } from '../../components/AuthForms/VerifyForm';
+import { Box } from '@mantine/core';
+import styles from '../../styles/LoginPage.module.css';
 
-export function Verify() {
-    const location = useLocation()
-    const navigate = useNavigate()
+// Usage: <Verify email={email} /> when passing an email to this component 
+// from another component or page like the registration page or login page
 
-    useEffect(()=>{
-        const params = new URLSearchParams(location.search)
-        const token = params.get('token')
-        
-        if (!token) {
+interface VerifyProps {
+  email: string;
+}
 
-        }
-        else {
-            console.log({token})
-        }
-
-    }, [location, navigate])
-
-    return (<></>)
+export function Verify({ email }: VerifyProps) {
+  return (
+    <Box className={styles.wrapper}>
+      <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', textAlign: 'center', width: '100%', height: '100%' }}>
+        <VerifyForm email={email} />
+      </Box>
+    </Box>
+  );
 }

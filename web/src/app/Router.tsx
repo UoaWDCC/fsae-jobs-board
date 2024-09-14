@@ -76,7 +76,9 @@ const router = createBrowserRouter([
   {
     path: '/verify',
     element: (
-      <Verify />
+      <AppLayout>
+        <Verify />
+      </AppLayout>
     ),
   },
   {
