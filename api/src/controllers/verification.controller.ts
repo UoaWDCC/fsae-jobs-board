@@ -3,10 +3,9 @@ import {
     repository,
 } from '@loopback/repository';
 import {
-    param,
-    get,
-    response,
+    post,
     HttpErrors,
+    requestBody,
 } from '@loopback/rest';
 import {
     VerificationRepository,
@@ -36,20 +35,38 @@ export class VerificationController {
 
         @inject('services.twilioService') private twilioService: TwilioService
 
-    ) {}
+    ) { }
 
-    @get('/verify')
-    @response(200, {
-        description: 'Verify a user',
-        content: { 'application/json': { schema: { type: 'boolean' } } },
-    })
-    async verifyUser(@param.query.string('token') token: string): Promise<boolean> {
+    @post('/verify')
+    async verifyUser(
+        @requestBody({
+            content: {
+                'application/json': {
+                    schema: {
+                        type: 'object',
+                        properties: {
+                            email: { type: 'string' },
+                            verification_code: { type: 'string' },
+                        },
+                        required: ['email', 'verification_code'],
+                    },
+                },
+            },
+        })
+        verificationDto: { email: string; verification_code: string }
+    ): Promise<boolean> {
+        const { email, verification_code } = verificationDto;
+
         const verification = await this.verificationRepository.findOne({
-            where: { token },
+            where: { email },
         });
 
         if (!verification) {
-            throw new HttpErrors.NotFound('Verification token invalid');
+            throw new HttpErrors.NotFound('Verification not found');
+        }
+
+        if (verification.verification_code !== verification_code) {
+            throw new HttpErrors.BadRequest('Verification code invalid');
         }
 
         const roleRepository = this.repositoryMap[verification.fsaeRole as 'student' | 'alumni' | 'sponsor' | 'admin'];
@@ -69,13 +86,13 @@ export class VerificationController {
 
         return true;
     }
-
+    
     private get repositoryMap() {
-        return {
-            student: this.memberRepository,
-            alumni: this.alumniRepository,
-            sponsor: this.sponsorRepository,
-            admin: this.adminRepository,
-        };
-    }
+    return {
+        student: this.memberRepository,
+        alumni: this.alumniRepository,
+        sponsor: this.sponsorRepository,
+        admin: this.adminRepository,
+    };
+}
 }

@@ -13,13 +13,13 @@ export class Verification extends Entity {
     type: 'string',
     required: true,
   })
-  token: string;
+  email: string;
 
   @property({
     type: 'string',
     required: true,
   })
-  email: string;
+  verification_code: string;
 
   @property({
     type: 'string',

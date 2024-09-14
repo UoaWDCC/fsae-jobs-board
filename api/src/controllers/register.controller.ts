@@ -11,7 +11,7 @@ import { Admin, FsaeRole } from '../models';
 import { inject } from '@loopback/core';
 import { PasswordHasherService } from '../services';
 import { TwilioService } from '../services/twilio.service';
-import { TokenService } from '../services/token.service';
+import { CodeGeneratorService } from '../services/code-generator.service';
 
 export class RegisterController {
     constructor(
@@ -21,7 +21,7 @@ export class RegisterController {
         @repository(SponsorRepository) private sponsorRepository: SponsorRepository,
         @repository(VerificationRepository) private verificationRepository: VerificationRepository,
         @inject('services.passwordhasher') private passwordHasher: PasswordHasherService,
-        @inject('services.tokenService') private tokenService: TokenService,
+        @inject('services.codegenerator') private codeGenerator: CodeGeneratorService,
         @inject('services.twilioService') private twilioService: TwilioService
     ) { }
 
@@ -88,11 +88,11 @@ export class RegisterController {
             desc: createUserDto.desc
         });
 
-        const { verification, token } = await this.sendVerificationEmail(createUserDto.email, createUserDto.firstName ? createUserDto.firstName : 'Administrator');
+        const { verification, verification_code } = await this.sendVerificationEmail(createUserDto.email, createUserDto.firstName ? createUserDto.firstName : 'Administrator');
         
         await this.verificationRepository.create({
             email: createUserDto.email,
-            token: token,
+            verification_code: verification_code,
             twilioId: verification.sid,
             fsaeRole: FsaeRole.ADMIN
         });
@@ -163,11 +163,11 @@ export class RegisterController {
             desc: createUserDto.desc
         });
 
-        const { verification, token } = await this.sendVerificationEmail(createUserDto.email, createUserDto.firstName ? createUserDto.firstName : 'Member');
+        const { verification, verification_code } = await this.sendVerificationEmail(createUserDto.email, createUserDto.firstName ? createUserDto.firstName : 'Member');
         
         await this.verificationRepository.create({
             email: createUserDto.email,
-            token: token,
+            verification_code: verification_code,
             twilioId: verification.sid,
             fsaeRole: FsaeRole.MEMBER
         });
@@ -238,14 +238,15 @@ export class RegisterController {
             desc: createUserDto.desc
         });
 
-        const { verification, token } = await this.sendVerificationEmail(createUserDto.email, createUserDto.firstName ? createUserDto.firstName : 'Sponsor');
+        const { verification, verification_code } = await this.sendVerificationEmail(createUserDto.email, createUserDto.firstName ? createUserDto.firstName : 'Sppnsor');
         
         await this.verificationRepository.create({
             email: createUserDto.email,
-            token: token,
+            verification_code: verification_code,
             twilioId: verification.sid,
             fsaeRole: FsaeRole.SPONSOR
         });
+
 
         return newMember;
     }
@@ -313,11 +314,11 @@ export class RegisterController {
             desc: createUserDto.desc
         });
 
-        const { verification, token } = await this.sendVerificationEmail(createUserDto.email, createUserDto.firstName ? createUserDto.firstName : 'Alumni');
+        const { verification, verification_code } = await this.sendVerificationEmail(createUserDto.email, createUserDto.firstName ? createUserDto.firstName : 'Alumni');
         
         await this.verificationRepository.create({
             email: createUserDto.email,
-            token: token,
+            verification_code: verification_code,
             twilioId: verification.sid,
             fsaeRole: FsaeRole.ALUMNI
         });
@@ -326,8 +327,8 @@ export class RegisterController {
     }
 
     async sendVerificationEmail(email: string, firstName: string) {
-        var token = await this.tokenService.generateToken();
-        var verification = await this.twilioService.sendVerificationEmail(email, firstName, token);
-        return { verification, token };
+        var verification_code = await this.codeGenerator.generateCode();
+        var verification = await this.twilioService.sendVerificationEmail(email, firstName, verification_code);
+        return { verification, verification_code };
     }
 }
