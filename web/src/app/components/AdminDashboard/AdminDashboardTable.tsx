@@ -1,13 +1,24 @@
-import { Stack, Table, Text } from '@mantine/core';
+import { Group, Pagination, Stack, Table, Text } from '@mantine/core';
 import styles from './AdminDashboard.module.css';
 import { AdminReview } from '@/app/models/adminReview';
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { date2string } from '@/app/features/date/dateConverter';
+import { ceil } from 'lodash';
 
 interface Props {
   data: AdminReview[];
 }
 const AdminDashboardTable: FC<Props> = ({ data }) => {
+  const [page, onChange] = useState(1);
+  const entriesPerPage = 6;
+
+  const totalPages = ceil(data.length / entriesPerPage);
+
+  // Calculate the starting and ending index for the current page
+  const startIdx = (page - 1) * entriesPerPage;
+  const endIdx = startIdx + entriesPerPage;
+  const currentPageData = data.slice(startIdx, endIdx);
+
   return (
     <Stack justify="center" align="center" gap="md" mt="md">
       <div className={styles.tableContainer}>
@@ -22,7 +33,7 @@ const AdminDashboardTable: FC<Props> = ({ data }) => {
               </Table.Tr>
             </Table.Thead>
             <Table.Tbody>
-              {data.map((review) => (
+              {currentPageData.map((review) => (
                 <Table.Tr key={review.id} className={styles.tableRow}>
                   <Table.Td className={styles.leftRoundedCell}>{review.name}</Table.Td>
                   <Table.Td>{review.userType}</Table.Td>
@@ -33,6 +44,21 @@ const AdminDashboardTable: FC<Props> = ({ data }) => {
             </Table.Tbody>
           </Table>
         </Table.ScrollContainer>
+        <Pagination.Root
+          total={totalPages}
+          value={page}
+          onChange={onChange}
+          className={styles.pagination}
+          mt="xl"
+        >
+          <Group gap={20} justify="center">
+            <Pagination.First />
+            <Pagination.Previous />
+            <Pagination.Items />
+            <Pagination.Next />
+            <Pagination.Last />
+          </Group>
+        </Pagination.Root>
       </div>
     </Stack>
   );
