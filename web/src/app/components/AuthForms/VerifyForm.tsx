@@ -1,5 +1,5 @@
-import React, { useState, useRef, FormEvent } from 'react';
-import { TextInput, Button, Stack, Title } from '@mantine/core';
+import React, { useState, useRef, FormEvent, useEffect } from 'react';
+import { TextInput, Stack, Title, Button } from '@mantine/core';
 
 interface VerifyFormProps {
   email: string;
@@ -7,7 +7,37 @@ interface VerifyFormProps {
 
 export function VerifyForm({ email }: VerifyFormProps) {
   const [code, setCode] = useState(Array(6).fill(""));
+  const [timer, setTimer] = useState(0); // Timer state in seconds
+  const [canResend, setCanResend] = useState(true); // State to enable/disable resend text
   const inputRefs = useRef<HTMLInputElement[]>([]);
+
+  useEffect(() => {
+    const checkTimer = () => {
+      const storedTime = localStorage.getItem('timerStartTime');
+      if (storedTime) {
+        const startTime = parseInt(storedTime, 10);
+        const now = Date.now();
+        const elapsed = Math.floor((now - startTime) / 1000); // Time elapsed in seconds
+        const remaining = Math.max(120 - elapsed, 0); // Time remaining
+
+        setTimer(remaining);
+        setCanResend(remaining <= 0);
+      }
+    };
+
+    checkTimer(); // Initial check
+
+    const intervalId = setInterval(() => {
+      if (timer > 0) {
+        setTimer(prev => prev - 1);
+      } else {
+        setCanResend(true);
+        localStorage.removeItem('timerStartTime'); // Clear stored timer start time
+      }
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [timer]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const value = e.target.value;
@@ -16,7 +46,6 @@ export function VerifyForm({ email }: VerifyFormProps) {
       newCode[index] = value;
       setCode(newCode);
 
-      // Move focus to the next input if a digit was entered
       if (value && index < 5) {
         inputRefs.current[index + 1]?.focus();
       }
@@ -53,7 +82,7 @@ export function VerifyForm({ email }: VerifyFormProps) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          email: email, // use email prop
+          email: email,
           verification_code: verificationCode,
         }),
       });
@@ -62,6 +91,29 @@ export function VerifyForm({ email }: VerifyFormProps) {
       console.log("Response:", result);
     } catch (error) {
       console.error("Error:", error);
+    }
+  };
+
+  const handleResendCode = async () => {
+    if (canResend) {
+      setCanResend(false);
+      setTimer(120); // Set timer for 2 minutes
+      localStorage.setItem('timerStartTime', Date.now().toString()); // Save timer start time
+
+      try {
+        const response = await fetch('http://localhost:3000/resend-code', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email: email }),
+        });
+
+        const result = await response.json();
+        console.log("Resend Response:", result);
+      } catch (error) {
+        console.error("Error:", error);
+      }
     }
   };
 
@@ -87,6 +139,22 @@ export function VerifyForm({ email }: VerifyFormProps) {
       <Button color="#0091FF" size="md" type="submit" style={{ marginTop: '1em', width: '50%' }}>
         Continue
       </Button>
+
+      <div style={{ display: 'flex', alignItems: 'center', marginTop: '1em' }}>
+        <span>Didn't receive an email?</span>
+        {canResend ? (
+          <span
+            onClick={handleResendCode}
+            style={{ color: '#007BFF', cursor: 'pointer', textDecoration: 'none', marginLeft: '0.5em' }}
+          >
+            Resend Code
+          </span>
+        ) : (
+          <span style={{ color: 'gray', marginLeft: '0.5em' }}>
+            Please wait {Math.floor(timer / 60)}:{timer % 60 < 10 ? '0' : ''}{timer % 60} before sending another code
+          </span>
+        )}
+      </div>
     </form>
   );
 }
