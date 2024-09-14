@@ -14,7 +14,7 @@
 
 .tableHeader {
   border: none;
-  background-color: transparent;
+  background-color: black;
   border-bottom: 1px solid white;
   padding: 1rem;
 }
@@ -22,20 +22,16 @@
 .tableRow {
   background-color: var(--mantine-color-customCharcoalGrey-1);
   color: white;
-  border-radius: 0.1rem;
-  margin: 1rem;
 }
 
 .leftRoundedCell {
   padding: 1rem;
   border-top-left-radius: 0.5rem;
   border-bottom-left-radius: 0.5rem;
-  margin: 1rem;
 }
 
 .rightRoundedCell {
   padding: 1rem;
   border-top-right-radius: 0.5rem;
   border-bottom-right-radius: 0.5rem;
-  margin: 1rem;
 }
