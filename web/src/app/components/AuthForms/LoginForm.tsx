@@ -4,8 +4,8 @@ import { NavLink } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
-import {login} from "@/api/login";
-import {useState} from "react";
+import { login } from "@/api/login";
+import { useState } from "react";
 
 export function LoginForm() {
   const dispatch = useDispatch();
@@ -31,6 +31,7 @@ export function LoginForm() {
     await login(email, password)
       .then((response) => {
         toast.success('Login Successful');
+        navigate('/', { replace: true });
         // Todo: Do something afterwards.
         // handleLoginAs(response.data.userType);
       }).catch((error) => {
@@ -52,8 +53,8 @@ export function LoginForm() {
           Login
         </Title>
 
-        <TextInput placeholder="Enter email" size="lg" mb="lg" value={email} onChange={(event) => setEmail(event.target.value)}/>
-        <PasswordInput placeholder="Enter password" mt="xl" size="lg" value={password} onChange={(event) => setPassword(event.target.value)}/>
+        <TextInput placeholder="Enter email" size="lg" mb="lg" value={email} onChange={(event) => setEmail(event.target.value)} />
+        <PasswordInput placeholder="Enter password" mt="xl" size="lg" value={password} onChange={(event) => setPassword(event.target.value)} />
         <Checkbox label="Remember Me" mt="xl" size="md" />
         <Button fullWidth mt="xl" mb="md" size="lg" onClick={onLogin}>
           Login
