@@ -1,0 +1,2 @@
+MONGODB_URI=mongodb+srv://fsae:ARiEWMHlHkI3Q1KZ@cluster0.rropzcv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+JWT_SECRET="9dI8a5D6CkP2Qb3jRx_VwJnGq_8OqbkO"

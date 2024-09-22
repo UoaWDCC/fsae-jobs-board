@@ -33,7 +33,6 @@ const fieldsByRole: { [key in Role]: Field[] } = {
   ],
   [Role.Sponsor]: [
     { label: 'Company', name: 'company' },
-    { label: 'Phone Number', name: 'phoneNumber' },
   ],
   [Role.Alumni]: [
     { label: 'First Name', name: 'firstName' },
@@ -58,13 +57,6 @@ const FormComponent: React.FC<FormComponentProps> = ({ fields, onSubmit }) => (
       <TextInput
         label="Email"
         name="email"
-        size="md"
-        required
-        classNames={{ label: styles.formLabel }}
-      />
-      <TextInput
-        label="Username"
-        name="username"
         size="md"
         required
         classNames={{ label: styles.formLabel }}
