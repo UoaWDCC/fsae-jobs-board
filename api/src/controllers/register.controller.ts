@@ -141,7 +141,7 @@ export class RegisterController {
         'application/json': {
           schema: {
             type: 'object',
-            required: ['email',  'password', 'firstName', 'lastName', 'phoneNumber'],
+            required: ['email', 'password', 'phoneNumber', 'company'],
             properties: {
               email: {
                 type: 'string',
@@ -149,16 +149,13 @@ export class RegisterController {
               password: {
                 type: 'string',
               },
-              firstName: {
-                type: 'string',
-              },
-              lastName: {
-                type: 'string',
-              },
               phoneNumber: {
                 type: 'string',
               },
               desc: {
+                type: 'string',
+              },
+              company: {
                 type: 'string',
               }
             },
@@ -196,12 +193,9 @@ export class RegisterController {
         'application/json': {
           schema: {
             type: 'object',
-            required: ['email', 'username', 'password', 'firstName', 'lastName', 'phoneNumber'],
+            required: ['email', 'username', 'password', 'firstName', 'lastName', 'phoneNumber', 'company'],
             properties: {
               email: {
-                type: 'string',
-              },
-              username: {
                 type: 'string',
               },
               password: {
@@ -217,6 +211,9 @@ export class RegisterController {
                 type: 'string',
               },
               desc: {
+                type: 'string',
+              },
+              company: {
                 type: 'string',
               }
             },
