@@ -9,6 +9,7 @@ interface FilterProps {
   filterFields: string[];
   setFilterFields: (filterFields: string[]) => void;
   color?: string;
+  useRoles: boolean;
 }
 
 const AlumniFilter: FC<FilterProps> = ({
