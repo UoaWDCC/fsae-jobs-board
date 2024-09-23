@@ -20,7 +20,7 @@ export class RegisterController {
             @repository(AlumniRepository) private alumniRepository: AlumniRepository,
             @repository(MemberRepository) private memberRepository: MemberRepository,
             @repository(SponsorRepository) private sponsorRepository: SponsorRepository,
-    @service(FsaeUserService) private fsaeUserService: FsaeUserService,
+            @service(FsaeUserService) private fsaeUserService: FsaeUserService,
             @repository(VerificationRepository) private verificationRepository: VerificationRepository,
             @inject(BindingKeys.PASSWORD_HASHER) private passwordHasher: PasswordHasherService,
             @inject('services.codegenerator') private codeGenerator: CodeGeneratorService,
