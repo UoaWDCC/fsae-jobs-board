@@ -31,53 +31,53 @@ function Navbar() {
         return value === 'student' || value === 'sponsor' || value === 'alumni' || value === 'admin';
     }
 
-    const userType = useSelector((state: RootState) => state.user.userType);
-    // Define navigation links based on user type
-    const navLinks: { [key in UserType]: { path: string; label: string }[] } = {
-        student: [
-            { path: '/jobs', label: 'Jobs' },
-            { path: '/sponsors', label: 'Sponsors' },
-            { path: '/alumni', label: 'Alumni' },
-        ],
-        sponsor: [
-            { path: '/students', label: 'Students' },
-            { path: '/alumni', label: 'Alumni' },
-        ],
-        alumni: [
-            { path: '/students', label: 'Students' },
-            { path: '/sponsors', label: 'Sponsors' },
-            { path: '/alumni', label: 'Alumni' },
-        ],
-        admin: [
-            { path: '/jobs', label: 'Job Board' },
-            { path: '/students', label: 'Students' },
-            { path: '/sponsors', label: 'Sponsors' },
-            { path: '/alumni', label: 'Alumni' },
-        ],
-    };
-    const handleLogout = () => {
-        dispatch(resetUser());
-        localStorage.removeItem('accessToken');
-        navigate('/');
-    };
-    // Redirect to the user's profile page based on their type
-    const handleProfileClick = () => {
-        if (userType) {
-            const profilePath = {
-                student: '/profile/student',
-                sponsor: '/profile/sponsor',
-                alumni: '/profile/alumni',
-                admin: '/profile/admin',
-            }[userType as UserType];
-            navigate(profilePath);
-        } else {
-            // Handle the case where userType is null
-            navigate('/login');
-        }
-    };
-    const [opened, { toggle, open, close }] = useDisclosure();
-    // Use a media query to determine small screen size for the collapsible menu
-    const [isMobile, setIsMobile] = useState(false);
+  const userType = useSelector((state: RootState) => state.user.UserType);
+  // Define navigation links based on user type
+  const navLinks: { [key in UserType]: { path: string; label: string }[] } = {
+    student: [
+      { path: '/jobs', label: 'Jobs' },
+      { path: '/sponsors', label: 'Sponsors' },
+      { path: '/alumni', label: 'Alumni' },
+    ],
+    sponsor: [
+      { path: '/students', label: 'Students' },
+      { path: '/alumni', label: 'Alumni' },
+    ],
+    alumni: [
+      { path: '/students', label: 'Students' },
+      { path: '/sponsors', label: 'Sponsors' },
+      { path: '/alumni', label: 'Alumni' },
+    ],
+    admin: [
+      { path: '/jobs', label: 'Job Board' },
+      { path: '/students', label: 'Students' },
+      { path: '/sponsors', label: 'Sponsors' },
+      { path: '/alumni', label: 'Alumni' },
+    ],
+  };
+  const handleLogout = () => {
+    dispatch(resetUser());
+    localStorage.removeItem('accessToken');
+    navigate('/');
+  };
+  // Redirect to the user's profile page based on their type
+  const handleProfileClick = () => {
+    if (userType) {
+      const profilePath = {
+        student: '/profile/student',
+        sponsor: '/profile/sponsor',
+        alumni: '/profile/alumni',
+        admin: '/profile/admin',
+      }[userType as UserType];
+      navigate(profilePath);
+    } else {
+      // Handle the case where userType is null
+      navigate('/login');
+    }
+  };
+  const [opened, { toggle, open, close }] = useDisclosure();
+  // Use a media query to determine small screen size for the collapsible menu
+  const [isMobile, setIsMobile] = useState(false);
 
     // Setting modals
     const [openModal, setOpenModal] = useState(false);

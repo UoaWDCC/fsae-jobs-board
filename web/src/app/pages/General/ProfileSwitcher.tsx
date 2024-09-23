@@ -7,7 +7,7 @@ function ProfileSwitcher() {
   const location = useLocation();
 
   // Type the useSelector result using RootState
-  const userType = useSelector((state: RootState) => state.user.userType);
+  const userType = useSelector((state: RootState) => state.user.UserType);
 
   if (!userType) {
     // Handle undefined userType (user not logged in or authentication not yet determined)

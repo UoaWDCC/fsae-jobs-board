@@ -6,31 +6,25 @@ import { CVTab } from '../Tabs/CVTab';
 import styles from './Modal.module.css';
 import { useMediaQuery } from '@mantine/hooks';
 import { useState } from 'react';
+import { SponsorAboutTab } from '../Tabs/SponsorAboutTab';
+import { SponsorProfileTab } from '../Tabs/SponsorProfileTab';
 
-export const EditStudentProfile = ({ close }: { close: () => void }) => {
+export const EditSponsorProfile = () => {
   const [activeTab, setActiveTab] = useState('about');
   const [isModalOpen, setIsModalOpen] = useState(true);
   const tabOptions = [
+    { value: 'profile', label: 'Profile' },
     { value: 'about', label: 'About Me' },
-    { value: 'education', label: 'Education' },
-    { value: 'skills', label: 'Skills' },
-    { value: 'cv', label: 'CV' },
   ];
 
   const isMobile = useMediaQuery('(max-width: 430px)'); //mobile screen
 
   const renderContent = () => {
     switch (activeTab) {
+      case 'profile':
+        return <SponsorProfileTab />;
       case 'about':
-        return <AboutTab />;
-      case 'education':
-        return <EducationTab />;
-      case 'skills':
-        return <SkillsTab />;
-      case 'cv':
-        return <CVTab />;
-      default:
-        return null;
+        return <SponsorAboutTab />;
     }
   };
 
@@ -54,7 +48,7 @@ export const EditStudentProfile = ({ close }: { close: () => void }) => {
       ) : (
         <Tabs
           color="#ff8400"
-          defaultValue="about"
+          defaultValue="profile"
           classNames={{
             root: styles.tabRoot,
             list: styles.list,
@@ -70,26 +64,14 @@ export const EditStudentProfile = ({ close }: { close: () => void }) => {
             ))}
           </Tabs.List>
 
+          <Tabs.Panel value="profile" mt={30}>
+            <SponsorProfileTab />
+          </Tabs.Panel>
           <Tabs.Panel value="about" mt={30}>
-            <AboutTab />
-          </Tabs.Panel>
-          <Tabs.Panel value="education" mt={30}>
-            <EducationTab />
-          </Tabs.Panel>
-          <Tabs.Panel value="skills" mt={30}>
-            <SkillsTab />
-          </Tabs.Panel>
-          <Tabs.Panel value="cv" mt={30}>
-            <CVTab />
+            <SponsorAboutTab />
           </Tabs.Panel>
         </Tabs>
       )}
-      <Box className={styles.buttonContainer}>
-        <Button className={styles.button1} onClick={close}>
-          Cancel
-        </Button>
-        <Button>Save</Button>
-      </Box>
     </Box>
   );
 };

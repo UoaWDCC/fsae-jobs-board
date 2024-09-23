@@ -12,6 +12,8 @@ import { FormEvent } from 'react';
 import styles from './authform.module.css';
 import { NavLink } from 'react-router-dom';
 import { Role } from '../../type/role';
+import {toast} from "react-toastify";
+import {createFSAEUserDto, register_alumni, register_member, register_sponsor} from "@/api/register";
 
 interface Field {
   label: string;
@@ -31,13 +33,15 @@ const fieldsByRole: { [key in Role]: Field[] } = {
   ],
   [Role.Sponsor]: [
     { label: 'Company', name: 'company' },
-    { label: 'Phone Number', name: 'phoneNumber' },
   ],
   [Role.Alumni]: [
     { label: 'First Name', name: 'firstName' },
     { label: 'Last Name', name: 'lastName' },
     { label: 'Company', name: 'company' },
   ],
+  [Role.Admin]: [],
+  [Role.Member]: [],
+  [Role.Unknown]: []
 };
 
 const FormComponent: React.FC<FormComponentProps> = ({ fields, onSubmit }) => (
@@ -56,6 +60,13 @@ const FormComponent: React.FC<FormComponentProps> = ({ fields, onSubmit }) => (
       <TextInput
         label="Email"
         name="email"
+        size="md"
+        required
+        classNames={{ label: styles.formLabel }}
+      />
+      <TextInput
+        label="Phone Number"
+        name="phoneNumber"
         size="md"
         required
         classNames={{ label: styles.formLabel }}
@@ -101,9 +112,29 @@ const SignupForm = ({ role }: { role: Role }) => {
     event.preventDefault();
     const formData = new FormData(event.target as HTMLFormElement);
     const data = Object.fromEntries(formData.entries());
-    console.log(data);
 
-    // Add form submission logic here
+    // Todo: Redirect or do something after successful registration
+    if (role === Role.Student) {
+      register_member(data as unknown as createFSAEUserDto).then((response) => {
+        toast.success('Student Registration Successful');
+      }).catch((error) => {
+        toast.error(error.toString());
+      })
+    } else if (role === Role.Sponsor) {
+      register_sponsor(data as unknown as createFSAEUserDto).then((response) => {
+        toast.success('Sponsor Registration Successful');
+      }).catch((error) => {
+        toast.error(error.toString());
+      })
+    } else if (role === Role.Alumni) {
+      register_alumni(data as unknown as createFSAEUserDto).then((response) => {
+        toast.success('Alumni Registration Successful');
+      }).catch((error) => {
+        toast.error(error.toString());
+      })
+    } else {
+      toast.error('Registering Unknown Role');
+    }
   };
 
   return (
