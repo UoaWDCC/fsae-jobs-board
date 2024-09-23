@@ -7,7 +7,7 @@ import PasswordTab from '../Tabs/PasswordTab';
 import EmailTab from '../Tabs/EmailTab';
 import DeleteTab from '../Tabs/DeleteTab';
 
-export const EditSetting = ({close}) => {
+export const EditSetting = ({ close }: { close: () => void }) => {
   const [activeTab, setActiveTab] = useState('password');
   const [isModalOpen, setIsModalOpen] = useState(true);
   const theme = useMantineTheme();
@@ -28,13 +28,19 @@ export const EditSetting = ({close}) => {
   const renderContent = () => {
     switch (activeTab) {
       case 'password':
-        return <PasswordTab password={userData.password}/>;
+        return <PasswordTab password={userData.password} />;
       case 'email':
-        return <EmailTab email={userData.email}/>;
+        return <EmailTab email={userData.email} />;
       case 'delete':
         return <DeleteTab />;
       default:
         return null;
+    }
+  };
+
+  const handleTabChange = (value: string | null) => {
+    if (value !== null) {
+      setActiveTab(value);
     }
   };
 
@@ -45,7 +51,7 @@ export const EditSetting = ({close}) => {
           <Select
             data={tabOptions}
             value={activeTab}
-            onChange={setActiveTab}
+            onChange={handleTabChange}
             classNames={{
               wrapper: styles.selectWrapper,
               input: styles.selectInput,
@@ -59,7 +65,7 @@ export const EditSetting = ({close}) => {
         <Tabs
           color="#ff8400"
           value={activeTab}
-          onChange={setActiveTab}
+          onChange={handleTabChange}
           classNames={{
             root: styles.tabRoot,
             list: styles.list,

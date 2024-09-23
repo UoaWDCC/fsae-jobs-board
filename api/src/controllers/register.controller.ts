@@ -8,8 +8,9 @@ import { AdminRepository, AlumniRepository, MemberRepository, SponsorRepository,
 import { HttpErrors, post, requestBody } from '@loopback/rest';
 import { createFSAEUserDto } from './controller-types/register.controller.types';
 import { Admin, FsaeRole } from '../models';
-import { inject } from '@loopback/core';
-import { PasswordHasherService } from '../services';
+import { inject, service } from '@loopback/core';
+import {FsaeUserService,  PasswordHasherService } from '../services';
+import { BindingKeys } from '../constants/binding-keys';
 import { TwilioService } from '../services/twilio.service';
 import { CodeGeneratorService } from '../services/code-generator.service';
 
@@ -19,60 +20,51 @@ export class RegisterController {
             @repository(AlumniRepository) private alumniRepository: AlumniRepository,
             @repository(MemberRepository) private memberRepository: MemberRepository,
             @repository(SponsorRepository) private sponsorRepository: SponsorRepository,
+    @service(FsaeUserService) private fsaeUserService: FsaeUserService,
             @repository(VerificationRepository) private verificationRepository: VerificationRepository,
-            @inject('services.passwordhasher') private passwordHasher: PasswordHasherService,
+            @inject(BindingKeys.PASSWORD_HASHER) private passwordHasher: PasswordHasherService,
             @inject('services.codegenerator') private codeGenerator: CodeGeneratorService,
             @inject('services.twilioService') private twilioService: TwilioService
         ) { }
 
-    @post('/register-admin')
-    // Todo authorize only admin to register admin
-    async registerAdmin(
-        @requestBody({
-            description: 'The input of register function',
-            content: {
-                'application/json': {
-                    schema: {
-                        type: 'object',
-                        required: ['email', 'username', 'password'],
-                        properties: {
-                            email: {
-                                type: 'string',
-                            },
-                            username: {
-                                type: 'string',
-                            },
-                            password: {
-                                type: 'string',
-                            },
-                            firstName: {
-                                type: 'string',
-                            },
-                            lastName: {
-                                type: 'string',
-                            },
-                            phoneNumber: {
-                                type: 'string',
-                            },
-                            desc: {
-                                type: 'string',
-                            }
-                        },
-                    },
-                },
-            }
-        }) createUserDto: createFSAEUserDto): Promise<Admin> {
-        // Find user Profile
-        let userSearchResults = await this.adminRepository.find({
-            where: {
-                email: createUserDto.email,
+  @post('/register-admin')
+  // Todo authorize only admin to register admin
+  async registerAdmin(
+    @requestBody({
+      description: 'The input of register function',
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            required: ['email', 'password'],
+            properties: {
+              email: {
+                type: 'string',
+              },
+              password: {
+                type: 'string',
+              },
+              firstName: {
+                type: 'string',
+              },
+              lastName: {
+                type: 'string',
+              },
+              phoneNumber: {
+                type: 'string',
+              },
+              desc: {
+                type: 'string',
+              }
             },
-        });
-
-        // If no user found, invalid credientials
-        if (userSearchResults.length > 0) {
-            throw new HttpErrors.Conflict('Email already exists')
-        }
+          },
+        },
+      }
+    })createUserDto: createFSAEUserDto): Promise<Admin> {
+      // Prevent duplicate user by email
+      if (await this.fsaeUserService.doesUserExist(createUserDto.email)) {
+        throw new HttpErrors.Conflict('Email already exists')
+      }
 
         let hashedPassword = await this.passwordHasher.hashPassword(createUserDto.password);
 
@@ -103,53 +95,43 @@ export class RegisterController {
         return newAdmin;
     }
 
-    @post('/register-member')
-    async registerMember(
-        @requestBody({
-            description: 'The input of register function',
-            content: {
-                'application/json': {
-                    schema: {
-                        type: 'object',
-                        required: ['email', 'username', 'password', 'firstName', 'lastName', 'phoneNumber'],
-                        properties: {
-                            email: {
-                                type: 'string',
-                            },
-                            username: {
-                                type: 'string',
-                            },
-                            password: {
-                                type: 'string',
-                            },
-                            firstName: {
-                                type: 'string',
-                            },
-                            lastName: {
-                                type: 'string',
-                            },
-                            phoneNumber: {
-                                type: 'string',
-                            },
-                            desc: {
-                                type: 'string',
-                            }
-                        },
-                    },
-                },
-            }
-        }) createUserDto: createFSAEUserDto): Promise<Admin> {
-        // Find user Profile
-        let userSearchResults = await this.memberRepository.find({
-            where: {
-                email: createUserDto.email,
+  @post('/register-member')
+  async registerMember(
+    @requestBody({
+      description: 'The input of register function',
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            required: ['email', 'password', 'firstName', 'lastName', 'phoneNumber'],
+            properties: {
+              email: {
+                type: 'string',
+              },
+              password: {
+                type: 'string',
+              },
+              firstName: {
+                type: 'string',
+              },
+              lastName: {
+                type: 'string',
+              },
+              phoneNumber: {
+                type: 'string',
+              },
+              desc: {
+                type: 'string',
+              }
             },
-        });
-
-        // If no user found, invalid credientials
-        if (userSearchResults.length > 0) {
-            throw new HttpErrors.Conflict('Email already exists')
-        }
+          },
+        },
+      }
+    })createUserDto: createFSAEUserDto): Promise<Admin> {
+    // Prevent duplicate user by email
+    if (await this.fsaeUserService.doesUserExist(createUserDto.email)) {
+      throw new HttpErrors.Conflict('Email already exists')
+    }
 
         let hashedPassword = await this.passwordHasher.hashPassword(createUserDto.password);
 
@@ -181,53 +163,40 @@ export class RegisterController {
         return newMember;
     }
 
-    @post('/register-sponsor')
-    async registerSponsor(
-        @requestBody({
-            description: 'The input of register function',
-            content: {
-                'application/json': {
-                    schema: {
-                        type: 'object',
-                        required: ['email', 'username', 'password', 'firstName', 'lastName', 'phoneNumber'],
-                        properties: {
-                            email: {
-                                type: 'string',
-                            },
-                            username: {
-                                type: 'string',
-                            },
-                            password: {
-                                type: 'string',
-                            },
-                            firstName: {
-                                type: 'string',
-                            },
-                            lastName: {
-                                type: 'string',
-                            },
-                            phoneNumber: {
-                                type: 'string',
-                            },
-                            desc: {
-                                type: 'string',
-                            }
-                        },
-                    },
-                },
-            }
-        }) createUserDto: createFSAEUserDto): Promise<Admin> {
-        // Find user Profile
-        let userSearchResults = await this.sponsorRepository.find({
-            where: {
-                email: createUserDto.email,
+  @post('/register-sponsor')
+  async registerSponsor(
+    @requestBody({
+      description: 'The input of register function',
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            required: ['email', 'password', 'phoneNumber', 'company'],
+            properties: {
+              email: {
+                type: 'string',
+              },
+              password: {
+                type: 'string',
+              },
+              phoneNumber: {
+                type: 'string',
+              },
+              desc: {
+                type: 'string',
+              },
+              company: {
+                type: 'string',
+              }
             },
-        });
-
-        // If no user found, invalid credientials
-        if (userSearchResults.length > 0) {
-            throw new HttpErrors.Conflict('Email already exists')
-        }
+          },
+        },
+      }
+    })createUserDto: createFSAEUserDto): Promise<Admin> {
+    // Prevent duplicate user by email
+    if (await this.fsaeUserService.doesUserExist(createUserDto.email)) {
+      throw new HttpErrors.Conflict('Email already exists')
+    }
 
         let hashedPassword = await this.passwordHasher.hashPassword(createUserDto.password);
 
@@ -260,53 +229,46 @@ export class RegisterController {
         return newMember;
     }
 
-    @post('/register-alumni')
-    async registerAlumni(
-        @requestBody({
-            description: 'The input of register function',
-            content: {
-                'application/json': {
-                    schema: {
-                        type: 'object',
-                        required: ['email', 'username', 'password', 'firstName', 'lastName', 'phoneNumber'],
-                        properties: {
-                            email: {
-                                type: 'string',
-                            },
-                            username: {
-                                type: 'string',
-                            },
-                            password: {
-                                type: 'string',
-                            },
-                            firstName: {
-                                type: 'string',
-                            },
-                            lastName: {
-                                type: 'string',
-                            },
-                            phoneNumber: {
-                                type: 'string',
-                            },
-                            desc: {
-                                type: 'string',
-                            }
-                        },
-                    },
-                },
-            }
-        }) createUserDto: createFSAEUserDto): Promise<Admin> {
-        // Find user Profile
-        let userSearchResults = await this.alumniRepository.find({
-            where: {
-                email: createUserDto.email,
+  @post('/register-alumni')
+  async registerAlumni(
+    @requestBody({
+      description: 'The input of register function',
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            required: ['email', 'username', 'password', 'firstName', 'lastName', 'phoneNumber', 'company'],
+            properties: {
+              email: {
+                type: 'string',
+              },
+              password: {
+                type: 'string',
+              },
+              firstName: {
+                type: 'string',
+              },
+              lastName: {
+                type: 'string',
+              },
+              phoneNumber: {
+                type: 'string',
+              },
+              desc: {
+                type: 'string',
+              },
+              company: {
+                type: 'string',
+              }
             },
-        });
-
-        // If no user found, invalid credientials
-        if (userSearchResults.length > 0) {
-            throw new HttpErrors.Conflict('Email already exists')
-        }
+          },
+        },
+      }
+    })createUserDto: createFSAEUserDto): Promise<Admin> {
+    // Prevent duplicate user by email
+    if (await this.fsaeUserService.doesUserExist(createUserDto.email)) {
+      throw new HttpErrors.Conflict('Email already exists')
+    }
 
         let hashedPassword = await this.passwordHasher.hashPassword(createUserDto.password);
 
