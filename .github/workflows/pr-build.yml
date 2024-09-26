@@ -1,0 +1,36 @@
+name: PR Build
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js (for Node projects)
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'  # Choose your node version
+
+      - name: Install dependencies
+        working-directory: ./web
+        run: npm install
+
+
+      - name: Build project
+        working-directory: ./web
+        run: npm run build
+
+      - name: Install dependencies
+        working-directory: ./api
+        run: npm install
+
+
+      - name: Build project
+        working-directory: ./api
+        run: npm run build
