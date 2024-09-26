@@ -17,20 +17,18 @@ jobs:
         with:
           node-version: '18'  # Choose your node version
 
-      - name: Install dependencies
+      - name: Install dependencies (web)
         working-directory: ./web
-        run: npm install
+        run: yarn install
 
-
-      - name: Build project
+      - name: Build project (web)
         working-directory: ./web
-        run: npm run build
+        run: yarn build
 
-      - name: Install dependencies
+      - name: Install dependencies (api)
         working-directory: ./api
-        run: npm install
+        run: yarn install
 
-
-      - name: Build project
+      - name: Build project (api)
         working-directory: ./api
-        run: npm run build
+        run: yarn build
