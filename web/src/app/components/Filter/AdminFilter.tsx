@@ -2,7 +2,7 @@ import { Checkbox, Title, Button, Stack, Modal, Flex } from '@mantine/core';
 import styles from './Filter.module.css';
 import { FC, useState } from 'react';
 import { IconArrowDown } from '@tabler/icons-react';
-import { Role, roleToString, stringsToRoles } from '@/app/type/role';
+import { Role, roleToString, stringToRole, stringsToRoles } from '@/app/type/role';
 import { Status, statusToString, stringsToStatuses } from '@/app/type/status';
 
 interface Props {
@@ -47,7 +47,7 @@ const AdminFilter: FC<Props> = ({
 
           <Stack>
             <Checkbox.Group
-              value={filterUserTypes.map((role) => roleToString(role))} // Convert enums to strings
+              value={filterUserTypes.map((role) => stringToRole(role))} // Convert enums to strings
               onChange={(selectedValues: string[]) => {
                 setFilterUserTypes(stringsToRoles(selectedValues)); // Convert strings back to RoleType
               }}

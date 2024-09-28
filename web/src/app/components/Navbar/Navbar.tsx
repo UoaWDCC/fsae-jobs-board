@@ -29,7 +29,7 @@ function Navbar() {
     return value === 'student' || value === 'sponsor' || value === 'alumni' || value === 'admin';
   }
 
-  const userType = useSelector((state: RootState) => state.user.userType);
+  const userType = useSelector((state: RootState) => state.user.UserType);
   // Define navigation links based on user type
   const navLinks: { [key in UserType]: { path: string; label: string }[] } = {
     student: [
