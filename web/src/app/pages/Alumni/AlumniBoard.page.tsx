@@ -51,7 +51,7 @@ export function AlumniBoard() {
             <SearchBar
               search={search}
               setSearch={setSearch}
-              title="Alumni"
+              title="Alumni Board"
               placeholder="Search alumni"
             />
             <AlumniListing />
