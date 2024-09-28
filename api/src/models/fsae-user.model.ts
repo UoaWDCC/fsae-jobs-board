@@ -19,7 +19,7 @@ export abstract class FsaeUser extends Entity {
 
   @property({
     type: 'string',
-    required: true,
+    required: false,
   })
   username: string;
 

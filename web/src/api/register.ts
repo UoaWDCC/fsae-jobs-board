@@ -1,6 +1,7 @@
 import {apiInstance} from "@/api/ApiInstance";
 import {UserState} from "@/app/features/user/userSlice";
 import {stringToRole} from "@/app/type/role";
+import axios from "axios";
 
 export interface createFSAEUserDto {
   email: string;
@@ -44,7 +45,10 @@ async function register(url: string, createUserDto: createFSAEUserDto): Promise<
     }
   } catch (e) {
     console.log(e)
-    let errorMsg = e.response.data.error.message
+    let errorMsg = 'Error creating admin';
+    if (axios.isAxiosError(e) && e.response) {
+      errorMsg = e.response.data.error.message || errorMsg;
+    }
     // If errorMsg not null display it, else say generic error message
     errorMsg = errorMsg ? errorMsg : 'Error creating admin'
     throw Error(errorMsg)
