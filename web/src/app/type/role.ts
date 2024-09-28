@@ -4,12 +4,14 @@ export enum Role {
   Alumni = 'alumni',
   Admin = 'admin',
   Member = 'member',
-  Unknown = 'unknown' // Fallback in case error
+  Unknown = 'unknown', // Fallback in case error
 }
 
 export function stringToRole(roleString: any): Role {
-  const roleKey = Object.keys(Role).find(key => Role[key as keyof typeof Role] === roleString) as keyof typeof Role | undefined;
-  return roleKey ? Role[roleKey] : Role.Unknown;
+  const roleKey = Object.keys(Role).find((key) => Role[key as keyof typeof Role] === roleString) as
+    | keyof typeof Role
+    | undefined;
+  return roleKey ? Role[roleKey] : Role.Unknown; // Fallback in case error
 }
 
 export function roleToString(role: Role): string {
