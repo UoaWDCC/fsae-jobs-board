@@ -7,7 +7,7 @@ import styles from './Modal.module.css';
 import { useMediaQuery } from '@mantine/hooks';
 import { useState } from 'react';
 
-export const EditStudentProfile = ({close}) => {
+export const EditStudentProfile = ({ close }: { close: () => void }) => {
   const [activeTab, setActiveTab] = useState('about');
   const [isModalOpen, setIsModalOpen] = useState(true);
   const tabOptions = [

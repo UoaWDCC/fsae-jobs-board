@@ -100,10 +100,10 @@ function Navbar() {
       <Flex
         className={styles.Navbar}
         gap="md"
-        pt="md"
-        pr="md"
-        pl="md"
-        pb="md"
+        pt="lg"
+        pr="lg"
+        pl="lg"
+        pb="lg"
         justify="space-between"
         align="center"
       >

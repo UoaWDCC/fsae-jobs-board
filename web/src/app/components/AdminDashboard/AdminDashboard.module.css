@@ -1,0 +1,57 @@
+/* table */
+.tableContainer {
+  background-color: black;
+  width: 90%;
+  max-width: 1000px;
+}
+
+.table {
+  border-collapse: separate;
+  border-spacing: 0 1rem;
+  background-color: black;
+}
+
+.tableHeader {
+  border: none;
+  background-color: black;
+  border-bottom: 1px solid white;
+  padding: 1rem;
+}
+
+.tableRow {
+  background-color: var(--mantine-color-customCharcoalGrey-1);
+  color: white;
+}
+
+.leftRoundedCell {
+  padding: 1rem;
+  border-top-left-radius: 0.5rem;
+  border-bottom-left-radius: 0.5rem;
+}
+
+.rightRoundedCell {
+  padding: 1rem;
+  border-top-right-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+}
+
+.pagination {
+  background: transparent;
+  color: white;
+  margin-top: 2rem;
+  button {
+    background: transparent;
+    color: white;
+    border-color: transparent;
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1.2rem;
+    &[data-active='true'] {
+      color: white;
+      background: var(--mantine-color-customDarkBlue-1);
+    }
+  }
+  button:hover {
+    background-color: var(--mantine-color-customAzureBlue-1);
+  }
+}

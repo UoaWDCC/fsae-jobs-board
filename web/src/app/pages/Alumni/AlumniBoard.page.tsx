@@ -35,6 +35,7 @@ export function AlumniBoard() {
               setFilterRoles={setFilterRoles}
               filterFields={filterFields}
               setFilterFields={setFilterFields}
+              useRoles={true}
             />
           </Grid.Col>
           <Grid.Col span={0.5} pl={40} style={{ alignSelf: 'stretch' }}>
@@ -50,7 +51,7 @@ export function AlumniBoard() {
             <SearchBar
               search={search}
               setSearch={setSearch}
-              title="Alumni"
+              title="Alumni Board"
               placeholder="Search alumni"
             />
             <AlumniListing />
@@ -71,6 +72,7 @@ export function AlumniBoard() {
             filterFields={filterFields}
             setFilterFields={setFilterFields}
             color={theme.colors.customPapayaOrange[0]}
+            useRoles={true}
           />
           <AlumniListing />
         </Grid.Col>
