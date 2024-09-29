@@ -21,9 +21,10 @@ export interface SponsorDTO {
   additionalProp1: Record<string, any>; // This represents a flexible object type
 }
 
-export const getSponsorMember = async (id: number) => {
+export const getSponsorMember = async (id: string) => {
   try {
-    const response = await apiInstance.get(`/user/member/${id}`);
+    console.log(`Fetching user member with id: ${id}`);
+    const response = await apiInstance.get(`/user/sponsor/${id}`);
     return response.data;
   } catch (error) {
     console.error(`Error fetching user member with id: ${id}`, error);
@@ -31,9 +32,9 @@ export const getSponsorMember = async (id: number) => {
   }
 };
 
-export const updateSponsorMember = async (id: number, updatedData: SponsorDTO) => {
+export const updateSponsorMember = async (id: string, updatedData: SponsorDTO) => {
   try {
-    const response = await apiInstance.patch(`/user/member/${id}`, updatedData);
+    const response = await apiInstance.patch(`/user/sponsor/${id}`, updatedData);
     return response.data;
   } catch (error) {
     console.error(`Error updating user member with id: ${id}`, error);
@@ -41,9 +42,9 @@ export const updateSponsorMember = async (id: number, updatedData: SponsorDTO) =
   }
 };
 
-export const deleteSponsorMember = async (id: number) => {
+export const deleteSponsorMember = async (id: string) => {
   try {
-    const response = await apiInstance.delete(`/user/member/${id}`);
+    const response = await apiInstance.delete(`/user/sponsor/${id}`);
     return response.data;
   } catch (error) {
     console.error(`Error deleting user member with id: ${id}`, error);

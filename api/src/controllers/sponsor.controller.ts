@@ -19,14 +19,14 @@ import {
 } from '@loopback/rest';
 import {FsaeRole, Sponsor} from '../models';
 import {SponsorRepository} from '../repositories';
-import { authenticate } from '@loopback/authentication';
-import { authorize } from '@loopback/authorization';
+import {authenticate} from '@loopback/authentication';
+import {authorize} from '@loopback/authorization';
 
 @authenticate('fsae-jwt')
 export class SponsorController {
   constructor(
     @repository(SponsorRepository)
-    public sponsorRepository : SponsorRepository,
+    public sponsorRepository: SponsorRepository,
   ) {}
 
   @authorize({
@@ -42,8 +42,9 @@ export class SponsorController {
     },
   })
   async findById(
-    @param.path.number('id') id: number,
-    @param.filter(Sponsor, {exclude: 'where'}) filter?: FilterExcludingWhere<Sponsor>
+    @param.path.string('id') id: string,
+    @param.filter(Sponsor, {exclude: 'where'})
+    filter?: FilterExcludingWhere<Sponsor>,
   ): Promise<Sponsor> {
     return this.sponsorRepository.findById(id, filter);
   }
@@ -56,7 +57,7 @@ export class SponsorController {
     description: 'Sponsor PATCH success',
   })
   async updateById(
-    @param.path.number('id') id: number,
+    @param.path.string('id') id: string,
     @requestBody({
       content: {
         'application/json': {
@@ -76,7 +77,7 @@ export class SponsorController {
   @response(204, {
     description: 'Sponsor DELETE success',
   })
-  async deleteById(@param.path.number('id') id: number): Promise<void> {
+  async deleteById(@param.path.string('id') id: string): Promise<void> {
     await this.sponsorRepository.deleteById(id);
   }
 }

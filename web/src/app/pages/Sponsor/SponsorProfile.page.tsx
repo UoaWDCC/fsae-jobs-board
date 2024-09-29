@@ -9,6 +9,8 @@ import { EditAvatar } from '@/app/components/Modal/EditAvatar';
 import { EditBannerModal } from '@/app/components/Modal/EditBannerModal';
 import { EditSponsorProfile } from '@/app/components/Modal/EditSponsorProfile';
 import EditModal from '@/app/components/Modal/EditModal';
+import { getSponsorMember, SponsorDTO } from '@/api/sponsor';
+import { Role } from '@/app/type/role';
 
 export function SponsorProfile() {
   // UseState for future modal implementation
@@ -21,21 +23,82 @@ export function SponsorProfile() {
   const [showMoreDescription, setShowMoreDescription] = useState(false);
   // const userType = useSelector((state: RootState) => state.user.userType);
   const [userType, setUserType] = useState<UserType>('sponsor');
+  const [userData, setUserData] = useState<SponsorDTO>();
+  // Dummy data for company userData
+  // const [userData, setUserData] = useState({
+  //   sponsorName: 'Sponsor Name',
+  //   sponsorField: 'Field of Specialization',
+  //   subgroup: 'Subgroup',
+  //   dateJoined: '2024',
+  //   email: 'johndoe@example.com',
+  //   phone: '+1234567890',
+  //   description:
+  //     ' Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque ut tristique lacus, eget euismod enim. Fusce suscipit at tortor sed pretium. Integer et pretium orci. Integer velit purus, gravida quis tincidunt ac, pretium sed lorem. Sed sagittis neque tincidunt, auctor ante vitae, ultricies risus. Aenean quis sem sed dolor feugiat tincidunt. Etiam purus justo, ullamcorper in cursus volutpat, luctus in dolor. Donec sed purus tristique, rhoncus erat ut, ullamcorper dolor. Pellentesque tincidunt eros id neque egestas, sed luctus sapien elementum. Etiam bibendum ex est, ac consequat turpis facilisis id. Mauris scelerisque purus quis leo fermentum, at semper nisl mattis. Vivamus vel ornare lectus. Nullam dictum felis et commodo lacinia. Etiam tempor placerat sapien quis maximus. Ut pellentesque libero ac sollicitudin accumsan. Sed vel dolor bibendum, egestas metus nec, eleifend mauris. Integer imperdiet eros vitae nibh interdum volutpat. Etiam et ultrices massa. Cras gravida facilisis sapien. Ut eleifend varius risus, eget bibendum dui blandit ac. Vivamus tempor varius massa, sed suscipit mauris interdum eu. Proin sed commodo ex, ac cursus nisl. Integer ut tincidunt augue. Cras molestie libero erat. Nunc justo felis, sodales auctor dapibus sit amet, dapibus ut turpis. Sed nec sagittis nisl. Cras eget condimentum est. Cras nulla lorem, venenatis euismod gravida quis, fermentum vel mauris. Fusce et ipsum et lorem egestas volutpat. Duis nec imperdiet ante. Quisque et ligula accumsan, eleifend urna sit amet, cursus dolor. Nullam ut erat diam. Ut non lacinia erat, eu pretium nisl. Vestibulum mattis sapien in tristique commodo. Integer faucibus leo at turpis rhoncus, eu hendrerit ex dignissim. Nulla facilisi. Donec eget turpis ac odio pretium iaculis. Sed imperdiet sollicitudin viverra. In consequat justo velit, aliquet ultricies leo efficitur laoreet. Nullam quis elementum diam. Sed in sodales est. Integer malesuada semper tortor eu feugiat. Morbi tincidunt turpis bibendum consequat cursus. Aenean faucibus felis sit amet porta interdum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Mauris dui magna, lobortis quis quam non, dictum bibendum libero. ',
+  //   avatar:
+  //     'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png',
+  //   banner: 'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png',
+  // });
+  // // Add code to fetch data from our database when it will be connected
 
-  console.log(
-    'Change this SponsorPage component to use real userType from Redux store once user integration is implemented'
-  );
+  // Fetch data from the database
+  const fetchData = async () => {
+    const userId = localStorage.getItem('userId');
+    // Check if userId is a string, and that it is not null
+    if (userId && typeof userId === 'string') {
+      const data = await getSponsorMember(userId);
+      setUserData(data);
+      console.log('Data: ', data);
+    } else {
+      console.log('Error: userId is not a string or is null');
+      setUserData({
+        id: '-1',
+        email: 'Undefined',
+        username: 'Undefined',
+        password: 'Undefined',
+        activated: false,
+        fsaeRole: Role.Sponsor,
+        firstName: 'Undefined',
+        lastName: 'Undefined',
+        phoneNumber: 'Undefined',
+        desc: 'Undefined',
+        sponsorID: -1,
+        logo: 'Undefined',
+        websiteURL: 'Undefined',
+        tier: 'Undefined',
+        name: 'Undefined',
+        industry: 'Undefined',
+        additionalProp1: {},
+      });
+    }
+  };
+
+  useEffect(() => {
+    // Logic to fetch data and setUserData
+    console.log('UserID: ', localStorage.getItem('userId'));
+    fetchData();
+  }, []);
 
   const handleAvatarChange = () => {
     setModalType('avatar');
-    setModalContent(<EditAvatar avatar={userData?.avatar} />);
+    setModalContent(
+      <EditAvatar
+        avatar={
+          userData?.logo ||
+          'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png'
+        }
+      />
+    );
     setModalTitle('Profile Photo');
     setOpenModal(true);
   };
 
   const handleBannerChange = () => {
     setModalType('banner');
-    setModalContent(<EditBannerModal banner={userData?.banner} />);
+    setModalContent(
+      <EditBannerModal
+        banner={'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png'}
+      />
+    ); // Add banner image in the future -- DOES NOT CURRENTLY EXIST
     setModalTitle('Banner Photo');
     setOpenModal(true);
   };
@@ -56,22 +119,6 @@ export function SponsorProfile() {
     setModalType('deactivateUser');
     setOpenModal(true);
   };
-
-  // Dummy data for company userData
-  const [userData, setUserData] = useState({
-    sponsorName: 'Sponsor Name',
-    sponsorField: 'Field of Specialization',
-    subgroup: 'Subgroup',
-    dateJoined: '2024',
-    email: 'johndoe@example.com',
-    phone: '+1234567890',
-    description:
-      ' Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque ut tristique lacus, eget euismod enim. Fusce suscipit at tortor sed pretium. Integer et pretium orci. Integer velit purus, gravida quis tincidunt ac, pretium sed lorem. Sed sagittis neque tincidunt, auctor ante vitae, ultricies risus. Aenean quis sem sed dolor feugiat tincidunt. Etiam purus justo, ullamcorper in cursus volutpat, luctus in dolor. Donec sed purus tristique, rhoncus erat ut, ullamcorper dolor. Pellentesque tincidunt eros id neque egestas, sed luctus sapien elementum. Etiam bibendum ex est, ac consequat turpis facilisis id. Mauris scelerisque purus quis leo fermentum, at semper nisl mattis. Vivamus vel ornare lectus. Nullam dictum felis et commodo lacinia. Etiam tempor placerat sapien quis maximus. Ut pellentesque libero ac sollicitudin accumsan. Sed vel dolor bibendum, egestas metus nec, eleifend mauris. Integer imperdiet eros vitae nibh interdum volutpat. Etiam et ultrices massa. Cras gravida facilisis sapien. Ut eleifend varius risus, eget bibendum dui blandit ac. Vivamus tempor varius massa, sed suscipit mauris interdum eu. Proin sed commodo ex, ac cursus nisl. Integer ut tincidunt augue. Cras molestie libero erat. Nunc justo felis, sodales auctor dapibus sit amet, dapibus ut turpis. Sed nec sagittis nisl. Cras eget condimentum est. Cras nulla lorem, venenatis euismod gravida quis, fermentum vel mauris. Fusce et ipsum et lorem egestas volutpat. Duis nec imperdiet ante. Quisque et ligula accumsan, eleifend urna sit amet, cursus dolor. Nullam ut erat diam. Ut non lacinia erat, eu pretium nisl. Vestibulum mattis sapien in tristique commodo. Integer faucibus leo at turpis rhoncus, eu hendrerit ex dignissim. Nulla facilisi. Donec eget turpis ac odio pretium iaculis. Sed imperdiet sollicitudin viverra. In consequat justo velit, aliquet ultricies leo efficitur laoreet. Nullam quis elementum diam. Sed in sodales est. Integer malesuada semper tortor eu feugiat. Morbi tincidunt turpis bibendum consequat cursus. Aenean faucibus felis sit amet porta interdum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Mauris dui magna, lobortis quis quam non, dictum bibendum libero. ',
-    avatar:
-      'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png',
-    banner: 'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png',
-  });
-  // Add code to fetch data from our database when it will be connected
 
   const [jobData, setJobData] = useState<JobCardProps[]>([
     {
@@ -107,11 +154,6 @@ export function SponsorProfile() {
       jobID: '1234567',
     },
   ]);
-  // dummy data for job opportunities
-
-  useEffect(() => {
-    // Logic to fetch data and setUserData
-  }, []);
 
   // methods to get elements based on user type
   const getElementBasedOnUserType = (element: string) => {
@@ -196,9 +238,9 @@ export function SponsorProfile() {
       {/* PICTURE AND COMPANY DETAILS */}
       <Card h={280} className={styles.card}>
         <Card.Section h={250} className={styles.banner} onClick={handleBannerChange} />
-        {userData?.sponsorName && (
+        {userData?.name && (
           <Text className={styles.name} pl={170} pt={140}>
-            {userData.sponsorName}
+            {userData.name}
           </Text>
         )}
 
@@ -211,7 +253,7 @@ export function SponsorProfile() {
           onClick={handleAvatarChange}
         />
         <Text size="lg" mt={-30} ml={170} className={styles.text}>
-          {userData.sponsorField}
+          {userData?.industry || 'Industry'}
         </Text>
       </Card>
 
@@ -226,7 +268,7 @@ export function SponsorProfile() {
             <Title order={5}>Contact</Title>
             <Box pl={15} mt={10} className={styles.box}>
               {userData?.email && <Text size="md">{userData.email}</Text>}
-              {userData?.phone && <Text size="lg">{userData.phone}</Text>}
+              {userData?.phoneNumber && <Text size="lg">{userData.phoneNumber}</Text>}
               {!userData && <Loader color="blue" />}
             </Box>
           </Box>
@@ -238,16 +280,16 @@ export function SponsorProfile() {
             <Title order={5}>About Me</Title>
             <Box pl={15} mt={10} className={styles.box}>
               {/* Conditionally render the full description based on showMore state */}
-              {userData?.description && (
+              {userData?.desc && (
                 <>
                   {showMoreDescription ? (
-                    <Text size="md">{userData.description}</Text>
+                    <Text size="md">{userData.desc}</Text>
                   ) : (
                     <>
-                      <Text size="md">{userData.description.substring(0, 1200)}</Text>
+                      <Text size="md">{userData.desc.substring(0, 1200)}</Text>
                     </>
                   )}
-                  {userData.description?.length > 1200 ? (
+                  {userData.desc?.length > 1200 ? (
                     <Button
                       variant="subtle"
                       size="sm"
@@ -262,7 +304,7 @@ export function SponsorProfile() {
                   ) : null}
                 </>
               )}
-              {!userData.description && <Loader color="blue" />}
+              {!userData?.desc && <Loader color="blue" />}
             </Box>
           </Box>
           <Box
