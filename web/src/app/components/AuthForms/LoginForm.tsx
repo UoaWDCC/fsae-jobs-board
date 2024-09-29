@@ -31,7 +31,7 @@ export function LoginForm() {
     await login(email, password)
       .then((response) => {
         toast.success('Login Successful');
-        navigate('/', { replace: true });
+        navigate('/profile', { replace: true });
         // Todo: Do something afterwards.
         // handleLoginAs(response.data.userType);
       }).catch((error) => {

@@ -137,7 +137,7 @@ const SignupForm = ({ role }: { role: Role }) => {
     } else {
       toast.error('Registering Unknown Role');
     }
-    navigate('/profile', { replace: true });
+    navigate('/', { replace: true });
   };
 
   return (
