@@ -7,6 +7,8 @@ import { JobCardProps } from '../../components/JobCardCarousel/JobCard';
 import { UserType } from '../../features/user/userSlice';
 import EditModal from '../../components/Modal/EditModal';
 import EditAlumniProfile from '../../components/Modal/EditAlumniProfile';
+import { EditAvatar } from '../../components/Modal/EditAvatar';
+import { EditBannerModal } from '../../components/Modal/EditBannerModal';
 
 export function AlumniProfile() {
   // UseState for future modal implementation
@@ -24,12 +26,16 @@ export function AlumniProfile() {
 
   const handleAvatarChange = () => {
     setModalType('avatar');
-    setOpenModal(true);
+    setOpenProfileModal(true);
+    setModalContent(<EditAvatar avatar={userData?.avatar} />);
+    setModalTitle('Profile Photo');
   };
 
   const handleBannerChange = () => {
     setModalType('banner');
-    setOpenModal(true);
+    setOpenProfileModal(true);
+    setModalContent(<EditBannerModal banner={userData?.banner} />)
+    setModalTitle('Banner Photo');
   };
 
   const handleProfileChange = () => {
@@ -60,6 +66,7 @@ export function AlumniProfile() {
     phone: '+1234567890',
     description:
       ' Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque ut tristique lacus, eget euismod enim. Fusce suscipit at tortor sed pretium. Integer et pretium orci. Integer velit purus, gravida quis tincidunt ac, pretium sed lorem. Sed sagittis neque tincidunt, auctor ante vitae, ultricies risus. Aenean quis sem sed dolor feugiat tincidunt. Etiam purus justo, ullamcorper in cursus volutpat, luctus in dolor. Donec sed purus tristique, rhoncus erat ut, ullamcorper dolor. Pellentesque tincidunt eros id neque egestas, sed luctus sapien elementum. Etiam bibendum ex est, ac consequat turpis facilisis id. Mauris scelerisque purus quis leo fermentum, at semper nisl mattis. Vivamus vel ornare lectus. Nullam dictum felis et commodo lacinia. Etiam tempor placerat sapien quis maximus. Ut pellentesque libero ac sollicitudin accumsan. Sed vel dolor bibendum, egestas metus nec, eleifend mauris. Integer imperdiet eros vitae nibh interdum volutpat. Etiam et ultrices massa. Cras gravida facilisis sapien. Ut eleifend varius risus, eget bibendum dui blandit ac. Vivamus tempor varius massa, sed suscipit mauris interdum eu. Proin sed commodo ex, ac cursus nisl. Integer ut tincidunt augue. Cras molestie libero erat. Nunc justo felis, sodales auctor dapibus sit amet, dapibus ut turpis. Sed nec sagittis nisl. Cras eget condimentum est. Cras nulla lorem, venenatis euismod gravida quis, fermentum vel mauris. Fusce et ipsum et lorem egestas volutpat. Duis nec imperdiet ante. Quisque et ligula accumsan, eleifend urna sit amet, cursus dolor. Nullam ut erat diam. Ut non lacinia erat, eu pretium nisl. Vestibulum mattis sapien in tristique commodo. Integer faucibus leo at turpis rhoncus, eu hendrerit ex dignissim. Nulla facilisi. Donec eget turpis ac odio pretium iaculis. Sed imperdiet sollicitudin viverra. In consequat justo velit, aliquet ultricies leo efficitur laoreet. Nullam quis elementum diam. Sed in sodales est. Integer malesuada semper tortor eu feugiat. Morbi tincidunt turpis bibendum consequat cursus. Aenean faucibus felis sit amet porta interdum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Mauris dui magna, lobortis quis quam non, dictum bibendum libero. ',
+    avatar: 'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png',
   });
   // Add code to fetch data from our database when it will be connected
 
@@ -193,7 +200,7 @@ export function AlumniProfile() {
         )}
 
         <Avatar
-          src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png"
+          src={userData?.avatar}
           size={150}
           mt={-100}
           ml={10}
