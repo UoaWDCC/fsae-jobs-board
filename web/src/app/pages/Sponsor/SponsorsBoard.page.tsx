@@ -51,7 +51,7 @@ export function SponsorsBoard() {
             <SearchBar
               search={search}
               setSearch={setSearch}
-              title={'SPONSORS'}
+              title={'Sponsors Board'}
               placeholder={'Search Sponsors'}
             />
             <SponsorListing filterRoles={filterRoles} filterFields={filterFields} />

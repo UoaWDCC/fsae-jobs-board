@@ -50,7 +50,7 @@ export function StudentsBoard() {
             <SearchBar
               search={search}
               setSearch={setSearch}
-              title="Student Profiles"
+              title="Students Board"
               placeholder="Search students"
             />
             <StudentListing />

@@ -9,7 +9,7 @@ interface AlumniProps {
   avatar: string;
 }
 
-const Alumni: FC<ALumniProps> = ({ name, role, avatar, company }) => (
+const Alumni: FC<AlumniProps> = ({ name, role, avatar, company }) => (
   <Flex direction="column" align="center" py={10} px={10} className={styles.singleStudent}>
     <Avatar src={avatar} alt={name} className={styles.avatar} />
     <Box mt={10} px={0} className={styles.innerText}>
