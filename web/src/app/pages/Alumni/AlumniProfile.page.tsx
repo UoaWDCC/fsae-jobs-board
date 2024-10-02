@@ -6,6 +6,8 @@ import { JobCarousel } from '../../components/JobCardCarousel/JobCarousel';
 import { JobCardProps } from '../../components/JobCardCarousel/JobCard';
 import { UserType } from '../../features/user/userSlice';
 import axios from 'axios';
+import {getAlumni, alumniDto} from '@/api/alumni';
+import { stringToRole } from '@/app/type/role';
 
 export function AlumniProfile() {
   // UseState for future modal implementation
@@ -46,43 +48,39 @@ export function AlumniProfile() {
   };
 
   // Dummy data for alumni userData
-  const [userData, setUserData] = useState({
-    alumniName: '',
-    company: '',
-    subgroup: '',
-    dateJoined: '',
-    email: '',
-    phone: '',
-    description: '',
-  });
+  const [userData, setUserData] = useState<alumniDto>();
   // Add code to fetch data from our database when it will be connected
 
-  const alumniId = localStorage.getItem('alumniId') || '66e570960f0c581128fd49a6'; //for testing
-  // const [isLoading, setIsLoading] = useState(true);
+  // useEffect(() => {
+  //   localStorage.setItem('id','66ef8da3a924226bdc05204e');
+  // }, [])
+  
+  
+  const alumniId = localStorage.getItem('id')
+  // const alumniId = localStorage.getItem('alumniId') || '66e570960f0c581128fd49a6'; 
 
   useEffect(() => {
     // Logic to fetch data and setUserData
-    console.log('fetching');
     const fetchAlumniData = async () => {
-      try {
-        console.log('Fetching alumni data...');
-        const response = await axios.get(`/profile/alumni/${alumniId}`);
-        console.log('API response:', response);
-        const data = response.data;
-        console.log(data);
-        setUserData({
-          alumniName: `${data.firstName} ${data.lastName}`,
-          company: data.company || 'Not specified',
-          subgroup: data.subGroup || 'Not specified',
-          dateJoined: data.dateJoined || 'Not specified',
-          email: data.email || 'Not specified',
-          phone: data.phoneNumber || 'Not specified',
-          description: data.desc || 'No description available',
-        });
-      } catch (error) {
-        console.log(error);
+      if (!alumniId) {
+        console.log("No alumniId found!");
+        return;
       }
-    };
+
+    try {
+      console.log("Fetching alumni data.....");
+      const data = await getAlumni(alumniId);
+      setUserData({
+        alumniName: `${data.firstName} ${data.lastName}`,
+        phone: data.phoneNumber || 'Not specified',
+        email: data.email || 'Not specified',
+        companyField: data.companyField || 'Not specified',
+        description: data.description || 'No description available',
+      });
+    } catch (error) {
+      console.log("Error fetching alumni data", error);
+    }
+  }
 
     fetchAlumniData();
   }, [alumniId]);
@@ -221,7 +219,7 @@ export function AlumniProfile() {
           onClick={handleAvatarChange}
         />
         <Text size="lg" mt={-30} ml={170} className={styles.text}>
-          {userData.companyField}
+          {/* {userData.companyField} */}
         </Text>
       </Card>
 
@@ -272,7 +270,7 @@ export function AlumniProfile() {
                   ) : null}
                 </>
               )}
-              {!userData.description && <Loader color="blue" />}
+              {/* {!userData.description && <Loader color="blue" />} */}
             </Box>
           </Box>
           <Box

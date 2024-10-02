@@ -51,7 +51,7 @@ const router = createBrowserRouter([
     element: (
       <AppLayout>
         <SignupSwitcher />
-      </AppLayout>
+     </AppLayout>
     ),
     children: [
       {
