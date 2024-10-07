@@ -5,6 +5,7 @@ const config = {
   name: 'mongoDB',
   connector: 'mongodb',
   url: process.env.MONGODB_URI, // Using environment variable
+  database: 'fsae_job_board',
   useNewUrlParser: true
 };
 

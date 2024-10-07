@@ -1,4 +1,4 @@
-import {injectable, /* inject, */ BindingScope, inject} from '@loopback/core';
+import {injectable, BindingScope, inject} from '@loopback/core';
 import {TokenService} from '@loopback/authentication';
 import {UserProfile, securityId} from '@loopback/security';
 import {promisify} from 'util';
@@ -18,7 +18,7 @@ export class JwtService implements TokenService{
       throw new Error('securityUserProfile cannot be null');
     }
 
-    let tokenBody = {
+    const tokenBody = {
       "id": userProfile.id,
       "role": userProfile.fsaeRole,
       "activated": userProfile.activated
@@ -35,31 +35,33 @@ export class JwtService implements TokenService{
     return Promise.resolve(token);
   }
 
+  // Verify token and map it to securityUserProfile
   verifyToken(token: string): Promise<any> {
     if (!token) {
-      throw new Error('Error verifying Token. Token cannot be null');
+      throw new HttpErrors.Unauthorized('Error verifying Token. Token cannot be null');
     }
 
-    let securityUserProfile: UserProfile;
-
-    let temp
+    let decodedToken: any;
     try {
-      // decode user profile from token
-      const decodedToken = verify(token, this.jwtSecret);
-      // don't copy over token field 'iat' and 'exp', nor 'aud', 'iss', 'sub'
-
-      // TODO: Correctly map out decoded Token to user profile
-      securityUserProfile = {
-        [securityId]: '',
-        name: 'Test',
-      };
-      temp = decodedToken
-
+      decodedToken = verify(token, this.jwtSecret);
     } catch (error) {
       throw new HttpErrors.Unauthorized(`Error verifying token: ${error.message}`);
     }
 
-    return Promise.resolve(temp);
-  }
+    const {id, role, activated} = decodedToken;
 
+    if (!id || !role || !activated) {
+      throw new HttpErrors.Unauthorized('Token payload missing required fields');
+    }
+
+    const securityUserProfile: UserProfile = {
+      [securityId]: id,
+      id: id,
+      //name: 'Test',
+      fsaeRole: role,
+      activated: activated
+    };
+
+    return Promise.resolve(securityUserProfile);
+  }
 }

@@ -1,0 +1,70 @@
+.filterContainer {
+  display: flex;
+  align-self: flex-start;
+}
+
+.searchBar {
+  width: 60%;
+  align-self: flex-end;
+}
+
+.studentCard {
+  background-color: var(--mantine-color-customCharcoalGrey-1);
+  border-radius: 10px;
+  margin: 0.5rem;
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+}
+
+.studentTitle {
+  background-color: var(--mantine-color-customAzureBlue-1);
+  padding: 5px 7px;
+  width: fit-content;
+  border-radius: 20px;
+}
+
+.studentCardContainer {
+  height: auto;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.innerText {
+  width: 100%;
+}
+
+.studentCardRoleText {
+  color: var(--mantine-color-customAzureBlue-1);
+  font-style: italic;
+}
+
+/* mobile view */
+@media (max-width: 768px) {
+  .studentRow {
+    grid-template-columns: 1fr;
+  }
+
+  .singleStudent {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 0;
+  }
+
+  .studentBox {
+    margin-bottom: 1%;
+  }
+
+  .avatar {
+    max-width: 6rem;
+  }
+
+  .innerText {
+    min-height: 100%;
+  }
+}

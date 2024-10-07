@@ -3,3 +3,4 @@ export * from './alumni.repository';
 export * from './member.repository';
 export * from './sponsor.repository';
 export * from './application.repository';
+export * from './job-ad.repository';

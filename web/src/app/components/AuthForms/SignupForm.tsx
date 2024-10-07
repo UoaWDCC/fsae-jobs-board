@@ -9,9 +9,11 @@ import {
   Text,
 } from '@mantine/core';
 import { FormEvent } from 'react';
-import classes from './authform.module.css';
+import styles from './authform.module.css';
 import { NavLink } from 'react-router-dom';
 import { Role } from '../../type/role';
+import {toast} from "react-toastify";
+import {createFSAEUserDto, register_alumni, register_member, register_sponsor} from "@/api/register";
 
 interface Field {
   label: string;
@@ -31,17 +33,19 @@ const fieldsByRole: { [key in Role]: Field[] } = {
   ],
   [Role.Sponsor]: [
     { label: 'Company', name: 'company' },
-    { label: 'Phone Number', name: 'phoneNumber' },
   ],
   [Role.Alumni]: [
     { label: 'First Name', name: 'firstName' },
     { label: 'Last Name', name: 'lastName' },
     { label: 'Company', name: 'company' },
   ],
+  [Role.Admin]: [],
+  [Role.Member]: [],
+  [Role.Unknown]: []
 };
 
 const FormComponent: React.FC<FormComponentProps> = ({ fields, onSubmit }) => (
-  <form className={classes.form} onSubmit={onSubmit}>
+  <form className={styles.form} onSubmit={onSubmit}>
     <Stack gap={30}>
       {fields.map((field) => (
         <TextInput
@@ -50,7 +54,7 @@ const FormComponent: React.FC<FormComponentProps> = ({ fields, onSubmit }) => (
           name={field.name}
           size="md"
           required
-          classNames={{ label: classes.formLabel }}
+          classNames={{ label: styles.formLabel }}
         />
       ))}
       <TextInput
@@ -58,7 +62,14 @@ const FormComponent: React.FC<FormComponentProps> = ({ fields, onSubmit }) => (
         name="email"
         size="md"
         required
-        classNames={{ label: classes.formLabel }}
+        classNames={{ label: styles.formLabel }}
+      />
+      <TextInput
+        label="Phone Number"
+        name="phoneNumber"
+        size="md"
+        required
+        classNames={{ label: styles.formLabel }}
       />
       <Flex justify="space-between">
         <PasswordInput
@@ -66,14 +77,14 @@ const FormComponent: React.FC<FormComponentProps> = ({ fields, onSubmit }) => (
           name="password"
           size="md"
           required
-          classNames={{ label: classes.formLabel, root: classes.horizontalInput }}
+          classNames={{ label: styles.formLabel, root: styles.horizontalInput }}
         />
         <PasswordInput
           label="Confirmed Password"
           name="confirmPassword"
           size="md"
           required
-          classNames={{ label: classes.formLabel, root: classes.horizontalInput }}
+          classNames={{ label: styles.formLabel, root: styles.horizontalInput }}
         />
       </Flex>
       <Checkbox
@@ -81,7 +92,7 @@ const FormComponent: React.FC<FormComponentProps> = ({ fields, onSubmit }) => (
         label={
           <>
             I accept{' '}
-            <NavLink to="/" className={classes.link}>
+            <NavLink to="/" className={styles.link}>
               terms and conditions
             </NavLink>
           </>
@@ -101,13 +112,33 @@ const SignupForm = ({ role }: { role: Role }) => {
     event.preventDefault();
     const formData = new FormData(event.target as HTMLFormElement);
     const data = Object.fromEntries(formData.entries());
-    console.log(data);
 
-    // Add form submission logic here
+    // Todo: Redirect or do something after successful registration
+    if (role === Role.Student) {
+      register_member(data as unknown as createFSAEUserDto).then((response) => {
+        toast.success('Student Registration Successful');
+      }).catch((error) => {
+        toast.error(error.toString());
+      })
+    } else if (role === Role.Sponsor) {
+      register_sponsor(data as unknown as createFSAEUserDto).then((response) => {
+        toast.success('Sponsor Registration Successful');
+      }).catch((error) => {
+        toast.error(error.toString());
+      })
+    } else if (role === Role.Alumni) {
+      register_alumni(data as unknown as createFSAEUserDto).then((response) => {
+        toast.success('Alumni Registration Successful');
+      }).catch((error) => {
+        toast.error(error.toString());
+      })
+    } else {
+      toast.error('Registering Unknown Role');
+    }
   };
 
   return (
-    <Flex align="center" justify="center" className={classes.signupFormContainer}>
+    <Flex align="center" justify="center" className={styles.signupFormContainer}>
       <Title order={5} ta="center" mt="lg" mb="lg" style={{ fontStyle: 'italic' }}>
         Join the F:SAE:47 Job Board Community
       </Title>
@@ -119,7 +150,7 @@ const SignupForm = ({ role }: { role: Role }) => {
       )}
       <Text ta="center" mt="md">
         Already have an account?{' '}
-        <NavLink to="/login" className={classes.link}>
+        <NavLink to="/login" className={styles.link}>
           Login
         </NavLink>
       </Text>

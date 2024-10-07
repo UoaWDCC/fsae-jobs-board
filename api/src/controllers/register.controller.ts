@@ -8,8 +8,9 @@ import {AdminRepository, AlumniRepository, MemberRepository, SponsorRepository} 
 import {HttpErrors, post, requestBody} from '@loopback/rest';
 import {createFSAEUserDto} from './controller-types/register.controller.types';
 import {Admin, FsaeRole} from '../models';
-import {inject} from '@loopback/core';
-import {PasswordHasherService} from '../services';
+import {inject, service} from '@loopback/core';
+import {FsaeUserService, PasswordHasherService} from '../services';
+import { BindingKeys } from '../constants/binding-keys';
 
 export class RegisterController {
   constructor(
@@ -17,7 +18,8 @@ export class RegisterController {
     @repository(AlumniRepository) private alumniRepository: AlumniRepository,
     @repository(MemberRepository) private memberRepository: MemberRepository,
     @repository(SponsorRepository) private sponsorRepository: SponsorRepository,
-    @inject('services.passwordhasher') private passwordHasher: PasswordHasherService
+    @service(FsaeUserService) private fsaeUserService: FsaeUserService,
+    @inject(BindingKeys.PASSWORD_HASHER) private passwordHasher: PasswordHasherService
   ) {}
 
   @post('/register-admin')
@@ -29,12 +31,9 @@ export class RegisterController {
         'application/json': {
           schema: {
             type: 'object',
-            required: ['email', 'username', 'password'],
+            required: ['email', 'password'],
             properties: {
               email: {
-                type: 'string',
-              },
-              username: {
                 type: 'string',
               },
               password: {
@@ -57,15 +56,8 @@ export class RegisterController {
         },
       }
     })createUserDto: createFSAEUserDto): Promise<Admin> {
-      // Find user Profile
-      let userSearchResults = await this.adminRepository.find({
-        where: {
-          email: createUserDto.email,
-        },
-      });
-
-      // If no user found, invalid credientials
-      if (userSearchResults.length > 0) {
+      // Prevent duplicate user by email
+      if (await this.fsaeUserService.doesUserExist(createUserDto.email)) {
         throw new HttpErrors.Conflict('Email already exists')
       }
 
@@ -94,12 +86,9 @@ export class RegisterController {
         'application/json': {
           schema: {
             type: 'object',
-            required: ['email', 'username', 'password', 'firstName', 'lastName', 'phoneNumber'],
+            required: ['email', 'password', 'firstName', 'lastName', 'phoneNumber'],
             properties: {
               email: {
-                type: 'string',
-              },
-              username: {
                 type: 'string',
               },
               password: {
@@ -122,15 +111,8 @@ export class RegisterController {
         },
       }
     })createUserDto: createFSAEUserDto): Promise<Admin> {
-    // Find user Profile
-    let userSearchResults = await this.memberRepository.find({
-      where: {
-        email: createUserDto.email,
-      },
-    });
-
-    // If no user found, invalid credientials
-    if (userSearchResults.length > 0) {
+    // Prevent duplicate user by email
+    if (await this.fsaeUserService.doesUserExist(createUserDto.email)) {
       throw new HttpErrors.Conflict('Email already exists')
     }
 
@@ -159,21 +141,12 @@ export class RegisterController {
         'application/json': {
           schema: {
             type: 'object',
-            required: ['email', 'username', 'password', 'firstName', 'lastName', 'phoneNumber'],
+            required: ['email', 'password', 'phoneNumber', 'company'],
             properties: {
               email: {
                 type: 'string',
               },
-              username: {
-                type: 'string',
-              },
               password: {
-                type: 'string',
-              },
-              firstName: {
-                type: 'string',
-              },
-              lastName: {
                 type: 'string',
               },
               phoneNumber: {
@@ -181,21 +154,17 @@ export class RegisterController {
               },
               desc: {
                 type: 'string',
+              },
+              company: {
+                type: 'string',
               }
             },
           },
         },
       }
     })createUserDto: createFSAEUserDto): Promise<Admin> {
-    // Find user Profile
-    let userSearchResults = await this.sponsorRepository.find({
-      where: {
-        email: createUserDto.email,
-      },
-    });
-
-    // If no user found, invalid credientials
-    if (userSearchResults.length > 0) {
+    // Prevent duplicate user by email
+    if (await this.fsaeUserService.doesUserExist(createUserDto.email)) {
       throw new HttpErrors.Conflict('Email already exists')
     }
 
@@ -224,12 +193,9 @@ export class RegisterController {
         'application/json': {
           schema: {
             type: 'object',
-            required: ['email', 'username', 'password', 'firstName', 'lastName', 'phoneNumber'],
+            required: ['email', 'username', 'password', 'firstName', 'lastName', 'phoneNumber', 'company'],
             properties: {
               email: {
-                type: 'string',
-              },
-              username: {
                 type: 'string',
               },
               password: {
@@ -246,21 +212,17 @@ export class RegisterController {
               },
               desc: {
                 type: 'string',
+              },
+              company: {
+                type: 'string',
               }
             },
           },
         },
       }
     })createUserDto: createFSAEUserDto): Promise<Admin> {
-    // Find user Profile
-    let userSearchResults = await this.alumniRepository.find({
-      where: {
-        email: createUserDto.email,
-      },
-    });
-
-    // If no user found, invalid credientials
-    if (userSearchResults.length > 0) {
+    // Prevent duplicate user by email
+    if (await this.fsaeUserService.doesUserExist(createUserDto.email)) {
       throw new HttpErrors.Conflict('Email already exists')
     }
 
