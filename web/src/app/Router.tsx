@@ -89,7 +89,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: 'sponsor',
+        path: 'sponsor/:id',
         element: (
           // <ProtectedRoute allowedRoles={['sponsor']}>
           <SponsorProfile />

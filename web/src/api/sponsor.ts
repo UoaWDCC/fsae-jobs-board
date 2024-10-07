@@ -1,12 +1,11 @@
 import { apiInstance } from '@/api/ApiInstance';
 import { Role } from '@/app/type/role';
+import { toast } from 'react-toastify';
 
 export interface SponsorDTO {
   id: string;
   email: string;
   username: string;
-  password: string;
-  activated: boolean;
   fsaeRole: Role;
   firstName: string;
   lastName: string;
@@ -28,6 +27,7 @@ export const getSponsorMember = async (id: string) => {
     return response.data;
   } catch (error) {
     console.error(`Error fetching user member with id: ${id}`, error);
+    toast.error(`Error fetching user member with id: ${id}`);
     throw error;
   }
 };
@@ -38,6 +38,7 @@ export const updateSponsorMember = async (id: string, updatedData: SponsorDTO) =
     return response.data;
   } catch (error) {
     console.error(`Error updating user member with id: ${id}`, error);
+    toast.error(`Error updating user member with id: ${id}`);
     throw error;
   }
 };
@@ -48,6 +49,7 @@ export const deleteSponsorMember = async (id: string) => {
     return response.data;
   } catch (error) {
     console.error(`Error deleting user member with id: ${id}`, error);
+    toast.error(`Error deleting user member with id: ${id}`);
     throw error;
   }
 };

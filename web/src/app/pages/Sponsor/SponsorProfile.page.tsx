@@ -10,7 +10,8 @@ import { EditBannerModal } from '@/app/components/Modal/EditBannerModal';
 import { EditSponsorProfile } from '@/app/components/Modal/EditSponsorProfile';
 import EditModal from '@/app/components/Modal/EditModal';
 import { getSponsorMember, SponsorDTO } from '@/api/sponsor';
-import { Role } from '@/app/type/role';
+import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 export function SponsorProfile() {
   // UseState for future modal implementation
@@ -19,6 +20,7 @@ export function SponsorProfile() {
   const [modalContent, setModalContent] = useState<React.ReactNode>(null);
   const [modalTitle, setModalTitle] = useState('');
   const [openProfileModal, setOpenProfileModal] = useState(false);
+  const { id } = useParams<string>(); // Extract the id from the URL
 
   const [showMoreDescription, setShowMoreDescription] = useState(false);
   // const userType = useSelector((state: RootState) => state.user.userType);
@@ -41,41 +43,24 @@ export function SponsorProfile() {
   // // Add code to fetch data from our database when it will be connected
 
   // Fetch data from the database
-  const fetchData = async () => {
-    const userId = localStorage.getItem('userId');
+  const fetchData = async (userId: string) => {
+    // const userId = localStorage.getItem('userId');
     // Check if userId is a string, and that it is not null
+    console.log('User ID: ', userId);
     if (userId && typeof userId === 'string') {
       const data = await getSponsorMember(userId);
       setUserData(data);
       console.log('Data: ', data);
     } else {
       console.log('Error: userId is not a string or is null');
-      setUserData({
-        id: '-1',
-        email: 'Undefined',
-        username: 'Undefined',
-        password: 'Undefined',
-        activated: false,
-        fsaeRole: Role.Sponsor,
-        firstName: 'Undefined',
-        lastName: 'Undefined',
-        phoneNumber: 'Undefined',
-        desc: 'Undefined',
-        sponsorID: -1,
-        logo: 'Undefined',
-        websiteURL: 'Undefined',
-        tier: 'Undefined',
-        name: 'Undefined',
-        industry: 'Undefined',
-        additionalProp1: {},
-      });
+      toast.error('Error: userId is not a string or is null');
     }
   };
 
   useEffect(() => {
     // Logic to fetch data and setUserData
-    console.log('UserID: ', localStorage.getItem('userId'));
-    fetchData();
+    if (id) fetchData(id);
+    else console.log('Error: No ID found in URL');
   }, []);
 
   const handleAvatarChange = () => {
@@ -238,11 +223,9 @@ export function SponsorProfile() {
       {/* PICTURE AND COMPANY DETAILS */}
       <Card h={280} className={styles.card}>
         <Card.Section h={250} className={styles.banner} onClick={handleBannerChange} />
-        {userData?.name && (
-          <Text className={styles.name} pl={170} pt={140}>
-            {userData.name}
-          </Text>
-        )}
+        <Text className={styles.name} pl={170} pt={140}>
+          {userData?.name || '...'}
+        </Text>
 
         <Avatar
           src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png"
@@ -253,7 +236,7 @@ export function SponsorProfile() {
           onClick={handleAvatarChange}
         />
         <Text size="lg" mt={-30} ml={170} className={styles.text}>
-          {userData?.industry || 'Industry'}
+          {userData?.industry || '...'}
         </Text>
       </Card>
 
