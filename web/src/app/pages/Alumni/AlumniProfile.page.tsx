@@ -18,7 +18,6 @@ export function AlumniProfile() {
   const [showMoreDescription, setShowMoreDescription] = useState(false);
   // const userType = useSelector((state: RootState) => state.user.userType);
   const [userType, setUserType] = useState<UserType>('alumni');
-  const {id} = useParams<string>();
 
   console.log(
     'Change this SponsorPage component to use real userType from Redux store once user integration is implemented'
@@ -58,33 +57,33 @@ export function AlumniProfile() {
   // }, [])
   
 
-  // const alumniId = localStorage.getItem('alumniId') || '66e570960f0c581128fd49a6'; 
+  const alumniId = localStorage.getItem('id');
 
   useEffect(() => {
     // Logic to fetch data and setUserData
     const fetchAlumniData = async () => {
-      if (!id) {
-        console.log("No alumniId found!");
+      if (!alumniId) {
+        console.log('No alumniId found!');
         return;
       }
 
-    try {
-      console.log("Fetching alumni data.....");
-      const data = await getAlumni(id);
-      setUserData({
-        alumniName: `${data.firstName} ${data.lastName}`,
-        phone: data.phoneNumber || 'Not specified',
-        email: data.email || 'Not specified',
-        companyField: data.companyField || 'Not specified',
-        description: data.description || 'No description available',
-      });
-    } catch (error) {
-      console.log("Error fetching alumni data", error);
-    }
-  }
+      try {
+        console.log('Fetching alumni data.....');
+        const data = await getAlumni(alumniId);
+        setUserData({
+          alumniName: `${data.firstName} ${data.lastName}`,
+          phone: data.phoneNumber || 'Not specified',
+          email: data.email || 'Not specified',
+          companyField: data.companyField || 'Not specified',
+          description: data.description || 'No description available',
+        });
+      } catch (error) {
+        console.log('Error fetching alumni data', error);
+      }
+    };
 
     fetchAlumniData();
-  }, [id]);
+  }, [alumniId]);
 
   const [jobData, setJobData] = useState<JobCardProps[]>([
     {
