@@ -1,6 +1,7 @@
 import { Card, Avatar, Text, Box, Title, Button, Grid, Flex, Loader } from '@mantine/core';
 import styles from '../../styles/SponsorProfile.module.css';
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { IconPlus } from '@tabler/icons-react';
 import { JobCarousel } from '../../components/JobCardCarousel/JobCarousel';
 import { JobCardProps } from '../../components/JobCardCarousel/JobCard';
@@ -17,6 +18,7 @@ export function AlumniProfile() {
   const [showMoreDescription, setShowMoreDescription] = useState(false);
   // const userType = useSelector((state: RootState) => state.user.userType);
   const [userType, setUserType] = useState<UserType>('alumni');
+  const {id} = useParams<string>();
 
   console.log(
     'Change this SponsorPage component to use real userType from Redux store once user integration is implemented'
@@ -55,21 +57,20 @@ export function AlumniProfile() {
   //   localStorage.setItem('id','66ef8da3a924226bdc05204e');
   // }, [])
   
-  
-  const alumniId = localStorage.getItem('id')
+
   // const alumniId = localStorage.getItem('alumniId') || '66e570960f0c581128fd49a6'; 
 
   useEffect(() => {
     // Logic to fetch data and setUserData
     const fetchAlumniData = async () => {
-      if (!alumniId) {
+      if (!id) {
         console.log("No alumniId found!");
         return;
       }
 
     try {
       console.log("Fetching alumni data.....");
-      const data = await getAlumni(alumniId);
+      const data = await getAlumni(id);
       setUserData({
         alumniName: `${data.firstName} ${data.lastName}`,
         phone: data.phoneNumber || 'Not specified',
@@ -83,7 +84,7 @@ export function AlumniProfile() {
   }
 
     fetchAlumniData();
-  }, [alumniId]);
+  }, [id]);
 
   const [jobData, setJobData] = useState<JobCardProps[]>([
     {
