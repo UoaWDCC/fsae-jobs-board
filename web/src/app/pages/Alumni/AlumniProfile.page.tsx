@@ -1,19 +1,24 @@
-import { Card, Avatar, Text, Box, Title, Button, Grid, Flex, Loader } from '@mantine/core';
+import { Card, Avatar, Text, Box, Title, Button, Grid, Flex, Loader, Image } from '@mantine/core';
 import styles from '../../styles/SponsorProfile.module.css';
 import { useEffect, useState } from 'react';
 import { IconPlus } from '@tabler/icons-react';
 import { JobCarousel } from '../../components/JobCardCarousel/JobCarousel';
 import { JobCardProps } from '../../components/JobCardCarousel/JobCard';
 import { UserType } from '../../features/user/userSlice';
+import EditModal from '../../components/Modal/EditModal';
+import EditAlumniProfile from '../../components/Modal/EditAlumniProfile';
+import { EditAvatar } from '../../components/Modal/EditAvatar';
+import { EditBannerModal } from '../../components/Modal/EditBannerModal';
 
 export function AlumniProfile() {
   // UseState for future modal implementation
   const [openModal, setOpenModal] = useState(false);
   const [modalType, setModalType] = useState('');
   const [openProfileModal, setOpenProfileModal] = useState(false);
+  const [modalContent, setModalContent] = useState<React.ReactNode>(null);
   const [showMoreDescription, setShowMoreDescription] = useState(false);
-  // const userType = useSelector((state: RootState) => state.user.userType);
   const [userType, setUserType] = useState<UserType>('alumni');
+  const [modalTitle, setModalTitle] = useState('');
 
   console.log(
     'Change this SponsorPage component to use real userType from Redux store once user integration is implemented'
@@ -21,17 +26,24 @@ export function AlumniProfile() {
 
   const handleAvatarChange = () => {
     setModalType('avatar');
-    setOpenModal(true);
+    setOpenProfileModal(true);
+    setModalContent(<EditAvatar avatar={userData?.avatar} />);
+    setModalTitle('Profile Photo');
   };
 
   const handleBannerChange = () => {
     setModalType('banner');
-    setOpenModal(true);
+    setOpenProfileModal(true);
+    setModalContent(<EditBannerModal banner={userData?.banner} />)
+    setModalTitle('Banner Photo');
   };
 
   const handleProfileChange = () => {
-    setModalType('profile');
     setOpenProfileModal(true);
+    setModalContent(
+      <EditAlumniProfile userData={userData} close={() => setOpenProfileModal(false)} />
+    );
+    setModalTitle('Edit Profile');
   };
 
   const handleJobOpportunitiesChange = () => {
@@ -54,6 +66,10 @@ export function AlumniProfile() {
     phone: '+1234567890',
     description:
       ' Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque ut tristique lacus, eget euismod enim. Fusce suscipit at tortor sed pretium. Integer et pretium orci. Integer velit purus, gravida quis tincidunt ac, pretium sed lorem. Sed sagittis neque tincidunt, auctor ante vitae, ultricies risus. Aenean quis sem sed dolor feugiat tincidunt. Etiam purus justo, ullamcorper in cursus volutpat, luctus in dolor. Donec sed purus tristique, rhoncus erat ut, ullamcorper dolor. Pellentesque tincidunt eros id neque egestas, sed luctus sapien elementum. Etiam bibendum ex est, ac consequat turpis facilisis id. Mauris scelerisque purus quis leo fermentum, at semper nisl mattis. Vivamus vel ornare lectus. Nullam dictum felis et commodo lacinia. Etiam tempor placerat sapien quis maximus. Ut pellentesque libero ac sollicitudin accumsan. Sed vel dolor bibendum, egestas metus nec, eleifend mauris. Integer imperdiet eros vitae nibh interdum volutpat. Etiam et ultrices massa. Cras gravida facilisis sapien. Ut eleifend varius risus, eget bibendum dui blandit ac. Vivamus tempor varius massa, sed suscipit mauris interdum eu. Proin sed commodo ex, ac cursus nisl. Integer ut tincidunt augue. Cras molestie libero erat. Nunc justo felis, sodales auctor dapibus sit amet, dapibus ut turpis. Sed nec sagittis nisl. Cras eget condimentum est. Cras nulla lorem, venenatis euismod gravida quis, fermentum vel mauris. Fusce et ipsum et lorem egestas volutpat. Duis nec imperdiet ante. Quisque et ligula accumsan, eleifend urna sit amet, cursus dolor. Nullam ut erat diam. Ut non lacinia erat, eu pretium nisl. Vestibulum mattis sapien in tristique commodo. Integer faucibus leo at turpis rhoncus, eu hendrerit ex dignissim. Nulla facilisi. Donec eget turpis ac odio pretium iaculis. Sed imperdiet sollicitudin viverra. In consequat justo velit, aliquet ultricies leo efficitur laoreet. Nullam quis elementum diam. Sed in sodales est. Integer malesuada semper tortor eu feugiat. Morbi tincidunt turpis bibendum consequat cursus. Aenean faucibus felis sit amet porta interdum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Mauris dui magna, lobortis quis quam non, dictum bibendum libero. ',
+    avatar:
+      'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png',
+    banner:
+      'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80',
   });
   // Add code to fetch data from our database when it will be connected
 
@@ -179,7 +195,12 @@ export function AlumniProfile() {
     <Box className={styles.container}>
       {/* PICTURE AND COMPANY DETAILS */}
       <Card h={280} className={styles.card}>
-        <Card.Section h={250} className={styles.banner} onClick={handleBannerChange} />
+        <Card.Section
+          h={250}
+          className={styles.banner}
+          onClick={handleBannerChange}
+          style={{ backgroundImage: `url(${userData.banner})` }}
+        />
         {userData?.alumniName && (
           <Text className={styles.name} pl={170} pt={140}>
             {userData.alumniName}
@@ -187,7 +208,7 @@ export function AlumniProfile() {
         )}
 
         <Avatar
-          src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png"
+          src={userData?.avatar}
           size={150}
           mt={-100}
           ml={10}
@@ -274,6 +295,13 @@ export function AlumniProfile() {
           </Box>
         </Grid.Col>
       </Grid>
+
+      <EditModal
+        opened={openProfileModal}
+        close={() => setOpenProfileModal(false)}
+        content={modalContent}
+        title={modalTitle}
+      ></EditModal>
     </Box>
   );
 }
