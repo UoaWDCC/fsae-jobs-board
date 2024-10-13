@@ -1,20 +1,27 @@
 import { Box, Textarea } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
-import styles from '../Modal/Modal.module.css';
-import { useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 
-const AlumniAboutTab = ({ userData }) => {
-  const [formData, setFormData] = useState({
+interface UserData {
+  description: string;
+}
+
+interface AlumniAboutTabProps {
+  userData: UserData;
+}
+
+const AlumniAboutTab = ({ userData }: AlumniAboutTabProps) => {
+  const [formData, setFormData] = useState<UserData>({
     description: userData.description || '',
   });
 
-  const handleInputChange = (field) => (event) => {
-    setFormData({
-      ...formData,
-      [field]: event.currentTarget.value,
-    });
-  };
-
+  const handleInputChange =
+    (field: keyof UserData) => (event: ChangeEvent<HTMLTextAreaElement>) => {
+      setFormData({
+        ...formData,
+        [field]: event.currentTarget.value,
+      });
+    };
   const isMobile = useMediaQuery('(max-width: 430px)'); //mobile screen
 
   return (

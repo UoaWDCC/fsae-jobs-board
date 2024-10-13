@@ -1,19 +1,30 @@
-import { Tabs, Box, Button, Select, Divider, Modal } from '@mantine/core';
+import { Tabs, Box, Button, Select, Divider } from '@mantine/core';
 import styles from './Modal.module.css';
 import { useMediaQuery } from '@mantine/hooks';
 import { useState } from 'react';
 import AlumniProfileTab from '../Tabs/AlumniProfileTab';
 import AlumniAboutTab from '../Tabs/AlumniAboutTab';
 
-const EditAlumniProfile = ({ userData, close }) => {
+interface UserData {
+  alumniName: string;
+  companyField: string;
+  phone: string;
+  description: string;
+}
+
+interface EditAlumniProfileProps {
+  userData: UserData;
+  close: () => void;
+}
+
+const EditAlumniProfile = ({ userData, close }: EditAlumniProfileProps) => {
   const [activeTab, setActiveTab] = useState('about');
   const [isModalOpen, setIsModalOpen] = useState(true);
   const tabOptions = [
     { value: 'profile', label: 'Profile' },
     { value: 'about', label: 'About Me' },
   ];
-
-  const isMobile = useMediaQuery('(max-width: 430px)'); //mobile screen
+  const isMobile = useMediaQuery('(max-width: 430px)'); // mobile screen
 
   const renderContent = () => {
     switch (activeTab) {
@@ -21,6 +32,8 @@ const EditAlumniProfile = ({ userData, close }) => {
         return <AlumniProfileTab userData={userData} />;
       case 'about':
         return <AlumniAboutTab userData={userData} />;
+      default:
+        return null;
     }
   };
 

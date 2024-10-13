@@ -2,20 +2,26 @@ import { Box, TextInput } from '@mantine/core';
 import styles from '../Modal/Modal.module.css';
 import { useState } from 'react';
 
-const AlumniProfileTab = ({ userData }) => {
-  //   const [value, setValue] = useState('');
-  const [formData, setFormData] = useState({
+interface UserData {
+  alumniName: string;
+  companyField: string;
+  phone: string;
+}
+
+const AlumniProfileTab = ({ userData }: { userData: UserData }) => {
+  const [formData, setFormData] = useState<UserData>({
     alumniName: userData.alumniName || '',
     companyField: userData.companyField || '',
     phone: userData.phone || '',
   });
 
-  const handleInputChange = (field) => (event) => {
-    setFormData({
-      ...formData,
-      [field]: event.currentTarget.value,
-    });
-  };
+  const handleInputChange =
+    (field: keyof UserData) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      setFormData({
+        ...formData,
+        [field]: event.currentTarget.value,
+      });
+    };
 
   return (
     <Box>
