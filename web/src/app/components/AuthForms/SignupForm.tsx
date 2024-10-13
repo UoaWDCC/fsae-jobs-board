@@ -14,6 +14,7 @@ import { NavLink } from 'react-router-dom';
 import { Role } from '../../type/role';
 import {toast} from "react-toastify";
 import {createFSAEUserDto, register_alumni, register_member, register_sponsor} from "@/api/register";
+import { useNavigate } from 'react-router-dom';
 
 interface Field {
   label: string;
@@ -108,6 +109,7 @@ const FormComponent: React.FC<FormComponentProps> = ({ fields, onSubmit }) => (
 );
 
 const SignupForm = ({ role }: { role: Role }) => {
+  const navigate = useNavigate();
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.target as HTMLFormElement);
@@ -135,6 +137,7 @@ const SignupForm = ({ role }: { role: Role }) => {
     } else {
       toast.error('Registering Unknown Role');
     }
+    navigate('/', { replace: true });
   };
 
   return (
