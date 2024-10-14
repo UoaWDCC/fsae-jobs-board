@@ -30,14 +30,14 @@ export function SponsorProfile() {
     setModalType('avatar');
     setModalContent(<EditAvatar avatar={userData?.avatar} />);
     setModalTitle('Profile Photo');
-    setOpenModal(true);
+    setOpenProfileModal(true);
   };
 
   const handleBannerChange = () => {
     setModalType('banner');
     setModalContent(<EditBannerModal banner={userData?.banner} />);
     setModalTitle('Banner Photo');
-    setOpenModal(true);
+    setOpenProfileModal(true);
   };
 
   const handleProfileChange = () => {
@@ -195,7 +195,12 @@ export function SponsorProfile() {
     <Box className={styles.container}>
       {/* PICTURE AND COMPANY DETAILS */}
       <Card h={280} className={styles.card}>
-        <Card.Section h={250} className={styles.banner} onClick={handleBannerChange} />
+        <Card.Section
+          h={250}
+          className={styles.banner}
+          onClick={handleBannerChange}
+          style={{ backgroundImage: `url(${userData.banner})` }}
+        />
         {userData?.sponsorName && (
           <Text className={styles.name} pl={170} pt={140}>
             {userData.sponsorName}
