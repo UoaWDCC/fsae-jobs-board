@@ -5,5 +5,6 @@ export type loginParams = {
 
 export type loginResponse = {
   userId: string,
-  token: string;
+  token: string,
+  verified: boolean;
 }

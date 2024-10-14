@@ -1,11 +1,13 @@
 import React, { useState, useRef, FormEvent, useEffect } from 'react';
 import { TextInput, Stack, Title, Button } from '@mantine/core';
+import { useLocation } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
-interface VerifyFormProps {
-  email: string;
-}
+export function VerifyForm() {
+  const location = useLocation();
+  const navigate = useNavigate();
 
-export function VerifyForm({ email }: VerifyFormProps) {
   const [code, setCode] = useState(Array(6).fill(""));
   const [timer, setTimer] = useState(0); // Timer state in seconds
   const [canResend, setCanResend] = useState(true); // State to enable/disable resend text
@@ -38,6 +40,16 @@ export function VerifyForm({ email }: VerifyFormProps) {
 
     return () => clearInterval(intervalId);
   }, [timer]);
+
+  useEffect(() => {
+    try {
+      if (!location.state.email || !location.state.password) {
+        navigate('/signup', { replace: true });
+      }
+    } catch (error) {
+      navigate('/signup', { replace: true });
+    }
+  });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const value = e.target.value;
@@ -82,15 +94,30 @@ export function VerifyForm({ email }: VerifyFormProps) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          email: email,
+          email: location.state.email,
           verification_code: verificationCode,
         }),
       });
 
       const result = await response.json();
-      console.log("Response:", result);
-    } catch (error) {
-      console.error("Error:", error);
+
+      if (result) {
+        if (result.error) {
+          toast.error(result.error.message);
+        } else {
+          toast.success('Verification successful'); 
+          navigate('/login', {
+            state: {
+              email: location.state.email,
+              password: location.state.password,
+            },
+            replace: true
+          });
+          
+        }
+      }
+    } catch (e) {
+      console.error(e);
     }
   };
 
@@ -106,13 +133,13 @@ export function VerifyForm({ email }: VerifyFormProps) {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ email: email }),
+          body: JSON.stringify({ email: location.state.email }),
         });
 
         const result = await response.json();
         console.log("Resend Response:", result);
-      } catch (error) {
-        console.error("Error:", error);
+      } catch (e) {
+
       }
     }
   };

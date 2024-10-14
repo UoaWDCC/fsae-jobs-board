@@ -12,8 +12,8 @@ import { FormEvent } from 'react';
 import styles from './authform.module.css';
 import { NavLink } from 'react-router-dom';
 import { Role } from '../../type/role';
-import {toast} from "react-toastify";
-import {createFSAEUserDto, register_alumni, register_member, register_sponsor} from "@/api/register";
+import { toast } from "react-toastify";
+import { createFSAEUserDto, register_alumni, register_member, register_sponsor } from "@/api/register";
 import { useNavigate } from 'react-router-dom';
 
 interface Field {
@@ -118,26 +118,46 @@ const SignupForm = ({ role }: { role: Role }) => {
     // Todo: Redirect or do something after successful registration
     if (role === Role.Student) {
       register_member(data as unknown as createFSAEUserDto).then((response) => {
-        toast.success('Student Registration Successful');
+        // toast.success('Student Registration Successful');
+        navigate('/verify', {
+          state: {
+            email: formData.get('email'),
+            password: formData.get('password'),
+          },
+          replace: true
+        });
       }).catch((error) => {
         toast.error(error.toString());
       })
     } else if (role === Role.Sponsor) {
       register_sponsor(data as unknown as createFSAEUserDto).then((response) => {
-        toast.success('Sponsor Registration Successful');
+        // toast.success('Sponsor Registration Successful');
+        navigate('/verify', {
+          state: {
+            email: formData.get('email'),
+            password: formData.get('password'),
+          },
+          replace: true
+        });
       }).catch((error) => {
         toast.error(error.toString());
       })
     } else if (role === Role.Alumni) {
       register_alumni(data as unknown as createFSAEUserDto).then((response) => {
-        toast.success('Alumni Registration Successful');
+        // toast.success('Alumni Registration Successful');
+        navigate('/verify', {
+          state: {
+            email: formData.get('email'),
+            password: formData.get('password'),
+          },
+          replace: true
+        });
       }).catch((error) => {
         toast.error(error.toString());
       })
     } else {
       toast.error('Registering Unknown Role');
     }
-    navigate('/', { replace: true });
   };
 
   return (

@@ -14,9 +14,9 @@ export const apiInstance = axios.create({
 // Add access token to headers
 apiInstance.interceptors.request.use(
   config => {
-    console.log("interceptted add auth token")
+    // console.log("interceptted add auth token")
     const accessToken = localStorage.getItem('accessToken');
-    console.log(`token is ${accessToken}`)
+    // console.log(`token is ${accessToken}`)
     if (accessToken) {
       config.headers['Authorization'] = `Bearer ${accessToken}`;
     }

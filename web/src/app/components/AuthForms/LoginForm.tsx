@@ -5,22 +5,40 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 import { login } from '@/api/login';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 export function LoginForm() {
-  const dispatch = useDispatch();
+  const location = useLocation();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState('');  
+
+  // Check if user is redirected from verify page, if so, auto-fill email and password that were entered from login or signup.
+  useEffect(() => {
+    try {
+      if (email && password) {
+        onLogin();
+      } else if (location.state.email && location.state.password) {
+        setEmail(location.state.email);
+        setPassword(location.state.password);
+      }
+    } catch (error) {
+      // Expected error if user is not redirected from verify page
+    }
+  }, [location.state, email, password]);  
 
   async function onLogin() {
     try {
       const { userType } = await login(email, password);
-      toast.success('Login Successful');
+      // toast.success('Login Successful');
 
       // Redirect based on user type
       switch (userType) {
+        case 'unverified':
+          navigate('/verify', {state: { email: email, password: password}, replace: true});
+          break;
         case 'admin':
           navigate('/profile/admin', { replace: true });
           break;

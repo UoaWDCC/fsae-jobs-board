@@ -50,9 +50,15 @@ export class VerificationController {
         const verification = await this.verificationRepository.findOne({
             where: { email },
         });
+        
+        // console.log(verification);
 
         if (!verification) {
             throw new HttpErrors.NotFound('Verification not found');
+        }
+
+        if (verification.verificationCode !== verification_code) {
+            throw new HttpErrors[401]('Incorrect Verification Code');
         }
 
         if (verification.expiresAt < Date.now()) {
@@ -60,11 +66,7 @@ export class VerificationController {
             throw new HttpErrors.BadRequest('Verification code expired, new code sent to email');
         }
 
-        if (verification.verificationCode !== verification_code) {
-            throw new HttpErrors.BadRequest('Verification code invalid');
-        }
-
-        const roleRepository = this.repositoryMap[verification.fsaeRole as 'student' | 'alumni' | 'sponsor' | 'admin'];
+        const roleRepository = this.repositoryMap[verification.fsaeRole as 'member' | 'alumni' | 'sponsor' | 'admin'];
 
         if (!roleRepository) {
             throw new HttpErrors.InternalServerError('User role invalid');
@@ -108,7 +110,7 @@ export class VerificationController {
             throw new HttpErrors.NotFound('Verification record not found');
         }
 
-        const roleRepository = this.repositoryMap[verification.fsaeRole as 'student' | 'alumni' | 'sponsor' | 'admin'];
+        const roleRepository = this.repositoryMap[verification.fsaeRole as 'member' | 'alumni' | 'sponsor' | 'admin'];
         if (!roleRepository) {
             throw new HttpErrors.InternalServerError('Role repository not found');
         }
@@ -132,7 +134,12 @@ export class VerificationController {
         }
 
         // Delete the old verification record and notify Twilio to invalidate the old verification code on their end
-        await this.verificationRepository.deleteById(verification.id);
+        try {
+            await this.verificationRepository.deleteById(verification.id);
+        } catch (error) {
+            // Do nothing
+        }
+        
         await this.twilioService.verifyUser(verification.twilioId);
 
         const verificationCode = await this.codeGenerator.generateCode();
@@ -162,7 +169,7 @@ export class VerificationController {
 
     private get repositoryMap() {
     return {
-        student: this.memberRepository,
+        member: this.memberRepository,
         alumni: this.alumniRepository,
         sponsor: this.sponsorRepository,
         admin: this.adminRepository,
