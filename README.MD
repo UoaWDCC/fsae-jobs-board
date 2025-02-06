@@ -49,3 +49,12 @@ Environment (.env) files are the files keeping any sensitive information, and ar
 - Change directory by running `cd web` and `cd api` in each terminal
 - Run `NPM install` in each terminal
 - Run `NPM run dev` in web and `NPM` start in api directoires
+
+## Important Libraries
+### Mantine
+The main frontend component library used is Mantine, find all relevant documentation regarding the use of the library the app on the google drive. Manitine doucmentation can be found here: https://mantine.dev/
+
+### Loopback4
+The backend is built ontop of the loopback4 framework which is built ontop of express. This library allows for easy generation of REST API's through command line, find all relevant doucmentation here: https://loopback.io/doc/en/lb4/.
+
+For the full arcitecture review the system arcitecture diagram found in the Google Drive for how the libraries are used.
