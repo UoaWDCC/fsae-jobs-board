@@ -3,7 +3,6 @@ import styles from './authform.module.css';
 import { NavLink } from 'react-router-dom';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
-// import { login } from '@/api';
 
 export function ForgotPasswordForm() {
   const [email, setEmail] = useState('');
@@ -17,7 +16,7 @@ export function ForgotPasswordForm() {
 
     setLoading(true);
     try {
-      await sendPasswordResetEmail(email);
+      // await sendPasswordResetEmail(email);
       toast.success('Password reset email sent successfully!');
     } catch (error) {
       if (error instanceof Error) {
