@@ -19,7 +19,7 @@ export function LoginForm() {
   useEffect(() => {
     try {
       if (email && password) {
-        onLogin();
+        return;
       } else if (location.state.email && location.state.password) {
         setEmail(location.state.email);
         setPassword(location.state.password);
