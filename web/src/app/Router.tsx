@@ -1,6 +1,7 @@
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
 import { HomePage } from './pages/General/Home.page';
 import { Login } from './pages/General/Login.page';
+import { ForgotPassword } from './pages/General/ForgotPassword.page';
 import { Verify } from './pages/General/Verify.page';
 import { StudentProfile } from './pages/Student/StudentProfile.page';
 import { SponsorProfile } from './pages/Sponsor/SponsorProfile.page';
@@ -44,6 +45,14 @@ const router = createBrowserRouter([
     element: (
       <AppLayout>
         <AdminLogin />
+      </AppLayout>
+    ),
+  },
+  {
+    path: '/forgot-password',
+    element: (
+      <AppLayout>
+        <ForgotPassword />
       </AppLayout>
     ),
   },

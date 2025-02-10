@@ -104,7 +104,7 @@ export function LoginForm() {
         </Text>
         <Text ta="center" mt="md">
           Forget your{' '}
-          <NavLink to="/" className={styles.link}>
+          <NavLink to="/forgot-password" className={styles.link}>
             password?
           </NavLink>
         </Text>
