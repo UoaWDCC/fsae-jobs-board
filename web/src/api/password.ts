@@ -14,7 +14,6 @@ export async function validateResetToken(token: string) {
     const res = await apiInstance.get(`reset-password/${token}`);
     return res;
   } catch (e) {
-    return true; // Assume token is valid
     throw Error("An unknown error occurred");
   }
 }

@@ -1,6 +1,6 @@
 import styles from './authform.module.css';
 import { useState, useEffect } from 'react';
-import { Flex, Title, PasswordInput, Button } from '@mantine/core';
+import { Flex, Title, PasswordInput, Button, TextInput } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { validateResetToken, resetPassword } from '@/api/password';
@@ -8,21 +8,18 @@ import { validateResetToken, resetPassword } from '@/api/password';
 export function ResetPasswordForm({ resetToken }: { resetToken: string }) {
   const navigate = useNavigate();
 
+  const [email, setEmail] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
   useEffect(() => {
     async function validateToken() {
       try {
-        const isValid = await validateResetToken(resetToken);
-
-        if (!isValid) {
-          toast.error('Invalid reset token');
-          navigate('/forgot-password');
-        }
+        const response = await validateResetToken(resetToken) as any;
+        console.log(response);
+        setEmail(response.data.email);
       } catch (error) {
         toast.error(error instanceof Error ? error.message : 'An unknown error occurred');
-        navigate('/forgot-password');
       }
     }
 
@@ -67,6 +64,12 @@ export function ResetPasswordForm({ resetToken }: { resetToken: string }) {
       </Title>
 
       <form className={styles.form}>
+        <TextInput
+          placeholder="Enter Email"
+          value={email}
+          disabled={true}
+          style={{display: "none"}} 
+        /> {/* This allows an autofill system to store the new password under the email relevant to this password reset. */}
         <PasswordInput
           placeholder="Enter New Password"
           mt="xl"
@@ -87,7 +90,7 @@ export function ResetPasswordForm({ resetToken }: { resetToken: string }) {
           mb="md" 
           size="lg" 
           onClick={onResetPassword} 
-          >Reset Password</Button>
+          >Submit</Button>
       </form>
     </Flex>
   );

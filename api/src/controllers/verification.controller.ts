@@ -14,7 +14,7 @@ import {
     SponsorRepository,
     AdminRepository,
 } from '../repositories';
-import { TwilioService, CodeGeneratorService } from '../services';
+import { TwilioService, GeneratorService } from '../services';
 
 export class VerificationController {
     constructor(
@@ -23,7 +23,7 @@ export class VerificationController {
         @repository(MemberRepository) private memberRepository: MemberRepository,
         @repository(SponsorRepository) private sponsorRepository: SponsorRepository,
         @repository(VerificationRepository) private verificationRepository: VerificationRepository,
-        @inject('services.codegenerator') private codeGenerator: CodeGeneratorService,
+        @inject('services.generator') private generator: GeneratorService,
         @inject('services.twilioService') private twilioService: TwilioService
     ) { }
 
@@ -142,7 +142,7 @@ export class VerificationController {
         
         await this.twilioService.verifyUser(verification.twilioId);
 
-        const verificationCode = await this.codeGenerator.generateCode();
+        const verificationCode = await this.generator.generateCode();
 
         // Send a new verification email
         const newVerification = await this.twilioService.sendVerificationEmail(verification.email, user.firstName, verificationCode);
@@ -162,7 +162,7 @@ export class VerificationController {
     }
 
     async sendVerificationEmail(email: string, firstName: string) {
-        var verificationCode = await this.codeGenerator.generateCode();
+        var verificationCode = await this.generator.generateCode();
         var verification = await this.twilioService.sendVerificationEmail(email, firstName, verificationCode);
         return { verification, verificationCode };
     }

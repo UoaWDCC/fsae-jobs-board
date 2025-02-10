@@ -7,3 +7,4 @@ export * from './sponsor.model';
 export * from './alumni.model';
 export * from './job-ad.model';
 export * from './verification.model';
+export * from './passwordresets.model';
