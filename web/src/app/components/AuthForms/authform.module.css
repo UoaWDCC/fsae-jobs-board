@@ -1,4 +1,4 @@
-.signupFormContainer, .loginFormContainer, .forgotPasswordFormContainer {
+.signupFormContainer, .loginFormContainer, .forgotPasswordFormContainer, .resetPasswordFormContainer {
   height: 100vh;
   display: flex;
   flex-direction: column;

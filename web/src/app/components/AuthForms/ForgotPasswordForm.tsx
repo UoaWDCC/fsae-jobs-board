@@ -1,33 +1,28 @@
 import { Flex, TextInput, Button, Title, Text } from '@mantine/core';
 import styles from './authform.module.css';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
+import { requestPasswordReset } from '@/api/password';
 
 export function ForgotPasswordForm() {
+  const navigate = useNavigate();
+  
   const [email, setEmail] = useState('');
-  const [loading, setLoading] = useState(false);
 
   async function onResetPassword() {
     if (!email) {
       toast.error('Please enter your email');
       return;
     }
-
-    setLoading(true);
+  
     try {
-      // await sendPasswordResetEmail(email);
+      await requestPasswordReset(email);
       toast.success('Password reset email sent successfully!');
     } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-        console.error(error);
-      } else {
-        toast.error('An unknown error occurred');
-        console.error('Unknown error:', error);
-      }
+      toast.error(error instanceof Error ? error.message : 'An unknown error occurred');
     } finally {
-      setLoading(false);
+      navigate('/login');
     }
   }
 
@@ -58,7 +53,6 @@ export function ForgotPasswordForm() {
           mb="md" 
           size="lg" 
           onClick={onResetPassword} 
-          loading={loading}
         >
           Send Reset Link
         </Button>
