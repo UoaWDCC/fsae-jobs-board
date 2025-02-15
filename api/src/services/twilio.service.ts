@@ -24,6 +24,7 @@ export class TwilioService {
             to: email,
             channel: 'email',
             channelConfiguration: {
+                template_id: "d-4b7a924efdfb492d97ce2f317e3968f7",
                 substitutions: {
                     first_name: firstName,
                     verification_code: verificationCode,
@@ -32,6 +33,26 @@ export class TwilioService {
         });
 
         return verification;
+    }
+
+    async sendPasswordResetEmail(email: string, firstName: string, resetToken: string) {
+        if (!this.verificationServiceId) {
+            throw new Error('Verification Service ID is not defined');
+        }
+
+        const passwordReset = await this.client.verify.v2.services(this.verificationServiceId).verifications.create({
+            to: email,
+            channel: 'email',
+            channelConfiguration: {
+                template_id: "d-4f7d51e155b8429da523fc36ddf22f14",
+                substitutions: {
+                    first_name: firstName,
+                    reset_token: resetToken,
+                }
+            }
+        });
+
+        return passwordReset;
     }
 
     async verifyUser(verificationId: string) {

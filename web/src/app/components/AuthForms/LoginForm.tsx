@@ -19,7 +19,7 @@ export function LoginForm() {
   useEffect(() => {
     try {
       if (email && password) {
-        onLogin();
+        return;
       } else if (location.state.email && location.state.password) {
         setEmail(location.state.email);
         setPassword(location.state.password);
@@ -104,7 +104,7 @@ export function LoginForm() {
         </Text>
         <Text ta="center" mt="md">
           Forget your{' '}
-          <NavLink to="/" className={styles.link}>
+          <NavLink to="/forgot-password" className={styles.link}>
             password?
           </NavLink>
         </Text>

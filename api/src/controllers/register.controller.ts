@@ -12,7 +12,7 @@ import { inject, service } from '@loopback/core';
 import {FsaeUserService,  PasswordHasherService } from '../services';
 import { BindingKeys } from '../constants/binding-keys';
 import { TwilioService } from '../services/twilio.service';
-import { CodeGeneratorService } from '../services/code-generator.service';
+import { GeneratorService } from '../services/generator.service';
 
 export class RegisterController {
         constructor(
@@ -23,7 +23,7 @@ export class RegisterController {
             @service(FsaeUserService) private fsaeUserService: FsaeUserService,
             @repository(VerificationRepository) private verificationRepository: VerificationRepository,
             @inject(BindingKeys.PASSWORD_HASHER) private passwordHasher: PasswordHasherService,
-            @inject('services.codegenerator') private codeGenerator: CodeGeneratorService,
+            @inject('services.generator') private generator: GeneratorService,
             @inject('services.twilioService') private twilioService: TwilioService
         ) { }
 
@@ -301,7 +301,7 @@ export class RegisterController {
     }
 
     async sendVerificationEmail(email: string, firstName: string) {
-        var verificationCode = await this.codeGenerator.generateCode();
+        var verificationCode = await this.generator.generateCode();
         var verification = await this.twilioService.sendVerificationEmail(email, firstName, verificationCode);
         return { verification, verificationCode };
     }
