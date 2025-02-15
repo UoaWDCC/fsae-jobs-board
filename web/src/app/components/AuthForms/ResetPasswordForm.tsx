@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { validateResetToken, resetPassword } from '@/api/password';
 
-export function ResetPasswordForm({ resetToken }: { resetToken: string }) {
+export function ResetPasswordForm({ resetToken }: { resetToken: string | null }) {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
@@ -14,8 +14,13 @@ export function ResetPasswordForm({ resetToken }: { resetToken: string }) {
 
   useEffect(() => {
     async function validateToken() {
+      if (!resetToken) {
+        toast.error('Invalid or missing reset token.');
+        return;
+      }
+
       try {
-        const response = await validateResetToken(resetToken) as any;
+        const response = await validateResetToken(resetToken);
         console.log(response);
         setEmail(response.data.email);
       } catch (error) {
@@ -25,7 +30,6 @@ export function ResetPasswordForm({ resetToken }: { resetToken: string }) {
 
     validateToken();
   }, [resetToken]);
-
   async function onResetPassword() {
     if (!newPassword) {
       toast.error('Please enter your new password');
@@ -39,6 +43,10 @@ export function ResetPasswordForm({ resetToken }: { resetToken: string }) {
 
     if (newPassword !== confirmPassword) {
       toast.error('Passwords do not match');
+      return;
+    }
+    if (!resetToken) {
+      toast.error('Invalid or missing reset token.');
       return;
     }
 
@@ -68,8 +76,9 @@ export function ResetPasswordForm({ resetToken }: { resetToken: string }) {
           placeholder="Enter Email"
           value={email}
           disabled={true}
-          style={{display: "none"}} 
-        /> {/* This allows an autofill system to store the new password under the email relevant to this password reset. */}
+          style={{ display: 'none' }}
+        />{' '}
+        {/* This allows an autofill system to store the new password under the email relevant to this password reset. */}
         <PasswordInput
           placeholder="Enter New Password"
           mt="xl"
@@ -84,13 +93,9 @@ export function ResetPasswordForm({ resetToken }: { resetToken: string }) {
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
         />
-        <Button 
-          fullWidth 
-          mt="xl" 
-          mb="md" 
-          size="lg" 
-          onClick={onResetPassword} 
-          >Submit</Button>
+        <Button fullWidth mt="xl" mb="md" size="lg" onClick={onResetPassword}>
+          Submit
+        </Button>
       </form>
     </Flex>
   );
