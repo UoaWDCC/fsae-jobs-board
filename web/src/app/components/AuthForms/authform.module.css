@@ -1,5 +1,13 @@
-.loginFormContainer {
+.signupFormContainer, .loginFormContainer, .forgotPasswordFormContainer, .resetPasswordFormContainer {
   height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.signupFormContainer {
+  width: 100vw;
 }
 
 .form {
@@ -10,15 +18,6 @@
 .formLabel {
   color: var(--mantine-color-customPapayaOrange-1);
   
-}
-
-.signupFormContainer {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
 }
 
 .horizontalInput {

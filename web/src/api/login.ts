@@ -30,11 +30,16 @@ export async function login(email: string, password: string) {
       email,
       password,
     });
-    const { userId, token } = res.data;
-    localStorage.setItem('accessToken', token);
-    console.log(`Successfully logged in as UserID ${userId}`);
+    console.log(res.data);
+    const { userId, token, verified } = res.data;
 
-    return { userType: userRole }; // Return userType
+    if (!verified) {
+      return { userType: 'unverified' };
+    } else {
+      localStorage.setItem('accessToken', token);
+      console.log(`Successfully logged in as UserID ${userId}`);
+      return { userType: userRole }; // Return userType
+    }
   } catch (e) {
     throw Error('Invalid credentials');
   }

@@ -198,6 +198,7 @@ export class LoginController {
     return {
       userId: fsaeUser.id as string,
       token: token,
+      verified: fsaeUser.verified,
     }
   }
 }

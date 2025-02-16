@@ -37,6 +37,12 @@ export abstract class FsaeUser extends Entity {
   activated: boolean;
 
   @property({
+    type: 'boolean',
+    required: true,
+  })
+  verified: boolean;
+
+  @property({
     type: 'string',
     required: true,
     jsonSchema: {
