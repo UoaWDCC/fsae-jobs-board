@@ -7,13 +7,7 @@
 
 ## 2025 Team Members
 
-- Carl Dela Pena
-- Chalith Dulhan Galbokke Hewage
-- Dhruv Sawant
-- Erica Ngin 
-- Grace Zhongxin Xu
-- Krish Patel
-- Kyle Rosser
+
 
 ## About
 
