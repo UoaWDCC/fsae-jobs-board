@@ -1,3 +1,5 @@
+import { apiInstance } from '@/api/ApiInstance';
+
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
@@ -23,19 +25,15 @@ export function JobDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const token = "your-hardcoded-jwt-token-here"; // 🔐 Replace later
+  const token = "your-hardcoded-jwt-token-here";
 
   useEffect(() => {
     const fetchJob = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`/job/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await apiInstance.get(`job/${id}`);
 
-        console.log("Fetched job:", response.data); // ✅ This is the key line
+        console.log("Fetched job:", response.data); 
 
         setJob(response.data);
         setError(null);

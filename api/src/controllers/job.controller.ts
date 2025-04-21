@@ -17,9 +17,9 @@ export class JobController {
   ) {}
 
 
-  // @authorize({
-  //   allowedRoles: [FsaeRole.ALUMNI, FsaeRole.SPONSOR],
-  // })
+  @authorize({
+    allowedRoles: [FsaeRole.ALUMNI, FsaeRole.SPONSOR],
+  })
   @post('/job')
   @response(200, {
     description: 'Creating a new job ad',
@@ -44,9 +44,9 @@ export class JobController {
   }
 
 
-  // @authorize({
-  //   allowedRoles: [FsaeRole.MEMBER],
-  // })
+  @authorize({
+    allowedRoles: [FsaeRole.MEMBER],
+  })
   @get('/job')
   @response(200, {
     description: 'Fetching a list of all job postings',
@@ -66,9 +66,9 @@ export class JobController {
   }
 
 
-  // @authorize({
-  //   allowedRoles: [FsaeRole.MEMBER],
-  // })
+  @authorize({
+    allowedRoles: [FsaeRole.MEMBER],
+  })
   @get('/job/{id}')
   @response(200, {
     description: 'Retrieving job details by ID',
@@ -90,9 +90,9 @@ export class JobController {
   }
 
 
-  // @authorize({
-  //   allowedRoles: [FsaeRole.ALUMNI, FsaeRole.SPONSOR],
-  // })
+  @authorize({
+    allowedRoles: [FsaeRole.ALUMNI, FsaeRole.SPONSOR],
+  })
   @patch('/job/{id}')
   @response(204, {
     description: 'Updating job details by ID',
@@ -117,9 +117,9 @@ export class JobController {
   }
 
 
-  // @authorize({
-  //   allowedRoles: [FsaeRole.ALUMNI, FsaeRole.SPONSOR],
-  // })
+  @authorize({
+    allowedRoles: [FsaeRole.ALUMNI, FsaeRole.SPONSOR],
+  })
   @del('/job/{id}')
   @response(204, {
     description: 'Deleting job postings by ID',
