@@ -3,7 +3,8 @@ import styles from './JobCard.module.css';
 import { useState } from 'react';
 import { UserType } from '@/app/features/user/userSlice';
 import { IconTrash } from '@tabler/icons-react';
-// dummy data -- change later when we have real data
+import { useNavigate } from 'react-router-dom'; // ✅ for navigation
+
 export interface JobCardProps {
   title: string;
   subtitle: string;
@@ -13,12 +14,8 @@ export interface JobCardProps {
 }
 
 export function JobCard({ data }: { data: JobCardProps }) {
-  // const userType = useSelector((state: RootState) => state.user.userType);
   const [userType, setUserType] = useState<UserType>('sponsor');
-
-  console.log(
-    'Change this JobCard component to use real userType from Redux store once user integration is implemented'
-  );
+  const navigate = useNavigate(); // ✅ hook for page redirection
 
   const handleDeleteJob = () => {
     console.log('Delete job with ID: ', data.jobID);
@@ -29,10 +26,10 @@ export function JobCard({ data }: { data: JobCardProps }) {
   };
 
   const handleViewJob = () => {
-    console.log('View job with ID: ', data.jobID);
+    //  fixed path to match new router.tsx setup
+    navigate(`/jobs/${data.jobID}`);
   };
 
-  // methods to get elements based on user type
   const getElementBasedOnUserType = (element: string) => {
     switch (userType) {
       case 'sponsor':
@@ -113,7 +110,6 @@ export function JobCard({ data }: { data: JobCardProps }) {
   return (
     <Paper p="md" radius="md">
       <Flex direction="column">
-        {/* Job Title */}
         <Stack gap="xs">
           <Flex justify={'space-between'}>
             <Text fw={500} size="xl" className={styles.text}>
@@ -122,12 +118,10 @@ export function JobCard({ data }: { data: JobCardProps }) {
             {getElementBasedOnUserType('deleteBtn')}
           </Flex>
 
-          {/* Job Subtite */}
           <Text fw={500} size="md" className={styles.text}>
             {data.subtitle}
           </Text>
 
-          {/* Job Description */}
           <Text fw={700} size="sm" className={styles.text} lineClamp={3}>
             {data.description}
           </Text>
@@ -137,7 +131,6 @@ export function JobCard({ data }: { data: JobCardProps }) {
           {getElementBasedOnUserType('jobBtn')}
         </Flex>
 
-        {/* Job ID */}
         <Flex justify="flex-end">
           <Text c={'#7C7C7C'} size="sm" className={styles.text}>
             #{data.jobID}

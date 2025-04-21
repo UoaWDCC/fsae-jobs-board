@@ -1,0 +1,75 @@
+:root {
+  --bg-dark: #000000;
+  --text-light: #ffffff;
+}
+
+.jobDetailPageWrapper {
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+  min-height: 100vh;
+  padding: 6rem 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.contentWrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 4rem;
+  max-width: 1200px;
+  width: 100%;
+}
+
+.leftColumn {
+  width: 30%;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.rightColumn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.buttonRow {
+  display: flex;
+  gap: 1rem;
+  margin: 0.5rem 0;
+}
+
+.skillList {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(120px, 1fr));
+  gap: 0.5rem;
+  padding-left: 1rem;
+}
+
+.skillList li {
+  list-style: disc;
+  color: var(--text-light);
+}
+
+.sectionTitle {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-top: 1rem;
+}
+
+.qualifications {
+  padding-left: 1rem;
+}
+
+.qualifications li {
+  margin-bottom: 0.5rem;
+  list-style: disc;
+}
