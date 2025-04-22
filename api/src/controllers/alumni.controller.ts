@@ -42,7 +42,7 @@ export class AlumniController {
     },
   })
   async findById(
-    @param.path.number('id') id: number,
+    @param.path.string('id') id: string,
     @param.filter(Alumni, {exclude: 'where'}) filter?: FilterExcludingWhere<Alumni>
   ): Promise<Alumni> {
     return this.alumniRepository.findById(id, filter);
@@ -56,7 +56,7 @@ export class AlumniController {
     description: 'Alumni PATCH success',
   })
   async updateById(
-    @param.path.number('id') id: number,
+    @param.path.string('id') id: string,
     @requestBody({
       content: {
         'application/json': {
@@ -76,7 +76,7 @@ export class AlumniController {
   @response(204, {
     description: 'Alumni DELETE success',
   })
-  async deleteById(@param.path.number('id') id: number): Promise<void> {
+  async deleteById(@param.path.string('id') id: string): Promise<void> {
     await this.alumniRepository.deleteById(id);
   }
 }

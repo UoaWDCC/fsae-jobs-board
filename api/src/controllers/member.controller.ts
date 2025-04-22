@@ -42,9 +42,10 @@ export class MemberController {
     },
   })
   async findById(
-    @param.path.number('id') id: number,
+    @param.path.string('id') id: string,
     @param.filter(Member, {exclude: 'where'}) filter?: FilterExcludingWhere<Member>
-  ): Promise<Member> {
+  ): Promise<Member | null> {
+
     return this.memberRepository.findById(id, filter);
   }
 
@@ -56,7 +57,7 @@ export class MemberController {
     description: 'Member PATCH success',
   })
   async updateById(
-    @param.path.number('id') id: number,
+    @param.path.string('id') id: string,
     @requestBody({
       content: {
         'application/json': {
@@ -76,7 +77,7 @@ export class MemberController {
   @response(204, {
     description: 'Member DELETE success',
   })
-  async deleteById(@param.path.number('id') id: number): Promise<void> {
+  async deleteById(@param.path.string('id') id: string): Promise<void> {
     await this.memberRepository.deleteById(id);
   }
 }

@@ -4,11 +4,11 @@ import {FsaeUser} from './index';
 @model({settings: {strict: false}})
 export class Alumni extends FsaeUser {
   @property({
-    type: 'number',
+    type: 'string',
     id: true,
     generated: true,
   })
-  alumniID?: number;
+  alumniID?: string;
 
   @property({
     type: 'string',

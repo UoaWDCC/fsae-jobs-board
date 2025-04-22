@@ -4,11 +4,11 @@ import {FsaeUser} from './fsae-user.model';
 @model({settings: {strict: false}})
 export class Member extends FsaeUser {
   @property({
-    type: 'number',
+    type: 'string',
     id: true,
     generated: true,
   })
-  memberID?: number;
+  memberID?: string;
 
   @property({
     type: 'string',
