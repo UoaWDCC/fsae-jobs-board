@@ -1,4 +1,4 @@
-import { Pagination, Container, Flex } from '@mantine/core';
+import { Pagination, Container, Flex, Loader, Text } from '@mantine/core';
 import styles from './JobBoard.module.css';
 import JobListingItem from './JobListingItem';
 import { FC, useEffect, useState } from 'react';
@@ -8,11 +8,26 @@ interface JobListingProps {
   filterRoles: string[];
   filterFields: string[];
 }
+
+interface JobAd {
+  id: string;
+  title: string;
+  description: string;
+  applicationLink: string;
+  applicationDeadline: string;
+  datePosted: string;
+  specialisation: string;
+  salary: string;
+  publisherID: string;
+}
+
 const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
   const [activePage, setPage] = useState(1);
-
   const [itemsPerPage, setItemsPerPage] = useState<number>(4);
   const [isPortrait, setIsPortrait] = useState(window.innerHeight > window.innerWidth);
+  const [jobListings, setJobListings] = useState<JobAd[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const updateItemsPerPage = () => {
     setIsPortrait(window.innerHeight > window.innerWidth);
@@ -24,86 +39,65 @@ const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
   };
 
   useEffect(() => {
-    updateItemsPerPage(); // Set initial value
+    updateItemsPerPage();
     window.addEventListener('resize', updateItemsPerPage);
-
-    // Cleanup listener on component unmount
-    return () => {
-      window.removeEventListener('resize', updateItemsPerPage);
-    };
+    return () => window.removeEventListener('resize', updateItemsPerPage);
   }, []);
 
+    // Cleanup listener on component unmount
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const res = await fetch('http://localhost:3000/job');
+        const data = await res.json();
+        setJobListings(data);
+      } catch (err) {
+        setError('Failed to fetch jobs');
+      } finally {
+        setLoading(false);
+      }
+    };
+
   // TODO: change this into actual data from backend, and apply filters & search
-  const jobListings = [
-    {
-      title: 'Junior Software Developer',
-      company: 'WDCC',
-      logo: 'WDCCLogo.png',
-      location: 'Auckland CBD, Auckland',
-      description:
-        'In this role, you will work to design, develop, and maintain software solutions using .NET, Typescript, and JavaScript.',
-    },
-    {
-      title: 'Junior Software Developer',
-      company: 'WDCC',
-      logo: 'WDCCLogo.png',
-      location: 'Auckland CBD, Auckland',
-      description:
-        'In this role, you will work to design, develop, and maintain software solutions using .NET, Typescript, and JavaScript.',
-    },
-    {
-      title: 'Junior Software Developer',
-      company: 'WDCC',
-      logo: 'WDCCLogo.png',
-      location: 'Auckland CBD, Auckland',
-      description:
-        'In this role, you will work to design, develop, and maintain software solutions using .NET, Typescript, and JavaScript.',
-    },
-    {
-      title: 'Junior Software Developer',
-      company: 'WDCC',
-      logo: 'WDCCLogo.png',
-      location: 'Auckland CBD, Auckland',
-      description:
-        'In this role, you will work to design, develop, and maintain software solutions using .NET, Typescript, and JavaScript.',
-    },
-    {
-      title: 'Junior Software Developer',
-      company: 'WDCC',
-      logo: 'WDCCLogo.png',
-      location: 'Auckland CBD, Auckland',
-      description:
-        'In this role, you will work to design, develop, and maintain software solutions using .NET, Typescript, and JavaScript.',
-    },
-  ];
+    fetchJobs();
+  }, []);
 
   // chunk all listings into four for per page display
   // TODO: filter the jobListings before chunking
   const chunkedJobListings = chunk(jobListings, itemsPerPage);
+  const currentPageItems = chunkedJobListings[activePage - 1] || [];
 
-  const jobListingItems = chunkedJobListings[activePage - 1].map((jobListingItem) => (
-    <JobListingItem
-      title={jobListingItem.title}
-      company={jobListingItem.company}
-      location={jobListingItem.location}
-      description={jobListingItem.description}
-      logo={jobListingItem.logo}
-    />
-  ));
   return (
     <Flex justify="flex-start" align="flex-start" direction="column" gap="md">
       <Container className={styles.listingInnerContainer} fluid>
-        {jobListingItems}
+        {loading && <Loader />}
+        {error && <Text color="red">{error}</Text>}
+        {!loading && !error && currentPageItems.length === 0 && (
+          <Text>No jobs available.</Text>
+        )}
+        {!loading && !error && currentPageItems.map((job) => (
+          <JobListingItem
+            key={job.id}
+            title={job.title}
+            description={job.description}
+            location={job.specialisation} // Using specialisation as fallback for location
+            company="FC Barcelona" // Static or derive from backend if added
+            logo="BarcaLogo.png" // Placeholder image
+          />
+        ))}
       </Container>
-      <Container className={styles.paginationContainer}>
-        <Pagination
-          total={Math.ceil(jobListings.length / itemsPerPage)}
-          value={activePage}
-          onChange={setPage}
-          size="lg"
-          mb="md"
-        />
-      </Container>
+
+      {!loading && jobListings.length > 0 && (
+        <Container className={styles.paginationContainer}>
+          <Pagination
+            total={chunkedJobListings.length}
+            value={activePage}
+            onChange={setPage}
+            size="lg"
+            mb="md"
+          />
+        </Container>
+      )}
     </Flex>
   );
 };

@@ -1,22 +1,17 @@
-import { apiInstance } from '@/api/ApiInstance';
-
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import axios from "axios";
-import { JobDetail } from "@/app/components/JobDetail/JobDetail";
-import { Loader, Center, Text, Button } from "@mantine/core";
+import { useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Container, Title, Text, Paper, Loader, Flex } from '@mantine/core';
 
 interface JobAd {
   id: string;
   title: string;
   description: string;
-  salary: string;
-  startDate: string;
+  applicationLink: string;
   applicationDeadline: string;
-  duration: string;
-  location: string;
-  skills?: string[];
-  qualifications?: string[];
+  datePosted: string;
+  specialisation: string;
+  salary: string;
+  publisherID: string;
 }
 
 export function JobDetailsPage() {
@@ -25,20 +20,15 @@ export function JobDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const token = "your-hardcoded-jwt-token-here";
-
   useEffect(() => {
     const fetchJob = async () => {
       try {
-        setLoading(true);
-        const response = await apiInstance.get(`job/${id}`);
-
-        console.log("Fetched job:", response.data); 
-
-        setJob(response.data);
-        setError(null);
-      } catch (err: any) {
-        setError(err.response?.data?.message || "Failed to load job details");
+        const response = await fetch(`http://localhost:3000/job/${id}`);
+        if (!response.ok) throw new Error('Job not found');
+        const data = await response.json();
+        setJob(data);
+      } catch (err) {
+        setError('Failed to load job details.');
       } finally {
         setLoading(false);
       }
@@ -47,30 +37,27 @@ export function JobDetailsPage() {
     if (id) fetchJob();
   }, [id]);
 
-  if (loading) {
-    return (
-      <Center mt="xl">
-        <Loader />
-      </Center>
-    );
-  }
-
-  if (error) {
-    return (
-      <Center mt="xl" style={{ flexDirection: "column" }}>
-        <Text color="red" mb="sm">
-          {error}
-        </Text>
-        <Button onClick={() => window.location.reload()}>Retry</Button>
-      </Center>
-    );
-  }
-
-  if (!job) return null;
+  if (loading) return <Loader />;
+  if (error) return <Text color="red">{error}</Text>;
+  if (!job) return <Text>No job found.</Text>;
 
   return (
-    <div className="jobDetailPageWrapper">
-      <JobDetail job={job} />
-    </div>
+    <Container size="md">
+      <Paper p="md" shadow="sm" radius="md">
+        <Title order={2} mb="sm">{job.title}</Title>
+        <Text size="md" mb="xs">Specialisation: {job.specialisation}</Text>
+        <Text size="md" mb="xs">Salary: {job.salary}</Text>
+        <Text size="md" mb="xs">Deadline: {new Date(job.applicationDeadline).toLocaleDateString()}</Text>
+        <Text size="md" mb="sm">Posted: {new Date(job.datePosted).toLocaleDateString()}</Text>
+        <Text size="sm" color="dimmed" mb="md">Publisher ID: {job.publisherID}</Text>
+        <Text>{job.description}</Text>
+
+        <Flex justify="flex-end" mt="lg">
+          <a href={job.applicationLink} target="_blank" rel="noopener noreferrer">
+            <Text color="blue" fw={500}>Apply Now →</Text>
+          </a>
+        </Flex>
+      </Paper>
+    </Container>
   );
 }

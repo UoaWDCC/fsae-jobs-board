@@ -9,17 +9,17 @@ import {authorize} from '@loopback/authorization';
 import {HttpErrors} from '@loopback/rest';
 import {FsaeRole} from '../models';
 
-@authenticate('fsae-jwt')
+// @authenticate('fsae-jwt')
 export class JobController {
   constructor(
     @repository(JobAdRepository) public jobAdRepository : JobAdRepository,
-    @inject(AuthenticationBindings.CURRENT_USER) private currentUserProfile: UserProfile,
+    // @inject(AuthenticationBindings.CURRENT_USER) private currentUserProfile: UserProfile,
   ) {}
 
 
-  @authorize({
-    allowedRoles: [FsaeRole.ALUMNI, FsaeRole.SPONSOR],
-  })
+  // @authorize({
+  //   allowedRoles: [FsaeRole.ALUMNI, FsaeRole.SPONSOR],
+  // })
   @post('/job')
   @response(200, {
     description: 'Creating a new job ad',
@@ -39,14 +39,14 @@ export class JobController {
     jobAdData: Omit<JobAd, 'id' | 'publisherID'>,
   ): Promise<JobAd> {
     const jobAd = new JobAd(jobAdData);
-    jobAd.publisherID = this.currentUserProfile.id.toString();
+    // jobAd.publisherID = this.currentUserProfile.id.toString();
     return this.jobAdRepository.create(jobAd);
   }
 
 
-  @authorize({
-    allowedRoles: [FsaeRole.MEMBER],
-  })
+  // @authorize({
+  //   allowedRoles: [FsaeRole.MEMBER],
+  // })
   @get('/job')
   @response(200, {
     description: 'Fetching a list of all job postings',
@@ -66,9 +66,9 @@ export class JobController {
   }
 
 
-  @authorize({
-    allowedRoles: [FsaeRole.MEMBER],
-  })
+  // @authorize({
+  //   allowedRoles: [FsaeRole.MEMBER],
+  // })
   @get('/job/{id}')
   @response(200, {
     description: 'Retrieving job details by ID',
@@ -90,9 +90,9 @@ export class JobController {
   }
 
 
-  @authorize({
-    allowedRoles: [FsaeRole.ALUMNI, FsaeRole.SPONSOR],
-  })
+  // @authorize({
+  //   allowedRoles: [FsaeRole.ALUMNI, FsaeRole.SPONSOR],
+  // })
   @patch('/job/{id}')
   @response(204, {
     description: 'Updating job details by ID',
@@ -110,16 +110,16 @@ export class JobController {
   ): Promise<void> {
     // Check if the user is the publisher of the job ad
     const existingjobAd = await this.jobAdRepository.findById(id);
-    if (existingjobAd.publisherID !== this.currentUserProfile.id.toString()) {
-      throw new HttpErrors.Unauthorized('You are not authorized to update this job posting');
-    }
+    // if (existingjobAd.publisherID !== this.currentUserProfile.id.toString()) {
+    //   throw new HttpErrors.Unauthorized('You are not authorized to update this job posting');
+    // }
     await this.jobAdRepository.updateById(id, jobAd);
   }
 
 
-  @authorize({
-    allowedRoles: [FsaeRole.ALUMNI, FsaeRole.SPONSOR],
-  })
+  // @authorize({
+  //   allowedRoles: [FsaeRole.ALUMNI, FsaeRole.SPONSOR],
+  // })
   @del('/job/{id}')
   @response(204, {
     description: 'Deleting job postings by ID',
@@ -127,9 +127,9 @@ export class JobController {
   async deleteById(@param.path.string('id') id: string): Promise<void> {
     // Check if the user is the publisher of the job ad
     const existingJobAd = await this.jobAdRepository.findById(id);
-    if (existingJobAd.publisherID.toString() !== this.currentUserProfile.id.toString()) {
-      throw new HttpErrors.Unauthorized('You are not authorized to delete this job posting');
-    }
+    // if (existingJobAd.publisherID.toString() !== this.currentUserProfile.id.toString()) {
+    //   throw new HttpErrors.Unauthorized('You are not authorized to delete this job posting');
+    // }
     await this.jobAdRepository.deleteById(id);
   }
 }
