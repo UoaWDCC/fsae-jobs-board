@@ -9,12 +9,11 @@ import {authorize} from '@loopback/authorization';
 import {HttpErrors} from '@loopback/rest';
 import {FsaeRole} from '../models';
 
-// TEMPORARY: Remove protection for testing job ads
-// @authenticate('fsae-jwt')
+@authenticate('fsae-jwt')
 export class JobController {
   constructor(
     @repository(JobAdRepository) public jobAdRepository : JobAdRepository,
-    // @inject(AuthenticationBindings.CURRENT_USER) private currentUserProfile: UserProfile,
+    @inject(AuthenticationBindings.CURRENT_USER) private currentUserProfile: UserProfile,
   ) {}
 
   // TEMPORARY: Remove protection for testing job ads
@@ -40,8 +39,7 @@ export class JobController {
     jobAdData: Omit<JobAd, 'id' | 'publisherID'>,
   ): Promise<JobAd> {
     const jobAd = new JobAd(jobAdData);
-    // TEMPORARY: Remove protection for testing job ads
-    // jobAd.publisherID = this.currentUserProfile.id.toString();
+    jobAd.publisherID = this.currentUserProfile.id.toString();
     return this.jobAdRepository.create(jobAd);
   }
 
