@@ -44,7 +44,6 @@ const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
     return () => window.removeEventListener('resize', updateItemsPerPage);
   }, []);
 
-    // Cleanup listener on component unmount
   useEffect(() => {
     const fetchJobs = async () => {
       try {
@@ -58,12 +57,9 @@ const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
       }
     };
 
-  // TODO: change this into actual data from backend, and apply filters & search
     fetchJobs();
   }, []);
 
-  // chunk all listings into four for per page display
-  // TODO: filter the jobListings before chunking
   const chunkedJobListings = chunk(jobListings, itemsPerPage);
   const currentPageItems = chunkedJobListings[activePage - 1] || [];
 
@@ -78,11 +74,12 @@ const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
         {!loading && !error && currentPageItems.map((job) => (
           <JobListingItem
             key={job.id}
+            id={job.id}
             title={job.title}
             description={job.description}
-            location={job.specialisation} // Using specialisation as fallback for location
-            company="FC Barcelona" // Static or derive from backend if added
-            logo="BarcaLogo.png" // Placeholder image
+            location={job.specialisation}
+            company={""}
+            logo={""} 
           />
         ))}
       </Container>
