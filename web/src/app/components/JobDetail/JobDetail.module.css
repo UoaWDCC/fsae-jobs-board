@@ -1,75 +1,105 @@
+/* Base Colors from Style Guide */
 :root {
-  --bg-dark: #000000;
-  --text-light: #ffffff;
+  --papaya-orange: #F78F1F;
+  --charcoal-grey: #373737;
+  --mercury-silver: #A5A5A5;
+  --azure-blue: #0091FF;
+  --uoa-dark-blue: #00467F;
+  --electric-orange: #FF8400;
+  --black: #000000;
+  --white: #FFFFFF;
 }
 
-.jobDetailPageWrapper {
-  background-color: var(--bg-dark);
-  color: var(--text-light);
-  min-height: 100vh;
-  padding: 6rem 2rem;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
+/* Font Families */
+body {
+  font-family: 'Cerebri', Helvetica, Arial, sans-serif;
+  background-color: var(--white);
+  color: var(--charcoal-grey);
+  margin: 0;
+  padding: 0;
 }
 
-.contentWrapper {
-  display: flex;
-  flex-direction: row;
-  gap: 4rem;
-  max-width: 1200px;
-  width: 100%;
+h1, .title {
+  font-family: 'Cerebri Bold', sans-serif;
+  font-size: 2.5rem;
+  color: var(--papaya-orange);
+  margin-bottom: 1rem;
 }
 
-.leftColumn {
-  width: 30%;
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+h2, .subtitle {
+  font-family: 'Cerebri Bold Italic', sans-serif;
+  font-size: 2rem;
+  color: var(--uoa-dark-blue);
+  margin-bottom: 0.75rem;
 }
 
-.rightColumn {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.titleRow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.buttonRow {
-  display: flex;
-  gap: 1rem;
-  margin: 0.5rem 0;
-}
-
-.skillList {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(120px, 1fr));
-  gap: 0.5rem;
-  padding-left: 1rem;
-}
-
-.skillList li {
-  list-style: disc;
-  color: var(--text-light);
-}
-
-.sectionTitle {
-  font-weight: 600;
-  font-size: 1.1rem;
-  margin-top: 1rem;
-}
-
-.qualifications {
-  padding-left: 1rem;
-}
-
-.qualifications li {
+h3, .heading {
+  font-family: 'Cerebri Bold', sans-serif;
+  font-size: 1.75rem;
+  color: var(--azure-blue);
   margin-bottom: 0.5rem;
-  list-style: disc;
 }
+
+h4, .subheading {
+  font-family: 'Cerebri Light Italic', sans-serif;
+  font-size: 1.5rem;
+  color: var(--mercury-silver);
+  margin-bottom: 0.5rem;
+}
+
+p, .body-text {
+  font-family: 'Cerebri', sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  color: var(--charcoal-grey);
+}
+
+.small-text {
+  font-family: 'Cerebri Light', sans-serif;
+  font-size: 0.85rem;
+  color: var(--mercury-silver);
+}
+
+/* Buttons */
+.button {
+  font-family: 'Cerebri Bold', sans-serif;
+  background-color: var(--electric-orange);
+  color: var(--white);
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.button:hover {
+  background-color: var(--papaya-orange);
+}
+
+/* Layout Helpers */
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 0;
+}
+
+.section {
+  padding: 4rem 0;
+  border-bottom: 1px solid var(--mercury-silver);
+}
+
+/* Header Example */
+header {
+  background-color: var(--uoa-dark-blue);
+  color: var(--white);
+  padding: 1rem 0;
+  text-align: center;
+}
+
+header h1 {
+  margin: 0;
+  color: var(--white);
+}
+

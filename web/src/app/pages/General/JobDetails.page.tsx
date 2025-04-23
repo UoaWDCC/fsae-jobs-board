@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { Container, Title, Text, Paper, Loader, Flex } from '@mantine/core';
+import { Center, Container, Title, Text, Paper, Loader, Flex } from '@mantine/core';
 import { Job } from '@/models/job.model';
 import { fetchJobById } from '@/api/job';
 import { JobDetail } from '@/app/components/JobDetail/JobDetail';
@@ -31,11 +31,10 @@ export function JobDetailsPage() {
   if (!job) return <Text>No job found.</Text>;
 
   return (
+    <Center style={{ minHeight: '100vh' }}>
     <Container size="lg" py="md">
-      <Title order={2} mb="md">
-        Job Details
-      </Title>
-        <JobDetail job={job} />
+      <JobDetail job={job} />
     </Container>
+  </Center>
   );
 }
