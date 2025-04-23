@@ -1,21 +1,11 @@
 import { Text, Button, Badge } from '@mantine/core';
 import styles from './JobDetail.module.css';
+import { Job } from '@/models/job.model';
 
-interface JobDetailProps {
-  job: {
-    title: string;
-    description: string;
-    salary: string;
-    startDate: string;
-    applicationDeadline: string;
-    duration: string;
-    location: string;
-    skills?: string[];
-    qualifications?: string[];
-  };
-}
+// TODO :
+// Needs rework to use Mantine components and look a better, also need to match the FSAE design system
 
-export function JobDetail({ job }: JobDetailProps) {
+export function JobDetail({ job }: { job: Job }) {
   return (
     <main className={styles.jobDetailPageWrapper}>
       <div className={styles.contentWrapper}>
@@ -23,18 +13,19 @@ export function JobDetail({ job }: JobDetailProps) {
         <div className={styles.leftColumn}>
           <div>
             <Text size="sm"><strong>Salary:</strong> {job.salary}</Text>
-            <Text size="sm"><strong>Start Date:</strong> {job.startDate}</Text>
-            <Text size="sm"><strong>Duration:</strong> {job.duration}</Text>
-            <Text size="sm"><strong>Application Deadline:</strong> {job.applicationDeadline}</Text>
+            <Text size="sm"><strong>Dead line:</strong> {job.applicationDeadline}</Text>
           </div>
 
           <div>
-            <Text className={styles.sectionTitle}>Relevant Skills for this Job</Text>
+            <Text className={styles.sectionTitle}><strong>Specialisation and Skills:</strong> {job.specialisation}</Text>
+            {
+            /*
+            Skills are currently not being used in the Job model, but can be added later.
             <ul className={styles.skillList}>
               {job.skills?.map((skill) => (
                 <li key={skill}>{skill}</li>
               ))}
-            </ul>
+            </ul> */}
           </div>
         </div>
 
@@ -45,24 +36,32 @@ export function JobDetail({ job }: JobDetailProps) {
             <Badge color="blue">WDCC</Badge>
           </div>
 
-          <Text size="sm" color="dimmed">{job.location} 📍</Text>
-
           <div className={styles.buttonRow}>
-            <Button>Apply ↗</Button>
+            <Button
+              component="a"
+              href={job.applicationLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="filled">
+              Apply ↗
+            </Button>
             <Button variant="outline">Save</Button>
           </div>
 
           <Text className={styles.sectionTitle}>About</Text>
           <Text size="sm">
             {job.description}
+            <br />
+            Posted on: {job.datePosted}
           </Text>
-
+          {/* 
+          Qualifications are currently not being used in the Job model, but can be added later.
           <Text className={styles.sectionTitle}>Qualifications:</Text>
           <ul className={styles.qualifications}>
             {job.qualifications?.map((q, index) => (
               <li key={index}>{q}</li>
             ))}
-          </ul>
+          </ul> */}
 
           <Text size="sm" mt="md">
             If you are passionate about software development and eager to kick-start your career in a dynamic and innovative environment, we encourage you to apply for this exciting opportunity. Join us and be part of a team that's shaping the future of technology. Apply now!
