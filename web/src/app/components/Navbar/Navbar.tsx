@@ -108,7 +108,7 @@ function Navbar() {
         align="center"
       >
         <NavLink to="/">
-          <Image radius="md" h={20} src="fsae_white_and_orange_logo.png" alt="FSAE Logo" />
+          <Image radius="md" h={20} src="/fsae_white_and_orange_logo.png" alt="FSAE Logo" />
         </NavLink>
 
         <Flex justify="center" align="center" style={{ flex: 1 }}>
