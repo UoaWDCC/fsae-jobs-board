@@ -3,29 +3,18 @@ import styles from './JobBoard.module.css';
 import JobListingItem from './JobListingItem';
 import { FC, useEffect, useState } from 'react';
 import { chunk } from 'lodash';
-
+import { fetchJobs } from '@/api/job';
+import { Job } from '@/models/job.model';
 interface JobListingProps {
   filterRoles: string[];
   filterFields: string[];
-}
-
-interface JobAd {
-  id: string;
-  title: string;
-  description: string;
-  applicationLink: string;
-  applicationDeadline: string;
-  datePosted: string;
-  specialisation: string;
-  salary: string;
-  publisherID: string;
 }
 
 const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
   const [activePage, setPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState<number>(4);
   const [isPortrait, setIsPortrait] = useState(window.innerHeight > window.innerWidth);
-  const [jobListings, setJobListings] = useState<JobAd[]>([]);
+  const [jobListings, setJobListings] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -39,16 +28,18 @@ const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
   };
 
   useEffect(() => {
+    // Set initial items per page based on window size
     updateItemsPerPage();
+    // Add event listener to update items per page on resize
     window.addEventListener('resize', updateItemsPerPage);
+    // Cleanup listener on component unmount
     return () => window.removeEventListener('resize', updateItemsPerPage);
   }, []);
 
   useEffect(() => {
-    const fetchJobs = async () => {
+    const fetchData = async () => {
       try {
-        const res = await fetch('http://localhost:3000/job');
-        const data = await res.json();
+        const data = await fetchJobs();
         setJobListings(data);
       } catch (err) {
         setError('Failed to fetch jobs');
@@ -56,11 +47,13 @@ const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
         setLoading(false);
       }
     };
-
-    fetchJobs();
+  
+    fetchData();
   }, []);
+  
 
-  const chunkedJobListings = chunk(jobListings, itemsPerPage);
+  // TODO: filter the jobListings before chunking
+  const chunkedJobListings = chunk(jobListings, itemsPerPage); // chunk all listings into four for per page display
   const currentPageItems = chunkedJobListings[activePage - 1] || [];
 
   return (
