@@ -9,6 +9,7 @@ import {authorize} from '@loopback/authorization';
 import {HttpErrors} from '@loopback/rest';
 import {FsaeRole} from '../models';
 
+// TEMPORARY: Remove protection for testing job ads
 // @authenticate('fsae-jwt')
 export class JobController {
   constructor(
@@ -16,7 +17,7 @@ export class JobController {
     // @inject(AuthenticationBindings.CURRENT_USER) private currentUserProfile: UserProfile,
   ) {}
 
-
+  // TEMPORARY: Remove protection for testing job ads
   // @authorize({
   //   allowedRoles: [FsaeRole.ALUMNI, FsaeRole.SPONSOR],
   // })
@@ -39,11 +40,12 @@ export class JobController {
     jobAdData: Omit<JobAd, 'id' | 'publisherID'>,
   ): Promise<JobAd> {
     const jobAd = new JobAd(jobAdData);
+    // TEMPORARY: Remove protection for testing job ads
     // jobAd.publisherID = this.currentUserProfile.id.toString();
     return this.jobAdRepository.create(jobAd);
   }
 
-
+  // TEMPORARY: Remove protection for testing job ads
   // @authorize({
   //   allowedRoles: [FsaeRole.MEMBER],
   // })
@@ -65,7 +67,7 @@ export class JobController {
     return this.jobAdRepository.find(filter);
   }
 
-
+  // TEMPORARY: Remove protection for testing job ads
   // @authorize({
   //   allowedRoles: [FsaeRole.MEMBER],
   // })
@@ -89,7 +91,7 @@ export class JobController {
     return jobAd;
   }
 
-
+  // TEMPORARY: Remove protection for testing job ads
   // @authorize({
   //   allowedRoles: [FsaeRole.ALUMNI, FsaeRole.SPONSOR],
   // })
@@ -108,15 +110,15 @@ export class JobController {
     })
     jobAd: JobAd,
   ): Promise<void> {
-    // Check if the user is the publisher of the job ad
     const existingjobAd = await this.jobAdRepository.findById(id);
+    // TEMPORARY: Remove protection for testing job ads
     // if (existingjobAd.publisherID !== this.currentUserProfile.id.toString()) {
     //   throw new HttpErrors.Unauthorized('You are not authorized to update this job posting');
     // }
     await this.jobAdRepository.updateById(id, jobAd);
   }
 
-
+  // TEMPORARY: Remove protection for testing job ads
   // @authorize({
   //   allowedRoles: [FsaeRole.ALUMNI, FsaeRole.SPONSOR],
   // })
@@ -125,8 +127,8 @@ export class JobController {
     description: 'Deleting job postings by ID',
   })
   async deleteById(@param.path.string('id') id: string): Promise<void> {
-    // Check if the user is the publisher of the job ad
     const existingJobAd = await this.jobAdRepository.findById(id);
+    // TEMPORARY: Remove protection for testing job ads
     // if (existingJobAd.publisherID.toString() !== this.currentUserProfile.id.toString()) {
     //   throw new HttpErrors.Unauthorized('You are not authorized to delete this job posting');
     // }
