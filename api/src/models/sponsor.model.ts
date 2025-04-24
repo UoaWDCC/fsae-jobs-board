@@ -4,11 +4,11 @@ import {FsaeUser} from './fsae-user.model';
 @model({settings: {strict: false}})
 export class Sponsor extends FsaeUser {
   @property({
-    type: 'number',
+    type: 'string',
     id: true,
     generated: true,
   })
-  sponsorID?: number;
+  sponsorID?: string;
 
   @property({
     type: 'string',
