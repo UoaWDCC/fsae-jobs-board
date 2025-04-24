@@ -16,7 +16,7 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { UserType, resetUser } from '@/app/features/user/userSlice';
-import { IconUserCircle, IconBell, IconLogout, IconSettings } from '@tabler/icons-react';
+import { IconUserCircle, IconBell, IconLogout, IconSettings, IconBriefcase2 } from '@tabler/icons-react';
 import styles from './Navbar.module.css';
 import SettingModal from '../Modal/EditModal';
 import { EditSetting } from '../Modal/EditSetting';
@@ -73,6 +73,22 @@ function Navbar() {
       navigate('/login');
     }
   };
+
+  const handleJobClick = () => {
+    if (userType) {
+      const jobPath = {
+        student: '/jobs',
+        sponsor: '/jobs',
+        alumni: '/jobs',
+        admin: '/jobs',
+      }[userType as UserType];
+      navigate(jobPath);
+    } else {
+      // Handle the case where userType is null
+      navigate('/login');
+    }
+  };
+
   const [opened, { toggle, open, close }] = useDisclosure();
   // Initialize based on current width
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768); 
@@ -145,6 +161,10 @@ function Navbar() {
           <Flex gap="md" align="center">
             {userType ? ( // Render icons if logged in
               <Group gap={20}>
+                <ActionIcon size={35} variant="subtle" color="white" onClick={handleJobClick}>
+                  <IconBriefcase2 size={35} values='Jobs'/>
+                </ActionIcon>
+                
                 <ActionIcon size={35} variant="subtle" color="white" onClick={handleProfileClick}>
                   <IconUserCircle size={35} />
                 </ActionIcon>
