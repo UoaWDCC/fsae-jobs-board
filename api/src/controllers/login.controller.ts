@@ -16,6 +16,7 @@ import {authenticate} from '@loopback/authentication';
 import {
   loginParams,
   loginResponse,
+  whoAmIResponse,
 } from './controller-types/login.controller.types';
 import {inject, service} from '@loopback/core';
 import {repository} from '@loopback/repository';
@@ -183,7 +184,6 @@ export class LoginController {
     return this.fsaeUserService.getUserRole(userEmail);
   }
 
-  //make a custom return type for the response??
   @get('/user/whoami')
   @authenticate('fsae-jwt')
   @authorize({
@@ -213,7 +213,7 @@ export class LoginController {
   })
   async whoAmI(
     @inject(SecurityBindings.USER) currentUser: UserProfile,
-  ): Promise<object> {
+  ): Promise<whoAmIResponse> {
     const userId = currentUser.id;
     const role = currentUser.fsaeRole;
 
@@ -232,12 +232,13 @@ export class LoginController {
         user = await this.memberRepository.findById(userId);
         break;
       default:
-        throw new HttpErrors.Unauthorized('Unrecognized role');
+        throw new HttpErrors.InternalServerError('Unrecognized role');
     }
 
     return {
       id: user.id,
-      name: user.firstName + ' ' + user.lastName,
+      firstName: user.firstName,
+      lastName: user.lastName,
       email: user.email,
       role: role,
     };
