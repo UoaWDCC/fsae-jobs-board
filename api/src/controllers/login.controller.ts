@@ -2,18 +2,34 @@
 
 // import {inject} from '@loopback/core';
 
-
-import {get, HttpErrors, param, post, Request, requestBody, RestBindings} from '@loopback/rest';
+import {
+  get,
+  HttpErrors,
+  param,
+  post,
+  Request,
+  requestBody,
+  response,
+  RestBindings,
+} from '@loopback/rest';
 import {authenticate} from '@loopback/authentication';
-import {loginParams, loginResponse} from './controller-types/login.controller.types';
+import {
+  loginParams,
+  loginResponse,
+} from './controller-types/login.controller.types';
 import {inject, service} from '@loopback/core';
 import {repository} from '@loopback/repository';
-import {AdminRepository, AlumniRepository, MemberRepository, SponsorRepository} from '../repositories';
+import {
+  AdminRepository,
+  AlumniRepository,
+  MemberRepository,
+  SponsorRepository,
+} from '../repositories';
 import {FsaeRole, FsaeUser} from '../models';
 import {FsaeUserService, JwtService, PasswordHasherService} from '../services';
-import {UserProfile} from '@loopback/security';
+import {SecurityBindings, UserProfile} from '@loopback/security';
 import {authorize} from '@loopback/authorization';
-import { BindingKeys } from '../constants/binding-keys';
+import {BindingKeys} from '../constants/binding-keys';
 
 export class LoginController {
   constructor(
@@ -24,36 +40,39 @@ export class LoginController {
     @service(FsaeUserService) private fsaeUserService: FsaeUserService,
     @inject(RestBindings.Http.REQUEST) private req: Request,
     @inject(BindingKeys.JWT_SERVICE) private jwtService: JwtService,
-    @inject(BindingKeys.PASSWORD_HASHER) private passwordHasher: PasswordHasherService
+    @inject(BindingKeys.PASSWORD_HASHER)
+    private passwordHasher: PasswordHasherService,
   ) {}
 
   @post('/login-admin')
   async loginAdmin(
     @requestBody({
-    description: 'The input of login function',
-    required: true,
-    content: {
-      'application/json': {
-        schema: {
-          type: 'object',
-          properties: {
-            email: {
-              type: 'string',
+      description: 'The input of login function',
+      required: true,
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              email: {
+                type: 'string',
+              },
+              password: {
+                type: 'string',
+              },
             },
-            password: {
-              type: 'string',
-            }
           },
         },
       },
-    }
-  })credentials: loginParams): Promise<loginResponse> {
+    })
+    credentials: loginParams,
+  ): Promise<loginResponse> {
     // Find user Profile
-    let userSearchResults = await this.adminRepository.find({
+    let userSearchResults = (await this.adminRepository.find({
       where: {
         email: credentials.email,
       },
-    }) as FsaeUser[];
+    })) as FsaeUser[];
 
     return this.getUserToken(credentials, userSearchResults);
   }
@@ -73,18 +92,20 @@ export class LoginController {
               },
               password: {
                 type: 'string',
-              }
+              },
             },
           },
         },
-      }
-    })credentials: loginParams): Promise<loginResponse> {
+      },
+    })
+    credentials: loginParams,
+  ): Promise<loginResponse> {
     // Find user Profile
-    let userSearchResults = await this.sponsorRepository.find({
+    let userSearchResults = (await this.sponsorRepository.find({
       where: {
         email: credentials.email,
       },
-    }) as FsaeUser[];
+    })) as FsaeUser[];
 
     return this.getUserToken(credentials, userSearchResults);
   }
@@ -104,18 +125,20 @@ export class LoginController {
               },
               password: {
                 type: 'string',
-              }
+              },
             },
           },
         },
-      }
-    })credentials: loginParams): Promise<loginResponse> {
+      },
+    })
+    credentials: loginParams,
+  ): Promise<loginResponse> {
     // Find user Profile
-    let userSearchResults = await this.memberRepository.find({
+    let userSearchResults = (await this.memberRepository.find({
       where: {
         email: credentials.email,
       },
-    }) as FsaeUser[];
+    })) as FsaeUser[];
 
     return this.getUserToken(credentials, userSearchResults);
   }
@@ -135,49 +158,95 @@ export class LoginController {
               },
               password: {
                 type: 'string',
-              }
+              },
             },
           },
         },
-      }
-    })credentials: loginParams): Promise<loginResponse> {
+      },
+    })
+    credentials: loginParams,
+  ): Promise<loginResponse> {
     // Find user Profile
-    let userSearchResults = await this.alumniRepository.find({
+    let userSearchResults = (await this.alumniRepository.find({
       where: {
         email: credentials.email,
       },
-    }) as FsaeUser[];
+    })) as FsaeUser[];
 
     return this.getUserToken(credentials, userSearchResults);
   }
 
   @get('/user/{userEmail}/role')
   async getUserRole(
-    @param.path.string('userEmail') userEmail: string
-  ) : Promise<string | null> {
+    @param.path.string('userEmail') userEmail: string,
+  ): Promise<string | null> {
     return this.fsaeUserService.getUserRole(userEmail);
   }
 
+  //make a custom return type for the response??
   @get('/user/whoami')
-  // @response(200, PING_RESPONSE)
   @authenticate('fsae-jwt')
   @authorize({
-    allowedRoles: [FsaeRole.ADMIN, FsaeRole.SPONSOR, FsaeRole.ALUMNI, FsaeRole.ALUMNI],
+    allowedRoles: [
+      FsaeRole.ADMIN,
+      FsaeRole.SPONSOR,
+      FsaeRole.ALUMNI,
+      FsaeRole.MEMBER,
+    ],
     scopes: ['allow-non-activated'],
   })
-  whoAmI(): object {
-    throw Error("todo")
-    // Todo: Requires usage of UserRepo which is on another ticket.
-    // // Reply with a greeting, the current time, the url, and request headers
-    // return {
-    //   greeting: 'This endpoint allows non activated accounts. ',
-    //   date: new Date(),
-    //   url: this.req.url,
-    //   headers: Object.assign({}, this.req.headers),
-    // };
+  @response(200, {
+    description: 'Authenticated user details',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'object',
+          properties: {
+            id: {type: 'string'},
+            name: {type: 'string'},
+            email: {type: 'string'},
+            role: {type: 'string'},
+          },
+        },
+      },
+    },
+  })
+  async whoAmI(
+    @inject(SecurityBindings.USER) currentUser: UserProfile,
+  ): Promise<object> {
+    const userId = currentUser.id;
+    const role = currentUser.fsaeRole;
+
+    let user;
+    switch (role) {
+      case FsaeRole.ADMIN:
+        user = await this.adminRepository.findById(userId);
+        break;
+      case FsaeRole.SPONSOR:
+        user = await this.sponsorRepository.findById(userId);
+        break;
+      case FsaeRole.ALUMNI:
+        user = await this.alumniRepository.findById(userId);
+        break;
+      case FsaeRole.MEMBER:
+        user = await this.memberRepository.findById(userId);
+        break;
+      default:
+        throw new HttpErrors.Unauthorized('Unrecognized role');
+    }
+
+    return {
+      id: user.id,
+      name: user.firstName + ' ' + user.lastName,
+      email: user.email,
+      role: role,
+    };
   }
 
-  async getUserToken(credentials: loginParams, userSearchResults: FsaeUser[]) : Promise<loginResponse> {
+  async getUserToken(
+    credentials: loginParams,
+    userSearchResults: FsaeUser[],
+  ): Promise<loginResponse> {
     // If no user found, invalid credientials
     if (userSearchResults.length === 0) {
       throw new HttpErrors.Unauthorized('Invalid login credentials');
@@ -188,17 +257,20 @@ export class LoginController {
     let fsaeUser = userSearchResults[0];
 
     // Verify Credentials
-    let passwordsMatched = await this.passwordHasher.comparePassword(credentials.password, fsaeUser.password);
+    let passwordsMatched = await this.passwordHasher.comparePassword(
+      credentials.password,
+      fsaeUser.password,
+    );
     if (!passwordsMatched) {
       throw new HttpErrors.Unauthorized('Invalid login credentials');
     }
 
     // Return Jwt Token
-    let token = await this.jwtService.generateToken(fsaeUser)
+    let token = await this.jwtService.generateToken(fsaeUser);
     return {
       userId: fsaeUser.id as string,
       token: token,
       verified: fsaeUser.verified,
-    }
+    };
   }
 }
