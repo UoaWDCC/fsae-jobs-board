@@ -16,7 +16,7 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { UserType, resetUser } from '@/app/features/user/userSlice';
-import { IconUserCircle, IconBell, IconLogout, IconSettings } from '@tabler/icons-react';
+import { IconUserCircle, IconBell, IconLogout, IconSettings, IconBriefcase2 } from '@tabler/icons-react';
 import styles from './Navbar.module.css';
 import SettingModal from '../Modal/EditModal';
 import { EditSetting } from '../Modal/EditSetting';
@@ -73,9 +73,25 @@ function Navbar() {
       navigate('/login');
     }
   };
+
+  const handleJobClick = () => {
+    if (userType) {
+      const jobPath = {
+        student: '/jobs',
+        sponsor: '/jobs',
+        alumni: '/jobs',
+        admin: '/jobs',
+      }[userType as UserType];
+      navigate(jobPath);
+    } else {
+      // Handle the case where userType is null
+      navigate('/login');
+    }
+  };
+
   const [opened, { toggle, open, close }] = useDisclosure();
-  // Use a media query to determine small screen size for the collapsible menu
-  const [isMobile, setIsMobile] = useState(false);
+  // Initialize based on current width
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768); 
 
   // Setting modals
   const [openModal, setOpenModal] = useState(false);
@@ -88,8 +104,11 @@ function Navbar() {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
     };
+    // Set initial state
+    handleResize();
     window.addEventListener('resize', handleResize);
 
+    // Cleanup listener on component unmount
     return () => {
       window.removeEventListener('resize', handleResize);
     };
@@ -108,9 +127,10 @@ function Navbar() {
         align="center"
       >
         <NavLink to="/">
-          <Image radius="md" h={20} src="fsae_white_and_orange_logo.png" alt="FSAE Logo" />
+          <Image radius="md" h={20} src="/fsae_white_and_orange_logo.png" alt="FSAE Logo" />
         </NavLink>
 
+        {/* Desktop Navigation Links */}
         <Flex justify="center" align="center" style={{ flex: 1 }}>
           {!isMobile && userType && isUserType(userType) && (
             <Group gap={100}>
@@ -135,30 +155,34 @@ function Navbar() {
             </Group>
           )}
         </Flex>
-        {!isMobile && userType && (
-          <Group gap={20}>
-            <ActionIcon size={35} variant="subtle" color="white" onClick={handleProfileClick}>
-              <IconUserCircle size={35} />
-            </ActionIcon>
 
-            <ActionIcon size={35} variant="subtle" color="white" onClick={handleSetting}>
-              <IconSettings size={35} />
-            </ActionIcon>
+        {/* Desktop Icons/Auth Buttons */}
+        {!isMobile && (
+          <Flex gap="md" align="center">
+            {userType ? ( // Render icons if logged in
+              <Group gap={20}>
+                <ActionIcon size={35} variant="subtle" color="white" onClick={handleJobClick}>
+                  <IconBriefcase2 size={35} values='Jobs'/>
+                </ActionIcon>
+                
+                <ActionIcon size={35} variant="subtle" color="white" onClick={handleProfileClick}>
+                  <IconUserCircle size={35} />
+                </ActionIcon>
 
-            {userType !== 'student' && (
-              <ActionIcon size={35} variant="subtle" color="white">
-                <IconBell size={35} />
-              </ActionIcon>
-            )}
-            <ActionIcon size={35} variant="subtle" color="white">
-              <IconLogout size={35} onClick={handleLogout} />
-            </ActionIcon>
-          </Group>
-        )}
+                <ActionIcon size={35} variant="subtle" color="white" onClick={handleSetting}>
+                  <IconSettings size={35} />
+                </ActionIcon>
 
-        <Flex gap="md">
-          {!isMobile &&
-            !userType && ( // Only render if not logged in
+                {userType !== 'student' && (
+                  <ActionIcon size={35} variant="subtle" color="white">
+                    <IconBell size={35} />
+                  </ActionIcon>
+                )}
+                <ActionIcon size={35} variant="subtle" color="white" onClick={handleLogout}>
+                  <IconLogout size={35} />
+                </ActionIcon>
+              </Group>
+            ) : ( // Render Sign Up/Log In if not logged in
               <>
                 <Menu>
                   <Menu.Target>
@@ -169,34 +193,19 @@ function Navbar() {
                   <Menu.Dropdown>
                     <NavLink
                       to="/signup/student"
-                      style={({ isActive }) => ({
-                        textDecoration: 'none',
-                        backgroundColor: isActive
-                          ? 'var(--mantine-color-customAzureBlue-1)'
-                          : 'none',
-                      })}
+                      style={{ textDecoration: 'none' }}
                     >
                       <Menu.Item> Student</Menu.Item>
                     </NavLink>
                     <NavLink
                       to="/signup/sponsor"
-                      style={({ isActive }) => ({
-                        textDecoration: 'none',
-                        backgroundColor: isActive
-                          ? 'var(--mantine-color-customAzureBlue-1)'
-                          : 'none',
-                      })}
+                      style={{ textDecoration: 'none' }}
                     >
                       <Menu.Item> Sponsor</Menu.Item>
                     </NavLink>
                     <NavLink
                       to="/signup/alumni"
-                      style={({ isActive }) => ({
-                        textDecoration: 'none',
-                        backgroundColor: isActive
-                          ? 'var(--mantine-color-customAzureBlue-1)'
-                          : 'none',
-                      })}
+                      style={{ textDecoration: 'none' }}
                     >
                       <Menu.Item> Alumni</Menu.Item>
                     </NavLink>
@@ -208,40 +217,45 @@ function Navbar() {
                 </NavLink>
               </>
             )}
-        </Flex>
-        {/* Burger Menu Button (only visible on mobile) */}
-        {isMobile && (
-          <Flex gap="md">
-            <Burger
-              opened={opened}
-              onClick={toggle}
-              aria-label="Toggle navigation"
-              size="sm"
-              mr="md"
-            />
           </Flex>
         )}
+
+        {/* Burger Menu Button (only visible on mobile) */}
+        {isMobile && (
+          <Burger
+            opened={opened}
+            onClick={toggle}
+            aria-label="Toggle navigation"
+            size="sm"
+            color="white" // Ensure burger is visible
+          />
+        )}
       </Flex>
-      {/* Mobile Navigation (conditionally rendered based on `opened` state) */}
-      {opened && (
-        <AppShell
-          header={{ height: 60 }}
-          navbar={{ width: 300, breakpoint: 'sm', collapsed: { mobile: !opened } }}
-          padding="md"
-        >
-          <AppShell.Header>
+
+      {/* Mobile Navigation Drawer */}
+      <AppShell
+        header={{ height: 0 }}
+        navbar={{ width: 300, breakpoint: 'sm', collapsed: { mobile: !opened } }}
+        padding="md"
+        hidden={!isMobile}
+      >
+        <AppShell.Navbar p="md" style={{ backgroundColor: 'rgba(0, 0, 0, 0.9)' }}> {/* Adjust background as needed */}
+          {/* Close button inside drawer */}
+          <Group justify="flex-end">
             <Burger
               opened={opened}
               onClick={toggle}
               aria-label="Toggle navigation"
               size="sm"
-              mr="md"
-              p={20}
+              color="white"
             />
-          </AppShell.Header>
-          <AppShell.Navbar p="md">
-            {userType && isUserType(userType) && (
-              <Flex justify="center" align="center" gap="xl" direction="column" style={{ flex: 1 }}>
+          </Group>
+          <Divider my="sm" />
+
+          {userType && isUserType(userType) ? (
+            <>
+              {/* Mobile Nav Links for Logged-in Users */}
+              <Flex justify="center" align="center" gap="xl" direction="column" style={{ flexGrow: 1 }}>
                 {navLinks[userType].map((link) => (
                   <NavLink
                     key={link.path}
@@ -262,114 +276,89 @@ function Navbar() {
                   </NavLink>
                 ))}
               </Flex>
-            )}
 
-            {userType && (
+              {/* Mobile Actions for Logged-in Users */}
               <Flex
                 justify="center"
-                align="Flex-end"
+                align="center" // Center items horizontally
                 gap="sm"
                 direction="column"
-                style={{ flex: 1 }}
               >
                 <Divider my="sm" />
-                <Menu>
-                  <Menu.Item
-                    onClick={() => {
-                      handleProfileClick();
-                      close();
-                    }}
-                    leftSection={<IconUserCircle size={30} />}
-                  >
-                    Profile
-                  </Menu.Item>
-
-                  <Menu.Item leftSection={<IconSettings size={30} />}>Settings</Menu.Item>
-
-                  {userType !== 'student' && (
-                    <Menu.Item onClick={close} leftSection={<IconBell size={30} />}>
-                      Notifications
-                    </Menu.Item>
-                  )}
-                  <Menu.Item
-                    onClick={() => {
-                      handleLogout();
-                      close();
-                    }}
-                    leftSection={<IconLogout size={30} />}
-                  >
-                    Logout
-                  </Menu.Item>
-                </Menu>
+                <Button
+                  variant="subtle" color="white" fullWidth
+                  onClick={() => { handleProfileClick(); close(); }}
+                  leftSection={<IconUserCircle size={20} />}
+                >
+                  Profile
+                </Button>
+                <Button
+                  variant="subtle" color="white" fullWidth
+                  onClick={() => { handleSetting(); close(); }} // Also close drawer when opening settings
+                  leftSection={<IconSettings size={20} />}
+                >
+                  Settings
+                </Button>
+                {userType !== 'student' && (
+                  <Button variant="subtle" color="white" fullWidth onClick={close} leftSection={<IconBell size={20} />}>
+                    Notifications
+                  </Button>
+                )}
+                <Button
+                  variant="subtle" color="white" fullWidth
+                  onClick={() => { handleLogout(); close(); }}
+                  leftSection={<IconLogout size={20} />}
+                >
+                  Logout
+                </Button>
               </Flex>
-            )}
-
-            {!userType && ( // Only render if not logged in
+            </>
+          ) : (
+            <>
+              {/* Mobile Auth for Logged-out Users */}
               <Flex
                 justify="center"
-                align="Flex-end"
+                align="center" // Center items horizontally
                 gap="sm"
                 direction="column"
-                style={{ flex: 1 }}
               >
-                <Menu>
+                <Divider my="sm" />
+                <Menu width={200}>
                   <Menu.Target>
-                    <Menu.Item>Sign Up</Menu.Item>
+                    <Button variant="subtle" color="white" fullWidth>
+                      Sign Up
+                    </Button>
                   </Menu.Target>
                   <Menu.Dropdown>
-                    <NavLink
-                      to="/signup/student"
-                      style={({ isActive }) => ({
-                        textDecoration: 'none',
-                        backgroundColor: isActive ? ' customAzureBlue' : 'none',
-                      })}
-                    >
-                      <Menu.Item> Student</Menu.Item>
+                    <NavLink to="/signup/student" onClick={close} style={{ textDecoration: 'none' }}>
+                      <Menu.Item>Student</Menu.Item>
                     </NavLink>
-                    <NavLink
-                      to="/signup/sponsor"
-                      style={({ isActive }) => ({
-                        textDecoration: 'none',
-                        backgroundColor: isActive ? ' customAzureBlue' : 'none',
-                      })}
-                    >
-                      <Menu.Item> Sponsor</Menu.Item>
+                    <NavLink to="/signup/sponsor" onClick={close} style={{ textDecoration: 'none' }}>
+                      <Menu.Item>Sponsor</Menu.Item>
                     </NavLink>
-                    <NavLink
-                      to="/signup/alumni"
-                      style={({ isActive }) => ({
-                        textDecoration: 'none',
-                        backgroundColor: isActive ? ' customAzureBlue' : 'none',
-                      })}
-                    >
-                      <Menu.Item> Alumni</Menu.Item>
+                    <NavLink to="/signup/alumni" onClick={close} style={{ textDecoration: 'none' }}>
+                      <Menu.Item>Alumni</Menu.Item>
                     </NavLink>
                   </Menu.Dropdown>
-
-                  <Menu.Item onClick={close}>
-                    <NavLink
-                      style={{
-                        textDecoration: 'none',
-                        color: ' customAzureBlue',
-                      }}
-                      to="/login"
-                    >
-                      Log In
-                    </NavLink>
-                  </Menu.Item>
                 </Menu>
+
+                <NavLink to="/login" onClick={close} style={{ textDecoration: 'none', width: '100%' }}>
+                  <Button variant="subtle" color="white" fullWidth>
+                    Log In
+                  </Button>
+                </NavLink>
               </Flex>
-            )}
-          </AppShell.Navbar>
-        </AppShell>
-      )}
+            </>
+          )}
+        </AppShell.Navbar>
+      </AppShell>
 
       <SettingModal
         opened={openModal}
         close={() => setOpenModal(false)}
         content={<EditSetting close={() => setOpenModal(false)} />}
         title="Settings"
-      ></SettingModal>
+      />
     </>
   );
 }
