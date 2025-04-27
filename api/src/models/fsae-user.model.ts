@@ -9,7 +9,7 @@ export abstract class FsaeUser extends Entity {
     id: true,
     generated: true,
   })
-  id?: string;
+  id: string;
 
   @property({
     type: 'string',
@@ -53,21 +53,25 @@ export abstract class FsaeUser extends Entity {
 
   @property({
     type: 'string',
+    required: true,
   })
-  firstName?: string;
+  firstName: string;
 
   @property({
     type: 'string',
+    required: true,
   })
-  lastName?: string;
+  lastName: string;
 
   @property({
     type: 'string',
+    required: true,
   })
-  phoneNumber?: string;
+  phoneNumber: string;
 
   @property({
     type: 'string',
+    required: false,
   })
   desc?: string;
 
