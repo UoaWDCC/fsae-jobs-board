@@ -110,6 +110,10 @@ export class ApplicationController {
     }
   }
 
+  @authenticate('fsae-jwt')
+  @authorize({
+    allowedRoles: [FsaeRole.SPONSOR, FsaeRole.ALUMNI],
+  })
   @get('/application')
   @response(200, {
     description: 'Array of Application model instances',
@@ -123,8 +127,30 @@ export class ApplicationController {
     },
   })
   async find(
-    @param.filter(Application) filter?: Filter<Application>,
+    @inject(AuthenticationBindings.CURRENT_USER) currentUser: UserProfile,
+    @param.query.string('jobID') jobID?: string,
+    @param.query.number('limit') limit?: number,
+    @param.query.number('skip') skip?: number,
   ): Promise<Application[]> {
+    const filter: Filter<Application> = {};
+
+    let jobIDs: string[] = [];
+    if (currentUser.fsaeRole === FsaeRole.ALUMNI) {
+      const jobs = await this.jobAdRepository.find({where: {publisherID: currentUser.id}});
+      jobIDs = jobs.map(j => j.id).filter((id): id is string => !!id);
+      filter.where = { ...(filter.where || {}), jobID: { inq: jobIDs } };
+    }
+
+    if (jobID) {
+      // If alumni, ensure jobID is in their jobs
+      if (currentUser.fsaeRole === FsaeRole.ALUMNI && !jobIDs.includes(jobID)) {
+        throw new HttpErrors.Forbidden('You are not authorized to view applications for this job.');
+      }
+      filter.where = { ...(filter.where || {}), jobID };
+    }
+    if (limit !== undefined && limit > 0) filter.limit = limit;
+    if (skip !== undefined && skip >= 0) filter.skip = skip;
+
     return this.applicationRepository.find(filter);
   }
 
