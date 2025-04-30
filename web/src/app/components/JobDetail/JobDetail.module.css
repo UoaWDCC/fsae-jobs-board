@@ -10,96 +10,101 @@
   --white: #FFFFFF;
 }
 
-/* Font Families */
-body {
-  font-family: 'Cerebri', Helvetica, Arial, sans-serif;
-  background-color: var(--white);
-  color: var(--charcoal-grey);
-  margin: 0;
-  padding: 0;
+.jobDetailPageWrapper {
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+  min-height: 100vh;
+  padding: 4rem;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow-x: hidden;
 }
 
-h1, .title {
-  font-family: 'Cerebri Bold', sans-serif;
-  font-size: 2.5rem;
-  color: var(--papaya-orange);
-  margin-bottom: 1rem;
+.contentWrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 4rem;
+  max-width: 100vw;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-h2, .subtitle {
-  font-family: 'Cerebri Bold Italic', sans-serif;
-  font-size: 2rem;
-  color: var(--uoa-dark-blue);
-  margin-bottom: 0.75rem;
+.leftColumn {
+  flex: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
 
-h3, .heading {
-  font-family: 'Cerebri Bold', sans-serif;
-  font-size: 1.75rem;
-  color: var(--azure-blue);
-  margin-bottom: 0.5rem;
+.rightColumn {
+  flex: 6;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
-h4, .subheading {
-  font-family: 'Cerebri Light Italic', sans-serif;
+.titleRow {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.5rem;
+}
+
+.buttonRow {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin: 0.5rem 0;
+}
+
+.buttonRow :global(.mantine-Button-root) {
+  font-size: 1.125rem;
+  padding: 1rem 2rem;
+  height: 3.5rem;
+}
+
+.skillList {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(120px, 1fr));
+  gap: 0.5rem;
+  padding-left: 1rem;
+}
+
+.skillList li {
+  list-style: disc;
+  color: var(--text-light);
+}
+
+.sectionTitle {
+  font-weight: 600;
+  margin-top: 1rem;
   font-size: 1.5rem;
-  color: var(--mercury-silver);
+}
+
+.qualifications {
+  padding-left: 1rem;
+}
+
+.qualifications li {
+  margin-bottom: 0.5rem;
+  list-style: disc;
+}
+
+.companyLogo {
+  width: 240px;
+  height: 240px;
+  object-fit: cover;
+  margin-bottom: 1rem;
+}
+
+.leftColumn strong {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: #f0f0f0;
+}
+
+.detailItem {
   margin-bottom: 0.5rem;
 }
-
-p, .body-text {
-  font-family: 'Cerebri', sans-serif;
-  font-size: 1rem;
-  line-height: 1.6;
-  margin-bottom: 1rem;
-  color: var(--charcoal-grey);
-}
-
-.small-text {
-  font-family: 'Cerebri Light', sans-serif;
-  font-size: 0.85rem;
-  color: var(--mercury-silver);
-}
-
-/* Buttons */
-.button {
-  font-family: 'Cerebri Bold', sans-serif;
-  background-color: var(--electric-orange);
-  color: var(--white);
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.button:hover {
-  background-color: var(--papaya-orange);
-}
-
-/* Layout Helpers */
-.container {
-  width: 90%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem 0;
-}
-
-.section {
-  padding: 4rem 0;
-  border-bottom: 1px solid var(--mercury-silver);
-}
-
-/* Header Example */
-header {
-  background-color: var(--uoa-dark-blue);
-  color: var(--white);
-  padding: 1rem 0;
-  text-align: center;
-}
-
-header h1 {
-  margin: 0;
-  color: var(--white);
-}
-

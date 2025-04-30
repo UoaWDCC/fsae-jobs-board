@@ -1,81 +1,85 @@
-import { Container, Grid, Stack, Text, Title, Button, Badge, Paper, Group, Divider } from '@mantine/core';
-import { IconExternalLink } from '@tabler/icons-react';
-import { Job } from '@/models/job.model';
+import { Text, Button, Badge } from '@mantine/core';
 import styles from './JobDetail.module.css';
 
-export function JobDetail({ job }: { job: Job }) {
+interface JobDetailProps {
+  job: {
+    title: string;
+    description: string;
+    salary: string;
+    startDate: string;
+    applicationDeadline: string;
+    duration: string;
+    location: string;
+    skills?: string[];
+    qualifications?: string[];
+  };
+}
+
+export function JobDetail({ job }: JobDetailProps) {
   return (
-    <Container className={styles.container} py="md">
-      <Paper withBorder shadow="sm" p="lg" radius="md">
-        <Grid>
-          {/* Left Column */}
-          <Grid.Col span={{ base: 12, md: 4 }}>
-            <Stack>
-              <Text className={styles.bodyText}>
-                <strong>Salary:</strong> {job.salary}
-              </Text>
-              <Text className={styles.bodyText}>
-                <strong>Deadline:</strong> {job.applicationDeadline}
-              </Text>
+    <main className={styles.jobDetailPageWrapper}>
+      <div className={styles.contentWrapper}>
+        {/* Left Column */}
+        <div className={styles.leftColumn}>
+          <img
+            src="/WDCCLogo.png"
+            alt="Company Logo"
+            className={styles.companyLogo}
+          />
+          <div>
+            <Text size="xl" fw={700} className={styles.detailItem}>
+              Salary: <span style={{ fontWeight: 400 }}>{job.salary}</span>
+            </Text>
+            <Text size="xl" fw={700} className={styles.detailItem}>
+              Start Date: <span style={{ fontWeight: 400 }}>{job.startDate}</span>
+            </Text>
+            <Text size="xl" fw={700} className={styles.detailItem}>
+              Duration: <span style={{ fontWeight: 400 }}>{job.duration}</span>
+            </Text>
+            <Text size="xl" fw={700} className={styles.detailItem}>
+              Application Deadline: <span style={{ fontWeight: 400 }}>{job.applicationDeadline}</span>
+            </Text>
+          </div>
 
-              <Divider my="sm" />
 
-              <div>
-                <Text component="h3" className={styles.heading} mb={4}>
-                  Specialisation and Skills
-                </Text>
-                <Text className={styles.bodyText}>{job.specialisation}</Text>
-              </div>
-            </Stack>
-          </Grid.Col>
+          <div>
+          <Text size="1.4rem" fw={700}>Relevant Skills for this Job: </Text>
+            <ul className={styles.skillList}>
+              {job.skills?.map((skill) => (
+                <li key={skill}>{skill}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
 
-          {/* Right Column */}
-          <Grid.Col span={{ base: 12, md: 8 }}>
-            <Stack>
-              <Group justify="space-between" align="center">
-                <Title className={styles.subtitle} order={2}>
-                  {job.title}
-                </Title>
-                <Badge color="blue" size="md" radius="sm">WDCC</Badge>
-              </Group>
+        {/* Right Column */}
+        <div className={styles.rightColumn}>
+          <div className={styles.titleRow}>
+            <Text size="2.25rem" fw={700}>{job.title}</Text>
+            <Badge size="xl" color="blue" className={styles.jobBadge}>WDCC</Badge>
 
-              <Group>
-                <Button
-                  className={styles.button}
-                  component="a"
-                  href={job.applicationLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  leftSection={<IconExternalLink size={16} />}
-                >
-                  Apply
-                </Button>
-                <Button className={styles.button} variant="outline">
-                  Save
-                </Button>
-              </Group>
+          </div>
 
-              <Divider />
+          <Text>{job.location} 📍</Text>
 
-              <div>
-                <Text component="h3" className={styles.heading} mb={4}>
-                  About
-                </Text>
-                <Text className={styles.bodyText}>
-                  {job.description}
-                </Text>
-                <Text className={styles.smallText} mt="xs">
-                  Posted on: {job.datePosted}
-                </Text>
-              </div>
+          <div className={styles.buttonRow}>
+            <Button>Apply ↗</Button>
+            <Button variant="outline">Save</Button>
+          </div>
 
-              <Text className={styles.bodyText} mt="md">
-                If you are passionate about software development and eager to kick-start your career in a dynamic and innovative environment, we encourage you to apply for this exciting opportunity. Join us and be part of a team that's shaping the future of technology.
-              </Text>
-            </Stack>
-          </Grid.Col>
-        </Grid>
-      </Paper>
-    </Container>
+          <Text size="2rem" fw={700}>About</Text>
+          <Text>{job.description}</Text>
+
+          <Text size="2rem" fw={700}>Qualifications:</Text>
+
+
+          <ul className={styles.qualifications}>
+            {job.qualifications?.map((q, index) => (
+              <li key={index}>{q}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </main>
   );
 }
