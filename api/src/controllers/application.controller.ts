@@ -26,7 +26,7 @@ export class ApplicationController {
     public applicationRepository : ApplicationRepository,
   ) {}
 
-  @post('/application')
+  @post('/application') //keep
   @response(200, {
     description: 'Application model instance',
     content: {'application/json': {schema: getModelSchemaRef(Application)}},
@@ -47,16 +47,16 @@ export class ApplicationController {
     return this.applicationRepository.create(application);
   }
 
-  @get('/application/count')
-  @response(200, {
-    description: 'Application model count',
-    content: {'application/json': {schema: CountSchema}},
-  })
-  async count(
-    @param.where(Application) where?: Where<Application>,
-  ): Promise<Count> {
-    return this.applicationRepository.count(where);
-  }
+  // @get('/application/count')
+  // @response(200, {
+  //   description: 'Application model count',
+  //   content: {'application/json': {schema: CountSchema}},
+  // })
+  // async count(
+  //   @param.where(Application) where?: Where<Application>,
+  // ): Promise<Count> {
+  //   return this.applicationRepository.count(where);
+  // }
 
   @get('/application')
   @response(200, {
@@ -76,24 +76,24 @@ export class ApplicationController {
     return this.applicationRepository.find(filter);
   }
 
-  @patch('/application')
-  @response(200, {
-    description: 'Application PATCH success count',
-    content: {'application/json': {schema: CountSchema}},
-  })
-  async updateAll(
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(Application, {partial: true}),
-        },
-      },
-    })
-    application: Application,
-    @param.where(Application) where?: Where<Application>,
-  ): Promise<Count> {
-    return this.applicationRepository.updateAll(application, where);
-  }
+  // @patch('/application')
+  // @response(200, {
+  //   description: 'Application PATCH success count',
+  //   content: {'application/json': {schema: CountSchema}},
+  // })
+  // async updateAll(
+  //   @requestBody({
+  //     content: {
+  //       'application/json': {
+  //         schema: getModelSchemaRef(Application, {partial: true}),
+  //       },
+  //     },
+  //   })
+  //   application: Application,
+  //   @param.where(Application) where?: Where<Application>,
+  // ): Promise<Count> {
+  //   return this.applicationRepository.updateAll(application, where);
+  // }
 
   @get('/application/{id}')
   @response(200, {
@@ -129,16 +129,16 @@ export class ApplicationController {
     await this.applicationRepository.updateById(id, application);
   }
 
-  @put('/application/{id}')
-  @response(204, {
-    description: 'Application PUT success',
-  })
-  async replaceById(
-    @param.path.string('id') id: string,
-    @requestBody() application: Application,
-  ): Promise<void> {
-    await this.applicationRepository.replaceById(id, application);
-  }
+  // @put('/application/{id}')
+  // @response(204, {
+  //   description: 'Application PUT success',
+  // })
+  // async replaceById(
+  //   @param.path.string('id') id: string,
+  //   @requestBody() application: Application,
+  // ): Promise<void> {
+  //   await this.applicationRepository.replaceById(id, application);
+  // }
 
   @del('/application/{id}')
   @response(204, {
