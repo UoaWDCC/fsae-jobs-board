@@ -4,6 +4,8 @@ export * from './alumni.controller';
 export * from './sponsor.controller';
 export * from './login.controller';
 export * from './register.controller';
+export * from './application.controller';
+export * from './application-member.controller';
 export * from './job.controller';
 export * from './activation.controller';
 export * from './verification.controller';
