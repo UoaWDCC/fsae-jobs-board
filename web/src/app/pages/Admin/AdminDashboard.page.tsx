@@ -1,5 +1,5 @@
 import { Status } from '@/app/type/status';
-import { AdminReview } from '@/app/models/adminReview';
+import { AdminReview } from '@/models/adminReview.model';
 import AdminDashboardTable from '@/app/components/AdminDashboard/AdminDashboardTable';
 import { useState, useEffect } from 'react';
 import { Role } from '@/app/type/role';

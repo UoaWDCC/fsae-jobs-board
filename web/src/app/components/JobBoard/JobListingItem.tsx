@@ -1,36 +1,41 @@
+import { Card, Text, Button, Flex } from '@mantine/core';
 import { FC } from 'react';
-import styles from './JobBoard.module.css';
-import { Flex, Text, Image } from '@mantine/core';
+import { useNavigate } from 'react-router-dom';
 
+// TODO Change to job.model.ts 
 interface JobListingItemProps {
+  id: string; //added id prop for navigation
   title: string;
-  company: string;
-  logo: string;
-  location: string;
   description: string;
+  company: string;
+  location: string;
+  logo: string;
 }
-const JobListingItem: FC<JobListingItemProps> = ({
-  title,
-  company,
-  location,
-  description,
-  logo,
-}) => {
+
+const JobListingItem: FC<JobListingItemProps> = ({ id, title, description, company, location, logo }) => {
+  const navigate = useNavigate();
+
+  const handleViewDetails = () => {
+    navigate(`/jobs/${id}`);
+  };
+
   return (
-    <Flex
-      gap="md"
-      justify="flex-start"
-      align="flex-start"
-      direction="column"
-      className={styles.jobCard}
-    >
-      <Text className={styles.listItemTitle}>{title}</Text>
-      <Image src={logo} alt={company} h={60} w={60}></Image>
-      <Text className={styles.listItemLocation}>{location}</Text>
-      <Text className={styles.listItemDescription} lineClamp={3}>
-        {description}
-      </Text>
-    </Flex>
+    <Card shadow="sm" padding="lg" radius="md" withBorder>
+      <Flex justify="space-between" align="center">
+        <Flex direction="column" gap="xs">
+          <Text fw={700} size="lg">{id} - ID is temporary</Text>
+          <Text fw={700} size="lg">{title}</Text>
+          <Text color="dimmed" size="sm">{company} ・ {location}</Text>
+          <Text size="sm" lineClamp={3}>{description}</Text>
+        </Flex>
+        <img src={logo || "/WDCCLogo.png"} alt="Company Logo" width={60} height={60} style={{ borderRadius: '50%' }} />
+      </Flex>
+      <Flex justify="flex-end" mt="md">
+        <Button variant="light" color="blue" size="sm" onClick={handleViewDetails}>
+          View Details
+        </Button>
+      </Flex>
+    </Card>
   );
 };
 

@@ -1,6 +1,6 @@
 import { Group, Pagination, Stack, Table, Text } from '@mantine/core';
 import styles from './AdminDashboard.module.css';
-import { AdminReview } from '@/app/models/adminReview';
+import { AdminReview } from '@/models/adminReview.model';
 import { FC, useState } from 'react';
 import { date2string } from '@/app/features/date/dateConverter';
 import { ceil } from 'lodash';

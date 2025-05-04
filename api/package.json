@@ -53,6 +53,7 @@
     "dotenv": "^16.4.5",
     "jsonwebtoken": "^9.0.2",
     "loopback-connector-mongodb": "^6.2.0",
+    "mongodb": "^6.15.0",
     "tslib": "^2.0.0",
     "twilio": "^5.3.0"
   },

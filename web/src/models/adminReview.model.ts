@@ -1,5 +1,5 @@
-import { UserType } from '../features/user/userSlice';
-import { Status } from '../type/status';
+import { UserType } from '@/app/features/user/userSlice';
+import { Status } from '@/app/type/status';
 
 export interface AdminReview {
   id: string;
