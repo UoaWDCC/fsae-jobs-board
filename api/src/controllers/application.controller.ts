@@ -16,10 +16,14 @@ import {
   del,
   requestBody,
   response,
-  HttpErrors
+  HttpErrors,
 } from '@loopback/rest';
 import {Application} from '../models';
-import {ApplicationRepository, JobAdRepository, MemberRepository} from '../repositories';
+import {
+  ApplicationRepository,
+  JobAdRepository,
+  MemberRepository,
+} from '../repositories';
 import {authenticate, AuthenticationBindings} from '@loopback/authentication';
 import {authorize} from '@loopback/authorization';
 import {inject} from '@loopback/core';
@@ -63,22 +67,38 @@ export class ApplicationController {
   ): Promise<Application> {
     try {
       // Input validation
-      if (!application.jobID || typeof application.jobID !== 'string' || application.jobID.trim() === '') {
-        throw new HttpErrors.BadRequest('jobID is required and must be a non-empty string.');
+      if (
+        !application.jobID ||
+        typeof application.jobID !== 'string' ||
+        application.jobID.trim() === ''
+      ) {
+        throw new HttpErrors.BadRequest(
+          'jobID is required and must be a non-empty string.',
+        );
       }
-      if (!application.status || typeof application.status !== 'string' || application.status.trim() === '') {
-        throw new HttpErrors.BadRequest('status is required and must be a non-empty string.');
+      if (
+        !application.status ||
+        typeof application.status !== 'string' ||
+        application.status.trim() === ''
+      ) {
+        throw new HttpErrors.BadRequest(
+          'status is required and must be a non-empty string.',
+        );
       }
-      if (!application.applicationDate || typeof application.applicationDate !== 'string' || application.applicationDate.trim() === '') {
-        throw new HttpErrors.BadRequest('applicationDate is required and must be a non-empty string.');
+      if (
+        !application.applicationDate ||
+        typeof application.applicationDate !== 'string' ||
+        application.applicationDate.trim() === ''
+      ) {
+        throw new HttpErrors.BadRequest(
+          'applicationDate is required and must be a non-empty string.',
+        );
       }
-
 
       const newApplication = {
         ...application,
         memberID: currentUser.id,
       };
-
 
       const existing = await this.applicationRepository.findOne({
         where: {
@@ -90,20 +110,17 @@ export class ApplicationController {
         throw new HttpErrors.Conflict('You have already applied to this job.');
       }
 
-
       try {
         await this.jobAdRepository.findById(newApplication.jobID);
       } catch {
         throw new HttpErrors.NotFound('The specified job does not exist.');
       }
 
-
       try {
         await this.memberRepository.findById(newApplication.memberID);
       } catch {
         throw new HttpErrors.NotFound('The specified member does not exist.');
       }
-
 
       return await this.applicationRepository.create(newApplication);
     } catch (err) {
@@ -137,18 +154,29 @@ export class ApplicationController {
     const filter: Filter<Application> = {};
 
     let jobIDs: string[] = [];
-    if (currentUser.fsaeRole === FsaeRole.ALUMNI || currentUser.fsaeRole === FsaeRole.SPONSOR) {
-      const jobs = await this.jobAdRepository.find({where: {publisherID: currentUser.id}});
+    if (
+      currentUser.fsaeRole === FsaeRole.ALUMNI ||
+      currentUser.fsaeRole === FsaeRole.SPONSOR
+    ) {
+      const jobs = await this.jobAdRepository.find({
+        where: {publisherID: currentUser.id},
+      });
       jobIDs = jobs.map(j => j.id).filter((id): id is string => !!id);
-      filter.where = { ...(filter.where || {}), jobID: { inq: jobIDs } };
+      filter.where = {...(filter.where || {}), jobID: {inq: jobIDs}};
     }
 
     if (jobID) {
       // If alumni/sponsor ensure jobID is in their jobs
-      if ((currentUser.fsaeRole === FsaeRole.ALUMNI || currentUser.fsaeRole === FsaeRole.SPONSOR) && !jobIDs.includes(jobID)) {
-        throw new HttpErrors.Forbidden('You are not authorized to view applications for this job.');
+      if (
+        (currentUser.fsaeRole === FsaeRole.ALUMNI ||
+          currentUser.fsaeRole === FsaeRole.SPONSOR) &&
+        !jobIDs.includes(jobID)
+      ) {
+        throw new HttpErrors.Forbidden(
+          'You are not authorized to view applications for this job.',
+        );
       }
-      filter.where = { ...(filter.where || {}), jobID };
+      filter.where = {...(filter.where || {}), jobID};
     }
     if (limit !== undefined && limit > 0) filter.limit = limit;
     if (skip !== undefined && skip >= 0) filter.skip = skip;
@@ -156,6 +184,10 @@ export class ApplicationController {
     return this.applicationRepository.find(filter);
   }
 
+  @authenticate('fsae-jwt')
+  @authorize({
+    allowedRoles: [FsaeRole.SPONSOR, FsaeRole.ALUMNI],
+  })
   @get('/application/{id}')
   @response(200, {
     description: 'Application model instance',
@@ -167,9 +199,39 @@ export class ApplicationController {
   })
   async findById(
     @param.path.string('id') id: string,
-    @param.filter(Application, {exclude: 'where'}) filter?: FilterExcludingWhere<Application>
+    @inject(AuthenticationBindings.CURRENT_USER) currentUser: UserProfile,
+    @param.filter(Application, {exclude: 'where'})
+    filter?: FilterExcludingWhere<Application>,
   ): Promise<Application> {
-    return this.applicationRepository.findById(id, filter);
+    try {
+      // Get the application
+      const application = await this.applicationRepository.findById(id);
+
+      if (!application) {
+        throw new HttpErrors.NotFound('Application not found');
+      }
+
+      // Get the job ad associated with this application
+      const jobAd = await this.jobAdRepository.findById(application.jobID);
+
+      if (!jobAd) {
+        throw new HttpErrors.NotFound('Associated job ad not found');
+      }
+
+      // Check if the current user owns the job ad
+      if (jobAd.publisherID !== currentUser.id) {
+        throw new HttpErrors.Forbidden(
+          'You are not authorized to view this application',
+        );
+      }
+
+      return application;
+    } catch (error) {
+      if (error instanceof HttpErrors.HttpError) {
+        throw error;
+      }
+      throw new HttpErrors.InternalServerError('Failed to fetch application');
+    }
   }
 
   @authenticate('fsae-jwt')
@@ -201,7 +263,9 @@ export class ApplicationController {
     }
 
     if (existing.memberID?.toString() !== currentUser.id?.toString()) {
-      throw new HttpErrors.Forbidden('You are not authorized to update this application.');
+      throw new HttpErrors.Forbidden(
+        'You are not authorized to update this application.',
+      );
     }
 
     for (const field of forbiddenFields) {
@@ -217,11 +281,42 @@ export class ApplicationController {
     await this.applicationRepository.updateById(id, application);
   }
 
+  @authenticate('fsae-jwt')
+  @authorize({
+    allowedRoles: [FsaeRole.SPONSOR, FsaeRole.ALUMNI],
+  })
   @del('/application/{id}')
   @response(204, {
     description: 'Application DELETE success',
   })
-  async deleteById(@param.path.string('id') id: string): Promise<void> {
-    await this.applicationRepository.deleteById(id);
+  async deleteById(
+    @param.path.string('id') id: string,
+    @inject(AuthenticationBindings.CURRENT_USER) currentUser: UserProfile,
+  ): Promise<void> {
+    try {
+      // Get the application
+      const application = await this.applicationRepository.findById(id);
+      if (!application) {
+        throw new HttpErrors.NotFound('Application not found');
+      }
+
+      // Get the job ad associated with this application
+      const jobAd = await this.jobAdRepository.findById(application.jobID);
+      if (!jobAd) {
+        throw new HttpErrors.NotFound('Associated job ad not found');
+      }
+
+      // Check if the current user owns the job ad
+      if (jobAd.publisherID !== currentUser.id) {
+        throw new HttpErrors.Forbidden(
+          'You are not authorized to delete this application',
+        );
+      }
+
+      await this.applicationRepository.deleteById(id);
+    } catch (error) {
+      if (error instanceof HttpErrors.HttpError) throw error;
+      throw new HttpErrors.InternalServerError('Failed to delete application');
+    }
   }
 }
