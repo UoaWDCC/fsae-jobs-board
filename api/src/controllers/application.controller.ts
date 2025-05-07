@@ -26,6 +26,8 @@ import {inject} from '@loopback/core';
 import {UserProfile} from '@loopback/security';
 import {FsaeRole} from '../models';
 
+const forbiddenFields: (keyof Application)[] = ['id', 'memberID']; // fields that cannot be updated by PATCH, can be extended to include other fields that should not be updated
+
 export class ApplicationController {
   constructor(
     @repository(ApplicationRepository)
@@ -135,15 +137,15 @@ export class ApplicationController {
     const filter: Filter<Application> = {};
 
     let jobIDs: string[] = [];
-    if (currentUser.fsaeRole === FsaeRole.ALUMNI) {
+    if (currentUser.fsaeRole === FsaeRole.ALUMNI || currentUser.fsaeRole === FsaeRole.SPONSOR) {
       const jobs = await this.jobAdRepository.find({where: {publisherID: currentUser.id}});
       jobIDs = jobs.map(j => j.id).filter((id): id is string => !!id);
       filter.where = { ...(filter.where || {}), jobID: { inq: jobIDs } };
     }
 
     if (jobID) {
-      // If alumni, ensure jobID is in their jobs
-      if (currentUser.fsaeRole === FsaeRole.ALUMNI && !jobIDs.includes(jobID)) {
+      // If alumni/sponsor ensure jobID is in their jobs
+      if ((currentUser.fsaeRole === FsaeRole.ALUMNI || currentUser.fsaeRole === FsaeRole.SPONSOR) && !jobIDs.includes(jobID)) {
         throw new HttpErrors.Forbidden('You are not authorized to view applications for this job.');
       }
       filter.where = { ...(filter.where || {}), jobID };
@@ -170,6 +172,10 @@ export class ApplicationController {
     return this.applicationRepository.findById(id, filter);
   }
 
+  @authenticate('fsae-jwt')
+  @authorize({
+    allowedRoles: [FsaeRole.MEMBER],
+  })
   @patch('/application/{id}')
   @response(204, {
     description: 'Application PATCH success',
@@ -179,12 +185,35 @@ export class ApplicationController {
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(Application, {partial: true}),
+          schema: getModelSchemaRef(Application, {
+            partial: true,
+            exclude: forbiddenFields,
+          }),
         },
       },
     })
-    application: Application,
+    application: Partial<Application>,
+    @inject(AuthenticationBindings.CURRENT_USER) currentUser: UserProfile,
   ): Promise<void> {
+    const existing = await this.applicationRepository.findById(id);
+    if (!existing) {
+      throw new HttpErrors.NotFound('Application not found.');
+    }
+
+    if (existing.memberID?.toString() !== currentUser.id?.toString()) {
+      throw new HttpErrors.Forbidden('You are not authorized to update this application.');
+    }
+
+    for (const field of forbiddenFields) {
+      if (field in application) {
+        throw new HttpErrors.BadRequest(`Field '${field}' cannot be updated.`);
+      }
+    }
+
+    if (Object.keys(application).length === 0) {
+      throw new HttpErrors.BadRequest('No updatable fields provided.');
+    }
+
     await this.applicationRepository.updateById(id, application);
   }
 
