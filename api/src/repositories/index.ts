@@ -6,3 +6,4 @@ export * from './member.repository';
 export * from './sponsor.repository';
 export * from './job-ad.repository';
 export * from './verification.repository';
+export * from './application.repository';

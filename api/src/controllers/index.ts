@@ -7,3 +7,4 @@ export * from './register.controller';
 export * from './job.controller';
 export * from './activation.controller';
 export * from './verification.controller';
+export * from './application.controller';
