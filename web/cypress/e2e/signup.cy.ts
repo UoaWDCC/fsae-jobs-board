@@ -1,4 +1,3 @@
-const baseUrl = 'http://localhost:5173';
 const bcrypt = require('bcryptjs');
 const password = 'test123';
 const passwordHash = bcrypt.hashSync(password, 10); // hash it like your app
@@ -18,23 +17,25 @@ function fillFields(role:String) {
   cy.get('input[name="terms"]').check();
 }
 
+// uncomment these once auth works
+
 // describe('Tests successful user signup flow', () => {
 //   it('should sign up a new student user with valid fields filled', () => {
-//     cy.visit(`${baseUrl}/signup/student`);
+//     cy.visit(`/signup/student`);
 //     fillFields('student');
 //     cy.get('button[type="submit"]').click();
 //     cy.url().should('include', '/verify');
 //   });
 
 //   it('should sign up a new sponsor user with valid fields filled', () => {
-//     cy.visit(`${baseUrl}/signup/sponsor`);
+//     cy.visit(`/signup/sponsor`);
 //     fillFields('sponsor');
 //     cy.get('button[type="submit"]').click();
 //     cy.url().should('include', '/verify');
 //   });
 
 //   it('should sign up a new alumni user with valid fields filled', () => {
-//     cy.visit(`${baseUrl}/signup/alumni`);
+//     cy.visit(`/signup/alumni`);
 //     fillFields('alumni');
 //     cy.get('button[type="submit"]').click();
 //     cy.url().should('include', '/verify');
@@ -50,7 +51,7 @@ describe('Tests unsuccessful user signup flow', () => {
 
   const bcrypt = require('bcryptjs');
   const usedEmail = 'usedemail@gmail.com';
-  const passwordHash = bcrypt.hash('usedpassword', 10);
+  const passwordHash = bcrypt.hashSync('usedpassword', 10);
   //create user in the database same email
   before(() => {
     cy.task('insertTestUser', {
@@ -61,14 +62,14 @@ describe('Tests unsuccessful user signup flow', () => {
       expect(result).to.be.true;
     });
   
-    cy.task('verifyUserInDB', usedEmail).then((result) => {
+    cy.task('findUserByEmail', usedEmail).then((result) => {
       expect(result).to.be.true;
     });
   });
 
   // studentRequiredFields.forEach((field) => {
   //   it(`should mark field as invalid and prevent submission when the ${field} field is empty`, () => {
-  //     cy.visit(`${baseUrl}/signup/student`);
+  //     cy.visit(`/signup/student`);
   //       // fill everything except the currently tested field
   //       fillFields('student');
   //       cy.get(`input[name="${field}"]`).clear();
@@ -85,7 +86,7 @@ describe('Tests unsuccessful user signup flow', () => {
   // });
 
   it('should throw a validation error when email is already taken', () => {
-    cy.visit(`${baseUrl}/signup/student`);
+    cy.visit(`/signup/student`);
     fillFields('student');
     cy.get(`input[name="email"]`).clear();
     cy.get(`input[name="email"]`).type('usedemail@gmail.com');

@@ -14,6 +14,7 @@ const client = new MongoClient(uri);
 
 export default defineConfig({
   e2e: {
+    baseUrl: "http://localhost:5173",
     setupNodeEvents(on, config) {
       on('before:run', async () => {
         try {
@@ -80,11 +81,6 @@ export default defineConfig({
             return false;
           }
         },
-        async verifyUserInDB(email) {
-          const db = client.db('fsae_job_board');
-          const user = await db.collection('Member').findOne({ email });
-          return user ? true : false;
-        }
       });
     }
   },
