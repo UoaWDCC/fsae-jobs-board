@@ -17,30 +17,28 @@ function fillFields(role:String) {
   cy.get('input[name="terms"]').check();
 }
 
-// uncomment these once auth works
+describe('Tests successful user signup flow', () => {
+  it('should sign up a new student user with valid fields filled', () => {
+    cy.visit(`/signup/student`);
+    fillFields('student');
+    cy.get('button[type="submit"]').click();
+    cy.url().should('include', '/verify');
+  });
 
-// describe('Tests successful user signup flow', () => {
-//   it('should sign up a new student user with valid fields filled', () => {
-//     cy.visit(`/signup/student`);
-//     fillFields('student');
-//     cy.get('button[type="submit"]').click();
-//     cy.url().should('include', '/verify');
-//   });
+  it('should sign up a new sponsor user with valid fields filled', () => {
+    cy.visit(`/signup/sponsor`);
+    fillFields('sponsor');
+    cy.get('button[type="submit"]').click();
+    cy.url().should('include', '/verify');
+  });
 
-//   it('should sign up a new sponsor user with valid fields filled', () => {
-//     cy.visit(`/signup/sponsor`);
-//     fillFields('sponsor');
-//     cy.get('button[type="submit"]').click();
-//     cy.url().should('include', '/verify');
-//   });
-
-//   it('should sign up a new alumni user with valid fields filled', () => {
-//     cy.visit(`/signup/alumni`);
-//     fillFields('alumni');
-//     cy.get('button[type="submit"]').click();
-//     cy.url().should('include', '/verify');
-//   });
-// })
+  it('should sign up a new alumni user with valid fields filled', () => {
+    cy.visit(`/signup/alumni`);
+    fillFields('alumni');
+    cy.get('button[type="submit"]').click();
+    cy.url().should('include', '/verify');
+  });
+})
 
 describe('Tests unsuccessful user signup flow', () => {
   const commonRequiredFields = ['email', 'phoneNumber', 'password', 'confirmPassword'];
@@ -67,23 +65,23 @@ describe('Tests unsuccessful user signup flow', () => {
     });
   });
 
-  // studentRequiredFields.forEach((field) => {
-  //   it(`should mark field as invalid and prevent submission when the ${field} field is empty`, () => {
-  //     cy.visit(`/signup/student`);
-  //       // fill everything except the currently tested field
-  //       fillFields('student');
-  //       cy.get(`input[name="${field}"]`).clear();
+  studentRequiredFields.forEach((field) => {
+    it(`should mark field as invalid and prevent submission when the ${field} field is empty`, () => {
+      cy.visit(`/signup/student`);
+        // fill everything except the currently tested field
+        fillFields('student');
+        cy.get(`input[name="${field}"]`).clear();
         
-  //       cy.get(`input[name="${field}"]`).then(($input) => {
-  //         const inputElement = $input[0] as HTMLInputElement;
-  //         expect(inputElement.checkValidity()).to.be.false;
-  //       });
+        cy.get(`input[name="${field}"]`).then(($input) => {
+          const inputElement = $input[0] as HTMLInputElement;
+          expect(inputElement.checkValidity()).to.be.false;
+        });
 
-  //       // click submit and check not redirected
-  //       cy.get('button[type="submit"]').click();
-  //       cy.url().should('not.include', '/verify');
-  //   });
-  // });
+        // click submit and check not redirected
+        cy.get('button[type="submit"]').click();
+        cy.url().should('not.include', '/verify');
+    });
+  });
 
   it('should throw a validation error when email is already taken', () => {
     cy.visit(`/signup/student`);
