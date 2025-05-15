@@ -15,6 +15,8 @@ const client = new MongoClient(uri);
 export default defineConfig({
   e2e: {
     baseUrl: "http://localhost:5173",
+    chromeWebSecurity: false,
+    testIsolation: false,
     setupNodeEvents(on, config) {
       on('before:run', async () => {
         try {
@@ -41,16 +43,16 @@ export default defineConfig({
           const user = await db.collection('Member').findOne({ email });
           return user ? true : false;
         },
-        async insertTestAdmin({ email, passwordHash }) {
-          const db = client.db('fsae_job_board');
-          const result = await db.collection('Admin').insertOne({
-            email,
-            password: passwordHash,
-            verified: true,
-            firstName: 'Test',
-            lastName: 'Admin',
-          });
-          return result.insertedId ? true : false;
+        async deleteUsersByEmail(email) {
+          try {
+            const db = client.db('fsae_job_board');
+            await db.collection('Member').deleteMany({ email });
+            await db.collection('Sponsor').deleteMany({ email });
+            await db.collection('Alumni').deleteMany({ email });
+            return null;
+          } catch (error) {
+            return null;
+          }
         },
         async insertTestUser({ role, email, passwordHash }) {
           try {
@@ -74,10 +76,8 @@ export default defineConfig({
               phoneNumber: '1234567890',
               desc: 'testing'
             });
-            console.log('User inserted:', result);
             return result.insertedId ? true : false;
           } catch (error) {
-            console.error('Error inserting user:', error);
             return false;
           }
         },

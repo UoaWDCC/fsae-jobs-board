@@ -20,6 +20,7 @@ function fillFields(role:String) {
 describe('Tests successful user signup flow', () => {
   it('should sign up a new student user with valid fields filled', () => {
     cy.visit(`/signup/student`);
+    cy.task('deleteUsersByEmail', `validstudent@gmail.com`); // delete any existing user with this email
     fillFields('student');
     cy.get('button[type="submit"]').click();
     cy.url().should('include', '/verify');
@@ -27,6 +28,7 @@ describe('Tests successful user signup flow', () => {
 
   it('should sign up a new sponsor user with valid fields filled', () => {
     cy.visit(`/signup/sponsor`);
+    cy.task('deleteUsersByEmail', `validsponsor@gmail.com`); // delete any existing user with this email
     fillFields('sponsor');
     cy.get('button[type="submit"]').click();
     cy.url().should('include', '/verify');
@@ -34,6 +36,7 @@ describe('Tests successful user signup flow', () => {
 
   it('should sign up a new alumni user with valid fields filled', () => {
     cy.visit(`/signup/alumni`);
+    cy.task('deleteUsersByEmail', `validalumni@gmail.com`); // delete any existing user with this email
     fillFields('alumni');
     cy.get('button[type="submit"]').click();
     cy.url().should('include', '/verify');
@@ -44,8 +47,6 @@ describe('Tests unsuccessful user signup flow', () => {
   const commonRequiredFields = ['email', 'phoneNumber', 'password', 'confirmPassword'];
 
   const studentRequiredFields = ['firstName', 'lastName', ...commonRequiredFields];
-  const sponsorRequiredFields = ['company', ...commonRequiredFields];
-  const alumniRequiredFields = ['firstName', 'lastName', 'company', ...commonRequiredFields];
 
   const bcrypt = require('bcryptjs');
   const usedEmail = 'usedemail@gmail.com';
@@ -87,7 +88,7 @@ describe('Tests unsuccessful user signup flow', () => {
     cy.visit(`/signup/student`);
     fillFields('student');
     cy.get(`input[name="email"]`).clear();
-    cy.get(`input[name="email"]`).type('usedemail@gmail.com');
+    cy.get(`input[name="email"]`).type('validstudent@gmail.com');
     cy.get('button[type="submit"]').click();
     cy.contains('Error: Email already exists').should('be.visible');
   });

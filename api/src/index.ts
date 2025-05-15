@@ -1,6 +1,14 @@
 import dotenv from 'dotenv';
 dotenv.config(); // Load environment variables from .env file
 
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection:', reason);
+});
+
 import {ApplicationConfig, FsaeApiApplication} from './application';
 
 export * from './application';
