@@ -7,11 +7,15 @@ export class TwilioService {
     private accountSid: string;
     private authToken: string;
     private verificationServiceId: string;
+    private verificationTemplateId: string;
+    private passwordResetTemplateId: string;
 
     constructor() {
         this.accountSid = process.env.TWILIO_ACCOUNT_SID || '';
         this.authToken = process.env.TWILIO_AUTH_TOKEN || '';
         this.verificationServiceId = process.env.TWILIO_VERIFY_SERVICE_ID || '';
+        this.verificationTemplateId = process.env.TWILIO_VERIFICATION_TEMPLATE_ID || '';
+        this.passwordResetTemplateId = process.env.TWILIO_PASSWORD_RESET_TEMPLATE_ID || '';
         this.client = twilio(this.accountSid, this.authToken);
     }
 
@@ -20,17 +24,27 @@ export class TwilioService {
             throw new Error('Verification Service ID is not defined');
         }
 
-        const verification = await this.client.verify.v2.services(this.verificationServiceId).verifications.create({
+        const verification = await this.client.verify.v2
+          .services(this.verificationServiceId)
+          .verifications.create({
             to: email,
             channel: 'email',
             channelConfiguration: {
-                template_id: "d-4b7a924efdfb492d97ce2f317e3968f7",
-                substitutions: {
-                    first_name: firstName,
-                    verification_code: verificationCode,
-                }
-            }
-        });
+              template_id: this.verificationTemplateId,
+              substitutions: {
+                first_name: firstName,
+                verification_code: verificationCode,
+              },
+            },
+          })
+          .catch(error => {
+            console.error(
+              'Twilio API Error Details:',
+              error.message,
+              error.moreInfo,
+            );
+            throw new Error(`Verification email failed: ${error.message}`);
+          });
 
         return verification;
     }
@@ -44,7 +58,7 @@ export class TwilioService {
             to: email,
             channel: 'email',
             channelConfiguration: {
-                template_id: "d-4f7d51e155b8429da523fc36ddf22f14",
+                template_id: this.passwordResetTemplateId,
                 substitutions: {
                     first_name: firstName,
                     reset_token: resetToken,
