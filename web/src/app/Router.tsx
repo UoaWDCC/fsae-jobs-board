@@ -23,7 +23,8 @@ import { AdminSignUp } from './pages/Admin/AdminSignup.page';
 import SignupSwitcher from './pages/General/SignupSwitcher.page';
 import { AdminLogin } from './pages/Admin/AdminLogin.page';
 
-// Protected route is currently commented out. To be enabled once the Authentication Logic has been implemented
+import { JobDetailsPage } from './pages/General/JobDetails.page'; 
+
 const router = createBrowserRouter([
   {
     path: '/',
@@ -86,7 +87,7 @@ const router = createBrowserRouter([
         element: <AlumniSignUp />,
       },
       {
-        path: '*', // Catch-all for unmatched paths under /signup
+        path: '*',
         element: <NotFound />,
       },
     ],
@@ -109,87 +110,68 @@ const router = createBrowserRouter([
     children: [
       {
         path: 'student',
-        element: (
-          //  <ProtectedRoute allowedRoles={['student']}>
-          <StudentProfile />
-          //</ProtectedRoute>
-        ),
+        element: <StudentProfile />,
       },
       {
         path: 'sponsor',
-        element: (
-          // <ProtectedRoute allowedRoles={['sponsor']}>
-          <SponsorProfile />
-          // </ProtectedRoute>
-        ),
+        element: <SponsorProfile />,
       },
       {
         path: 'alumni',
-        element: (
-          // <ProtectedRoute allowedRoles={['alumni']}>
-          <AlumniProfile />
-          // </ProtectedRoute>
-        ),
+        element: <AlumniProfile />,
       },
       {
         path: 'admin',
-        element: (
-          // <ProtectedRoute allowedRoles={['admin']}>
-          <AdminDashboard />
-          //  </ProtectedRoute>
-        ),
+        element: <AdminDashboard />,
       },
       {
-        path: '*', // Catch-all for unmatched paths under /profile
+        path: '*',
         element: <NotFound />,
       },
     ],
   },
   {
     path: '/jobs',
-
     element: (
-      // <ProtectedRoute allowedRoles={['student', 'admin']}>
       <AppLayout>
         <JobBoard />
       </AppLayout>
-      // </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/jobs/:id', // ✅ NEW clean dynamic route for job detail
+    element: (
+      <AppLayout>
+        <JobDetailsPage />
+      </AppLayout>
     ),
   },
   {
     path: '/students',
-
     element: (
-      // <ProtectedRoute allowedRoles={['sponsor', 'alumni', 'admin']}>
       <AppLayout>
         <StudentsBoard />
       </AppLayout>
-      //</ProtectedRoute>
     ),
   },
   {
     path: '/sponsors',
     element: (
-      //<ProtectedRoute allowedRoles={['student', 'admin']}>
       <AppLayout>
         <SponsorsBoard />
       </AppLayout>
-      //</ProtectedRoute>
     ),
   },
   {
     path: '/alumni',
-
     element: (
-      //<ProtectedRoute allowedRoles={['student', 'admin']}>
       <AppLayout>
         <AlumniBoard />
       </AppLayout>
-      // </ProtectedRoute>
     ),
   },
   {
-    path: '*', // Catch-all undefined routes
+    path: '*',
     element: (
       <AppLayout>
         <NotFound />
