@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { IconPlus } from '@tabler/icons-react';
 import { JobCarousel } from '../../components/JobCardCarousel/JobCarousel';
 import { JobCardProps } from '../../components/JobCardCarousel/JobCard';
-import { UserType } from '../../features/user/userSlice';
+import { Role } from '@/app/type/role';
 import EditModal from '../../components/Modal/EditModal';
 import EditAlumniProfile from '../../components/Modal/EditAlumniProfile';
 import { EditAvatar } from '../../components/Modal/EditAvatar';
@@ -17,11 +17,11 @@ export function AlumniProfile() {
   const [openProfileModal, setOpenProfileModal] = useState(false);
   const [modalContent, setModalContent] = useState<React.ReactNode>(null);
   const [showMoreDescription, setShowMoreDescription] = useState(false);
-  const [userType, setUserType] = useState<UserType>('alumni');
+  const [role, setRole] = useState<Role>(Role.Alumni); // Dummy role, replace with actual role from Redux store
   const [modalTitle, setModalTitle] = useState('');
 
   console.log(
-    'Change this SponsorPage component to use real userType from Redux store once user integration is implemented'
+    'Change this SponsorPage component to use real role from Redux store once user integration is implemented'
   );
 
   const handleAvatarChange = () => {
@@ -114,11 +114,11 @@ export function AlumniProfile() {
   }, []);
 
   // methods to get elements based on user type
-  const getElementBasedOnUserType = (element: string) => {
-    switch (userType) {
+  const getElementBasedOnRole = (element: string) => {
+    switch (role) {
       case 'sponsor':
         return getSponsorElements(element);
-      case 'student':
+      case 'member':
         return getStudentElements(element);
       case 'alumni':
         return getAlumniElements(element);
@@ -221,7 +221,7 @@ export function AlumniProfile() {
       </Card>
 
       <Flex style={{ display: 'flex', justifyContent: 'flex-end', marginRight: '20px' }}>
-        {getElementBasedOnUserType('profileBtn')}
+        {getElementBasedOnRole('profileBtn')}
       </Flex>
 
       <Grid>
@@ -286,7 +286,7 @@ export function AlumniProfile() {
                 style={{ display: 'flex', justifyContent: 'space-between', marginRight: '20px' }}
               >
                 <Title order={5}>Job Opportunities</Title>
-                {getElementBasedOnUserType('addNewBtn')}
+                {getElementBasedOnRole('addNewBtn')}
               </Flex>
               <Flex mt={15} justify={'center'} align={'center'}>
                 <JobCarousel jobs={jobData} />

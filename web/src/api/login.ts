@@ -34,11 +34,12 @@ export async function login(email: string, password: string) {
     const { userId, token, verified } = res.data;
 
     if (!verified) {
-      return { userType: 'unverified' };
+      return { role: 'unverified' };
     } else {
       localStorage.setItem('accessToken', token);
       console.log(`Successfully logged in as UserID ${userId}`);
-      return { userType: userRole }; // Return userType
+      console.log(userRole);
+      return { role: userRole }; // Return role
     }
   } catch (e) {
     throw Error('Invalid credentials');

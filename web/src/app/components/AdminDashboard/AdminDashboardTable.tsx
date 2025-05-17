@@ -36,7 +36,7 @@ const AdminDashboardTable: FC<Props> = ({ data }) => {
               {currentPageData.map((review) => (
                 <Table.Tr key={review.id} className={styles.tableRow}>
                   <Table.Td className={styles.leftRoundedCell}>{review.name}</Table.Td>
-                  <Table.Td>{review.userType}</Table.Td>
+                  <Table.Td>{review.role}</Table.Td>
                   <Table.Td>{date2string(review.date)}</Table.Td>
                   <Table.Td className={styles.rightRoundedCell}>{review.status}</Table.Td>
                 </Table.Tr>

@@ -28,7 +28,7 @@ interface FormComponentProps {
 }
 
 const fieldsByRole: { [key in Role]: Field[] } = {
-  [Role.Student]: [
+  [Role.Member]: [
     { label: 'First Name', name: 'firstName' },
     { label: 'Last Name', name: 'lastName' },
   ],
@@ -41,7 +41,6 @@ const fieldsByRole: { [key in Role]: Field[] } = {
     { label: 'Company', name: 'company' },
   ],
   [Role.Admin]: [],
-  [Role.Member]: [],
   [Role.Unknown]: []
 };
 
@@ -116,7 +115,7 @@ const SignupForm = ({ role }: { role: Role }) => {
     const data = Object.fromEntries(formData.entries());
 
     // Todo: Redirect or do something after successful registration
-    if (role === Role.Student) {
+    if (role === Role.Member) {
       register_member(data as unknown as createFSAEUserDto).then((response) => {
         // toast.success('Student Registration Successful');
         navigate('/verify', {

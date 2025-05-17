@@ -1,9 +1,9 @@
 import { ActionIcon, Text, Button, Paper, Flex, Stack } from '@mantine/core';
 import styles from './JobCard.module.css';
-import { useState } from 'react';
-import { UserType } from '@/app/features/user/userSlice';
 import { IconTrash } from '@tabler/icons-react';
-import { useNavigate } from 'react-router-dom'; // ✅ for navigation
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/app/store';
 
 export interface JobCardProps {
   title: string;
@@ -14,8 +14,8 @@ export interface JobCardProps {
 }
 
 export function JobCard({ data }: { data: JobCardProps }) {
-  const [userType, setUserType] = useState<UserType>('sponsor');
-  const navigate = useNavigate(); // ✅ hook for page redirection
+  const navigate = useNavigate();
+  const role = useSelector((state: RootState) => state.user.role);
 
   const handleDeleteJob = () => {
     console.log('Delete job with ID: ', data.jobID);
@@ -26,16 +26,15 @@ export function JobCard({ data }: { data: JobCardProps }) {
   };
 
   const handleViewJob = () => {
-    //  fixed path to match new router.tsx setup
     navigate(`/jobs/${data.jobID}`);
   };
 
-  const getElementBasedOnUserType = (element: string) => {
-    switch (userType) {
+  const getElementBasedOnRole = (element: string) => {
+    switch (role) { 
+      case 'member':
+        return getStudentElements(element);
       case 'sponsor':
         return getSponsorElements(element);
-      case 'student':
-        return getStudentElements(element);
       case 'alumni':
         return getAlumniElements(element);
       case 'admin':
@@ -115,7 +114,7 @@ export function JobCard({ data }: { data: JobCardProps }) {
             <Text fw={500} size="xl" className={styles.text}>
               {data.title}
             </Text>
-            {getElementBasedOnUserType('deleteBtn')}
+            {getElementBasedOnRole('deleteBtn')}
           </Flex>
 
           <Text fw={500} size="md" className={styles.text}>
@@ -128,7 +127,7 @@ export function JobCard({ data }: { data: JobCardProps }) {
         </Stack>
 
         <Flex justify="flex-end" mb="xs">
-          {getElementBasedOnUserType('jobBtn')}
+          {getElementBasedOnRole('jobBtn')}
         </Flex>
 
         <Flex justify="flex-end">

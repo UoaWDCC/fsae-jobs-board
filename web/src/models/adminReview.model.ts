@@ -1,10 +1,10 @@
-import { UserType } from '@/app/features/user/userSlice';
+import { Role } from '@/app/type/role';
 import { Status } from '@/app/type/status';
 
 export interface AdminReview {
   id: string;
   name: string;
-  userType: UserType;
+  role: Role;
   date: Date;
   status: Status;
 }
