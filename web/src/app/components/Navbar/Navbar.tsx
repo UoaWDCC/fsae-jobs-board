@@ -39,17 +39,17 @@ function Navbar() {
       { path: '/alumni', label: 'Alumni' },
     ],
     [Role.Sponsor]: [
-      { path: '/students', label: 'Students' },
+      { path: '/members', label: 'Students' },
       { path: '/alumni', label: 'Alumni' },
     ],
     [Role.Alumni]: [
-      { path: '/students', label: 'Students' },
+      { path: '/members', label: 'Students' },
       { path: '/sponsors', label: 'Sponsors' },
       { path: '/alumni', label: 'Alumni' },
     ],
     [Role.Admin]: [
       { path: '/jobs', label: 'Job Board' },
-      { path: '/students', label: 'Students' },
+      { path: '/members', label: 'Students' },
       { path: '/sponsors', label: 'Sponsors' },
       { path: '/alumni', label: 'Alumni' },
     ],
@@ -196,7 +196,7 @@ function Navbar() {
                   </Menu.Target>
                   <Menu.Dropdown>
                     <NavLink
-                      to="/signup/student"
+                      to="/signup/member"
                       style={{ textDecoration: 'none' }}
                     >
                       <Menu.Item> Student</Menu.Item>
@@ -334,7 +334,7 @@ function Navbar() {
                     </Button>
                   </Menu.Target>
                   <Menu.Dropdown>
-                    <NavLink to="/signup/student" onClick={close} style={{ textDecoration: 'none' }}>
+                    <NavLink to="/signup/member" onClick={close} style={{ textDecoration: 'none' }}>
                       <Menu.Item>Student</Menu.Item>
                     </NavLink>
                     <NavLink to="/signup/sponsor" onClick={close} style={{ textDecoration: 'none' }}>
