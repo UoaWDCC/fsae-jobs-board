@@ -16,7 +16,7 @@ import { NotFound } from './pages/General/NotFound.page';
 import ProfileSwitcher from './pages/General/ProfileSwitcher';
 import { AppLayout } from './Layouts/AppLayout';
 import ProtectedRoute from './components/ProtectedRoute';
-import { MemberSignUp } from './pages/Student/StudentSignup.page';
+import { StudentSignUp } from './pages/Student/StudentSignup.page';
 import { SponsorSignUp } from './pages/Sponsor/SponsorSignup.page';
 import { AlumniSignUp } from './pages/Alumni/AlumniSignup.page';
 import { AdminSignUp } from './pages/Admin/AdminSignup.page';
@@ -76,7 +76,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: 'member',
-        element: <MemberSignUp />,
+        element: <StudentSignUp />,
       },
       {
         path: 'sponsor',
