@@ -7,7 +7,7 @@ export function StudentSignUp() {
   return (
     <>
       <Box className={styles.wrapper}>
-        <SignupForm role={Role.Student} />
+        <SignupForm role={Role.Member} />
       </Box>
     </>
   );

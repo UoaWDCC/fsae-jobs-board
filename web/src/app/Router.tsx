@@ -75,7 +75,7 @@ const router = createBrowserRouter([
     ),
     children: [
       {
-        path: 'student',
+        path: 'member',
         element: <StudentSignUp />,
       },
       {
@@ -109,7 +109,7 @@ const router = createBrowserRouter([
     ),
     children: [
       {
-        path: 'student',
+        path: 'member',
         element: <StudentProfile />,
       },
       {

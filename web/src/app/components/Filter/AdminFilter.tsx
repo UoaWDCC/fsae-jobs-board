@@ -6,21 +6,21 @@ import { Role, roleToString, stringToRole, stringsToRoles } from '@/app/type/rol
 import { Status, statusToString, stringsToStatuses } from '@/app/type/status';
 
 interface Props {
-  filterUserTypes: Role[];
-  setFilterUserTypes: (filterRoles: Role[]) => void;
+  filterRoles: Role[];
+  setfilterRoles: (filterRoles: Role[]) => void;
   filterStatus: Status[];
   setFilterStatus: (filterFields: Status[]) => void;
 }
 
 const AdminFilter: FC<Props> = ({
-  filterUserTypes,
-  setFilterUserTypes,
+  filterRoles,
+  setfilterRoles,
   filterStatus,
   setFilterStatus,
 }) => {
   const roles = [
     { label: 'Sponsor', value: Role.Sponsor },
-    { label: 'Student', value: Role.Student },
+    { label: 'Member', value: Role.Member },
     { label: 'Alumni', value: Role.Alumni },
     // Add other roles as needed
   ];
@@ -47,11 +47,11 @@ const AdminFilter: FC<Props> = ({
 
           <Stack>
             <Checkbox.Group
-              value={filterUserTypes.map((role) => stringToRole(role))} // Convert enums to strings
+              value={filterRoles.map((role) => stringToRole(role))} // Convert enums to strings
               onChange={(selectedValues: string[]) => {
-                setFilterUserTypes(stringsToRoles(selectedValues)); // Convert strings back to RoleType
+                setfilterRoles(stringsToRoles(selectedValues)); // Convert strings back to RoleType
               }}
-              label="User Type"
+              label="Role"
               labelProps={{ style: { color: 'customAzureBlue.1' } }}
               classNames={{ label: styles.filterSubheading }}
             >
@@ -112,11 +112,11 @@ const AdminFilter: FC<Props> = ({
           >
             <Stack>
               <Checkbox.Group
-                value={filterUserTypes.map((role) => roleToString(role))} // Convert enums to strings
+                value={filterRoles.map((role) => roleToString(role))} // Convert enums to strings
                 onChange={(selectedValues: string[]) => {
-                  setFilterUserTypes(stringsToRoles(selectedValues)); // Convert strings back to RoleType
+                  setfilterRoles(stringsToRoles(selectedValues)); // Convert strings back to RoleType
                 }}
-                label="User Type"
+                label="Role"
                 labelProps={{ style: { color: 'customAzureBlue.1' } }}
                 classNames={{ label: styles.filterSubheading }}
               >

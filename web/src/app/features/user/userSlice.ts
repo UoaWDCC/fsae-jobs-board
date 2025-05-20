@@ -1,8 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Role } from '@/app/type/role';
 
-// Todo: Remove this duplicate type definition...
-export type UserType = 'student' | 'sponsor' | 'alumni' | 'admin';
 
 // Define the user state interface
 export interface UserState {
@@ -14,7 +12,7 @@ export interface UserState {
   lastName: string;
   phoneNumber: string;
   desc?: string;
-  UserType?: Role; // Allow for null (unauthenticated)
+  role?: Role; // Allow for null (unauthenticated)  
   // ... other user data (name, email, etc.) as needed
 }
 
@@ -36,13 +34,13 @@ const userSlice = createSlice({
     resetUser() {
       return initialState;
     },
-    setUserType(state, action: PayloadAction<UserType>) {
+    setRole(state, action: PayloadAction<Role>) {
       const role = action.payload as Role;
-      state.UserType = role;
+      state.role = role;
     },
     // ... other reducers for user actions (e.g., login, logout, update profile)
   },
 });
 
-export const { setUserType, resetUser } = userSlice.actions;
+export const { setRole, resetUser } = userSlice.actions;
 export default userSlice.reducer;

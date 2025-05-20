@@ -3,7 +3,7 @@ const password = 'test123';
 const passwordHash = bcrypt.hashSync(password, 10); // hash it like your app
 
 function fillFields(role:String) {
-  if (role == 'student' || role == 'alumni') {
+  if (role == 'member' || role == 'alumni') {
     cy.get('input[name="firstName"]').type('First', { force: true });
     cy.get('input[name="lastName"]').type('Last', { force: true });
   }
@@ -19,7 +19,7 @@ function fillFields(role:String) {
 
 describe('Tests successful user signup flow', () => {
   it('should sign up a new student user with valid fields filled', () => {
-    cy.visit(`/signup/student`);
+    cy.visit(`/signup/member`);
     cy.task('deleteUsersByEmail', `validstudent@gmail.com`); // delete any existing user with this email
     fillFields('student');
     cy.get('button[type="submit"]').click();
@@ -54,7 +54,7 @@ describe('Tests unsuccessful user signup flow', () => {
   //create user in the database same email
   before(() => {
     cy.task('insertTestUser', {
-      role: 'student',
+      role: 'member',
       email: usedEmail,
       passwordHash: passwordHash
     }).then((result) => {
@@ -68,7 +68,7 @@ describe('Tests unsuccessful user signup flow', () => {
 
   studentRequiredFields.forEach((field) => {
     it(`should mark field as invalid and prevent submission when the ${field} field is empty`, () => {
-      cy.visit(`/signup/student`);
+      cy.visit(`/signup/member`);
         // fill everything except the currently tested field
         fillFields('student');
         cy.get(`input[name="${field}"]`).clear();
@@ -85,8 +85,8 @@ describe('Tests unsuccessful user signup flow', () => {
   });
 
   it('should throw a validation error when email is already taken', () => {
-    cy.visit(`/signup/student`);
-    fillFields('student');
+    cy.visit(`/signup/member`);
+    fillFields('member');
     cy.get(`input[name="email"]`).clear();
     cy.get(`input[name="email"]`).type('validstudent@gmail.com');
     cy.get('button[type="submit"]').click();

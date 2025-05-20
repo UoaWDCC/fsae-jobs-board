@@ -1,5 +1,5 @@
 describe('Tests successful login flow with valid user credentials', () => {
-    const roles = ['student', 'alumni'];
+    const roles = ['member', 'alumni'];
     roles.forEach((role) => {
       it(`should log in a valid ${role}`, () => {
         cy.visit(`/login`);

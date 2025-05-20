@@ -15,43 +15,45 @@ import {
   Divider,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { UserType, resetUser } from '@/app/features/user/userSlice';
+import { Role } from '@/app/type/role';
 import { IconUserCircle, IconBell, IconLogout, IconSettings, IconBriefcase2 } from '@tabler/icons-react';
 import styles from './Navbar.module.css';
 import SettingModal from '../Modal/EditModal';
 import { EditSetting } from '../Modal/EditSetting';
+import { resetUser } from '../../features/user/userSlice';
 
 function Navbar() {
   // Use Redux State Management
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  function isUserType(value: any): value is UserType {
-    return value === 'student' || value === 'sponsor' || value === 'alumni' || value === 'admin';
+  function isRole(value: any): value is Role {
+    return value === Role.Member || value === Role.Sponsor || value === Role.Alumni || value === Role.Admin;
   }
 
-  const userType = useSelector((state: RootState) => state.user.UserType);
+  const role = useSelector((state: RootState) => state.user.role);
   // Define navigation links based on user type
-  const navLinks: { [key in UserType]: { path: string; label: string }[] } = {
-    student: [
+  const navLinks: { [key in Role]: { path: string; label: string }[] } = {
+    [Role.Member]: [
       { path: '/jobs', label: 'Jobs' },
       { path: '/sponsors', label: 'Sponsors' },
       { path: '/alumni', label: 'Alumni' },
     ],
-    sponsor: [
-      { path: '/students', label: 'Students' },
+    [Role.Sponsor]: [
+      { path: '/members', label: 'Students' },
       { path: '/alumni', label: 'Alumni' },
     ],
-    alumni: [
-      { path: '/students', label: 'Students' },
+    [Role.Alumni]: [
+      { path: '/members', label: 'Students' },
       { path: '/sponsors', label: 'Sponsors' },
       { path: '/alumni', label: 'Alumni' },
     ],
-    admin: [
+    [Role.Admin]: [
       { path: '/jobs', label: 'Job Board' },
-      { path: '/students', label: 'Students' },
+      { path: '/members', label: 'Students' },
       { path: '/sponsors', label: 'Sponsors' },
       { path: '/alumni', label: 'Alumni' },
     ],
+    [Role.Unknown]: [],
   };
   const handleLogout = () => {
     dispatch(resetUser());
@@ -60,31 +62,33 @@ function Navbar() {
   };
   // Redirect to the user's profile page based on their type
   const handleProfileClick = () => {
-    if (userType) {
+    if (role) {
       const profilePath = {
-        student: '/profile/student',
-        sponsor: '/profile/sponsor',
-        alumni: '/profile/alumni',
-        admin: '/profile/admin',
-      }[userType as UserType];
+        [Role.Member]: '/profile/member',
+        [Role.Sponsor]: '/profile/sponsor',
+        [Role.Alumni]: '/profile/alumni',
+        [Role.Admin]: '/profile/admin',
+        [Role.Unknown]: '/profile/unknown',
+      }[role as Role];
       navigate(profilePath);
     } else {
-      // Handle the case where userType is null
+      // Handle the case where role is null
       navigate('/login');
     }
   };
 
   const handleJobClick = () => {
-    if (userType) {
+    if (role) {
       const jobPath = {
-        student: '/jobs',
-        sponsor: '/jobs',
-        alumni: '/jobs',
-        admin: '/jobs',
-      }[userType as UserType];
+        [Role.Member]: '/jobs',
+        [Role.Sponsor]: '/jobs',
+        [Role.Alumni]: '/jobs',
+        [Role.Admin]: '/jobs',
+        [Role.Unknown]: '/jobs',
+      }[role as Role];
       navigate(jobPath);
     } else {
-      // Handle the case where userType is null
+      // Handle the case where role is null
       navigate('/login');
     }
   };
@@ -132,9 +136,9 @@ function Navbar() {
 
         {/* Desktop Navigation Links */}
         <Flex justify="center" align="center" style={{ flex: 1 }}>
-          {!isMobile && userType && isUserType(userType) && (
+          {!isMobile && role && isRole(role) && (
             <Group gap={100}>
-              {navLinks[userType].map((link) => (
+              {navLinks[role].map((link) => (
                 <NavLink
                   key={link.path}
                   to={link.path}
@@ -159,7 +163,7 @@ function Navbar() {
         {/* Desktop Icons/Auth Buttons */}
         {!isMobile && (
           <Flex gap="md" align="center">
-            {userType ? ( // Render icons if logged in
+            {role ? ( // Render icons if logged in
               <Group gap={20}>
                 <ActionIcon size={35} variant="subtle" color="white" onClick={handleJobClick}>
                   <IconBriefcase2 size={35} values='Jobs'/>
@@ -173,7 +177,7 @@ function Navbar() {
                   <IconSettings size={35} />
                 </ActionIcon>
 
-                {userType !== 'student' && (
+                {role !== Role.Member && (
                   <ActionIcon size={35} variant="subtle" color="white">
                     <IconBell size={35} />
                   </ActionIcon>
@@ -192,7 +196,7 @@ function Navbar() {
                   </Menu.Target>
                   <Menu.Dropdown>
                     <NavLink
-                      to="/signup/student"
+                      to="/signup/member"
                       style={{ textDecoration: 'none' }}
                     >
                       <Menu.Item> Student</Menu.Item>
@@ -252,11 +256,11 @@ function Navbar() {
           </Group>
           <Divider my="sm" />
 
-          {userType && isUserType(userType) ? (
+          {role && isRole(role) ? (
             <>
               {/* Mobile Nav Links for Logged-in Users */}
               <Flex justify="center" align="center" gap="xl" direction="column" style={{ flexGrow: 1 }}>
-                {navLinks[userType].map((link) => (
+                {navLinks[role].map((link) => (
                   <NavLink
                     key={link.path}
                     to={link.path}
@@ -299,7 +303,7 @@ function Navbar() {
                 >
                   Settings
                 </Button>
-                {userType !== 'student' && (
+                {role !== Role.Member && (
                   <Button variant="subtle" color="white" fullWidth onClick={close} leftSection={<IconBell size={20} />}>
                     Notifications
                   </Button>
@@ -330,7 +334,7 @@ function Navbar() {
                     </Button>
                   </Menu.Target>
                   <Menu.Dropdown>
-                    <NavLink to="/signup/student" onClick={close} style={{ textDecoration: 'none' }}>
+                    <NavLink to="/signup/member" onClick={close} style={{ textDecoration: 'none' }}>
                       <Menu.Item>Student</Menu.Item>
                     </NavLink>
                     <NavLink to="/signup/sponsor" onClick={close} style={{ textDecoration: 'none' }}>

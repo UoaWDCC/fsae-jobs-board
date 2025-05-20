@@ -7,10 +7,12 @@ import { toast } from 'react-toastify';
 import { login } from '@/api/login';
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { setRole } from '@/app/features/user/userSlice';
 
 export function LoginForm() {
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');  
@@ -31,11 +33,13 @@ export function LoginForm() {
 
   async function onLogin() {
     try {
-      const { userType } = await login(email, password);
+      const { role } = await login(email, password);
+      console.log(role);
+      dispatch(setRole(role));
       // toast.success('Login Successful');
 
-      // Redirect based on user type
-      switch (userType) {
+      // Redirect based on role
+      switch (role) {
         case 'unverified':
           navigate('/verify', {state: { email: email, password: password}, replace: true});
           break;
@@ -46,7 +50,7 @@ export function LoginForm() {
           navigate('/profile/alumni', { replace: true });
           break;
         case 'member':
-          navigate('/profile/student', { replace: true });
+          navigate('/profile/member', { replace: true });
           break;
         case 'sponsor':
           navigate('/profile/sponsor', { replace: true });

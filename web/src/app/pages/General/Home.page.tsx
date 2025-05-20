@@ -16,7 +16,7 @@ export function HomePage() {
         subtitle3="Find a Job"
         description3="Browse and Apply to Jobs"
         buttonText="Register as a Student"
-        useRef="/signup/student"
+        useRef="/signup/member"
       />
       <Guide
         title="Sponsors"
