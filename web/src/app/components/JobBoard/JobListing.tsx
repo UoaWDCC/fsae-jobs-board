@@ -53,7 +53,7 @@ const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields, search }) 
   }, []);
 
   // TODO: filter the jobListings before chunking
-  const chunkedJobListings = chunk(jobListings, itemsPerPage); // chunk all listings into four for per page display
+  // const chunkedJobListings = chunk(jobListings, itemsPerPage); // chunk all listings into four for per page display
   useEffect(() => {
     setPage(1);
   }, [search]);
