@@ -22,6 +22,7 @@ export function JobBoard() {
     };
   }, []);
   const [search, setSearch] = useState<string>('');
+  console.log("JobBoard search state:", search);
 
   return (
     <Grid justify="center" align="center">
@@ -51,7 +52,11 @@ export function JobBoard() {
               title="Job Board"
               placeholder="Search jobs"
             />
-            <JobListing filterRoles={filterRoles} filterFields={filterFields} />
+            <JobListing
+              filterRoles={filterRoles}
+              filterFields={filterFields}
+              search={search}
+            />
           </Grid.Col>
           
         </>
@@ -64,7 +69,11 @@ export function JobBoard() {
             filterFields={filterFields}
             setFilterFields={setFilterFields}
           />
-          <JobListing filterRoles={filterRoles} filterFields={filterFields} />
+          <JobListing
+            filterRoles={filterRoles}
+            filterFields={filterFields}
+            search={search}
+          />
         </Grid.Col>
       )}
     </Grid>

@@ -8,9 +8,10 @@ import { Job } from '@/models/job.model';
 interface JobListingProps {
   filterRoles: string[];
   filterFields: string[];
+  search: string;
 }
 
-const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
+const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields, search }) => {
   const [activePage, setPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState<number>(4);
   const [isPortrait, setIsPortrait] = useState(window.innerHeight > window.innerWidth);
@@ -50,10 +51,22 @@ const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
   
     fetchData();
   }, []);
-  
 
   // TODO: filter the jobListings before chunking
   const chunkedJobListings = chunk(jobListings, itemsPerPage); // chunk all listings into four for per page display
+  useEffect(() => {
+    setPage(1);
+  }, [search]);
+
+  // Filter jobs by search term (case-insensitive, matches title or description)
+  console.log("JobListing search prop:", search);
+  const filteredJobListings = jobListings.filter(job =>
+    job.title.toLowerCase().includes(search.toLowerCase()) ||
+    job.description.toLowerCase().includes(search.toLowerCase())
+  );
+  console.log("Filtered jobs:", filteredJobListings);
+
+  const chunkedJobListings = chunk(filteredJobListings, itemsPerPage); // chunk all listings into four for per page display
   const currentPageItems = chunkedJobListings[activePage - 1] || [];
 
   return (

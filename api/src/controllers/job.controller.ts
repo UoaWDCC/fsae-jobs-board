@@ -1,19 +1,21 @@
+//TEMPORARY: Temporarily remove AUTH protection for testing job ads (Will re-enable and uncomment authentication after search functionality is added)
+
 import {Filter, FilterExcludingWhere, repository} from '@loopback/repository';
 import {post, param, get, getModelSchemaRef, patch, del, requestBody, response} from '@loopback/rest';
 import {inject} from '@loopback/core';
 import {JobAd} from '../models';
 import {JobAdRepository} from '../repositories';
 import {UserProfile} from '@loopback/security';
-import {authenticate, AuthenticationBindings} from '@loopback/authentication';
+//import {authenticate, AuthenticationBindings} from '@loopback/authentication';
 import {authorize} from '@loopback/authorization';
 import {HttpErrors} from '@loopback/rest';
 import {FsaeRole} from '../models';
 
-@authenticate('fsae-jwt')
+// @authenticate('fsae-jwt')
 export class JobController {
   constructor(
     @repository(JobAdRepository) public jobAdRepository : JobAdRepository,
-    @inject(AuthenticationBindings.CURRENT_USER) private currentUserProfile: UserProfile,
+    // @inject(AuthenticationBindings.CURRENT_USER) private currentUserProfile: UserProfile,
   ) {}
 
   // TEMPORARY: Remove protection for testing job ads
@@ -39,7 +41,7 @@ export class JobController {
     jobAdData: Omit<JobAd, 'id' | 'publisherID'>,
   ): Promise<JobAd> {
     const jobAd = new JobAd(jobAdData);
-    jobAd.publisherID = this.currentUserProfile.id.toString();
+    // jobAd.publisherID = this.currentUserProfile.id.toString();
     return this.jobAdRepository.create(jobAd);
   }
 
