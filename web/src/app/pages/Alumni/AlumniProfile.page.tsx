@@ -9,9 +9,12 @@ import EditModal from '../../components/Modal/EditModal';
 import EditAlumniProfile from '../../components/Modal/EditAlumniProfile';
 import { EditAvatar } from '../../components/Modal/EditAvatar';
 import { EditBannerModal } from '../../components/Modal/EditBannerModal';
+import { useParams } from 'react-router-dom';
 
 export function AlumniProfile() {
   // UseState for future modal implementation
+  const { alumniId } = useParams();
+
   const [openModal, setOpenModal] = useState(false);
   const [modalType, setModalType] = useState('');
   const [openProfileModal, setOpenProfileModal] = useState(false);
@@ -19,7 +22,7 @@ export function AlumniProfile() {
   const [showMoreDescription, setShowMoreDescription] = useState(false);
   const [role, setRole] = useState<Role>(Role.Alumni); // Dummy role, replace with actual role from Redux store
   const [modalTitle, setModalTitle] = useState('');
-
+  
   console.log(
     'Change this SponsorPage component to use real role from Redux store once user integration is implemented'
   );
