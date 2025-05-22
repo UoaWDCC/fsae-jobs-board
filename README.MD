@@ -7,7 +7,7 @@
 
 ## 2025 Team Members
 - Carl Dela Pena
-- Chalith Dulhan Galbokke Hewage
+- Chalith Hewage
 - Dhruv Sawant
 - Erica Ngin
 - Grace Zhongxin Xu
