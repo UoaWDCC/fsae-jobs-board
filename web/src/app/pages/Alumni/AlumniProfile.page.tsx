@@ -166,6 +166,7 @@ export function AlumniProfile() {
             classNames={{
               root: styles.button_root,
             }}
+            style={{ marginLeft: '10px' }}
           >
             Add New
           </Button>
@@ -283,7 +284,13 @@ export function AlumniProfile() {
             {/* JOB OPPORTUNITIES CAROUSEL */}
             <Box miw="100%">
               <Flex
-                style={{ display: 'flex', justifyContent: 'space-between', marginRight: '20px' }}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  marginRight: '20px',
+                  flexWrap: 'wrap',
+                  gap: '0.5rem'
+                }}
               >
                 <Title order={5}>Job Opportunities</Title>
                 {getElementBasedOnRole('addNewBtn')}
