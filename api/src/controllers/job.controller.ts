@@ -62,8 +62,18 @@ export class JobController {
     },
   })
   async find(
-    @param.filter(JobAd) filter?: Filter<JobAd>,
+    @param.query.string('search') search?: string,
   ): Promise<JobAd[]> {
+    const filter = search
+      ? {
+          where: {
+            or: [
+              {title: {like: search, options: 'i'}},
+              {description: {like: search, options: 'i'}},
+            ],
+          },
+        }
+      : {};
     return this.jobAdRepository.find(filter);
   }
 

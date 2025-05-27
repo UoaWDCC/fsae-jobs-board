@@ -39,34 +39,24 @@ const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields, search }) 
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
-        const data = await fetchJobs();
+        const data = await fetchJobs(search); 
         setJobListings(data);
+        setError(null);
       } catch (err) {
         setError('Failed to fetch jobs');
       } finally {
         setLoading(false);
       }
     };
-  
     fetchData();
-  }, []);
-
   // TODO: filter the jobListings before chunking
   // const chunkedJobListings = chunk(jobListings, itemsPerPage); // chunk all listings into four for per page display
-  useEffect(() => {
-    setPage(1);
   }, [search]);
 
   // Filter jobs by search term (case-insensitive, matches title or description)
-  console.log("JobListing search prop:", search);
-  const filteredJobListings = jobListings.filter(job =>
-    job.title.toLowerCase().includes(search.toLowerCase()) ||
-    job.description.toLowerCase().includes(search.toLowerCase())
-  );
-  console.log("Filtered jobs:", filteredJobListings);
-
-  const chunkedJobListings = chunk(filteredJobListings, itemsPerPage); // chunk all listings into four for per page display
+  const chunkedJobListings = chunk(jobListings, itemsPerPage);
   const currentPageItems = chunkedJobListings[activePage - 1] || [];
 
   return (
