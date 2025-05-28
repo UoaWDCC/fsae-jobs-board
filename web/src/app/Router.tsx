@@ -157,8 +157,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: '/students',
-
+    path: '/members',
     element: (
       // <ProtectedRoute allowedRoles={['sponsor', 'alumni', 'admin']}>
       <AppLayout>

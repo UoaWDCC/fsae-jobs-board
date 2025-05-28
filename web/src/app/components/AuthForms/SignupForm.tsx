@@ -59,9 +59,11 @@ const FormComponent: React.FC<FormComponentProps> = ({ fields, onSubmit }) => (
         />
       ))}
       <TextInput
-        label="Email"
         name="email"
+        type="email"
+        label="Email"
         size="md"
+        pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
         required
         classNames={{ label: styles.formLabel }}
       />
