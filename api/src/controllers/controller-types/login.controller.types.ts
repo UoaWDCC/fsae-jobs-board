@@ -8,3 +8,11 @@ export type loginResponse = {
   token: string,
   verified: boolean;
 }
+
+export type whoAmIResponse = {
+  id: string,
+  firstName: string,
+  lastName: string,
+  email: string,
+  role: string,
+}

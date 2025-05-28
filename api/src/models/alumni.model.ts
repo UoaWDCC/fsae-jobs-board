@@ -4,23 +4,23 @@ import {FsaeUser} from './index';
 @model({settings: {strict: false}})
 export class Alumni extends FsaeUser {
   @property({
-    type: 'number',
+    type: 'string',
     id: true,
     generated: true,
   })
-  alumniID?: number;
+  alumniID?: string;
 
   @property({
     type: 'string',
     required: false,
   })
-  subGroup: string;
+  subGroup?: string;
 
   @property({
     type: 'string',
     required: false,
   })
-  company: string;
+  company?: string;
 
   // Indexer property to allow additional data
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -1,9 +1,8 @@
 export enum Role {
-  Student = 'student',
+  Member = 'member',
   Sponsor = 'sponsor',
   Alumni = 'alumni',
   Admin = 'admin',
-  Member = 'member',
   Unknown = 'unknown', // Fallback in case error
 }
 

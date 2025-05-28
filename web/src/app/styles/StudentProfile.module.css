@@ -2,7 +2,6 @@
   background-color: var(--mantine-color-background-1);
   height: 100vh;
   color: var(--mantine-color-customWhite-1);
-  overflow-y: auto;
 }
 
 .card {

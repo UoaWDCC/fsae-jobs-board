@@ -1,11 +1,11 @@
 import { apiInstance } from '@/api/ApiInstance';
 export async function login(email: string, password: string) {
-  let userRole;
+  let role;
   try {
     const res = await apiInstance.get(`user/${email}/role`);
-    userRole = res.data;
+    role = res.data;
 
-    if (!userRole) {
+    if (!role) {
       throw Error('Invalid credentials');
     }
   } catch (e) {
@@ -13,13 +13,13 @@ export async function login(email: string, password: string) {
   }
 
   let loginUrl;
-  if (userRole === 'admin') {
+  if (role === 'admin') {
     loginUrl = 'login-admin';
-  } else if (userRole === 'alumni') {
+  } else if (role === 'alumni') {
     loginUrl = 'login-alumni';
-  } else if (userRole === 'member') {
+  } else if (role === 'member') {
     loginUrl = 'login-member';
-  } else if (userRole === 'sponsor') {
+  } else if (role === 'sponsor') {
     loginUrl = 'login-sponsor';
   } else {
     throw Error('Unknown login type');
@@ -34,11 +34,12 @@ export async function login(email: string, password: string) {
     const { userId, token, verified } = res.data;
 
     if (!verified) {
-      return { userType: 'unverified' };
+      return { role: 'unverified' };
     } else {
       localStorage.setItem('accessToken', token);
       console.log(`Successfully logged in as UserID ${userId}`);
-      return { userType: userRole }; // Return userType
+      console.log(role);
+      return { role: role }; // Return role
     }
   } catch (e) {
     throw Error('Invalid credentials');

@@ -49,7 +49,7 @@ export class ActivationController {
     description: 'Check if alumni is activated',
     content: { 'application/json': { schema: { type: 'boolean' } } },
   })
-  async isAlumniActivated(@param.path.number('id') id: number): Promise<boolean> {
+  async isAlumniActivated(@param.path.string('id') id: string): Promise<boolean> {
     const alumni = await this.alumniRepository.findById(id);
     if (!alumni) {
       throw new HttpErrors.NotFound(`Alumni with id ${id} not found.`);
@@ -67,7 +67,7 @@ export class ActivationController {
     description: 'Check if sponsor is activated',
     content: { 'application/json': { schema: { type: 'boolean' } } },
   })
-  async isSponsorActivated(@param.path.number('id') id: number): Promise<boolean> {
+  async isSponsorActivated(@param.path.string('id') id: string): Promise<boolean> {
     const sponsor = await this.sponsorRepository.findById(id);
     if (!sponsor) {
       throw new HttpErrors.NotFound(`Sponsor with id ${id} not found.`);
@@ -86,7 +86,7 @@ export class ActivationController {
     description: 'Check if member is activated',
     content: { 'application/json': { schema: { type: 'boolean' } } },
   })
-  async isMemberActivated(@param.path.number('id') id: number): Promise<boolean> {
+  async isMemberActivated(@param.path.string('id') id: string): Promise<boolean> {
     const member = await this.memberRepository.findById(id);
     if (!member) {
       throw new HttpErrors.NotFound(`Member with id ${id} not found.`);
@@ -103,7 +103,7 @@ export class ActivationController {
   @response(204, {
     description: 'Activate alumni',
   })
-  async activateAlumni(@param.path.number('id') id: number): Promise<void> {
+  async activateAlumni(@param.path.string('id') id: string): Promise<void> {
     await this.alumniRepository.updateById(id, { activated: true });
   }
 
@@ -116,7 +116,7 @@ export class ActivationController {
   @response(204, {
     description: 'Deactivate alumni',
   })
-  async deactivateAlumni(@param.path.number('id') id: number): Promise<void> {
+  async deactivateAlumni(@param.path.string('id') id: string): Promise<void> {
     await this.alumniRepository.updateById(id, { activated: false });
   }
 
@@ -129,7 +129,7 @@ export class ActivationController {
   @response(204, {
     description: 'Activate sponsor',
   })
-  async activateSponsor(@param.path.number('id') id: number): Promise<void> {
+  async activateSponsor(@param.path.string('id') id: string): Promise<void> {
     await this.sponsorRepository.updateById(id, { activated: true });
   }
 
@@ -142,7 +142,7 @@ export class ActivationController {
   @response(204, {
     description: 'Deactivate sponsor',
   })
-  async deactivateSponsor(@param.path.number('id') id: number): Promise<void> {
+  async deactivateSponsor(@param.path.string('id') id: string): Promise<void> {
     await this.sponsorRepository.updateById(id, { activated: false });
   }
 
@@ -155,7 +155,7 @@ export class ActivationController {
   @response(204, {
     description: 'Activate member',
   })
-  async activateMember(@param.path.number('id') id: number): Promise<void> {
+  async activateMember(@param.path.string('id') id: string): Promise<void> {
     await this.memberRepository.updateById(id, { activated: true });
   }
 
@@ -168,7 +168,7 @@ export class ActivationController {
   @response(204, {
     description: 'Deactivate member',
   })
-  async deactivateMember(@param.path.number('id') id: number): Promise<void> {
+  async deactivateMember(@param.path.string('id') id: string): Promise<void> {
     await this.memberRepository.updateById(id, { activated: false });
   }
 }

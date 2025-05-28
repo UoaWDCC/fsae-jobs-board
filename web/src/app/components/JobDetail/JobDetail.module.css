@@ -1,0 +1,110 @@
+/* Base Colors from Style Guide */
+:root {
+  --papaya-orange: #F78F1F;
+  --charcoal-grey: #373737;
+  --mercury-silver: #A5A5A5;
+  --azure-blue: #0091FF;
+  --uoa-dark-blue: #00467F;
+  --electric-orange: #FF8400;
+  --black: #000000;
+  --white: #FFFFFF;
+}
+
+.jobDetailPageWrapper {
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+  min-height: 100vh;
+  padding: 4rem;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow-x: hidden;
+}
+
+.contentWrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 4rem;
+  max-width: 100vw;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.leftColumn {
+  flex: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.rightColumn {
+  flex: 6;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.titleRow {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.5rem;
+}
+
+.buttonRow {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin: 0.5rem 0;
+}
+
+.buttonRow :global(.mantine-Button-root) {
+  font-size: 1.125rem;
+  padding: 1rem 2rem;
+  height: 3.5rem;
+}
+
+.skillList {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(120px, 1fr));
+  gap: 0.5rem;
+  padding-left: 1rem;
+}
+
+.skillList li {
+  list-style: disc;
+  color: var(--text-light);
+}
+
+.sectionTitle {
+  font-weight: 600;
+  margin-top: 1rem;
+  font-size: 1.5rem;
+}
+
+.qualifications {
+  padding-left: 1rem;
+}
+
+.qualifications li {
+  margin-bottom: 0.5rem;
+  list-style: disc;
+}
+
+.companyLogo {
+  width: 240px;
+  height: 240px;
+  object-fit: cover;
+  margin-bottom: 1rem;
+}
+
+.leftColumn strong {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: #f0f0f0;
+}
+
+.detailItem {
+  margin-bottom: 0.5rem;
+}

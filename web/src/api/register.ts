@@ -40,7 +40,7 @@ async function register(url: string, createUserDto: createFSAEUserDto): Promise<
       firstName: res.data.firstName,
       lastName: res.data.lastName,
       phoneNumber: res.data.phoneNumber,
-      UserType: stringToRole(res.data.fsaeRole), // Convert this to Role enum
+      role: stringToRole(res.data.fsaeRole), // Convert this to Role enum
       desc: res.data.desc
     }
   } catch (e) {

@@ -1,6 +1,6 @@
 import { Group, Pagination, Stack, Table, Text } from '@mantine/core';
 import styles from './AdminDashboard.module.css';
-import { AdminReview } from '@/app/models/adminReview';
+import { AdminReview } from '@/models/adminReview.model';
 import { FC, useState } from 'react';
 import { date2string } from '@/app/features/date/dateConverter';
 import { ceil } from 'lodash';
@@ -36,7 +36,7 @@ const AdminDashboardTable: FC<Props> = ({ data }) => {
               {currentPageData.map((review) => (
                 <Table.Tr key={review.id} className={styles.tableRow}>
                   <Table.Td className={styles.leftRoundedCell}>{review.name}</Table.Td>
-                  <Table.Td>{review.userType}</Table.Td>
+                  <Table.Td>{review.role}</Table.Td>
                   <Table.Td>{date2string(review.date)}</Table.Td>
                   <Table.Td className={styles.rightRoundedCell}>{review.status}</Table.Td>
                 </Table.Tr>

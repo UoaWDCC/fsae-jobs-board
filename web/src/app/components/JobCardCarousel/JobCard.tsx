@@ -1,9 +1,10 @@
 import { ActionIcon, Text, Button, Paper, Flex, Stack } from '@mantine/core';
 import styles from './JobCard.module.css';
-import { useState } from 'react';
-import { UserType } from '@/app/features/user/userSlice';
 import { IconTrash } from '@tabler/icons-react';
-// dummy data -- change later when we have real data
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/app/store';
+
 export interface JobCardProps {
   title: string;
   subtitle: string;
@@ -13,12 +14,8 @@ export interface JobCardProps {
 }
 
 export function JobCard({ data }: { data: JobCardProps }) {
-  // const userType = useSelector((state: RootState) => state.user.userType);
-  const [userType, setUserType] = useState<UserType>('sponsor');
-
-  console.log(
-    'Change this JobCard component to use real userType from Redux store once user integration is implemented'
-  );
+  const navigate = useNavigate();
+  const role = useSelector((state: RootState) => state.user.role);
 
   const handleDeleteJob = () => {
     console.log('Delete job with ID: ', data.jobID);
@@ -29,16 +26,15 @@ export function JobCard({ data }: { data: JobCardProps }) {
   };
 
   const handleViewJob = () => {
-    console.log('View job with ID: ', data.jobID);
+    navigate(`/jobs/${data.jobID}`);
   };
 
-  // methods to get elements based on user type
-  const getElementBasedOnUserType = (element: string) => {
-    switch (userType) {
+  const getElementBasedOnRole = (element: string) => {
+    switch (role) { 
+      case 'member':
+        return getStudentElements(element);
       case 'sponsor':
         return getSponsorElements(element);
-      case 'student':
-        return getStudentElements(element);
       case 'alumni':
         return getAlumniElements(element);
       case 'admin':
@@ -113,31 +109,27 @@ export function JobCard({ data }: { data: JobCardProps }) {
   return (
     <Paper p="md" radius="md">
       <Flex direction="column">
-        {/* Job Title */}
         <Stack gap="xs">
           <Flex justify={'space-between'}>
             <Text fw={500} size="xl" className={styles.text}>
               {data.title}
             </Text>
-            {getElementBasedOnUserType('deleteBtn')}
+            {getElementBasedOnRole('deleteBtn')}
           </Flex>
 
-          {/* Job Subtite */}
           <Text fw={500} size="md" className={styles.text}>
             {data.subtitle}
           </Text>
 
-          {/* Job Description */}
           <Text fw={700} size="sm" className={styles.text} lineClamp={3}>
             {data.description}
           </Text>
         </Stack>
 
         <Flex justify="flex-end" mb="xs">
-          {getElementBasedOnUserType('jobBtn')}
+          {getElementBasedOnRole('jobBtn')}
         </Flex>
 
-        {/* Job ID */}
         <Flex justify="flex-end">
           <Text c={'#7C7C7C'} size="sm" className={styles.text}>
             #{data.jobID}

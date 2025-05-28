@@ -7,10 +7,10 @@ function ProfileSwitcher() {
   const location = useLocation();
 
   // Type the useSelector result using RootState
-  const userType = useSelector((state: RootState) => state.user.UserType);
+    const role = useSelector((state: RootState) => state.user.role);
 
-  if (!userType) {
-    // Handle undefined userType (user not logged in or authentication not yet determined)
+  if (!role) {
+    // Handle undefined role (user not logged in or authentication not yet determined)
     // return <Navigate to="/login" state={{ from: location }} replace />; // Redirect to login
   }
 
