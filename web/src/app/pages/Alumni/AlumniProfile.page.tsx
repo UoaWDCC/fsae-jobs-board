@@ -10,10 +10,12 @@ import EditAlumniProfile from '../../components/Modal/EditAlumniProfile';
 import { EditAvatar } from '../../components/Modal/EditAvatar';
 import { EditBannerModal } from '../../components/Modal/EditBannerModal';
 import { useParams } from 'react-router-dom';
+import { fetchAlumniById } from '@/api/alumni';
+import { Alumni } from '@/models/alumni.model';
 
 export function AlumniProfile() {
   // UseState for future modal implementation
-  const { alumniId } = useParams();
+  const { id } = useParams();
 
   const [openModal, setOpenModal] = useState(false);
   const [modalType, setModalType] = useState('');
@@ -30,24 +32,28 @@ export function AlumniProfile() {
   const handleAvatarChange = () => {
     setModalType('avatar');
     setOpenProfileModal(true);
-    setModalContent(<EditAvatar avatar={userData?.avatar} />);
+    // Alumni avatar doesnt exist in the model yet
+    //setModalContent(<EditAvatar avatar={userData?.avatar} />);
+    setModalContent(<EditAvatar avatar={""} />);
     setModalTitle('Profile Photo');
   };
 
   const handleBannerChange = () => {
     setModalType('banner');
     setOpenProfileModal(true);
-    setModalContent(<EditBannerModal banner={userData?.banner} />)
+    // Banner doesnt exist in alumni model yet
+    //setModalContent(<EditBannerModal banner={userData?.banner} />)
+    setModalContent(<EditBannerModal banner={""} />)
     setModalTitle('Banner Photo');
   };
-
+  /* todo
   const handleProfileChange = () => {
     setOpenProfileModal(true);
     setModalContent(
       <EditAlumniProfile userData={userData} close={() => setOpenProfileModal(false)} />
     );
     setModalTitle('Edit Profile');
-  };
+  };*/
 
   const handleJobOpportunitiesChange = () => {
     setModalType('jobOpportunities');
@@ -60,21 +66,7 @@ export function AlumniProfile() {
   };
 
   // Dummy data for alumni userData
-  const [userData, setUserData] = useState({
-    alumniName: 'Eliza Smith',
-    companyField: 'Company',
-    subgroup: 'Subgroup',
-    dateJoined: '2024',
-    email: 'elizasmith@example.com',
-    phone: '+1234567890',
-    description:
-      ' Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque ut tristique lacus, eget euismod enim. Fusce suscipit at tortor sed pretium. Integer et pretium orci. Integer velit purus, gravida quis tincidunt ac, pretium sed lorem. Sed sagittis neque tincidunt, auctor ante vitae, ultricies risus. Aenean quis sem sed dolor feugiat tincidunt. Etiam purus justo, ullamcorper in cursus volutpat, luctus in dolor. Donec sed purus tristique, rhoncus erat ut, ullamcorper dolor. Pellentesque tincidunt eros id neque egestas, sed luctus sapien elementum. Etiam bibendum ex est, ac consequat turpis facilisis id. Mauris scelerisque purus quis leo fermentum, at semper nisl mattis. Vivamus vel ornare lectus. Nullam dictum felis et commodo lacinia. Etiam tempor placerat sapien quis maximus. Ut pellentesque libero ac sollicitudin accumsan. Sed vel dolor bibendum, egestas metus nec, eleifend mauris. Integer imperdiet eros vitae nibh interdum volutpat. Etiam et ultrices massa. Cras gravida facilisis sapien. Ut eleifend varius risus, eget bibendum dui blandit ac. Vivamus tempor varius massa, sed suscipit mauris interdum eu. Proin sed commodo ex, ac cursus nisl. Integer ut tincidunt augue. Cras molestie libero erat. Nunc justo felis, sodales auctor dapibus sit amet, dapibus ut turpis. Sed nec sagittis nisl. Cras eget condimentum est. Cras nulla lorem, venenatis euismod gravida quis, fermentum vel mauris. Fusce et ipsum et lorem egestas volutpat. Duis nec imperdiet ante. Quisque et ligula accumsan, eleifend urna sit amet, cursus dolor. Nullam ut erat diam. Ut non lacinia erat, eu pretium nisl. Vestibulum mattis sapien in tristique commodo. Integer faucibus leo at turpis rhoncus, eu hendrerit ex dignissim. Nulla facilisi. Donec eget turpis ac odio pretium iaculis. Sed imperdiet sollicitudin viverra. In consequat justo velit, aliquet ultricies leo efficitur laoreet. Nullam quis elementum diam. Sed in sodales est. Integer malesuada semper tortor eu feugiat. Morbi tincidunt turpis bibendum consequat cursus. Aenean faucibus felis sit amet porta interdum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Mauris dui magna, lobortis quis quam non, dictum bibendum libero. ',
-    avatar:
-      'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png',
-    banner:
-      'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80',
-  });
-  // Add code to fetch data from our database when it will be connected
+  const [userData, setUserData] = useState<Alumni | null>(null);
 
   const [jobData, setJobData] = useState<JobCardProps[]>([
     {
@@ -114,7 +106,18 @@ export function AlumniProfile() {
 
   useEffect(() => {
     // Logic to fetch data and setUserData
-  }, []);
+    const fetchUserData = async () => {
+      try {
+        const userData = await fetchAlumniById(id as string);
+        setUserData(userData);
+      } catch (err) {
+        // TODO: error case
+      } finally {
+        //setLoading(false);
+      }
+    };
+    if (id) fetchUserData();
+   }, [id]);
 
   // methods to get elements based on user type
   const getElementBasedOnRole = (element: string) => {
@@ -153,7 +156,7 @@ export function AlumniProfile() {
       case 'profileBtn':
         return (
           <Button
-            onClick={handleProfileChange}
+            //onClick={handleProfileChange}
             classNames={{
               root: styles.button_root,
             }}
@@ -202,16 +205,19 @@ export function AlumniProfile() {
           h={250}
           className={styles.banner}
           onClick={handleBannerChange}
-          style={{ backgroundImage: `url(${userData.banner})` }}
+          // alumnis dont have banners yet
+          //style={{ backgroundImage: `url(${userData.banner})` }}
+          style={{ backgroundImage: `url(${"https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80"})` }}
         />
-        {userData?.alumniName && (
+        {(userData?.firstName && userData?.lastName) && (
           <Text className={styles.name} pl={170} pt={140}>
-            {userData.alumniName}
+            {userData.firstName + " " + userData.lastName}
           </Text>
         )}
 
         <Avatar
-          src={userData?.avatar}
+          //src={userData?.avatar}
+          src={"https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png"}
           size={150}
           mt={-100}
           ml={10}
@@ -219,7 +225,7 @@ export function AlumniProfile() {
           onClick={handleAvatarChange}
         />
         <Text size="lg" mt={-30} ml={170} className={styles.text}>
-          {userData.companyField}
+          {"Company Placeholder"}
         </Text>
       </Card>
 
@@ -234,7 +240,7 @@ export function AlumniProfile() {
             <Title order={5}>Contact</Title>
             <Box pl={15} mt={10} className={styles.box}>
               {userData?.email && <Text size="md">{userData.email}</Text>}
-              {userData?.phone && <Text size="lg">{userData.phone}</Text>}
+              {userData?.phoneNumber && <Text size="lg">{userData.phoneNumber}</Text>}
               {!userData && <Loader color="blue" />}
             </Box>
           </Box>
@@ -246,16 +252,16 @@ export function AlumniProfile() {
             <Title order={5}>About Me</Title>
             <Box pl={15} mt={10} className={styles.box}>
               {/* Conditionally render the full description based on showMore state */}
-              {userData?.description && (
+              {userData?.desc && (
                 <>
                   {showMoreDescription ? (
-                    <Text size="md">{userData.description}</Text>
+                    <Text size="md">{userData.desc}</Text>
                   ) : (
                     <>
-                      <Text size="md">{userData.description.substring(0, 1200)}</Text>
+                      <Text size="md">{userData.desc.substring(0, 1200)}</Text>
                     </>
                   )}
-                  {userData.description?.length > 1200 ? (
+                  {userData.desc?.length > 1200 ? (
                     <Button
                       variant="subtle"
                       size="sm"
@@ -270,7 +276,7 @@ export function AlumniProfile() {
                   ) : null}
                 </>
               )}
-              {!userData.description && <Loader color="blue" />}
+              {!userData?.desc && <Loader color="blue" />}
             </Box>
           </Box>
           <Box
