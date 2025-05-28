@@ -51,12 +51,17 @@ const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields, search }) 
       }
     };
     fetchData();
-  // TODO: filter the jobListings before chunking
-  // const chunkedJobListings = chunk(jobListings, itemsPerPage); // chunk all listings into four for per page display
   }, [search]);
 
-  // Filter jobs by search term (case-insensitive, matches title or description)
-  const chunkedJobListings = chunk(jobListings, itemsPerPage);
+  // Carl : Filter job listings based on role type
+  const filteredJobListings = jobListings.filter(job =>
+    job.roleType &&
+    (filterRoles.length === 0 ||
+      filterRoles.includes(job.roleType.toLowerCase()))
+    || (!job.roleType && filterRoles.length === 0)
+  );
+
+  const chunkedJobListings = chunk(filteredJobListings, itemsPerPage);
   const currentPageItems = chunkedJobListings[activePage - 1] || [];
 
   return (
@@ -80,7 +85,7 @@ const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields, search }) 
         ))}
       </Container>
 
-      {!loading && jobListings.length > 0 && (
+      {!loading && filteredJobListings.length > 0 && (
         <Container className={styles.paginationContainer}>
           <Pagination
             total={chunkedJobListings.length}
