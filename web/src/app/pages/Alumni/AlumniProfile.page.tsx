@@ -9,7 +9,7 @@ import EditModal from '../../components/Modal/EditModal';
 import EditAlumniProfile from '../../components/Modal/EditAlumniProfile';
 import { EditAvatar } from '../../components/Modal/EditAvatar';
 import { EditBannerModal } from '../../components/Modal/EditBannerModal';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { fetchAlumniById } from '@/api/alumni';
 import { fetchJobsByPublisherId } from '@/api/job';
 import { Alumni } from '@/models/alumni.model';
@@ -19,8 +19,8 @@ const PLACEHOLDER_BANNER = "https://images.unsplash.com/photo-1488590528505-98d2
 const PLACEHOLDER_AVATAR = "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png"
 
 export function AlumniProfile() {
-  // UseState for future modal implementation
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const [openModal, setOpenModal] = useState(false);
   const [modalType, setModalType] = useState('');
@@ -81,6 +81,9 @@ export function AlumniProfile() {
     const fetchUserData = async () => {
       try {
         const userData = await fetchAlumniById(id as string);
+        if (!userData) {
+          navigate("/404")
+        }
         setUserData(userData);
         const jobs: Job[] = await fetchJobsByPublisherId(id as string);
         const jobsForJobCard = jobs.map((thisJob) => {
@@ -94,9 +97,7 @@ export function AlumniProfile() {
         })
         setJobData(jobsForJobCard)
       } catch (err) {
-        // TODO: error case
-      } finally {
-        //setLoading(false);
+        navigate("/404")
       }
     };
     if (id) fetchUserData();

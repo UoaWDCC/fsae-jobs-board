@@ -171,6 +171,14 @@ const router = createBrowserRouter([
     ),
   },
   {
+    path: '404',
+    element: (
+      <AppLayout>
+        <NotFound />
+      </AppLayout>
+    ),
+  },
+  {
     path: '*',
     element: (
       <AppLayout>

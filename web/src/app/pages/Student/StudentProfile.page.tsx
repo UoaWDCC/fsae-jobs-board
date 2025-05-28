@@ -19,15 +19,15 @@ import { EditAvatar } from '../../components/Modal/EditAvatar';
 import { EditBannerModal } from '../../components/Modal/EditBannerModal';
 import { Member } from '@/models/member.model';
 import { fetchMemberById } from '@/api/member';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 const PLACEHOLDER_BANNER = "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80"
 const PLACEHOLDER_AVATAR = "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png"
 
 export function StudentProfile() {
   const { id } = useParams();
+  const navigate = useNavigate();
 
-  // UseState for future modal implementation
   const [modalType, setModalType] = useState('');
   const [openProfileModal, setOpenProfileModal] = useState(false);
   const [modalContent, setModalContent] = useState<React.ReactNode>(null);
@@ -68,6 +68,9 @@ export function StudentProfile() {
         const fetchUserData = async () => {
           try {
             const userData = await fetchMemberById(id as string);
+            if (!userData) {
+              navigate("/404")
+            }
             // Temporary injection of placeholder fields as currently the database model doesnt have any
             const userDataModifiedWithPlaceholders = userData ? {
               ...userData,
@@ -83,9 +86,7 @@ export function StudentProfile() {
             } : null
             setUserData(userDataModifiedWithPlaceholders);
           } catch (err) {
-            // TODO: error case
-          } finally {
-            //setLoading(false);
+            navigate("/404")
           }
         };
         if (id) fetchUserData();
