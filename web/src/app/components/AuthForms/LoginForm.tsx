@@ -33,7 +33,7 @@ export function LoginForm() {
 
   async function onLogin() {
     try {
-      const { role } = await login(email, password);
+      const { role, id } = await login(email, password);
       console.log(role);
       dispatch(setRole(role));
       // toast.success('Login Successful');
@@ -44,16 +44,16 @@ export function LoginForm() {
           navigate('/verify', {state: { email: email, password: password}, replace: true});
           break;
         case 'admin':
-          navigate('/profile/admin', { replace: true });
+          navigate(`/profile/admin/${id}`, { replace: true });
           break;
         case 'alumni':
-          navigate('/profile/alumni', { replace: true });
+          navigate(`/profile/alumni/${id}`, { replace: true });
           break;
         case 'member':
-          navigate('/profile/member', { replace: true });
+          navigate(`/profile/member/${id}`, { replace: true });
           break;
         case 'sponsor':
-          navigate('/profile/sponsor', { replace: true });
+          navigate(`/profile/sponsor/${id}`, { replace: true });
           break;
         default:
           navigate('/'); // Default fallback
