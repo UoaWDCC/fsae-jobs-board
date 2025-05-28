@@ -15,6 +15,9 @@ import { fetchJobsByPublisherId } from '@/api/job';
 import { Alumni } from '@/models/alumni.model';
 import { Job } from "@/models/job.model";
 
+const PLACEHOLDER_BANNER = "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80"
+const PLACEHOLDER_AVATAR = ""
+
 export function AlumniProfile() {
   // UseState for future modal implementation
   const { id } = useParams();
@@ -185,19 +188,24 @@ export function AlumniProfile() {
           h={250}
           className={styles.banner}
           onClick={handleBannerChange}
-          // alumnis dont have banners yet
-          //style={{ backgroundImage: `url(${userData.banner})` }}
-          style={{ backgroundImage: `url(${"https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80"})` }}
+          // TODO: userData?.banner ?? PLACEHOLDER_BANNER
+          // Alumni model doesnt currently have a banner field
+          style={{ backgroundImage: `url(${PLACEHOLDER_BANNER})`}}
         />
         {(userData?.firstName && userData?.lastName) && (
           <Text className={styles.name} pl={170} pt={140}>
             {userData.firstName + " " + userData.lastName}
           </Text>
         )}
+        {userData?.subGroup && (
+          <Text size="xl" className={styles.subGroup} pl={170} pt={160}>
+            {userData.subGroup}
+          </Text>
+        )}
 
         <Avatar
-          //src={userData?.avatar}
-          src={"https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png"}
+          //TODO: Use alumni avatar (not in the model yet as of writing) src={userData?.avatar ?? PLACEHOLDER_AVATAR}
+          src={PLACEHOLDER_AVATAR}
           size={150}
           mt={-100}
           ml={10}

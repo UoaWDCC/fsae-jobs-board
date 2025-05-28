@@ -1,4 +1,4 @@
-export interface Alumni {
+export interface Member {
   "id": string,
   "email": string,
   "activated": boolean,
@@ -7,8 +7,5 @@ export interface Alumni {
   "firstName": string,
   "lastName": string,
   "phoneNumber": string,
-  "desc": string | null,
-  "alumniID" : string | null,
-  "subGroup" : string | null,
-  "company" : string | null
+  "desc": string
 }
