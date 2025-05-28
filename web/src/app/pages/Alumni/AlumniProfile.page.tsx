@@ -97,6 +97,7 @@ export function AlumniProfile() {
         })
         setJobData(jobsForJobCard)
       } catch (err) {
+        // TODO: proper error handling (eg. auth errors/forbidden pages etc.)
         navigate("/404")
       }
     };

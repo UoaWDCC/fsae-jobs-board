@@ -37,6 +37,8 @@ export function StudentProfile() {
   const [showMoreSkills, setShowMoreSkills] = useState(false);
   const [showMoreEducation, setShowMoreEducation] = useState(false);
 
+  const [userData, setUserData] = useState<Member | null>(null);
+
   // TODO: avatar and banner doesnt exist in the member model yet
   /*
   const handleAvatarChange = () => {
@@ -59,37 +61,36 @@ export function StudentProfile() {
     setModalTitle('Edit Profile');
     setOpenProfileModal(true);
   };
-
-  // Dummy data for userData
-  const [userData, setUserData] = useState<Member | null>(null);
+  
 
   useEffect(() => {
     // Logic to fetch data and setUserData
-        const fetchUserData = async () => {
-          try {
-            const userData = await fetchMemberById(id as string);
-            if (!userData) {
-              navigate("/404")
-            }
-            // Temporary injection of placeholder fields as currently the database model doesnt have any
-            const userDataModifiedWithPlaceholders = userData ? {
-              ...userData,
-              skills: ['Placeholder1', 'Placeholder2', 'Placeholder3', 'React', 'C#', 'Git'],
-              education: [
-                'Major(s): Master of Software Engineering',
-                'Expected Graduation Date: 2026',
-                'Major(s): Part II Bachelor of Software Engineering',
-                'Graduation Date: 2024',
-                'Major(s): Bachelor of Science',
-                'Graduation Date: 2024',
-              ],
-            } : null
-            setUserData(userDataModifiedWithPlaceholders);
-          } catch (err) {
-            navigate("/404")
-          }
-        };
-        if (id) fetchUserData();
+    const fetchUserData = async () => {
+      try {
+        const userData = await fetchMemberById(id as string);
+        if (!userData) {
+          navigate("/404")
+        }
+        // Temporary injection of placeholder fields as currently the database model doesnt have any
+        const userDataModifiedWithPlaceholders = userData ? {
+          ...userData,
+          skills: ['Placeholder1', 'Placeholder2', 'Placeholder3', 'React', 'C#', 'Git'],
+          education: [
+            'Major(s): Master of Software Engineering',
+            'Expected Graduation Date: 2026',
+            'Major(s): Part II Bachelor of Software Engineering',
+            'Graduation Date: 2024',
+            'Major(s): Bachelor of Science',
+            'Graduation Date: 2024',
+          ],
+        } : null
+        setUserData(userDataModifiedWithPlaceholders);
+      } catch (err) {
+        // TODO: proper error handling (eg. auth errors/forbidden pages etc.)
+        navigate("/404")
+      }
+    };
+    if (id) fetchUserData();
   }, [id]);
 
   return (
