@@ -12,6 +12,8 @@ import EditModal from '@/app/components/Modal/EditModal';
 import { fetchSponsorById } from '@/api/sponsor';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Sponsor } from '@/models/sponsor.model';
+import { Job } from '@/models/job.model';
+import { fetchJobsByPublisherId } from '@/api/job';
 
 const PLACEHOLDER_BANNER = "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png"
 const PLACEHOLDER_AVATAR = "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png"
@@ -76,6 +78,17 @@ export function SponsorProfile() {
           navigate("/404")
         }
         setUserData(userData);
+        const jobs: Job[] = await fetchJobsByPublisherId(id as string);
+        const jobsForJobCard = jobs.map((thisJob) => {
+          return {
+            title: thisJob.title,
+            subtitle: "Placeholder subtitle",
+            description: thisJob.description,
+            jobLink: "#", // TODO: correctly link to job details page
+            jobID: thisJob.id
+          }
+        })
+        setJobData(jobsForJobCard)
       } catch (err) {
         // TODO: proper error handling (eg. auth errors/forbidden pages etc.)
         navigate("/404")
