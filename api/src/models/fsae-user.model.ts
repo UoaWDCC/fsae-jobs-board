@@ -53,13 +53,13 @@ export abstract class FsaeUser extends Entity {
 
   @property({
     type: 'string',
-    required: true,
+    required: false,
   })
   firstName: string;
 
   @property({
     type: 'string',
-    required: true,
+    required: false,
   })
   lastName: string;
 
