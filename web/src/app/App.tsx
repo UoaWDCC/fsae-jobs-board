@@ -14,7 +14,7 @@ import { useEffect } from 'react';
 
 export default function App() {
   const dispatch = useDispatch();
-
+  //Keep track of the role of the user
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
     if (token) {

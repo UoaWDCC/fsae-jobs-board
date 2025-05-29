@@ -3,7 +3,7 @@ import {FsaeRole} from './roles';
 import {securityId, UserProfile} from '@loopback/security';
 
 @model({settings: {strict: false}})
-export abstract class FsaeUser extends Entity {
+export class FsaeUser extends Entity {
   @property({
     type: 'string',
     id: true,
@@ -14,78 +14,72 @@ export abstract class FsaeUser extends Entity {
   @property({
     type: 'string',
     required: true,
-  })
-  email: string;
-
-  @property({
-    type: 'string',
-    required: false,
-  })
-  username: string;
-
-  @property({
-    type: 'string',
-    required: true,
-    hidden: true
-  })
-  password: string;
-
-  @property({
-    type: 'boolean',
-    required: true,
-  })
-  activated: boolean;
-
-  @property({
-    type: 'boolean',
-    required: true,
-  })
-  verified: boolean;
-
-  @property({
-    type: 'string',
-    required: true,
     jsonSchema: {
       enum: Object.values(FsaeRole),
-    }
+    },
   })
-  fsaeRole: FsaeRole;
+  role: FsaeRole=FsaeRole.UNkNOWN;
 
+  // Common fields
+  @property({type: 'string', required: true})
+  email: string;
+  
   @property({
     type: 'string',
-    required: false,
+    required: true,
   })
-  firstName: string;
+  username: string='FsaeUser'; 
 
-  @property({
-    type: 'string',
-    required: false,
-  })
-  lastName: string;
+  @property({type: 'string', required: true, hidden: true})
+  password: string;
+
+  @property({type: 'boolean', required: true})
+  activated: boolean;
+
+  @property({type: 'boolean', required: true})
+  verified: boolean;
+
+  @property({type: 'string', value: ''}) 
+  phoneNumber?: string;
 
   @property({
     type: 'string',
     required: true,
   })
-  phoneNumber: string;
+  desc: string = 'An FSAE user profile.';
 
   @property({
     type: 'string',
-    required: false,
+    required: true,
   })
-  desc?: string;
+  avatar: string='/default-avatar.png'; // TODO: set it to default avatar URL
+
+  /* Role-specific optional fields
+  Member: firstName, lastName, cv, subGroup;
+  Alumni: firstName, lastName, subGroup, company;
+  Sponsor: company, websiteURL, tier, industry, name;
+  these fields are optional and redefined in the derived classes
+  */
+  @property({type: 'string'}) firstName?: string; //member/Alumni
+  @property({type: 'string'}) lastName?: string; //member/Alumni
+  @property({type: 'string'}) cv?: string; // Member
+  @property({type: 'string'}) subGroup?: string; // Member/Alumni
+  @property({type: 'string'}) company?: string; // Alumni/Sponsor
+  @property({type: 'string'}) websiteURL?: string; // Sponsor
+  @property({type: 'string'}) tier?: string; // Sponsor
+  @property({type: 'string'}) industry?: string; // Sponsor
+  @property({type: 'string'}) name?: string; // Sponsor
+
+  // Indexer property to allow additional data
+  [prop: string]: any;
 
   public convertToSecurityUserProfile(): UserProfile {
     return {
       [securityId]: this.id as string,
-      name: this.username,
+      name: this.username ?? '',
       email: this.email,
-    }
+    };
   }
-
-  // Indexer property to allow additional data
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [prop: string]: any;
 }
 
 export interface FsaeUserRelations {

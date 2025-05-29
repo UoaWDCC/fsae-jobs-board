@@ -9,25 +9,13 @@ export class Member extends FsaeUser {
     generated: true,
   })
   memberID?: string;
-
-  @property({
-    type: 'string',
-    required: false,
-  })
-  cv?: string;
-
-  @property({
-    type: 'string',
-    required: false,
-  })
-  subGroup?: string;
-
-  @property({
-    type: 'string',
-    required: false,
-  })
-  photo?: string;
-
+  
+  // default values for optional fields
+  firstName?: string = 'Fsae';
+  lastName?: string = 'member';
+  cv?: string = '';
+  subGroup?: string = 'Fsae club';
+ 
   // Indexer property to allow additional data
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [prop: string]: any;
