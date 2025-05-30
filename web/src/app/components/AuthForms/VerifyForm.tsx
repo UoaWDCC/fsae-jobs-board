@@ -20,7 +20,7 @@ export function VerifyForm() {
         const startTime = parseInt(storedTime, 10);
         const now = Date.now();
         const elapsed = Math.floor((now - startTime) / 1000); // Time elapsed in seconds
-        const remaining = Math.max(120 - elapsed, 0); // Time remaining
+        const remaining = Math.max(1 - elapsed, 0); // Time remaining
 
         setTimer(remaining);
         setCanResend(remaining <= 0);
@@ -124,7 +124,7 @@ export function VerifyForm() {
   const handleResendCode = async () => {
     if (canResend) {
       setCanResend(false);
-      setTimer(120); // Set timer for 2 minutes
+      setTimer(1); // Set timer for 2 minutes
       localStorage.setItem('timerStartTime', Date.now().toString()); // Save timer start time
 
       try {
