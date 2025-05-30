@@ -54,12 +54,14 @@ export abstract class FsaeUser extends Entity {
   @property({
     type: 'string',
     required: true,
+    default: "-",
   })
   firstName: string;
 
   @property({
     type: 'string',
     required: true,
+    default: "-",
   })
   lastName: string;
 

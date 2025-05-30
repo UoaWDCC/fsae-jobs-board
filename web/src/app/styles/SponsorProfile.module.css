@@ -59,6 +59,14 @@
   color: var(--mantine-color-customWhite-1);
 }
 
+@media (max-width: 400px) {
+  .button_root {
+    background-color: var(--mantine-color-customGrey-1);
+    color: var(--mantine-color-customWhite-1);
+    align-self: center;
+  }
+}
+
 .button_root:hover {
   background-color: hsl(0, 0%, 25%);
   color: var(--mantine-color-customWhite-1);
@@ -72,4 +80,64 @@
 .button_admin_root:hover {
   background-color: hsl(0, 75%, 40%);
   color: var(--mantine-color-customWhite-1);
+}
+
+@media (min-width: 501px) {
+  .name {
+    padding-left: 170px;
+    padding-top: 170px;
+    font-size: 2rem;
+    font-weight: bold;
+  }
+}
+
+@media (max-width: 500px) {
+  .name {
+    align-self: center;
+    padding-top: 280px;
+    font-size: 2rem;
+    font-weight: bold;
+  }
+}
+
+@media (min-width: 501px) {
+  .text {
+    margin-left: 170px;
+    margin-top: -30px;
+    font-size: 1.2rem;
+    font-weight: 500;
+  }
+}
+
+@media (max-width: 500px) {
+  .text {
+    padding-top: 40px;
+    font-size: 1rem;
+    opacity: 70%;
+    align-self: center;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 500px) {
+  .avatar {
+    padding-top: 0px;
+    align-self: center;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 500px) {
+  .profileBtn {
+    display: flex;
+    justify-content: center;
+    margin-right: 0;
+  }
+}
+
+@media (min-width: 501px) {
+  .profileBtn {
+    justify-content: flex-end;
+    margin-right: 20px;
+  }
 }

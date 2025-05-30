@@ -82,7 +82,7 @@ export function StudentProfile() {
 
   return (
     <Box className={styles.container}>
-      <Card h={280} className={styles.card}>
+      <Card className={styles.card}>
         <Card.Section
           h={250}
           className={styles.banner}
@@ -90,12 +90,12 @@ export function StudentProfile() {
           style={{ backgroundImage: `url(${userData.banner})` }}
         />
         {userData?.firstName && (
-          <Text className={styles.name} pl={170} pt={110}>
+          <Text className={styles.name}>
             {userData.firstName} {userData.lastName}
           </Text>
         )}
         {userData?.subgroup && (
-          <Text size="xl" className={styles.subgroup} pl={170} pt={160}>
+          <Text size="xl" className={styles.subgroup}>
             {userData.subgroup} since {userData.dateJoined}
           </Text>
         )}
@@ -108,12 +108,12 @@ export function StudentProfile() {
           className={styles.avatar}
           onClick={handleAvatarChange}
         />
-        <Text size="xl" mt={-40} ml={170} pt={10} className={styles.text}>
+        <Text size="xl" className={styles.text}>
           Looking for: {userData.jobType}
         </Text>
       </Card>
 
-      <Flex style={{ display: 'flex', justifyContent: 'flex-end', marginRight: '20px' }}>
+      <Flex className={styles.profileBtn}>
         <Button size="md" onClick={handleProfileChange}>
           Edit Profile
         </Button>

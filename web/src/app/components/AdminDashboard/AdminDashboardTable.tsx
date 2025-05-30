@@ -52,11 +52,11 @@ const AdminDashboardTable: FC<Props> = ({ data }) => {
           mt="xl"
         >
           <Group gap={20} justify="center">
-            <Pagination.First />
-            <Pagination.Previous />
+            <Pagination.First aria-label="Go to first page" />
+            <Pagination.Previous aria-label="Go to previous page" />
             <Pagination.Items />
-            <Pagination.Next />
-            <Pagination.Last />
+            <Pagination.Next aria-label="Go to next page" />
+            <Pagination.Last aria-label="Go to last page" />
           </Group>
         </Pagination.Root>
       </div>

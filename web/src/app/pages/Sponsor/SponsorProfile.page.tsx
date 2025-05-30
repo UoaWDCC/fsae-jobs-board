@@ -148,6 +148,7 @@ export function SponsorProfile() {
             classNames={{
               root: styles.button_root,
             }}
+            style={{ marginLeft: '10px' }}
           >
             Add New
           </Button>
@@ -194,7 +195,7 @@ export function SponsorProfile() {
   return (
     <Box className={styles.container}>
       {/* PICTURE AND COMPANY DETAILS */}
-      <Card h={280} className={styles.card}>
+      <Card className={styles.card}>
         <Card.Section
           h={250}
           className={styles.banner}
@@ -202,7 +203,7 @@ export function SponsorProfile() {
           style={{ backgroundImage: `url(${userData.banner})` }}
         />
         {userData?.sponsorName && (
-          <Text className={styles.name} pl={170} pt={140}>
+          <Text className={styles.name}>
             {userData.sponsorName}
           </Text>
         )}
@@ -215,12 +216,12 @@ export function SponsorProfile() {
           className={styles.avatar}
           onClick={handleAvatarChange}
         />
-        <Text size="lg" mt={-30} ml={170} className={styles.text}>
+        <Text size="lg" className={styles.text}>
           {userData.sponsorField}
         </Text>
       </Card>
 
-      <Flex style={{ display: 'flex', justifyContent: 'flex-end', marginRight: '20px' }}>
+      <Flex className={styles.profileBtn}>
         {getElementBasedOnRole('profileBtn')}
       </Flex>
 
@@ -283,7 +284,13 @@ export function SponsorProfile() {
             {/* JOB OPPORTUNITIES CAROUSEL */}
             <Box miw="100%">
               <Flex
-                style={{ display: 'flex', justifyContent: 'space-between', marginRight: '20px' }}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  marginRight: '20px',
+                  flexWrap: 'wrap',
+                  gap: '0.5rem'
+                }}
               >
                 <Title order={5}>Job Opportunities</Title>
                 {getElementBasedOnRole('addNewBtn')}

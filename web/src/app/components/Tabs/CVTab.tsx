@@ -14,7 +14,7 @@ export const CVTab = () => {
         } }>
           <Flex justify="center" align="center" direction="column">
             <IconUpload stroke={2} className={styles.dropIcon} />
-            <Text>Drop you file here</Text>
+            <Text>Drop your file here</Text>
             <Text>or</Text>
             <Group justify="center" mt="md">
               <Button onClick={() => openRef.current?.()} className={styles.dropButton}>
