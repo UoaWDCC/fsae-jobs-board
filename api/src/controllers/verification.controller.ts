@@ -51,7 +51,7 @@ export class VerificationController {
             where: { email },
         });
         
-        console.log(verification?.verificationCode, verification_code);
+        // console.log(verification);
 
         if (!verification) {
             throw new HttpErrors.NotFound('Verification not found');
@@ -71,8 +71,6 @@ export class VerificationController {
         if (!roleRepository) {
             throw new HttpErrors.InternalServerError('User role invalid');
         }
-
-        console.log('Role Repository:', roleRepository);
 
         const user = await roleRepository.findOne({ where: { email: verification.email } });
         if (!user) {
@@ -145,8 +143,6 @@ export class VerificationController {
         await this.twilioService.verifyUser(verification.twilioId);
 
         const verificationCode = await this.generator.generateCode();
-
-        console.log("About to send new verification email with code:", verificationCode);
 
         // Send a new verification email
         const newVerification = await this.twilioService.sendVerificationEmail(verification.email, user.firstName, verificationCode);

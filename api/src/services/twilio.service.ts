@@ -46,8 +46,6 @@ export class TwilioService {
             throw new Error(`Verification email failed: ${error.message}`);
           });
 
-        console.log('Verification email sent:', verification);
-        console.log('Verification code:', verificationCode);
         return verification;
     }
 
