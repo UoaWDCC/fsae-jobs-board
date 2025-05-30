@@ -195,7 +195,7 @@ export function AlumniProfile() {
   return (
     <Box className={styles.container}>
       {/* PICTURE AND COMPANY DETAILS */}
-      <Card h={280} className={styles.card}>
+      <Card className={styles.card}>
         <Card.Section
           h={250}
           className={styles.banner}
@@ -203,7 +203,7 @@ export function AlumniProfile() {
           style={{ backgroundImage: `url(${userData.banner})` }}
         />
         {userData?.alumniName && (
-          <Text className={styles.name} pl={170} pt={140}>
+          <Text className={styles.name}>
             {userData.alumniName}
           </Text>
         )}
@@ -216,12 +216,12 @@ export function AlumniProfile() {
           className={styles.avatar}
           onClick={handleAvatarChange}
         />
-        <Text size="lg" mt={-30} ml={170} className={styles.text}>
+        <Text size="lg" className={styles.text}>
           {userData.companyField}
         </Text>
       </Card>
 
-      <Flex style={{ display: 'flex', justifyContent: 'flex-end', marginRight: '20px' }}>
+      <Flex className={styles.profileBtn}>
         {getElementBasedOnRole('profileBtn')}
       </Flex>
 
