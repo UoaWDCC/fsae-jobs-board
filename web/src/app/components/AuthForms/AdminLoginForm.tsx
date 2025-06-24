@@ -12,12 +12,13 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setRole } from '../../features/user/userSlice';
 import { toast } from 'react-toastify';
+import { Role } from '@/app/type/role';
 
 export function AdminLoginForm() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const theme = useMantineTheme();
-  const handleLoginAs = (role: 'member' | 'sponsor' | 'alumni' | 'admin') => {
+  const handleLoginAs = (role: Role) => {
     // Simulate successful login (to be replaced with the actual authentication logic)
     const mockToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
     localStorage.setItem('accessToken', mockToken);
@@ -29,6 +30,7 @@ export function AdminLoginForm() {
       sponsor: '/profile/sponsor',
       alumni: '/profile/alumni',
       admin: '/profile/admin',
+      unknown: '/profile/unknown', // Fallback in case error
     }[role];
     toast.success('Logged in as ' + role);
     navigate(profilePath, { replace: true });
@@ -65,7 +67,7 @@ export function AdminLoginForm() {
           Login
         </Button>
         <Flex justify="center" gap="md" mt="md" mr="md">
-          <Button variant="filled" color="red" onClick={() => handleLoginAs('admin')}>
+          <Button variant="filled" color="red" onClick={() => handleLoginAs(Role.Admin)}>
             Temp Admin Login
           </Button>
         </Flex>
