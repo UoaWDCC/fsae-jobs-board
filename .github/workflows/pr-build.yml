@@ -3,6 +3,7 @@ name: PR Build
 on:
   pull_request:
     types: [opened, synchronize, reopened]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -13,13 +14,13 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Set up Node.js (for Node projects)
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '18'  # Choose your node version
+          node-version: "20" # Choose your node version
 
       - name: Install dependencies (web)
         working-directory: ./web
-        run: yarn install
+        run: yarn install --immutable --immutable-cache --check-cache
 
       - name: Build project (web)
         working-directory: ./web
@@ -27,7 +28,7 @@ jobs:
 
       - name: Install dependencies (api)
         working-directory: ./api
-        run: yarn install
+        run: yarn install --immutable --immutable-cache --check-cache
 
       - name: Build project (api)
         working-directory: ./api
