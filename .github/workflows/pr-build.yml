@@ -20,7 +20,7 @@ jobs:
 
       - name: Install dependencies (web)
         working-directory: ./web
-        run: yarn install --immutable --immutable-cache --check-cache
+        run: yarn install
 
       - name: Build project (web)
         working-directory: ./web
@@ -28,7 +28,7 @@ jobs:
 
       - name: Install dependencies (api)
         working-directory: ./api
-        run: yarn install --immutable --immutable-cache --check-cache
+        run: yarn install
 
       - name: Build project (api)
         working-directory: ./api
