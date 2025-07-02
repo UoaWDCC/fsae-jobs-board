@@ -10,41 +10,13 @@ export class Sponsor extends FsaeUser {
   })
   sponsorID?: string;
 
-  @property({
-    type: 'string',
-    required: false,
-  })
-  logo?: string;
-
-  @property({
-    type: 'string',
-    required: false,
-  })
-  websiteURL?: string;
-
-  @property({
-    type: 'string',
-    required: false,
-  })
-  tier?: string;
-
-  @property({
-    type: 'string',
-    required: false,
-  })
-  name?: string;
-
-  @property({
-    type: 'string',
-    required: false,
-  })
-  industry?: string;
-
-  @property({
-    type: 'string',
-    required: false,
-  })
-  company?: string;
+  // default values for optional fields
+  subGroup?: string = 'Fsae club';
+  company?: string = 'Fsae club';
+  websiteURL?: string = '';
+  tier?: string = '';
+  industry?: string = '';
+  name?: string = 'Sponsor';
 
   // Indexer property to allow additional data
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

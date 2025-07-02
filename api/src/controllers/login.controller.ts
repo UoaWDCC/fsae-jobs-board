@@ -237,8 +237,8 @@ export class LoginController {
 
     return {
       id: user.id,
-      firstName: user.firstName,
-      lastName: user.lastName,
+      firstName: user.firstName ?? '',
+      lastName: user.lastName ?? '',
       email: user.email,
       role: role,
     };

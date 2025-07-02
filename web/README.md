@@ -9,6 +9,7 @@ This template comes with the following features:
 - [Storybook](https://storybook.js.org/)
 - [Vitest](https://vitest.dev/) setup with [React Testing Library](https://testing-library.com/docs/react-testing-library/intro)
 - ESLint setup with [eslint-config-mantine](https://github.com/mantinedev/eslint-config-mantine)
+- [Cypress](https://www.cypress.io/)
 
 ## npm scripts
 

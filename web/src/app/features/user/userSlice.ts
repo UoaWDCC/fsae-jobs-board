@@ -21,7 +21,7 @@ const initialState: UserState = {
   id: '',
   email: '',
   username: '',
-  activated: false,
+  activated: true,
   firstName: '',
   lastName: '',
   phoneNumber: '',
