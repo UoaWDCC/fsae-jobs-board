@@ -31,6 +31,9 @@ const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
+    login(state, action: PayloadAction<UserState>) {
+      Object.assign(state, action.payload);
+    },
     resetUser() {
       return initialState;
     },
