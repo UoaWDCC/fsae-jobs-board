@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 import { login } from '@/api/login';
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { setRole } from '@/app/features/user/userSlice';
+import { setRole, setId } from '@/app/features/user/userSlice';
 
 export function LoginForm() {
   const location = useLocation();
@@ -36,7 +36,8 @@ export function LoginForm() {
       const { role, id } = await login(email, password);
       console.log(role);
       dispatch(setRole(role));
-      // toast.success('Login Successful');
+      dispatch(setId(id));
+      toast.success('Login Successful');
 
       // Redirect based on role
       switch (role) {
