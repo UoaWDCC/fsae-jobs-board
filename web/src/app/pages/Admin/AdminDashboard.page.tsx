@@ -3,9 +3,9 @@ import {Divider, Grid} from '@mantine/core';
 import {Role}   from '@/app/type/role';
 import {Status} from '@/app/type/status';
 import {AdminReview} from '@/models/adminReview.model';
-import {adminApi} from '@/api/admin';                        // ← grouped API hub
-import AdminFilter        from '@/app/components/Filter/AdminFilter';
-import SearchBar          from '@/app/components/SearchBar/SearchBar';
+import {adminApi} from '@/api/admin';
+import AdminFilter from '@/app/components/Filter/AdminFilter';
+import SearchBar from '@/app/components/SearchBar/SearchBar';
 import AdminDashboardTable from '@/app/components/AdminDashboard/AdminDashboardTable';
 
 export function AdminDashboard() {
@@ -24,17 +24,23 @@ export function AdminDashboard() {
     return () => window.removeEventListener('resize', onResize);
   }, []);
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const data = await adminApi.getDashboardRequests();
-        const hydrated = data.map(d => ({...d, date: new Date(d.date)}));
-        setAllReviews(hydrated);
-      } catch (err) {
-        console.error('Dashboard fetch failed:', err);
-      }
-    })();
-  }, []);
+ useEffect(() => {
+  (async () => {
+    try {
+      const raw = await adminApi.getDashboardRequests();
+      const hydrated = raw.map(r => ({
+        ...r,
+        date: new Date(r.date),
+        role: (r.role.charAt(0).toUpperCase() + r.role.slice(1)) as Role,
+        status: (r.status.charAt(0).toUpperCase() + r.status.slice(1)) as Status,
+      }));
+      setAllReviews(hydrated);
+    } catch (err) {
+      console.error('Dashboard fetch failed:', err);
+    }
+  })();
+}, []);
+
 
   useEffect(() => {
     const f = allReviews.filter(r => {
