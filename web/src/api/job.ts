@@ -36,7 +36,7 @@ export async function fetchJobsByPublisherId(publisherId: string): Promise<Job[]
         publisherID: publisherId,
       }
     };
-    const res = await apiInstance.get("job");
+    const res = await apiInstance.get(`job?filter[where][publisherID]=${publisherId}`);
     // Return the data as an array of Job objects
     return res.data as Job[];
   } catch (e) {
