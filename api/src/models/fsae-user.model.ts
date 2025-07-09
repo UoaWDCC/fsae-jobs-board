@@ -1,5 +1,6 @@
 import {Entity, model, property} from '@loopback/repository';
 import {FsaeRole} from './roles';
+import {AdminStatus} from './admin.status';
 import {securityId, UserProfile} from '@loopback/security';
 
 @model({settings: {strict: false}})
@@ -70,6 +71,19 @@ export abstract class FsaeUser extends Entity {
     required: true,
   })
   phoneNumber: string;
+
+  @property({
+    type: AdminStatus,
+    required: true,
+    default: AdminStatus.PENDING,
+  })
+  adminStatus: AdminStatus;
+
+  @property({
+    type: 'date', 
+    defaultFn: 'now'
+  })
+  createdAt: Date;
 
   @property({
     type: 'string',
