@@ -11,36 +11,18 @@ import {
   Text,
   Title,
 } from '@mantine/core';
-import { EditAvatar } from '../../components/Modal/EditAvatar';
-import { EditBannerModal } from '../../components/Modal/EditBannerModal';
 import EditModal from '../../components/Modal/EditModal';
+import {EditAvatar} from '../../components/Modal/EditAvatar';
+import {EditBannerModal} from '../../components/Modal/EditBannerModal';
 import styles from '../../styles/SponsorProfile.module.css';
-import {Role} from '@/app/type/role';
 
 export function AdminProfile() {
-  /* ─── modal plumbing ────────────────────────── */
+  const [modalType, setModalType] = useState('');
   const [openProfileModal, setOpenProfileModal] = useState(false);
   const [modalContent, setModalContent] = useState<React.ReactNode>(null);
   const [modalTitle, setModalTitle] = useState('');
+  const [showMoreDescription, setShowMoreDescription] = useState(false);
 
-  const handleAvatarChange = () => {
-    setModalTitle('Profile Photo');
-    setModalContent(<EditAvatar avatar={adminData.avatar} />);
-    setOpenProfileModal(true);
-  };
-
-  const handleBannerChange = () => {
-    setModalTitle('Banner Photo');
-    setModalContent(<EditBannerModal banner={adminData.banner} />);
-    setOpenProfileModal(true);
-  };
-
-  const handleDeactivateUser = () => {
-    // TODO: hook up deactivate logic
-    alert('Deactivate-User clicked');
-  };
-
-  /* ─── dummy admin data (replace with real fetch) ─── */
   const [adminData, setAdminData] = useState({
     fullName: 'Alex Johnson',
     email: 'admin@example.com',
@@ -50,10 +32,9 @@ export function AdminProfile() {
       'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-4.png',
     banner:
       'https://images.unsplash.com/photo-1504384308090-cb064f939db4?auto=format&fit=crop&w=500&q=80',
-    bio: 'System administrator overseeing user onboarding, approvals and infra maintenance.',
+    bio: 'System administrator overseeing user onboarding, approvals and infrastructure maintenance. Responsible for managing permissions, deactivating accounts, and ensuring platform security.',
   });
 
-  /* ─── responsiveness hook (portrait / landscape) ── */
   const [isPortrait, setIsPortrait] = useState(
     window.innerHeight > window.innerWidth,
   );
@@ -63,7 +44,20 @@ export function AdminProfile() {
     return () => window.removeEventListener('resize', onResize);
   }, []);
 
-  /* ─── render ─────────────────────────────────────── */
+  const handleAvatarChange = () => {
+    setModalType('avatar');
+    setModalContent(<EditAvatar avatar={adminData.avatar} />);
+    setModalTitle('Profile Photo');
+    setOpenProfileModal(true);
+  };
+
+  const handleBannerChange = () => {
+    setModalType('banner');
+    setModalContent(<EditBannerModal banner={adminData.banner} />);
+    setModalTitle('Banner Photo');
+    setOpenProfileModal(true);
+  };
+
   return (
     <Box className={styles.container}>
       <Card className={styles.card}>
@@ -83,26 +77,14 @@ export function AdminProfile() {
           className={styles.avatar}
           onClick={handleAvatarChange}
         />
-
         <Text size="md" className={styles.text}>
           Administrator
         </Text>
       </Card>
 
-      {/* Deactivate-User button (admin-only) */}
-      <Flex className={styles.profileBtn}>
-        <Button
-          onClick={handleDeactivateUser}
-          classNames={{root: styles.button_admin_root}}
-        >
-          Deactivate User
-        </Button>
-      </Flex>
-
       <Grid>
-        {/* Contact card */}
         <Grid.Col span={{md: 3, xs: 12}}>
-          <Box ml={20} mt={15}>
+          <Box ml={20} mt={20}>
             <Title order={5}>Contact</Title>
             <Box pl={15} mt={10} className={styles.box}>
               <Text size="md">{adminData.email}</Text>
@@ -114,26 +96,38 @@ export function AdminProfile() {
           </Box>
         </Grid.Col>
 
-        {/* Bio + placeholder for Admin dashboard widgets */}
         <Grid.Col span={{md: 9, xs: 12}}>
-          <Box mx={20} mt={10}>
+          <Box mx={20} mt={20}>
             <Title order={5}>About Me</Title>
             <Box pl={15} mt={10} className={styles.box}>
-              {adminData.bio || <Loader color="blue" />}
+              {adminData.bio ? (
+                <>
+                  {showMoreDescription ? (
+                    <Text size="md">{adminData.bio}</Text>
+                  ) : (
+                    <Text size="md">{adminData.bio.slice(0, 1200)}</Text>
+                  )}
+                  {adminData.bio.length > 1200 && (
+                    <Button
+                      size="sm"
+                      variant="subtle"
+                      pl={0}
+                      pr={0}
+                      onClick={() =>
+                        setShowMoreDescription(!showMoreDescription)
+                      }
+                    >
+                      {showMoreDescription ? 'Show less' : 'View more'}
+                    </Button>
+                  )}
+                </>
+              ) : (
+                <Loader color="blue" />
+              )}
             </Box>
           </Box>
 
           <Divider my="xl" />
-
-          <Box mx={20}>
-            <Title order={5}>Admin Dashboard</Title>
-            <Box pl={15} mt={10} className={styles.box}>
-              {/* Replace with widgets / charts / tables as needed */}
-              <Text size="sm" c="dimmed">
-                (Dashboard widgets coming soon…)
-              </Text>
-            </Box>
-          </Box>
         </Grid.Col>
       </Grid>
 

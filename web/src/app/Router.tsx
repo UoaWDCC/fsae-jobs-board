@@ -23,8 +23,8 @@ import { AlumniSignUp } from './pages/Alumni/AlumniSignup.page';
 import { AdminSignUp } from './pages/Admin/AdminSignup.page';
 import SignupSwitcher from './pages/General/SignupSwitcher.page';
 import { AdminLogin } from './pages/Admin/AdminLogin.page';
-
-import { JobDetailsPage } from './pages/General/JobDetails.page'; 
+import { JobDetailsPage } from './pages/General/JobDetails.page';
+import { Role } from './type/role'; 
 
 const router = createBrowserRouter([
   {
@@ -172,13 +172,15 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: '/admin',
-    element: (
+  path: '/admin-dashboard',
+  element: (
+    <ProtectedRoute allowedRoles={[Role.Admin]}>
       <AppLayout>
         <AdminDashboard />
       </AppLayout>
-    ),
-  },
+    </ProtectedRoute>
+  ),
+},
   {
     path: '*',
     element: (
