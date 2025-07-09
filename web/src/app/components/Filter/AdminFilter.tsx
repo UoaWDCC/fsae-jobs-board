@@ -26,9 +26,9 @@ const AdminFilter: FC<Props> = ({
   ];
 
   const statusOptions = [
-    { value: Status.Pending, label: 'Pending' },
-    { value: Status.Approved, label: 'Approved' },
-    { value: Status.Rejected, label: 'Rejected' },
+    { value: Status.PENDING, label: 'Pending' },
+    { value: Status.APPROVED, label: 'Approved' },
+    { value: Status.REJECTED, label: 'Rejected' },
   ];
 
   const [isModalOpen, setIsModalOpen] = useState(false);

@@ -3,6 +3,10 @@ import {
 } from '@loopback/repository';
 import {
   get,
+  HttpErrors,
+  param,
+  patch,
+  requestBody,
   response,
 } from '@loopback/rest';
 import {authenticate} from '@loopback/authentication';
@@ -15,6 +19,7 @@ import {
   SponsorRepository,
 } from '../repositories';
 import {AdminReview} from './controller-types/admin.controller.types';
+import { AdminStatus } from '../models/admin.status';
 
 @authenticate('fsae-jwt')
 export class AdminController {
@@ -42,6 +47,8 @@ export class AdminController {
             type: 'object',
             properties: {
               id:     {type: 'string'},
+              contact: {type: 'string'},
+              email:  {type: 'string', format: 'email'},
               name:   {type: 'string'},
               role:   {type: 'string'},
               date:   {type: 'string', format: 'date-time'},
@@ -73,10 +80,12 @@ export class AdminController {
 
       return {
         id,
+        contact: u.phoneNumber ?? u.contact ?? '',
         name,
+        email: u.email ?? '',
         role,
         date: created,
-        status: u.adminStatus ?? 'pending',
+        status: u.adminStatus ?? AdminStatus.PENDING,
       };
     };
 
@@ -85,5 +94,70 @@ export class AdminController {
       ...members.map(m  => toReview(m, FsaeRole.MEMBER)),
       ...sponsors.map(s => toReview(s, FsaeRole.SPONSOR)),
     ];
+
+  }
+
+  /**
+ * PATCH /user/admin/status/{id}
+ * Approve or reject a pending user request.
+ */
+  @authenticate('fsae-jwt')
+  @authorize({allowedRoles: [FsaeRole.ADMIN]})
+  @patch('/user/admin/status/{id}')
+  @response(204, {description: 'Admin status updated'})
+  async updateUserStatus(
+    @param.path.string('id') id: string,
+    @requestBody({
+      required: true,
+      description: 'Target role and new status',
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            required: ['role', 'status'],
+            properties: {
+              role: {
+                type: 'string',
+                enum: [FsaeRole.ALUMNI, FsaeRole.MEMBER, FsaeRole.SPONSOR],
+              },
+              status: {
+                type: 'string',
+                enum: [AdminStatus.APPROVED, AdminStatus.REJECTED],
+              },
+            },
+          },
+        },
+      },
+    })
+    body: {role: FsaeRole; status: AdminStatus},
+  ): Promise<void> {
+    const {role, status} = body;
+
+    /* pick the correct repository based on role */
+    let repo;
+  
+    if (role === FsaeRole.ALUMNI) {
+      repo = this.alumniRepository;
+    }else if (role === FsaeRole.MEMBER) {
+      repo = this.memberRepository;
+    } else if (role === FsaeRole.SPONSOR) {
+      repo = this.sponsorRepository;
+    } else {
+      repo = undefined; // unsupported role
+    }
+
+    if (!repo) {
+      throw new HttpErrors.BadRequest(`Unsupported role "${role}"`);
+    }
+
+    /* update the user; throw 404 if not found */
+    try {
+      await repo.updateById(id, {adminStatus: status});
+    } catch (e: any) {
+      if (e.code === 'ENTITY_NOT_FOUND') {
+        throw new HttpErrors.NotFound(`User ${id} not found in ${role} collection`);
+      }
+      throw e; // propagate other errors
+    }
   }
 }
