@@ -52,6 +52,7 @@ function Navbar() {
       { path: '/members', label: 'Students' },
       { path: '/sponsors', label: 'Sponsors' },
       { path: '/alumni', label: 'Alumni' },
+      {path: '/admin', label: 'Dashboard'},
     ],
     [Role.Unknown]: [],
   };

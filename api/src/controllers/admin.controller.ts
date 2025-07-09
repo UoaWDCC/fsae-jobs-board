@@ -24,13 +24,16 @@ export class AdminController {
     @repository(SponsorRepository) private sponsorRepository: SponsorRepository,
   ) {}
 
-  /**
-   * Consolidated list of every user awaiting admin review.
+   /**
+   * GET /user/admin/dashboard
+   * Returns every Alumni / Member / Sponsor in a flat array,
+   * with name, role, created-at date, and current admin-approval status.
    */
+  @authenticate('fsae-jwt')
   @authorize({allowedRoles: [FsaeRole.ADMIN]})
   @get('/user/admin/dashboard')
   @response(200, {
-    description: 'Array of users (alumni / member / sponsor) with admin-review metadata',
+    description: 'Array of users awaiting (or finished) admin review',
     content: {
       'application/json': {
         schema: {
@@ -38,10 +41,10 @@ export class AdminController {
           items: {
             type: 'object',
             properties: {
-              id: {type: 'string'},
-              name: {type: 'string'},
-              role: {type: 'string'},
-              date: {type: 'string', format: 'date-time'},
+              id:     {type: 'string'},
+              name:   {type: 'string'},
+              role:   {type: 'string'},
+              date:   {type: 'string', format: 'date-time'},
               status: {type: 'string'},
             },
           },
@@ -58,11 +61,15 @@ export class AdminController {
 
     const toReview = (u: FsaeUser, role: FsaeRole): AdminReview => {
       const id = (u._id ?? u.id).toString();
+
       const name =
         u.lastName && u.lastName !== '-'
           ? `${u.firstName} ${u.lastName}`
           : u.firstName;
-      const created = u.createdAt ?? new Date(parseInt(id.slice(0, 8), 16) * 1000);
+
+      // `createdAt` may not exist → fall back to ObjectId timestamp
+      const created =
+        u.createdAt ?? new Date(parseInt(id.slice(0, 8), 16) * 1000);
 
       return {
         id,
