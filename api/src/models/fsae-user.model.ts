@@ -73,7 +73,7 @@ export abstract class FsaeUser extends Entity {
   phoneNumber: string;
 
   @property({
-    type: AdminStatus,
+    type: 'string',
     required: true,
     default: AdminStatus.PENDING,
   })
