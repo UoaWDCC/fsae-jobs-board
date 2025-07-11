@@ -13,6 +13,13 @@ export interface Job {
     salary: string;
     publisherID: string;
     roleType: string; 
+    startDate?: string;
+    duration?: string;
+    location?: string;
+    skills?: string[];
+    qualifications?: string[];
 }
+
+//carl: fixed and added missing fields to the Job interface
 
 //! If this changes, make sure to update the JobDetail component in web/src/app/components/JobDetail/JobDetail.tsx

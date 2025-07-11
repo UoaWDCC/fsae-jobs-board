@@ -1,18 +1,9 @@
 import { Text, Button, Badge } from '@mantine/core';
 import styles from './JobDetail.module.css';
+import { Job } from '@/models/job.model';
 
 interface JobDetailProps {
-  job: {
-    title: string;
-    description: string;
-    salary: string;
-    startDate: string;
-    applicationDeadline: string;
-    duration: string;
-    location: string;
-    skills?: string[];
-    qualifications?: string[];
-  };
+  job: Job;
 }
 
 export function JobDetail({ job }: JobDetailProps) {
@@ -41,9 +32,8 @@ export function JobDetail({ job }: JobDetailProps) {
             </Text>
           </div>
 
-
           <div>
-          <Text size="1.4rem" fw={700}>Relevant Skills for this Job: </Text>
+            <Text size="1.4rem" fw={700}>Relevant Skills for this Job: </Text>
             <ul className={styles.skillList}>
               {job.skills?.map((skill) => (
                 <li key={skill}>{skill}</li>
@@ -57,7 +47,6 @@ export function JobDetail({ job }: JobDetailProps) {
           <div className={styles.titleRow}>
             <Text size="2.25rem" fw={700}>{job.title}</Text>
             <Badge size="xl" color="blue" className={styles.jobBadge}>WDCC</Badge>
-
           </div>
 
           <Text>{job.location} 📍</Text>
@@ -71,8 +60,6 @@ export function JobDetail({ job }: JobDetailProps) {
           <Text>{job.description}</Text>
 
           <Text size="2rem" fw={700}>Qualifications:</Text>
-
-
           <ul className={styles.qualifications}>
             {job.qualifications?.map((q, index) => (
               <li key={index}>{q}</li>
