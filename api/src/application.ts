@@ -10,7 +10,6 @@ import {ServiceMixin} from '@loopback/service-proxy';
 import path from 'node:path';
 import {MySequence} from './sequence';
 import {JwtService, PasswordHasherService, GeneratorService, TwilioService} from './services';
-import {TwilioMockService} from './services/twilio-mock.service';
 import {AuthenticationComponent, registerAuthenticationStrategy} from '@loopback/authentication';
 import {FSAEJwtStrategy} from './auth/auth-strategies/jwt-strategy';
 import {
@@ -70,8 +69,7 @@ export class FsaeApiApplication extends BootMixin(
     this.bind(`services.jwtservice`).toClass(JwtService);
     this.bind(`services.passwordhasher`).toClass(PasswordHasherService);
     this.bind('services.generator').toClass(GeneratorService);
-    // Use mock Twilio service for testing authentication bugs
-    this.bind('services.twilioService').toClass(TwilioMockService);
+    this.bind('services.twilioService').toClass(TwilioService);
     registerAuthenticationStrategy(this, FSAEJwtStrategy);
 
     // Authorization
