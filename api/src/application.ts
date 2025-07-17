@@ -62,6 +62,9 @@ export class FsaeApiApplication extends BootMixin(
 
     // Authentication - JWT Service
     this.component(AuthenticationComponent);
+    if (!process.env.JWT_SECRET) {
+  console.warn("WARNING: JWT_SECRET not set in .env — using fallback secret. Don't use in production");
+    }
     this.bind(`jwt.secret`).to(process.env.JWT_SECRET || 'fallback-secret-key')
     this.bind(`services.jwtservice`).toClass(JwtService);
     this.bind(`services.passwordhasher`).toClass(PasswordHasherService);
