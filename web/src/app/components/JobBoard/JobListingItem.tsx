@@ -23,7 +23,7 @@ const JobListingItem: FC<JobListingItemProps> = ({ id, title, description, compa
     <Card shadow="sm" padding="lg" radius="md" withBorder>
       <Flex justify="space-between" align="center">
         <Flex direction="column" gap="xs">
-          <Text fw={700} size="lg">{id} - ID is temporary</Text>
+          {/* <Text fw={700} size="lg">{id} - ID is temporary</Text> */}
           <Text fw={700} size="lg">{title}</Text>
           <Text color="dimmed" size="sm">{company} ・ {location}</Text>
           <Text size="sm" lineClamp={3}>{description}</Text>

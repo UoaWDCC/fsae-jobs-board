@@ -36,10 +36,8 @@ export function JobDetail({ job }: JobDetailProps) {
           </div>
 
           <div>
-            <Text size="1.4rem" fw={700}>
-              Relevant Skills for this Job:{' '}
-            </Text>
-            {/* <ul className={styles.skillList}>
+            <Text size="1.4rem" fw={700}>Relevant Skills for this Job: </Text>
+            <ul className={styles.skillList}>
               {job.skills?.map((skill) => (
                 <li key={skill}>{skill}</li>
               ))}
@@ -50,12 +48,9 @@ export function JobDetail({ job }: JobDetailProps) {
         {/* Right Column */}
         <div className={styles.rightColumn}>
           <div className={styles.titleRow}>
-            <Text size="2.25rem" fw={700}>
-              {job.title}
-            </Text>
-            <Badge size="xl" color="blue" className={styles.jobBadge}>
-              WDCC
-            </Badge>
+            <Text size="2.25rem" fw={700}>{job.title}</Text>
+            <Badge size="xl" color="blue" className={styles.jobBadge}>WDCC</Badge>
+
           </div>
 
           <Text>{`TODO: add start date to Job model or remove this`} 📍</Text>
@@ -70,11 +65,10 @@ export function JobDetail({ job }: JobDetailProps) {
           </Text>
           <Text>{job.description}</Text>
 
-          <Text size="2rem" fw={700}>
-            Qualifications:
-          </Text>
 
-          {/* <ul className={styles.qualifications}>
+          <Text size="2rem" fw={700}>Qualifications:</Text>
+          <ul className={styles.qualifications}>
+
             {job.qualifications?.map((q, index) => (
               <li key={index}>{q}</li>
             ))}
