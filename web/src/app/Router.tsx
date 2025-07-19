@@ -139,7 +139,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: '/jobs/:id', // ✅ NEW clean dynamic route for job detail
+    path: '/jobs/:id',
     element: (
       <AppLayout>
         <JobDetailsPage />
@@ -147,7 +147,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: '/students',
+    path: '/members',
     element: (
       <AppLayout>
         <StudentsBoard />

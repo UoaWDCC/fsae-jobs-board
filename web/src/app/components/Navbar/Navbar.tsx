@@ -165,15 +165,18 @@ function Navbar() {
           <Flex gap="md" align="center">
             {role ? ( // Render icons if logged in
               <Group gap={20}>
-                <ActionIcon size={35} variant="subtle" color="white" onClick={handleJobClick}>
+                <ActionIcon size={35} variant="subtle" color="white" onClick={handleJobClick}
+                 aria-label="See jobs">
                   <IconBriefcase2 size={35} values='Jobs'/>
                 </ActionIcon>
                 
-                <ActionIcon size={35} variant="subtle" color="white" onClick={handleProfileClick}>
+                <ActionIcon size={35} variant="subtle" color="white" onClick={handleProfileClick}
+                 aria-label="See profile">
                   <IconUserCircle size={35} />
                 </ActionIcon>
 
-                <ActionIcon size={35} variant="subtle" color="white" onClick={handleSetting}>
+                <ActionIcon size={35} variant="subtle" color="white" onClick={handleSetting}
+                 aria-label="Go to settings">
                   <IconSettings size={35} />
                 </ActionIcon>
 
@@ -182,7 +185,8 @@ function Navbar() {
                     <IconBell size={35} />
                   </ActionIcon>
                 )}
-                <ActionIcon size={35} variant="subtle" color="white" onClick={handleLogout}>
+                <ActionIcon size={35} variant="subtle" color="white" onClick={handleLogout}
+                  aria-label="Logout">
                   <IconLogout size={35} />
                 </ActionIcon>
               </Group>
