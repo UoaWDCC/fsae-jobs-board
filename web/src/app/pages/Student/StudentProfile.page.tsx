@@ -20,6 +20,8 @@ import { EditBannerModal } from '../../components/Modal/EditBannerModal';
 import { Member } from '@/models/member.model';
 import { fetchMemberById } from '@/api/member';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../app/store';
 
 const PLACEHOLDER_BANNER = "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80"
 const PLACEHOLDER_AVATAR = "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png"
@@ -38,6 +40,10 @@ export function StudentProfile() {
   const [showMoreEducation, setShowMoreEducation] = useState(false);
 
   const [userData, setUserData] = useState<Member | null>(null);
+  const [isLocalProfile, setIsLocalProfile] = useState(false) // Is this profile this user's profile (aka. should we show the edit button)
+  
+  const userRole = useSelector((state: RootState) => state.user.role); // the id of the local user
+  const userId = useSelector((state: RootState) => state.user.id); // the id of the local user
 
   // TODO: avatar and banner doesnt exist in the member model yet
   /*
@@ -70,6 +76,7 @@ export function StudentProfile() {
         const userData = await fetchMemberById(id as string);
         if (!userData) {
           navigate("/404")
+          return;
         }
         // Temporary injection of placeholder fields as currently the database model doesnt have any
         const userDataModifiedWithPlaceholders = userData ? {
@@ -85,6 +92,7 @@ export function StudentProfile() {
           ],
         } : null
         setUserData(userDataModifiedWithPlaceholders);
+        setIsLocalProfile(userData.id == userId);
       } catch (err) {
         // TODO: proper error handling (eg. auth errors/forbidden pages etc.)
         navigate("/404")
@@ -130,9 +138,12 @@ export function StudentProfile() {
       </Card>
 
       <Flex style={{ display: 'flex', justifyContent: 'flex-end', marginRight: '20px' }}>
+        {/* Conditionally render the edit button based on whether this is the logged in user's profile */}
+        {isLocalProfile ? 
         <Button size="md" onClick={handleProfileChange}>
           Edit Profile
         </Button>
+        : null}
       </Flex>
 
       <Grid>

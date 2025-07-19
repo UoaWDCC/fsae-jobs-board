@@ -14,6 +14,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Sponsor } from '@/models/sponsor.model';
 import { Job } from '@/models/job.model';
 import { fetchJobsByPublisherId } from '@/api/job';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../app/store';
 
 const PLACEHOLDER_BANNER = "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png"
 const PLACEHOLDER_AVATAR = "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png"
@@ -29,11 +31,14 @@ export function SponsorProfile() {
   const [openProfileModal, setOpenProfileModal] = useState(false);
 
   const [showMoreDescription, setShowMoreDescription] = useState(false);
-  // const Role = useSelector((state: RootState) => state.user.role);
-  const [role, setRole] = useState<Role>(Role.Sponsor); // Dummy role for testing, replace with Redux store value
 
   const [userData, setUserData] = useState<Sponsor | null>(null);
   const [jobData, setJobData] = useState<JobCardProps[]>([]);
+
+  const [isLocalProfile, setIsLocalProfile] = useState(false) // Is this profile this user's profile (aka. should we show the edit button)
+  
+  const userRole = useSelector((state: RootState) => state.user.role); // the id of the local user
+  const userId = useSelector((state: RootState) => state.user.id); // the id of the local user
 
   console.log(
     'Change this SponsorPage component to use real role from Redux store once user integration is implemented'
@@ -76,8 +81,10 @@ export function SponsorProfile() {
         const userData = await fetchSponsorById(id as string);
         if (!userData) {
           navigate("/404")
+          return;
         }
         setUserData(userData);
+        setIsLocalProfile(userData.id == userId);
         const jobs: Job[] = await fetchJobsByPublisherId(id as string);
         const jobsForJobCard = jobs.map((thisJob) => {
           return {
@@ -99,7 +106,7 @@ export function SponsorProfile() {
 
   // methods to get elements based on user type
   const getElementBasedOnRole = (element: string) => {
-    switch (role) {
+    switch (userRole) {
       case 'sponsor':
         return getSponsorElements(element);
       case 'member':
@@ -114,6 +121,7 @@ export function SponsorProfile() {
   const getSponsorElements = (element: string) => {
     switch (element) {
       case 'profileBtn':
+        if (!isLocalProfile) return null;
         return (
           <Button
             onClick={handleProfileChange}
