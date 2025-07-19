@@ -58,7 +58,7 @@ export class VerificationController {
         }
 
         if (verification.verificationCode !== verification_code) {
-            throw new HttpErrors[401]('Incorrect Verification Code');
+            throw new HttpErrors.Unauthorized('Incorrect Verification Code');
         }
 
         if (verification.expiresAt < Date.now()) {
@@ -121,8 +121,8 @@ export class VerificationController {
             throw new HttpErrors.NotFound('User not found');
         }
 
-        // Check if the verification code is still valid
-        if (Date.now() < Date.now() - 1000*60*2) {
+        // Check if rate limiting should apply (within 2 minutes of creation)
+        if (Date.now() < verification.createdAt + 1000*60*2) {
             if (verification.resentOnce) {
                 throw new HttpErrors.BadRequest('Rate limit exceeded');
             }

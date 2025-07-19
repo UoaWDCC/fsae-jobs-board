@@ -38,6 +38,7 @@ export class JwtService implements TokenService{
   // Verify token and map it to securityUserProfile
   verifyToken(token: string): Promise<any> {
     if (!token) {
+      console.log('AUTH: Token verification failed - no token provided');
       throw new HttpErrors.Unauthorized('Error verifying Token. Token cannot be null');
     }
 
@@ -45,12 +46,14 @@ export class JwtService implements TokenService{
     try {
       decodedToken = verify(token, this.jwtSecret);
     } catch (error) {
+      console.log(`AUTH: Token verification failed - ${error.message}`);
       throw new HttpErrors.Unauthorized(`Error verifying token: ${error.message}`);
     }
 
     const {id, role, activated} = decodedToken;
 
     if (!id || !role || !activated) {
+      console.log('AUTH: Token verification failed - missing required fields in payload');
       throw new HttpErrors.Unauthorized('Token payload missing required fields');
     }
 
