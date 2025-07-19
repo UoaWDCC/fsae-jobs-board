@@ -14,6 +14,8 @@ import { fetchAlumniById } from '@/api/alumni';
 import { fetchJobsByPublisherId } from '@/api/job';
 import { Alumni } from '@/models/alumni.model';
 import { Job } from "@/models/job.model";
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../app/store';
 
 const PLACEHOLDER_BANNER = "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80"
 const PLACEHOLDER_AVATAR = "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png"
@@ -27,12 +29,11 @@ export function AlumniProfile() {
   const [openProfileModal, setOpenProfileModal] = useState(false);
   const [modalContent, setModalContent] = useState<React.ReactNode>(null);
   const [showMoreDescription, setShowMoreDescription] = useState(false);
-  const [role, setRole] = useState<Role>(Role.Alumni); // Dummy role, replace with actual role from Redux store
   const [modalTitle, setModalTitle] = useState('');
+  const [isLocalProfile, setIsLocalProfile] = useState(false) // Is this profile this user's profile (aka. should we show the edit button)
   
-  console.log(
-    'Change this SponsorPage component to use real role from Redux store once user integration is implemented'
-  );
+  const userRole = useSelector((state: RootState) => state.user.role); // the id of the local user
+  const userId = useSelector((state: RootState) => state.user.id); // the id of the local user
 
   const handleAvatarChange = () => {
     setModalType('avatar');
@@ -51,14 +52,15 @@ export function AlumniProfile() {
     setModalContent(<EditBannerModal banner={""} />)
     setModalTitle('Banner Photo');
   };
-  /* todo
+  
   const handleProfileChange = () => {
+    if (!userData) return;
     setOpenProfileModal(true);
     setModalContent(
       <EditAlumniProfile userData={userData} close={() => setOpenProfileModal(false)} />
     );
     setModalTitle('Edit Profile');
-  };*/
+  };
 
   const handleJobOpportunitiesChange = () => {
     setModalType('jobOpportunities');
@@ -70,11 +72,9 @@ export function AlumniProfile() {
     setOpenModal(true);
   };
 
-  // Dummy data for alumni userData
   const [userData, setUserData] = useState<Alumni | null>(null);
 
   const [jobData, setJobData] = useState<JobCardProps[]>([]);
-  // dummy data for job opportunities
 
   useEffect(() => {
     // Logic to fetch data and setUserData
@@ -83,8 +83,10 @@ export function AlumniProfile() {
         const userData = await fetchAlumniById(id as string);
         if (!userData) {
           navigate("/404")
+          return;
         }
         setUserData(userData);
+        setIsLocalProfile(userData.id == userId);
         const jobs: Job[] = await fetchJobsByPublisherId(id as string);
         const jobsForJobCard = jobs.map((thisJob) => {
           return {
@@ -106,7 +108,7 @@ export function AlumniProfile() {
 
   // methods to get elements based on user type
   const getElementBasedOnRole = (element: string) => {
-    switch (role) {
+    switch (userRole) {
       case 'sponsor':
         return getSponsorElements(element);
       case 'member':
@@ -139,9 +141,10 @@ export function AlumniProfile() {
   const getAlumniElements = (element: string) => {
     switch (element) {
       case 'profileBtn':
+        if (!isLocalProfile) return null;
         return (
           <Button
-            //onClick={handleProfileChange}
+            onClick={handleProfileChange}
             classNames={{
               root: styles.button_root,
             }}
@@ -150,6 +153,7 @@ export function AlumniProfile() {
           </Button>
         );
       case 'addNewBtn':
+        if (!isLocalProfile) return null;
         return (
           <Button
             onClick={handleJobOpportunitiesChange}
