@@ -4,7 +4,7 @@ import { jwtDecode } from 'jwt-decode';
 import styles from './JobDetail.module.css';
 import { adminApi } from '@/api/admin';
 import { useNavigate } from 'react-router-dom';
-import DeletePostModal from '../Modal/DeletePostModal'; // import your modal
+import DeletePostModal from '../Modal/DeletePostModal';
 
 interface JwtPayload {
   role?: string;
@@ -120,7 +120,6 @@ export function JobDetail({ job }: JobDetailProps) {
         </div>
       </main>
 
-      {/* Modal mounted below everything else */}
       <DeletePostModal
         opened={modalOpen}
         onClose={() => setModalOpen(false)}

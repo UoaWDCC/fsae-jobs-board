@@ -9,11 +9,15 @@ import { EditAvatar } from '@/app/components/Modal/EditAvatar';
 import { EditBannerModal } from '@/app/components/Modal/EditBannerModal';
 import { EditSponsorProfile } from '@/app/components/Modal/EditSponsorProfile';
 import EditModal from '@/app/components/Modal/EditModal';
+import { jwtDecode } from 'jwt-decode';
+import DeactivateAccountModal from '../../components/Modal/DeactivateAccountModal';
+
 
 export function SponsorProfile() {
   // UseState for future modal implementation
   const [openModal, setOpenModal] = useState(false);
   const [modalType, setModalType] = useState('');
+  const [deactivateModalOpen, setDeactivateModalOpen] = useState(false); // look better into this stuff. im not really sure how we are using the modals :3
   const [modalContent, setModalContent] = useState<React.ReactNode>(null);
   const [modalTitle, setModalTitle] = useState('');
   const [openProfileModal, setOpenProfileModal] = useState(false);
@@ -25,6 +29,30 @@ export function SponsorProfile() {
   console.log(
     'Change this SponsorPage component to use real role from Redux store once user integration is implemented'
   );
+
+   interface JwtPayload {
+    role?: string;
+  }
+
+  useEffect(() => {
+  const token = localStorage.getItem('accessToken');
+  try {
+    if (!token) {
+      setRole(Role.Unknown);
+      return;
+    }
+    const payload = jwtDecode<JwtPayload>(token);
+    const decoded = payload.role?.toLowerCase();
+
+    if (Object.values(Role).includes(decoded as Role)) {
+      setRole(decoded as Role);
+    } else {
+      setRole(Role.Unknown);
+    }
+  } catch {
+    setRole(Role.Unknown);
+  }
+}, []);
 
   const handleAvatarChange = () => {
     setModalType('avatar');
@@ -52,9 +80,16 @@ export function SponsorProfile() {
     setOpenModal(true);
   };
 
+  //wtf?? shouldve been done but idefk whats happening here
   const handleDeactivateUserChange = () => {
     setModalType('deactivateUser');
     setOpenModal(true);
+  };
+
+  const handleDeactivateAccount = (reason: string) => {
+    console.log('Account deactivated:', reason);
+    setDeactivateModalOpen(false);
+    // trigger backend call to deactivate account.
   };
 
   // Dummy data for company userData
@@ -179,7 +214,7 @@ export function SponsorProfile() {
       case 'profileBtn':
         return (
           <Button
-            onClick={handleDeactivateUserChange}
+             onClick={() => setDeactivateModalOpen(true)}
             classNames={{
               root: styles.button_admin_root,
             }}
@@ -308,6 +343,12 @@ export function SponsorProfile() {
         content={modalContent}
         title={modalTitle}
       ></EditModal>
+
+      <DeactivateAccountModal
+        onClose={() => setDeactivateModalOpen(false)}
+        onConfirm={handleDeactivateAccount}
+        opened={deactivateModalOpen}
+      />
     </Box>
   );
 }
