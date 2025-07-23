@@ -41,7 +41,7 @@ export function JobDetail({ job }: JobDetailProps) {
               {job.skills?.map((skill) => (
                 <li key={skill}>{skill}</li>
               ))}
-            </ul> */}
+            </ul>
           </div>
         </div>
 
@@ -72,7 +72,7 @@ export function JobDetail({ job }: JobDetailProps) {
             {job.qualifications?.map((q, index) => (
               <li key={index}>{q}</li>
             ))}
-          </ul> */}
+          </ul>
         </div>
       </div>
     </main>
