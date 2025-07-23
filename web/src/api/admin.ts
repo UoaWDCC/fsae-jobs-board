@@ -16,4 +16,8 @@ export const adminApi = {
   ): Promise<void> {
     await apiInstance.patch(`user/admin/status/${id}`, {role, status});
   },
+
+  async deleteJob(id: string): Promise<void> {
+    await apiInstance.delete(`job/${id}`);
+  }
 };

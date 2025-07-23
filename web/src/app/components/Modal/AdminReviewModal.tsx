@@ -9,16 +9,16 @@ import {
   Title,
 } from '@mantine/core';
 import {IconXboxX} from '@tabler/icons-react';
+import {Role} from '@/app/type/role';
 import {AdminReview} from '@/models/adminReview.model';
-import styles from './Modal.module.css';
-import { Role } from '@/app/type/role';
+import styles from '../../styles/AdminReview.module.css';
 
 interface Props {
   opened: boolean;
   onClose: () => void;
   detail: AdminReview;
   onApprove: (id: string, role: Role) => void;
-  onReject:  (id: string, role: Role) => void;
+  onReject: (id: string, role: Role) => void;
 }
 
 export default function AdminReviewModal({
@@ -33,42 +33,47 @@ export default function AdminReviewModal({
       opened={opened}
       onClose={onClose}
       centered
-      size="100%"
+      size="lg"
       closeButtonProps={{
-        icon: <IconXboxX size={50} stroke={2} color="#ffffff" />,
+        icon: <IconXboxX size={24} stroke={1.8} color="#ffffff" />,
       }}
       classNames={{
         content: styles.content,
         body: styles.body,
-        title: styles.title,
-        header: styles.modalHeader,
+        header: styles.header,
       }}
+      overlayProps={{backgroundOpacity: 0.55, blur: 2}}
       title={
-        <Center>
-          <Title order={4}>{detail.name}</Title>
+        <Center className={styles.titleWrapper}>
+          <Title order={4} className={styles.title}>
+            {detail.name}
+          </Title>
         </Center>
       }
-      overlayProps={{backgroundOpacity: 0.55, blur: 2}}
     >
-      <Grid>
-        <Grid.Col span={4}>
-          <Center>
-            <Avatar size={180} radius="xl" />
-          </Center>
-        </Grid.Col>
+      <Flex align="flex-start" gap="xl">
+        {/* Avatar Section */}
+        <div style={{ flexShrink: 0 }}>
+          <Avatar size={120} radius="50%" color="dark">
+            {/* placeholder ‒ keep empty for grey circle */}
+          </Avatar>
+        </div>
 
-        <Grid.Col span={8}>
-          <Flex direction="column" gap="sm">
-            <Row label="Contact"   value={detail.contact} />
-            <Row label="Email"     value={detail.email} />
-            <Row label="User Type" value={detail.role} />
-            {detail.intention && <Row label="Intention" value={detail.intention} />}
-          </Flex>
-        </Grid.Col>
-      </Grid>
+        {/* Info Section */}
+        <Flex direction="column" gap="md" style={{ flex: 1 }}>
+          <Row label="Contact" value={detail.contact} />
+          <Row label="Email" value={detail.email} />
+          <Row label="User Type" value={detail.role} />
+          {detail.intention && <Row label="Intention" value={detail.intention} />}
+        </Flex>
+      </Flex>
 
-      <Flex mt="lg" justify="flex-end" gap="sm">
-        <Button variant="filled" color="gray" onClick={() => onReject(detail.id, detail.role)}>
+      <Flex justify="flex-end" gap="sm" mt="xl">
+        <Button
+          color="gray"
+          variant="filled"
+          onClick={() => onReject(detail.id, detail.role)}
+        >
           Reject
         </Button>
         <Button onClick={() => onApprove(detail.id, detail.role)}>Approve</Button>
@@ -79,11 +84,11 @@ export default function AdminReviewModal({
 
 function Row({label, value}: {label: string; value: string}) {
   return (
-    <Flex gap="md">
-      <Text fw={500} w={90}>
+    <Flex gap="md" align="flex-start">
+      <Text fw={500} w={80} style={{ flexShrink: 0 }}>
         {label}
       </Text>
-      <Text>{value}</Text>
+      <Text style={{ wordBreak: 'break-word' }}>{value}</Text>
     </Flex>
   );
 }

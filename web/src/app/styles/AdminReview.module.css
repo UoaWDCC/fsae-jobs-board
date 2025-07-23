@@ -1,0 +1,72 @@
+.content {
+  background: #2d2d2d;
+  border-radius: 12px;
+  padding: 2.5rem 3rem;
+  width: 90vw;          /* responsive width */
+  max-width: 960px;     /* a bit wider than before */
+  margin-inline: auto;  /* horizontal centre */
+}
+
+.body { padding-top: 1.25rem; }
+
+.header {
+  border-bottom: none;
+  padding-bottom: 0;
+  background: transparent;
+  display: flex;
+  justify-content: center;
+}
+
+.titleWrapper {
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.title {
+  color: #fff;
+  position: relative;
+  font-size: 1.45rem;
+  font-weight: 600;
+  margin: 0;
+  text-align: center;
+  
+}
+
+
+/* avatar + info layout */
+.mainRow {
+  display: flex;
+  gap: 3rem;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.avatarBox {
+  flex-shrink: 0;
+}
+
+.infoBox {
+  flex: 1 1 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.infoRow {
+  display: flex;
+  gap: 1rem;
+}
+
+.infoLabel {
+  width: 95px;
+  flex-shrink: 0;
+  font-weight: 500;
+}
+
+.btnRow {
+  margin-top: 2.5rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.8rem;
+}
