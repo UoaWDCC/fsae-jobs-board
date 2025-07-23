@@ -51,7 +51,7 @@ export function LoginForm() {
           navigate(`/profile/alumni/${id}`, { replace: true });
           break;
         case 'member':
-          navigate(`/profile/alumni/682e61bd064cb911781c9974`, { replace: true });
+          navigate(`/profile/alumni/${id}`, { replace: true });
           break;
         case 'sponsor':
           navigate(`/profile/sponsor/${id}`, { replace: true });
