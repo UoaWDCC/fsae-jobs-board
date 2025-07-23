@@ -63,7 +63,7 @@ export function StudentProfile() {
 
   const handleProfileChange = () => {
     setModalType('profile');
-    setModalContent(<EditStudentProfile close={() => setOpenProfileModal(false)} />);
+    setModalContent(<EditStudentProfile userData={userData} setUserData={setUserData} close={() => setOpenProfileModal(false)} />);
     setModalTitle('Edit Profile');
     setOpenProfileModal(true);
   };
