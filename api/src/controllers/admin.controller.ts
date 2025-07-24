@@ -17,10 +17,10 @@ import {
   AlumniRepository,
   MemberRepository,
   SponsorRepository,
+  AdminLogRepository
 } from '../repositories';
 import {AdminReview} from './controller-types/admin.controller.types';
 import { AdminStatus } from '../models/admin.status';
-import { AdminLogRepository } from '../repositories/admin.logs.repository';
 import {inject} from '@loopback/core';
 import {SecurityBindings, UserProfile, securityId} from '@loopback/security';
 
