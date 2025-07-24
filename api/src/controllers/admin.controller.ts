@@ -20,6 +20,10 @@ import {
 } from '../repositories';
 import {AdminReview} from './controller-types/admin.controller.types';
 import { AdminStatus } from '../models/admin.status';
+import { AdminLogRepository } from '../repositories/admin.logs.repository';
+import {inject} from '@loopback/core';
+import {SecurityBindings, UserProfile, securityId} from '@loopback/security';
+
 
 @authenticate('fsae-jwt')
 export class AdminController {
@@ -27,6 +31,9 @@ export class AdminController {
     @repository(AlumniRepository) private alumniRepository: AlumniRepository,
     @repository(MemberRepository) private memberRepository: MemberRepository,
     @repository(SponsorRepository) private sponsorRepository: SponsorRepository,
+    @repository(AdminLogRepository) private adminLogRepository: AdminLogRepository,
+    @inject(SecurityBindings.USER) private currentUser: UserProfile,
+
   ) {}
 
    /**
@@ -94,7 +101,6 @@ export class AdminController {
       ...members.map(m  => toReview(m, FsaeRole.MEMBER)),
       ...sponsors.map(s => toReview(s, FsaeRole.SPONSOR)),
     ];
-
   }
 
   /**
@@ -153,6 +159,19 @@ export class AdminController {
     /* update the user; throw 404 if not found */
     try {
       await repo.updateById(id, {adminStatus: status});
+      const user = await repo.findById(id);
+      await this.adminLogRepository.create({
+        adminId: this.currentUser[securityId] as string,
+        action: `application-${status.toLowerCase()}`,
+        targetType: role.toLowerCase(),
+        targetId: id,
+        metadata: {
+          firstName: user.firstName,
+          lastName: user.lastName,
+          memberType: role,
+        },
+        timestamp: new Date().toISOString(),
+    });
     } catch (e: any) {
       if (e.code === 'ENTITY_NOT_FOUND') {
         throw new HttpErrors.NotFound(`User ${id} not found in ${role} collection`);

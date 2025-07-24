@@ -58,6 +58,7 @@ export class JwtService implements TokenService{
       [securityId]: id,
       id: id,
       //name: 'Test',
+      roles: [role],
       fsaeRole: role,
       activated: activated
     };

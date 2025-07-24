@@ -31,9 +31,15 @@ const DeletePostModal: React.FC<DeletePostModalProps> = ({ opened, onClose, onDe
   };
 
   const handleDelete = () => {
-    if (!effectiveReason) return;
-    onDelete(effectiveReason);
+    const trimmedReason = effectiveReason.trim();
+    const isValid =
+      (violationChecked && !otherChecked) ||
+      (otherChecked && trimmedReason.length > 0);
+
+    if (!isValid) return;
+    onDelete(trimmedReason);
   };
+
 
   if (!opened) return null;
 
@@ -98,7 +104,10 @@ const DeletePostModal: React.FC<DeletePostModalProps> = ({ opened, onClose, onDe
           <button
             style={styles.deleteBtn}
             onClick={handleDelete}
-            disabled={!effectiveReason}
+            disabled={
+              (!violationChecked && !otherChecked) ||
+              (otherChecked && otherReason.trim() === '')
+            }
           >
             Delete
           </button>

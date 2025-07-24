@@ -17,7 +17,13 @@ export const adminApi = {
     await apiInstance.patch(`user/admin/status/${id}`, {role, status});
   },
 
-  async deleteJob(id: string): Promise<void> {
-    await apiInstance.delete(`job/${id}`);
+  async deleteJob(id: string, reason: string): Promise<void> {
+    try{
+      await apiInstance.delete(`job/${id}`, {
+      data: {reason},
+    });
+    } catch (error) {
+      console.error('Error deleting job:', error);
+    }
   }
 };

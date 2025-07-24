@@ -41,7 +41,7 @@ export function JobDetail({ job }: JobDetailProps) {
   }, []);
 
   const handleConfirmDelete = async (reason: string) => {
-    await adminApi.deleteJob(job.id); // optionally pass reason to backend
+    await adminApi.deleteJob(job.id, reason); // optionally pass reason to backend
     console.log('Deleted with reason:', reason);
     navigate('/jobs');
   };
