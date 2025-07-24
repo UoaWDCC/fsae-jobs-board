@@ -35,6 +35,8 @@ export function SponsorProfile() {
   const [userData, setUserData] = useState<Sponsor | null>(null);
   const [jobData, setJobData] = useState<JobCardProps[]>([]);
 
+  const [newUserData, setNewUserData] = useState<Partial<Sponsor> | null>(null); // partial because the database schema is currently messed up
+
   const [isLocalProfile, setIsLocalProfile] = useState(false) // Is this profile this user's profile (aka. should we show the edit button)
   
   const userRole = useSelector((state: RootState) => state.user.role); // the id of the local user
@@ -60,7 +62,7 @@ export function SponsorProfile() {
 
   const handleProfileChange = () => {
     setModalType('profile');
-    setModalContent(<EditSponsorProfile />);
+    setModalContent(<EditSponsorProfile userData={userData} setUserData={setUserData} close={() => setOpenProfileModal(false)}/>);
     setModalTitle('Edit Profile');
     setOpenProfileModal(true);
   };

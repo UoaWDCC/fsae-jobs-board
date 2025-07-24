@@ -57,7 +57,7 @@ export function AlumniProfile() {
     if (!userData) return;
     setOpenProfileModal(true);
     setModalContent(
-      <EditAlumniProfile userData={userData} close={() => setOpenProfileModal(false)} />
+      <EditAlumniProfile userData={userData} setUserData={setUserData} close={() => setOpenProfileModal(false)} />
     );
     setModalTitle('Edit Profile');
   };

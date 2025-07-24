@@ -1,28 +1,14 @@
 import { Box, Textarea } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import { ChangeEvent, useState } from 'react';
+import { Alumni } from '@/models/alumni.model';
 
-interface UserData {
-  description: string;
-}
+const AlumniAboutTab = ({ newUserData, setNewUserData }: { newUserData: Partial<Alumni> | null, setNewUserData: React.Dispatch<React.SetStateAction<Partial<Alumni> | null>>}) => {
 
-interface AlumniAboutTabProps {
-  userData: UserData;
-}
-
-const AlumniAboutTab = ({ userData }: AlumniAboutTabProps) => {
-  const [formData, setFormData] = useState<UserData>({
-    description: userData.description || '',
-  });
-
-  const handleInputChange =
-    (field: keyof UserData) => (event: ChangeEvent<HTMLTextAreaElement>) => {
-      setFormData({
-        ...formData,
-        [field]: event.currentTarget.value,
-      });
-    };
   const isMobile = useMediaQuery('(max-width: 430px)'); //mobile screen
+  const handleFieldChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setNewUserData({...newUserData, [field]: event.currentTarget.value});
+  }
 
   return (
     <Box>
@@ -32,8 +18,8 @@ const AlumniAboutTab = ({ userData }: AlumniAboutTabProps) => {
           minRows={10}
           maxRows={15}
           autosize
-          value={formData.description}
-          onChange={handleInputChange('description')}
+          value={newUserData?.desc as string} 
+          onChange={handleFieldChange("desc")}
         ></Textarea>
       ) : (
         <Textarea
@@ -41,8 +27,8 @@ const AlumniAboutTab = ({ userData }: AlumniAboutTabProps) => {
           minRows={5}
           maxRows={20}
           autosize
-          value={formData.description}
-          onChange={handleInputChange('description')}
+          value={newUserData?.desc as string} 
+          onChange={handleFieldChange("desc")}
         ></Textarea>
       )}
     </Box>
