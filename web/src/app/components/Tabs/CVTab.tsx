@@ -103,7 +103,16 @@ export const CVTab = () => {
     });
 
     if (!response.ok) {
-      throw new Error('Upload failed');
+      if (response.status === 413) {
+        setErrorMsg("File too large (server limit).");
+      } else if (response.status === 415) {
+        setErrorMsg("Unsupported file format.");
+      } else {
+        setErrorMsg("Upload failed.");
+      }
+      setUploadStatus('error');
+      throw new Error(`Upload failed: ${response.status}`);
+
     } else {
       console.log('CV uploaded successfully');
       dispatch(setCVStatus({ hasCV: true }));
