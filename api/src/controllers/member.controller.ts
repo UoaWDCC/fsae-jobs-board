@@ -155,11 +155,11 @@ export class MemberController {
 
         console.log('Member ID:', memberId);
 
-        const base64Data = file.buffer.toString('base64');
+        const binaryData = file.buffer;
 
         try {
           await this.memberRepository.updateById(memberId, {
-            cvData: base64Data,
+            cvData: binaryData,
             cvFileName: file.originalname,
             cvMimeType: file.mimetype,
             cvSize: file.size,
@@ -228,7 +228,7 @@ export class MemberController {
         return;
       }
 
-      const cvBuffer = Buffer.from(member.cvData, 'base64');
+      const cvBuffer = member.cvData as unknown as Buffer;
       
       response.setHeader('Content-Type', member.cvMimeType || 'application/pdf');
       response.setHeader('Content-Disposition', `inline; filename="${member.cvFileName}"`);

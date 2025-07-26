@@ -11,10 +11,10 @@ export class Member extends FsaeUser {
   memberID?: string;
 
   @property({
-    type: 'string',
-    default: '',
+    type: 'buffer',
+    mongodb: { dataType: 'binData' },
   })
-  cvData?: string;
+  cvData?: Buffer;
 
   @property({
     type: 'string',
