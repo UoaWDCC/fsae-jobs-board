@@ -256,7 +256,7 @@ export class MemberController {
     
     if (member) {
       await this.memberRepository.updateById(id, {
-        cvData: '',
+        cvData: undefined,
         cvFileName: '',
         cvMimeType: '',
         cvSize: 0,
