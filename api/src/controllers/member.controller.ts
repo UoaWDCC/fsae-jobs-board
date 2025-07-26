@@ -243,6 +243,31 @@ export class MemberController {
   }
 
   @authorize({
+    allowedRoles: [FsaeRole.MEMBER],
+  })
+  @patch('/user/member/{id}/delete-cv')
+  @response(204, {
+    description: 'CV deleted successfully',
+  })
+  async deleteCV(
+    @param.path.string('id') id: string,
+  ): Promise<void> {
+    const member = await this.memberRepository.findById(id);
+    
+    if (member) {
+      await this.memberRepository.updateById(id, {
+        cvData: '',
+        cvFileName: '',
+        cvMimeType: '',
+        cvSize: 0,
+        cvUploadedAt: new Date(),
+        hasCV: false,
+      });
+    }
+  }
+
+
+  @authorize({
     allowedRoles: [FsaeRole.ADMIN],
   })
   @del('/user/member/{id}')

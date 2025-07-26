@@ -12,7 +12,7 @@ import {
 } from '@mantine/core';
 import styles from '../../styles/StudentProfile.module.css';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../store';
 import EditModal from '../../components/Modal/EditModal';
 import { EditStudentProfile } from '../../components/Modal/EditStudentProfile';
@@ -21,6 +21,7 @@ import { EditBannerModal } from '../../components/Modal/EditBannerModal';
 
 export function StudentProfile() {
   const user = useSelector((state: RootState) => state.user);
+  const hasCV = useSelector((state: RootState) => state.user.hasCV);
   console.log('[StudentProfile] Redux user:', user);
   const memberID = user.id;
 
@@ -115,6 +116,7 @@ export function StudentProfile() {
     avatar:
       'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png',
     banner: 'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png',
+    hasCV: true,
   });
   // Add code to fetch data from our database when it will be connected
 
@@ -153,8 +155,8 @@ export function StudentProfile() {
     }
   };
 
-  // fetchUserData();
-}, [memberID]);
+  fetchUserData();
+}, [memberID, hasCV]);
 
   return (
     <Box className={styles.container}>
@@ -316,16 +318,18 @@ export function StudentProfile() {
               </Box>
             </Box>
 
-            <ActionIcon variant="transparent" color="#ffffff" size={200} mt={-40}
-            onClick={handleOpenCV}
-            style={{ cursor: 'pointer' }}>
-              <img 
-                src="/cv_white.png" 
-                alt="CV Icon" 
-                width={90} 
-                height={90}
-              />
-            </ActionIcon>
+            {userData?.hasCV && (
+              <ActionIcon variant="transparent" color="#ffffff" size={200} mt={-40}
+              onClick={handleOpenCV}
+              style={{ cursor: 'pointer' }}>
+                <img 
+                  src="/cv_white.png" 
+                  alt="CV Icon" 
+                  width={90} 
+                  height={90}
+                />
+              </ActionIcon>
+            )}
           </Box>
         </Grid.Col>
       </Grid>
