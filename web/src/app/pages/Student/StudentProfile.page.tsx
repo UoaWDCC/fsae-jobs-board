@@ -12,13 +12,18 @@ import {
 } from '@mantine/core';
 import styles from '../../styles/StudentProfile.module.css';
 import { useEffect, useState } from 'react';
-import { IconCertificate } from '@tabler/icons-react';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store';
 import EditModal from '../../components/Modal/EditModal';
 import { EditStudentProfile } from '../../components/Modal/EditStudentProfile';
 import { EditAvatar } from '../../components/Modal/EditAvatar';
 import { EditBannerModal } from '../../components/Modal/EditBannerModal';
 
 export function StudentProfile() {
+  const user = useSelector((state: RootState) => state.user);
+  console.log('[StudentProfile] Redux user:', user);
+  const memberID = user.id;
+
   // UseState for future modal implementation
   const [modalType, setModalType] = useState('');
   const [openProfileModal, setOpenProfileModal] = useState(false);
@@ -50,6 +55,43 @@ export function StudentProfile() {
     setOpenProfileModal(true);
   };
 
+  const handleOpenCV = async () => {
+    if (!memberID) {
+      alert('Member ID invalid');
+      return;
+    }
+
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+      alert('No access token found');
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:3000/user/member/${memberID}/cv`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch CV');
+      }
+
+      // fetch CV as blob for opening in a new tab
+      const blob = await response.blob();
+
+      const url = window.URL.createObjectURL(blob);
+
+      window.open(url, '_blank');
+
+      setTimeout(() => window.URL.revokeObjectURL(url), 10000);
+    } catch (error) {
+      console.error('Error fetching CV:', error);
+      alert('Failed to load CV');
+    }
+  };
+
   // Dummy data for userData
   const [userData, setUserData] = useState({
     firstName: 'John',
@@ -77,8 +119,39 @@ export function StudentProfile() {
   // Add code to fetch data from our database when it will be connected
 
   useEffect(() => {
-    // Logic to fetch data and setUserData
-  }, []);
+  const fetchUserData = async () => {
+    if (!memberID) {
+      console.log('User not authenticated or no member ID');
+      return;
+    }
+
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+      console.log('No access token available yet');
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:3000/user/member/${memberID}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const memberData = await response.json();
+        setUserData(memberData);
+      } else {
+        console.error('Failed to fetch member data');
+      }
+    } catch (error) {
+      console.error('Error fetching member data:', error);
+    }
+  };
+
+  // fetchUserData();
+}, [memberID]);
 
   return (
     <Box className={styles.container}>
@@ -240,8 +313,15 @@ export function StudentProfile() {
               </Box>
             </Box>
 
-            <ActionIcon variant="transparent" color="#ffffff" size={200} mt={-40}>
-              <IconCertificate width={90} height={90} stroke={1.5} />
+            <ActionIcon variant="transparent" color="#ffffff" size={200} mt={-40}
+            onClick={handleOpenCV}
+            style={{ cursor: 'pointer' }}>
+              <img 
+                src="/cv_white.png" 
+                alt="CV Icon" 
+                width={90} 
+                height={90}
+              />
             </ActionIcon>
           </Box>
         </Grid.Col>

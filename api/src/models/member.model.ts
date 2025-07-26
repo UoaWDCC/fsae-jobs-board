@@ -9,11 +9,41 @@ export class Member extends FsaeUser {
     generated: true,
   })
   memberID?: string;
+
+  @property({
+    type: 'string',
+    default: '',
+  })
+  cvData?: string;
+
+  @property({
+    type: 'string',
+    default: '',
+  })
+  cvFileName?: string;
+
+  @property({
+    type: 'string',
+    default: '',
+  })
+  cvMimeType?: string;
+
+  @property({
+    type: 'number',
+    default: 0,
+  })
+  cvSize?: number;
+
+  @property({
+    type: 'date',
+    default: () => new Date(),
+  })
+  cvUploadedAt?: Date;
   
   // default values for optional fields
   firstName?: string = 'Fsae';
   lastName?: string = 'member';
-  cv?: string = '';
+  // cv?: string = '';
   subGroup?: string = 'Fsae club';
  
   // Indexer property to allow additional data

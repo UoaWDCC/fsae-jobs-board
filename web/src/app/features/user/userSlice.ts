@@ -38,9 +38,12 @@ const userSlice = createSlice({
       const role = action.payload as Role;
       state.role = role;
     },
+    setUser(state, action: PayloadAction<Partial<UserState>>) {
+      Object.assign(state, action.payload);
+    }
     // ... other reducers for user actions (e.g., login, logout, update profile)
   },
 });
 
-export const { setRole, resetUser } = userSlice.actions;
+export const { setRole, resetUser, setUser } = userSlice.actions;
 export default userSlice.reducer;
