@@ -8,7 +8,7 @@ interface SearchBarProps {
   setSearch: (search: string) => void;
   title: string;
   placeholder: string;
-  onSearch: () => void; // <-- Add this
+  onSearch?: () => void; // <-- Add this
 }
 
 const SearchBar: FC<SearchBarProps> = ({ search, setSearch, title, placeholder, onSearch }) => {
@@ -21,13 +21,17 @@ const SearchBar: FC<SearchBarProps> = ({ search, setSearch, title, placeholder, 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
       setSearch(input);
-      onSearch();
+      if (onSearch) {
+        onSearch();
+      }
     }
   };
 
   const handleSearchClick = () => {
     setSearch(input);
-    onSearch();
+    if (onSearch) {
+      onSearch();
+    }
   };
 
   return (

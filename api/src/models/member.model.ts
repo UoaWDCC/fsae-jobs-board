@@ -9,11 +9,47 @@ export class Member extends FsaeUser {
     generated: true,
   })
   memberID?: string;
+
+  @property({
+    type: 'buffer',
+    mongodb: { dataType: 'binData' },
+  })
+  cvData?: Buffer;
+
+  @property({
+    type: 'string',
+    default: '',
+  })
+  cvFileName?: string;
+
+  @property({
+    type: 'string',
+    default: '',
+  })
+  cvMimeType?: string;
+
+  @property({
+    type: 'number',
+    default: 0,
+  })
+  cvSize?: number;
+
+  @property({
+    type: 'date',
+    default: () => new Date(),
+  })
+  cvUploadedAt?: Date;
+
+  @property({
+    type: 'boolean',
+    default: false,
+  })
+  hasCV?: boolean;
   
   // default values for optional fields
   firstName?: string = 'Fsae';
   lastName?: string = 'member';
-  cv?: string = '';
+  // cv?: string = '';
   subGroup?: string = 'Fsae club';
  
   // Indexer property to allow additional data

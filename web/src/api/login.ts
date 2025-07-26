@@ -1,4 +1,5 @@
 import { apiInstance } from '@/api/ApiInstance';
+
 export async function login(email: string, password: string) {
   let role;
   try {
@@ -39,7 +40,7 @@ export async function login(email: string, password: string) {
       localStorage.setItem('accessToken', token);
       console.log(`Successfully logged in as UserID ${userId}`);
       console.log(role);
-      return { role: role }; // Return role
+      return { role: role, userId: userId }; // Return role
     }
   } catch (e) {
     throw Error('Invalid credentials');

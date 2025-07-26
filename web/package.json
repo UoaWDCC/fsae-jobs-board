@@ -39,6 +39,7 @@
     "react-router-dom": "^6.22.3",
     "react-toastify": "^10.0.5",
     "redux": "^5.0.1",
+    "redux-persist": "^6.0.0",
     "yarn": "^1.22.22"
   },
   "devDependencies": {
@@ -58,6 +59,7 @@
     "@types/node": "^22.15.17",
     "@types/react": "^18.2.65",
     "@types/react-dom": "^18.2.21",
+    "@types/redux-persist": "^4.0.0",
     "@typescript-eslint/eslint-plugin": "^7.2.0",
     "@typescript-eslint/parser": "^7.2.0",
     "@vitejs/plugin-react": "^4.2.1",
