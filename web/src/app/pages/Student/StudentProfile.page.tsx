@@ -141,7 +141,10 @@ export function StudentProfile() {
 
       if (response.ok) {
         const memberData = await response.json();
-        setUserData(memberData);
+        setUserData((prev) => ({
+            ...prev,
+            ...memberData,
+          }));
       } else {
         console.error('Failed to fetch member data');
       }

@@ -164,6 +164,7 @@ export class MemberController {
             cvMimeType: file.mimetype,
             cvSize: file.size,
             cvUploadedAt: new Date(),
+            hasCV: true,
           });
 
           resolve({

@@ -39,6 +39,12 @@ export class Member extends FsaeUser {
     default: () => new Date(),
   })
   cvUploadedAt?: Date;
+
+  @property({
+    type: 'boolean',
+    default: false,
+  })
+  hasCV?: boolean;
   
   // default values for optional fields
   firstName?: string = 'Fsae';
