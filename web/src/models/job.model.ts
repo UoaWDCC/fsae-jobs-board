@@ -13,7 +13,10 @@ export interface Job {
     description: string;
     salary: string;
     publisherID: string;
-    startDate: string;
+    startDate?: string;
+    duration?: string;
+    location?: string;
+    roleType?: string;
 }
 
 //! If this changes, make sure to update the JobDetail component in web/src/app/components/JobDetail/JobDetail.tsx

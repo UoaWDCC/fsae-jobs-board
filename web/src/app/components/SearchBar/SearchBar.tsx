@@ -21,13 +21,13 @@ const SearchBar: FC<SearchBarProps> = ({ search, setSearch, title, placeholder, 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
       setSearch(input);
-      onSearch();
+      if (onSearch) onSearch();
     }
   };
 
   const handleSearchClick = () => {
     setSearch(input);
-    onSearch();
+    if (onSearch) onSearch();
   };
 
   return (
