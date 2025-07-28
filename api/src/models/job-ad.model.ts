@@ -56,6 +56,15 @@ export class JobAd extends Entity {
   })
   publisherID: string;
 
+  @property({
+    type: 'string',
+    required: true,
+    jsonSchema: {
+      enum: ['Internship', 'Graduate', 'Junior'],
+    },
+  })
+  roleType: string;
+
 
   constructor(data?: Partial<JobAd>) {
     super(data);

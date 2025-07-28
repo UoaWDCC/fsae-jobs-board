@@ -8,6 +8,8 @@ export function JobBoard() {
   const [filterRoles, setFilterRoles] = useState<string[]>([]);
   const [filterFields, setFilterFields] = useState<string[]>([]);
   const [isPortrait, setIsPortrait] = useState(window.innerHeight > window.innerWidth);
+  const [searchInput, setSearchInput] = useState('');
+  const [search, setSearch] = useState('');
   const theme = useMantineTheme();
 
   useEffect(() => {
@@ -21,7 +23,10 @@ export function JobBoard() {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
-  const [search, setSearch] = useState<string>('');
+
+  const handleSearch = () => {
+    setSearch(searchInput);
+  };
 
   return (
     <Grid justify="center" align="center">
@@ -46,25 +51,39 @@ export function JobBoard() {
           </Grid.Col>
           <Grid.Col span={9}>
             <SearchBar
-              search={search}
-              setSearch={setSearch}
+              search={searchInput}
+              setSearch={setSearchInput}
               title="Job Board"
               placeholder="Search jobs"
+              onSearch={handleSearch}
             />
-            <JobListing filterRoles={filterRoles} filterFields={filterFields} />
+            <JobListing
+              filterRoles={filterRoles}
+              filterFields={filterFields}
+              search={search}
+            />
           </Grid.Col>
-          
         </>
       ) : (
         <Grid.Col span={12}>
-          <SearchBar search={search} setSearch={setSearch} title={''} placeholder={''} />
+          <SearchBar
+            search={searchInput}
+            setSearch={setSearchInput}
+            title=""
+            placeholder=""
+            onSearch={handleSearch}
+          />
           <Filter
             filterRoles={filterRoles}
             setFilterRoles={setFilterRoles}
             filterFields={filterFields}
             setFilterFields={setFilterFields}
           />
-          <JobListing filterRoles={filterRoles} filterFields={filterFields} />
+          <JobListing
+            filterRoles={filterRoles}
+            filterFields={filterFields}
+            search={search}
+          />
         </Grid.Col>
       )}
     </Grid>

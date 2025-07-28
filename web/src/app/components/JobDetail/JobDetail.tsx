@@ -58,13 +58,20 @@ export function JobDetail({ job }: JobDetailProps) {
               Salary: <span style={{ fontWeight: 400 }}>{job.salary}</span>
             </Text>
             <Text size="xl" fw={700} className={styles.detailItem}>
-              Start Date: <span style={{ fontWeight: 400 }}>{job.startDate}</span>
+              Start Date:{' '}
+              <span
+                style={{ fontWeight: 400 }}
+              >{`TODO: add start date to Job model or remove this`}</span>
             </Text>
             <Text size="xl" fw={700} className={styles.detailItem}>
-              Duration: <span style={{ fontWeight: 400 }}>{job.duration}</span>
+              Duration:{' '}
+              <span
+                style={{ fontWeight: 400 }}
+              >{`TODO: add start date to Job model or remove this`}</span>
             </Text>
             <Text size="xl" fw={700} className={styles.detailItem}>
-              Application Deadline: <span style={{ fontWeight: 400 }}>{job.applicationDeadline}</span>
+              Application Deadline:{' '}
+              <span style={{ fontWeight: 400 }}>{job.applicationDeadline}</span>
             </Text>
 
             <Text size="1.4rem" fw={700}>
