@@ -45,10 +45,9 @@ export class FsaeUser extends Entity {
 
   @property({
     type: 'string',
-    required: true,
-    default: "-",
+    required: false,
   })
-  desc: string = 'An FSAE user profile.';
+  desc?: string;
 
   @property({
     type: 'string',
@@ -85,12 +84,6 @@ export class FsaeUser extends Entity {
     defaultFn: 'now'
   })
   createdAt: Date;
-
-  @property({
-    type: 'string',
-    required: false,
-  })
-  desc?: string;
 
   public convertToSecurityUserProfile(): UserProfile {
     return {

@@ -74,7 +74,7 @@ export class AdminController {
     ]);
 
     const toReview = (u: FsaeUser, role: FsaeRole): AdminReview => {
-      const id = (u._id ?? u.id).toString();
+      const id = u.id.toString();
 
       const name =
         u.lastName && u.lastName !== '-'
@@ -87,8 +87,8 @@ export class AdminController {
 
       return {
         id,
-        contact: u.phoneNumber ?? u.contact ?? '',
-        name,
+        contact: u.phoneNumber ?? '',
+        name: name ?? '',
         email: u.email ?? '',
         role,
         date: created,

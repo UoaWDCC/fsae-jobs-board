@@ -117,7 +117,7 @@ export class ActivationController {
     if (!alumni) {
       throw new HttpErrors.NotFound(`Alumni with id ${id} not found.`);
     }
-    await this.logAdminAction('activated-alumni', 'alumni', id, alumni.firstName, alumni.lastName);
+    await this.logAdminAction('activated-alumni', 'alumni', id, alumni.firstName ?? '', alumni.lastName ?? '');
   }
 
   // Method to deactivate an alumni
@@ -135,7 +135,7 @@ export class ActivationController {
     if (!alumni) {
       throw new HttpErrors.NotFound(`Alumni with id ${id} not found.`);
     }
-    await this.logAdminAction('deactivated-alumni', 'alumni', id, alumni.firstName, alumni.lastName);
+    await this.logAdminAction('deactivated-alumni', 'alumni', id, alumni.firstName ?? '', alumni.lastName ?? '');
   }
 
   // Method to activate a sponsor
@@ -153,7 +153,7 @@ export class ActivationController {
     if (!sponsor) {
       throw new HttpErrors.NotFound(`Sponsor with id ${id} not found.`);
     }
-    await this.logAdminAction('activated-sponsor', 'sponsor', id, sponsor.firstName, sponsor.lastName);
+    await this.logAdminAction('activated-sponsor', 'sponsor', id, sponsor.firstName ?? '', sponsor.lastName ?? '');
   }
 
   // Method to deactivate a sponsor
@@ -171,7 +171,7 @@ export class ActivationController {
     if (!sponsor) {
       throw new HttpErrors.NotFound(`Sponsor with id ${id} not found.`);
     }
-    await this.logAdminAction('deactivated-sponsor', 'sponsor', id, sponsor.firstName, sponsor.lastName);
+    await this.logAdminAction('deactivated-sponsor', 'sponsor', id, sponsor.firstName ?? '', sponsor.lastName ?? '');
   }
 
   // Method to activate a member
@@ -189,7 +189,7 @@ export class ActivationController {
     if (!member) {
       throw new HttpErrors.NotFound(`Member with id ${id} not found.`);
     }
-    await this.logAdminAction('activated-member', 'member', id, member.firstName, member.lastName);
+    await this.logAdminAction('activated-member', 'member', id, member.firstName ?? '', member.lastName ?? '');
   }
 
   // Method to deactivate a member
@@ -207,7 +207,7 @@ export class ActivationController {
     if (!member) {
       throw new HttpErrors.NotFound(`Member with id ${id} not found.`);
     }
-    await this.logAdminAction('deactivated-member', 'member', id, member.firstName, member.lastName);
+    await this.logAdminAction('deactivated-member', 'member', id, member.firstName ?? '', member.lastName ?? '');
   }
 
   private async logAdminAction(
