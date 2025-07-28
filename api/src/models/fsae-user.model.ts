@@ -1,5 +1,6 @@
 import {Entity, model, property} from '@loopback/repository';
 import {FsaeRole} from './roles';
+import {AdminStatus} from './admin.status';
 import {securityId, UserProfile} from '@loopback/security';
 
 @model({settings: {strict: false}})
@@ -44,10 +45,9 @@ export class FsaeUser extends Entity {
 
   @property({
     type: 'string',
-    required: true,
-    default: "-",
+    required: false,
   })
-  desc: string = 'An FSAE user profile.';
+  desc?: string;
 
   @property({
     type: 'string',
@@ -72,8 +72,18 @@ export class FsaeUser extends Entity {
   @property({type: 'string'}) industry?: string; // Sponsor
   @property({type: 'string'}) name?: string; // Sponsor
 
-  // Indexer property to allow additional data
-  [prop: string]: any;
+  @property({
+    type: 'string',
+    required: true,
+    default: AdminStatus.PENDING,
+  })
+  adminStatus: AdminStatus;
+
+  @property({
+    type: 'date', 
+    defaultFn: 'now'
+  })
+  createdAt: Date;
 
   public convertToSecurityUserProfile(): UserProfile {
     return {

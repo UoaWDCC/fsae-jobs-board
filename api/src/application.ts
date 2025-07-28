@@ -19,6 +19,8 @@ import {
   AuthorizationTags,
 } from '@loopback/authorization';
 import {FsaeAuthorizationProvider} from './auth/authorization/FsaeAuthorizationProvider';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 export {ApplicationConfig};
 

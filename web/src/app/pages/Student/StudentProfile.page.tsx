@@ -17,10 +17,14 @@ import EditModal from '../../components/Modal/EditModal';
 import { EditStudentProfile } from '../../components/Modal/EditStudentProfile';
 import { EditAvatar } from '../../components/Modal/EditAvatar';
 import { EditBannerModal } from '../../components/Modal/EditBannerModal';
+import { jwtDecode } from 'jwt-decode';
+import DeactivateAccountModal from '../../components/Modal/DeactivateAccountModal';
+
 
 export function StudentProfile() {
   // UseState for future modal implementation
   const [modalType, setModalType] = useState('');
+  const [deactivateModalOpen, setDeactivateModalOpen] = useState(false); // look better into this stuff. im not really sure how we are using the modals :3
   const [openProfileModal, setOpenProfileModal] = useState(false);
   const [modalContent, setModalContent] = useState<React.ReactNode>(null);
   const [modalTitle, setModalTitle] = useState('');
@@ -28,6 +32,21 @@ export function StudentProfile() {
   const [showMoreDescription, setShowMoreDescription] = useState(false);
   const [showMoreSkills, setShowMoreSkills] = useState(false);
   const [showMoreEducation, setShowMoreEducation] = useState(false);
+
+  interface JwtPayload {
+    role?: string;
+  }
+
+  const token = localStorage.getItem('accessToken');
+  const role = (() => {
+    try {
+      if (!token) return null;
+      const payload = jwtDecode<JwtPayload>(token);
+      return payload.role ?? null;
+    } catch {
+      return null;
+    }
+  })();
 
   const handleAvatarChange = () => {
     setModalType('avatar');
@@ -49,6 +68,13 @@ export function StudentProfile() {
     setModalTitle('Edit Profile');
     setOpenProfileModal(true);
   };
+
+  const handleDeactivateAccount = (reason: string) => {
+    console.log('Account deactivated:', reason);
+    setDeactivateModalOpen(false);
+    // trigger backend call to deactivate account.
+  };
+
 
   // Dummy data for userData
   const [userData, setUserData] = useState({
@@ -114,10 +140,16 @@ export function StudentProfile() {
       </Card>
 
       <Flex className={styles.profileBtn}>
-        <Button size="md" onClick={handleProfileChange}>
-          Edit Profile
-        </Button>
-      </Flex>
+        {role === 'admin' ? (
+          <Button size="md" color="red" onClick={() => setDeactivateModalOpen(true)}>
+            Deactivate Account
+          </Button>
+        ) : (
+          <Button size="md" onClick={handleProfileChange}>
+            Edit Profile
+          </Button>
+        )}
+    </Flex>
 
       <Grid>
         <Grid.Col span={{ md: 3, xs: 12 }}>
@@ -253,6 +285,12 @@ export function StudentProfile() {
         content={modalContent}
         title={modalTitle}
       ></EditModal>
+
+      <DeactivateAccountModal
+        onClose={() => setDeactivateModalOpen(false)}
+        onConfirm={handleDeactivateAccount}
+        opened={deactivateModalOpen}
+      />
     </Box>
   );
 }

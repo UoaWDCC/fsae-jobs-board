@@ -39,7 +39,12 @@ export function JobDetailsPage() {
             ← Back to Job Board
           </Button>
         </Flex>
-        <JobDetail job={job!} />
+        <JobDetail job={{
+          ...job!,
+          duration: job!.duration ?? '',
+          location: job!.location ?? '',
+          startDate: job!.startDate ?? '',
+        }} />
       </Container>
     </Center>
   );

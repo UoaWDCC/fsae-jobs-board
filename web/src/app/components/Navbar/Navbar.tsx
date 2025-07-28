@@ -39,19 +39,20 @@ function Navbar() {
       { path: '/alumni', label: 'Alumni' },
     ],
     [Role.Sponsor]: [
-      { path: '/members', label: 'Students' },
+      { path: '/students', label: 'Students' },
       { path: '/alumni', label: 'Alumni' },
     ],
     [Role.Alumni]: [
-      { path: '/members', label: 'Students' },
+      { path: '/students', label: 'Students' },
       { path: '/sponsors', label: 'Sponsors' },
       { path: '/alumni', label: 'Alumni' },
     ],
     [Role.Admin]: [
       { path: '/jobs', label: 'Job Board' },
-      { path: '/members', label: 'Students' },
+      { path: '/students', label: 'Students' },
       { path: '/sponsors', label: 'Sponsors' },
       { path: '/alumni', label: 'Alumni' },
+      {path: '/admin-dashboard', label: 'Dashboard'},
     ],
     [Role.Unknown]: [],
   };
