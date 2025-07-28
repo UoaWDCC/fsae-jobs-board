@@ -8,6 +8,7 @@ interface SearchBarProps {
   setSearch: (search: string) => void;
   title: string;
   placeholder: string;
+  onSearch?: () => void; // do nothing
 }
 
 const SearchBar: FC<SearchBarProps> = ({ search, setSearch, title, placeholder }) => {
