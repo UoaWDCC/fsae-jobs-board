@@ -63,5 +63,14 @@ typings/
 # Cache used by TypeScript's incremental build
 *.tsbuildinfo
 
+# Yarn related files
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
 /.idea/*
 /.vscode/*
