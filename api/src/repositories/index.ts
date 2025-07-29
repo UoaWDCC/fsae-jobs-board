@@ -7,3 +7,4 @@ export * from './sponsor.repository';
 export * from './job-ad.repository';
 export * from './verification.repository';
 export * from './application.repository';
+export * from './admin.logs.repository';

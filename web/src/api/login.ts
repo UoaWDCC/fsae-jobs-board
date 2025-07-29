@@ -40,7 +40,7 @@ export async function login(email: string, password: string) {
       localStorage.setItem('accessToken', token);
       console.log(`Successfully logged in as UserID ${userId}`);
       console.log(role);
-      return { role: role, userId: userId }; // Return role
+      return { role: role, id: userId }; // Return role
     }
   } catch (e) {
     throw Error('Invalid credentials');

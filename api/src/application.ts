@@ -20,6 +20,8 @@ import {
 } from '@loopback/authorization';
 import {FsaeAuthorizationProvider} from './auth/authorization/FsaeAuthorizationProvider';
 import {MulterProvider} from './provider/multer.provider';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 export {ApplicationConfig};
 

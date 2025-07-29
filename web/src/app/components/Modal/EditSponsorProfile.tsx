@@ -8,10 +8,18 @@ import { useMediaQuery } from '@mantine/hooks';
 import { useState } from 'react';
 import { SponsorAboutTab } from '../Tabs/SponsorAboutTab';
 import { SponsorProfileTab } from '../Tabs/SponsorProfileTab';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../app/store';
+import { Sponsor } from '@/models/sponsor.model';
+import { editSponsorById } from '@/api/sponsor';
+import { useEffect } from 'react';
 
-export const EditSponsorProfile = () => {
+export const EditSponsorProfile = ({ close, userData, setUserData }: { close: () => void, userData: Sponsor | null, setUserData: React.Dispatch<React.SetStateAction<Sponsor | null>>}) => {
   const [activeTab, setActiveTab] = useState('about');
   const [isModalOpen, setIsModalOpen] = useState(true);
+  const [newUserData, setNewUserData] = useState<Partial<Sponsor> | null>(null); // partial because the database schema is currently messed up
+
+  const userId = useSelector((state: RootState) => state.user.id); // the id of the local user
   const tabOptions = [
     { value: 'profile', label: 'Profile' },
     { value: 'about', label: 'About Me' },
@@ -22,11 +30,33 @@ export const EditSponsorProfile = () => {
   const renderContent = () => {
     switch (activeTab) {
       case 'profile':
-        return <SponsorProfileTab />;
+        return <SponsorProfileTab newUserData={newUserData} setNewUserData={setNewUserData} />;
       case 'about':
-        return <SponsorAboutTab />;
+        return <SponsorAboutTab newUserData={newUserData} setNewUserData={setNewUserData} />;
     }
   };
+
+  const saveFields = async () => {
+      if (!newUserData) return;
+      if (!userData) return;
+  
+      setUserData(newUserData as Sponsor);
+  
+      const partialSponsor: Partial<Sponsor> = {};
+  
+      (Object.keys(newUserData) as (keyof Sponsor)[]).forEach((key) => {
+        if (newUserData[key] !== userData[key]) {
+          partialSponsor[key] = newUserData[key] as any;
+        }
+      });
+  
+      close();
+      await editSponsorById(userId, partialSponsor);
+    }
+  
+    useEffect(() => {
+      setNewUserData(userData);
+    }, [userData])
 
   return (
     <Box>
@@ -65,13 +95,16 @@ export const EditSponsorProfile = () => {
           </Tabs.List>
 
           <Tabs.Panel value="profile" mt={30}>
-            <SponsorProfileTab />
+            <SponsorProfileTab newUserData={newUserData} setNewUserData={setNewUserData}/>
           </Tabs.Panel>
           <Tabs.Panel value="about" mt={30}>
-            <SponsorAboutTab />
+            <SponsorAboutTab newUserData={newUserData} setNewUserData={setNewUserData}/>
           </Tabs.Panel>
         </Tabs>
       )}
+      <Box className={styles.buttonContainer}>
+        <Button onClick={saveFields}>Save</Button>
+      </Box>
     </Box>
   );
 };
