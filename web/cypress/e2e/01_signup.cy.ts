@@ -3,7 +3,7 @@ const password = 'test123';
 const passwordHash = bcrypt.hashSync(password, 10); // hash it like your app
 
 function fillFields(role:String) {
-  if (role == 'member' || role == 'alumni') {
+  if (role == 'student' || role == 'alumni') {
     cy.get('input[name="firstName"]').type('First', { force: true });
     cy.get('input[name="lastName"]').type('Last', { force: true });
   }
@@ -54,7 +54,7 @@ describe('Tests unsuccessful user signup flow', () => {
   //create user in the database same email
   before(() => {
     cy.task('insertTestUser', {
-      role: 'member',
+      role: 'student',
       email: usedEmail,
       passwordHash: passwordHash
     }).then((result) => {
@@ -86,7 +86,7 @@ describe('Tests unsuccessful user signup flow', () => {
 
   it('should throw a validation error when email is already taken', () => {
     cy.visit(`/signup/member`);
-    fillFields('member');
+    fillFields('student');
     cy.get(`input[name="email"]`).clear();
     cy.get(`input[name="email"]`).type('validstudent@gmail.com');
     cy.get('button[type="submit"]').click();

@@ -16,6 +16,8 @@ import { Job } from '@/models/job.model';
 import { fetchJobsByPublisherId } from '@/api/job';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../app/store';
+import { jwtDecode } from 'jwt-decode';
+import DeactivateAccountModal from '../../components/Modal/DeactivateAccountModal';
 
 const PLACEHOLDER_BANNER = "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png"
 const PLACEHOLDER_AVATAR = "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png"
@@ -26,6 +28,7 @@ export function SponsorProfile() {
 
   const [openModal, setOpenModal] = useState(false);
   const [modalType, setModalType] = useState('');
+  const [deactivateModalOpen, setDeactivateModalOpen] = useState(false); // look better into this stuff. im not really sure how we are using the modals :3
   const [modalContent, setModalContent] = useState<React.ReactNode>(null);
   const [modalTitle, setModalTitle] = useState('');
   const [openProfileModal, setOpenProfileModal] = useState(false);
@@ -45,6 +48,30 @@ export function SponsorProfile() {
   console.log(
     'Change this SponsorPage component to use real role from Redux store once user integration is implemented'
   );
+
+   interface JwtPayload {
+    role?: string;
+  }
+
+  useEffect(() => {
+  const token = localStorage.getItem('accessToken');
+  try {
+    if (!token) {
+      setRole(Role.Unknown);
+      return;
+    }
+    const payload = jwtDecode<JwtPayload>(token);
+    const decoded = payload.role?.toLowerCase();
+
+    if (Object.values(Role).includes(decoded as Role)) {
+      setRole(decoded as Role);
+    } else {
+      setRole(Role.Unknown);
+    }
+  } catch {
+    setRole(Role.Unknown);
+  }
+}, []);
 
   const handleAvatarChange = () => {
     setModalType('avatar');
@@ -72,9 +99,16 @@ export function SponsorProfile() {
     setOpenModal(true);
   };
 
+  //wtf?? shouldve been done but idefk whats happening here
   const handleDeactivateUserChange = () => {
     setModalType('deactivateUser');
     setOpenModal(true);
+  };
+
+  const handleDeactivateAccount = (reason: string) => {
+    console.log('Account deactivated:', reason);
+    setDeactivateModalOpen(false);
+    // trigger backend call to deactivate account.
   };
 
   useEffect(() => {
@@ -142,6 +176,7 @@ export function SponsorProfile() {
             classNames={{
               root: styles.button_root,
             }}
+            style={{ marginLeft: '10px' }}
           >
             Add New
           </Button>
@@ -172,7 +207,7 @@ export function SponsorProfile() {
       case 'profileBtn':
         return (
           <Button
-            onClick={handleDeactivateUserChange}
+             onClick={() => setDeactivateModalOpen(true)}
             classNames={{
               root: styles.button_admin_root,
             }}
@@ -188,7 +223,7 @@ export function SponsorProfile() {
   return (
     <Box className={styles.container}>
       {/* PICTURE AND COMPANY DETAILS */}
-      <Card h={280} className={styles.card}>
+      <Card className={styles.card}>
         <Card.Section
           h={250}
           className={styles.banner}
@@ -214,7 +249,7 @@ export function SponsorProfile() {
         </Text>
       </Card>
 
-      <Flex style={{ display: 'flex', justifyContent: 'flex-end', marginRight: '20px' }}>
+      <Flex className={styles.profileBtn}>
         {getElementBasedOnRole('profileBtn')}
       </Flex>
 
@@ -277,7 +312,13 @@ export function SponsorProfile() {
             {/* JOB OPPORTUNITIES CAROUSEL */}
             <Box miw="100%">
               <Flex
-                style={{ display: 'flex', justifyContent: 'space-between', marginRight: '20px' }}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  marginRight: '20px',
+                  flexWrap: 'wrap',
+                  gap: '0.5rem'
+                }}
               >
                 <Title order={5}>Job Opportunities</Title>
                 {getElementBasedOnRole('addNewBtn')}
@@ -295,6 +336,12 @@ export function SponsorProfile() {
         content={modalContent}
         title={modalTitle}
       ></EditModal>
+
+      <DeactivateAccountModal
+        onClose={() => setDeactivateModalOpen(false)}
+        onConfirm={handleDeactivateAccount}
+        opened={deactivateModalOpen}
+      />
     </Box>
   );
 }

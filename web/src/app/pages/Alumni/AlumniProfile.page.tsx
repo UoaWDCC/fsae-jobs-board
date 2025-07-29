@@ -16,15 +16,19 @@ import { Alumni } from '@/models/alumni.model';
 import { Job } from "@/models/job.model";
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../app/store';
+import { jwtDecode } from 'jwt-decode';
+import DeactivateAccountModal from '../../components/Modal/DeactivateAccountModal';
 
 const PLACEHOLDER_BANNER = "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80"
 const PLACEHOLDER_AVATAR = "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png"
+
 
 export function AlumniProfile() {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [openModal, setOpenModal] = useState(false);
+  const [deactivateModalOpen, setDeactivateModalOpen] = useState(false); // look better into this stuff. im not really sure how we are using the modals :3
   const [modalType, setModalType] = useState('');
   const [openProfileModal, setOpenProfileModal] = useState(false);
   const [modalContent, setModalContent] = useState<React.ReactNode>(null);
@@ -34,6 +38,31 @@ export function AlumniProfile() {
   
   const userRole = useSelector((state: RootState) => state.user.role); // the id of the local user
   const userId = useSelector((state: RootState) => state.user.id); // the id of the local user
+
+  interface JwtPayload {
+    role?: string;
+  }
+
+  useEffect(() => {
+  const token = localStorage.getItem('accessToken');
+  try {
+    if (!token) {
+      setRole(Role.Unknown);
+      return;
+    }
+    const payload = jwtDecode<JwtPayload>(token);
+    const decoded = payload.role?.toLowerCase();
+
+    if (Object.values(Role).includes(decoded as Role)) {
+      setRole(decoded as Role);
+    } else {
+      setRole(Role.Unknown);
+    }
+  } catch {
+    setRole(Role.Unknown);
+  }
+}, []);
+
 
   const handleAvatarChange = () => {
     setModalType('avatar');
@@ -73,6 +102,13 @@ export function AlumniProfile() {
   };
 
   const [userData, setUserData] = useState<Alumni | null>(null);
+  const handleDeactivateAccount = (reason: string) => {
+    console.log('Account deactivated:', reason);
+    setDeactivateModalOpen(false);
+    // trigger backend call to deactivate account.
+  };
+
+  
 
   const [jobData, setJobData] = useState<JobCardProps[]>([]);
 
@@ -161,6 +197,7 @@ export function AlumniProfile() {
             classNames={{
               root: styles.button_root,
             }}
+            style={{ marginLeft: '10px' }}
           >
             Add New
           </Button>
@@ -173,7 +210,7 @@ export function AlumniProfile() {
       case 'profileBtn':
         return (
           <Button
-            onClick={handleDeactivateUserChange}
+            onClick={() => setDeactivateModalOpen(true)}
             classNames={{
               root: styles.button_admin_root,
             }}
@@ -189,7 +226,7 @@ export function AlumniProfile() {
   return (
     <Box className={styles.container}>
       {/* PICTURE AND COMPANY DETAILS */}
-      <Card h={280} className={styles.card}>
+      <Card className={styles.card}>
         <Card.Section
           h={250}
           className={styles.banner}
@@ -223,7 +260,7 @@ export function AlumniProfile() {
         </Text>
       </Card>
 
-      <Flex style={{ display: 'flex', justifyContent: 'flex-end', marginRight: '20px' }}>
+      <Flex className={styles.profileBtn}>
         {getElementBasedOnRole('profileBtn')}
       </Flex>
 
@@ -286,7 +323,13 @@ export function AlumniProfile() {
             {/* JOB OPPORTUNITIES CAROUSEL */}
             <Box miw="100%">
               <Flex
-                style={{ display: 'flex', justifyContent: 'space-between', marginRight: '20px' }}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  marginRight: '20px',
+                  flexWrap: 'wrap',
+                  gap: '0.5rem'
+                }}
               >
                 <Title order={5}>Job Opportunities</Title>
                 {getElementBasedOnRole('addNewBtn')}
@@ -305,6 +348,12 @@ export function AlumniProfile() {
         content={modalContent}
         title={modalTitle}
       ></EditModal>
+
+      <DeactivateAccountModal
+        onClose={() => setDeactivateModalOpen(false)}
+        onConfirm={handleDeactivateAccount}
+        opened={deactivateModalOpen}
+      />
     </Box>
   );
 }

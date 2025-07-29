@@ -8,9 +8,11 @@ import { Job } from "@/models/job.model";
 // [] Search
 
 // Using the API class to fetch jobs
-export async function fetchJobs(): Promise<Job[]> {
+export async function fetchJobs(search?: string): Promise<Job[]> {
   try {
-    const res = await apiInstance.get("job");
+    const res = await apiInstance.get("job", {
+      params: search ? { search } : {},
+    });
     // Return the data as an array of Job objects
     return res.data as Job[];
   } catch (e) {

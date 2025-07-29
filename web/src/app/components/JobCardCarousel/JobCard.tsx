@@ -46,8 +46,12 @@ export function JobCard({ data }: { data: JobCardProps }) {
     switch (element) {
       case 'deleteBtn':
         return (
-          <ActionIcon variant="transparent" color="white" onClick={handleDeleteJob}>
-            <IconTrash />
+          <ActionIcon
+            variant="transparent"
+            color="white"
+            onClick={handleDeleteJob}>
+            <IconTrash 
+            aria-label = "Delete Job"/>
           </ActionIcon>
         );
       case 'jobBtn':

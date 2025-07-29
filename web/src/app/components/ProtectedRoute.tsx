@@ -29,7 +29,7 @@ function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) {
     if (!allowedRoles.includes(decodedToken.role)) {
       toast.error('You do not have permission to access this page.');
       // User does not have permission, redirect to unauthorised page
-      return <Navigate to="/login" replace />;
+      return <Navigate to={"/profile/" + decodedToken.role} replace />;
     }
 
     // 4. If Authorised, Render Protected Content

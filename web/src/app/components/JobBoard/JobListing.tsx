@@ -8,9 +8,10 @@ import { Job } from '@/models/job.model';
 interface JobListingProps {
   filterRoles: string[];
   filterFields: string[];
+  search: string;
 }
 
-const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
+const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields, search }) => {
   const [activePage, setPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState<number>(4);
   const [isPortrait, setIsPortrait] = useState(window.innerHeight > window.innerWidth);
@@ -38,22 +39,29 @@ const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
-        const data = await fetchJobs();
+        const data = await fetchJobs(search); 
         setJobListings(data);
+        setError(null);
       } catch (err) {
         setError('Failed to fetch jobs');
       } finally {
         setLoading(false);
       }
     };
-  
     fetchData();
-  }, []);
-  
+  }, [search]);
 
-  // TODO: filter the jobListings before chunking
-  const chunkedJobListings = chunk(jobListings, itemsPerPage); // chunk all listings into four for per page display
+  // Carl : Filter job listings based on role type
+  const filteredJobListings = jobListings.filter(job =>
+    job.roleType &&
+    (filterRoles.length === 0 ||
+      filterRoles.includes(job.roleType.toLowerCase()))
+    || (!job.roleType && filterRoles.length === 0)
+  );
+
+  const chunkedJobListings = chunk(filteredJobListings, itemsPerPage);
   const currentPageItems = chunkedJobListings[activePage - 1] || [];
 
   return (
@@ -77,7 +85,7 @@ const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
         ))}
       </Container>
 
-      {!loading && jobListings.length > 0 && (
+      {!loading && filteredJobListings.length > 0 && (
         <Container className={styles.paginationContainer}>
           <Pagination
             total={chunkedJobListings.length}

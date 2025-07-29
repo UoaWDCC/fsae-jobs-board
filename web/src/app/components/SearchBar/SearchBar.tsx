@@ -1,4 +1,4 @@
-import { Grid, TextInput, Title } from '@mantine/core';
+import { Grid, TextInput, Title, Button } from '@mantine/core';
 import { IconSearch } from '@tabler/icons-react';
 import { FC, useState } from 'react';
 import styles from './SearchBar.module.css';
@@ -8,48 +8,46 @@ interface SearchBarProps {
   setSearch: (search: string) => void;
   title: string;
   placeholder: string;
+  onSearch?: () => void; // do nothing
 }
 
-const SearchBar: FC<SearchBarProps> = ({ search, setSearch, title, placeholder }) => {
+const SearchBar: FC<SearchBarProps> = ({ search, setSearch, title, placeholder, onSearch }) => {
+  const [input, setInput] = useState(search);
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearch(event.target.value);
+    setInput(event.target.value);
   };
-  const [isPortrait, setIsPortrait] = useState(window.innerHeight > window.innerWidth);
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      setSearch(input);
+      if (onSearch) onSearch();
+    }
+  };
+
+  const handleSearchClick = () => {
+    setSearch(input);
+    if (onSearch) onSearch();
+  };
 
   return (
     <Grid mt={90} mb="xs">
-      {!isPortrait ? (
-        <>
-          <Grid.Col pl={30} span={6}>
-            <Title order={4}>{title}</Title>
-          </Grid.Col>
-          <Grid.Col span={6} pr={30}>
-            <div className={styles.searchInputContainer}>
-              <TextInput
-                placeholder={placeholder}
-                rightSection={<IconSearch />}
-                size="md"
-                value={search}
-                onChange={handleChange}
-                className={styles.searchInput}
-              />
-            </div>
-          </Grid.Col>
-        </>
-      ) : (
-        <Grid.Col pl={30} span={12}>
-          <Title order={4}>{title}</Title>
-
-          <TextInput
-            placeholder={placeholder}
-            rightSection={<IconSearch />}
-            size="md"
-            value={search}
-            onChange={handleChange}
-            pr={20}
-          />
-        </Grid.Col>
-      )}
+      <Grid.Col span={12}>
+        <Title order={4}>{title}</Title>
+        <TextInput
+          placeholder={placeholder}
+          rightSection={
+            <Button variant="subtle" onClick={handleSearchClick} px={6}>
+              <IconSearch />
+            </Button>
+          }
+          size="md"
+          value={input}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+          pr={20}
+        />
+      </Grid.Col>
     </Grid>
   );
 };

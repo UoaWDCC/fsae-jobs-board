@@ -22,15 +22,19 @@ import { fetchMemberById } from '@/api/member';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../app/store';
-
+import { jwtDecode } from 'jwt-decode';
+import DeactivateAccountModal from '../../components/Modal/DeactivateAccountModal';
+        
 const PLACEHOLDER_BANNER = "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80"
 const PLACEHOLDER_AVATAR = "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png"
+
 
 export function StudentProfile() {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [modalType, setModalType] = useState('');
+  const [deactivateModalOpen, setDeactivateModalOpen] = useState(false); // look better into this stuff. im not really sure how we are using the modals :3
   const [openProfileModal, setOpenProfileModal] = useState(false);
   const [modalContent, setModalContent] = useState<React.ReactNode>(null);
   const [modalTitle, setModalTitle] = useState('');
@@ -46,7 +50,7 @@ export function StudentProfile() {
   const userId = useSelector((state: RootState) => state.user.id); // the id of the local user
 
   // TODO: avatar and banner doesnt exist in the member model yet
-  /*
+
   const handleAvatarChange = () => {
     setModalType('avatar');
     setModalContent(<EditAvatar avatar={userData?.photo} />);
@@ -59,7 +63,7 @@ export function StudentProfile() {
     setModalContent(<EditBannerModal banner={userData?.banner} />);
     setModalTitle('Banner Photo');
     setOpenProfileModal(true);
-  };*/
+  };
 
   const handleProfileChange = () => {
     setModalType('profile');
@@ -67,7 +71,12 @@ export function StudentProfile() {
     setModalTitle('Edit Profile');
     setOpenProfileModal(true);
   };
-  
+
+  const handleDeactivateAccount = (reason: string) => {
+    console.log('Account deactivated:', reason);
+    setDeactivateModalOpen(false);
+    // trigger backend call to deactivate account.
+  };
 
   useEffect(() => {
     // Logic to fetch data and setUserData
@@ -103,7 +112,7 @@ export function StudentProfile() {
 
   return (
     <Box className={styles.container}>
-      <Card h={280} className={styles.card}>
+      <Card className={styles.card}>
         <Card.Section
           h={250}
           className={styles.banner}
@@ -280,6 +289,12 @@ export function StudentProfile() {
         content={modalContent}
         title={modalTitle}
       ></EditModal>
+
+      <DeactivateAccountModal
+        onClose={() => setDeactivateModalOpen(false)}
+        onConfirm={handleDeactivateAccount}
+        opened={deactivateModalOpen}
+      />
     </Box>
   );
 }

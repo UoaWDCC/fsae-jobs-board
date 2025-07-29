@@ -53,3 +53,79 @@
   border-left: 2px solid var(--mantine-color-customAzureBlue-1);
 }
 
+@media (min-width: 501px) {
+  .name {
+    padding-left: 170px;
+    padding-top: 140px;
+    font-size: 2rem;
+    font-weight: bold;
+  }
+}
+
+@media (max-width: 500px) {
+  .name {
+    align-self: center;
+    padding-top: 280px;
+    font-size: 2rem;
+    font-weight: bold;
+  }
+}
+
+@media (min-width: 501px) {
+  .text {
+    margin-left: 170px;
+    margin-top: -30px;
+    font-size: 1.2rem;
+    font-weight: 500;
+  }
+}
+
+@media (max-width: 500px) {
+  .text {
+    padding-top: 70px;
+    font-size: 1rem;
+    opacity: 70%;
+    align-self: center;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 500px) {
+  .avatar {
+    padding-top: 0px;
+    align-self: center;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 500px) {
+  .profileBtn {
+    display: flex;
+    justify-content: center;
+    margin-right: 0;
+  }
+}
+
+@media (min-width: 501px) {
+  .profileBtn {
+    justify-content: flex-end;
+    margin-right: 20px;
+  }
+}
+
+@media (max-width: 500px) {
+  .subgroup {
+    padding-top: 330px;
+    font-size: 1rem;
+    opacity: 70%;
+    align-self: center;
+    justify-content: center;
+  }
+}
+@media (min-width: 501px) {
+  .subgroup {
+    padding-left: 170px;
+    padding-top: 180px;
+    font-size: 1.25rem;
+  }
+}

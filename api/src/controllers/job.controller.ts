@@ -8,11 +8,13 @@ import {authenticate, AuthenticationBindings} from '@loopback/authentication';
 import {authorize} from '@loopback/authorization';
 import {HttpErrors} from '@loopback/rest';
 import {FsaeRole} from '../models';
+import { AdminLogRepository } from '../repositories/admin.logs.repository';
 
 @authenticate('fsae-jwt')
 export class JobController {
   constructor(
     @repository(JobAdRepository) public jobAdRepository : JobAdRepository,
+    @repository(AdminLogRepository) private adminLogRepository: AdminLogRepository,
     @inject(AuthenticationBindings.CURRENT_USER) private currentUserProfile: UserProfile,
   ) {}
 
@@ -116,20 +118,57 @@ export class JobController {
     await this.jobAdRepository.updateById(id, jobAd);
   }
 
-  // TEMPORARY: Remove protection for testing job ads
-  // @authorize({
-  //   allowedRoles: [FsaeRole.ALUMNI, FsaeRole.SPONSOR],
-  // })
+  @authorize({
+    allowedRoles: [FsaeRole.ALUMNI, FsaeRole.SPONSOR, FsaeRole.ADMIN],
+  })
   @del('/job/{id}')
   @response(204, {
     description: 'Deleting job postings by ID',
   })
-  async deleteById(@param.path.string('id') id: string): Promise<void> {
-    const existingJobAd = await this.jobAdRepository.findById(id);
-    // TEMPORARY: Remove protection for testing job ads
-    // if (existingJobAd.publisherID.toString() !== this.currentUserProfile.id.toString()) {
-    //   throw new HttpErrors.Unauthorized('You are not authorized to delete this job posting');
-    // }
+  async deleteById(
+    @param.path.string('id') id: string,
+    @requestBody({
+      required: false,
+      description: 'Optional reason for admin deletion',
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              reason: {type: 'string'},
+            },
+          },
+        },
+      },
+    })
+    body?: {reason?: string},
+  ): Promise<void> {
+    const job = await this.jobAdRepository.findById(id);
+
+    const currentUserId = this.currentUserProfile.id.toString();
+    const isAdmin = this.currentUserProfile.roles?.includes(FsaeRole.ADMIN);
+
+    const isOwner = job.publisherID.toString() === currentUserId;
+
+    if (!isOwner && !isAdmin) {
+      throw new HttpErrors.Unauthorized('You are not authorized to delete this job posting');
+    }
+
     await this.jobAdRepository.deleteById(id);
+
+    if (isAdmin) {
+      await this.adminLogRepository.create({
+        adminId: currentUserId,
+        action: 'job-deletion',
+        targetType: 'job',
+        targetId: id,
+        metadata: {
+          jobTitle: job.title,
+          publisherId: job.publisherID,
+          reason: body?.reason,
+        },
+        timestamp: new Date().toISOString(),
+      });
+    }
   }
 }

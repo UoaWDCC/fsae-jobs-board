@@ -1,7 +1,7 @@
 export enum Status {
-  Pending = 'pending',
-  Approved = 'approved',
-  Rejected = 'rejected',
+  PENDING = 'pending',
+  APPROVED = 'approved',
+  REJECTED = 'rejected',
 }
 
 export function statusToString(status: Status): string {
@@ -14,5 +14,5 @@ export function stringToStatus(status: string): Status | undefined {
 
 // Convert Array of Strings to Array of Status Enums
 export function stringsToStatuses(statuses: string[]): Status[] {
-  return statuses.map((value) => stringToStatus(value) ?? Status.Pending); // Default to Status.Pending if not found
+  return statuses.map((value) => stringToStatus(value) ?? Status.PENDING); // Default to Status.Pending if not found
 }
