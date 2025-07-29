@@ -51,7 +51,7 @@ export function StudentProfile() {
 
   // TODO: avatar and banner doesnt exist in the member model yet
 
-  const handleAvatarChange = () => {
+  /*const handleAvatarChange = () => {
     setModalType('avatar');
     setModalContent(<EditAvatar avatar={userData?.photo} />);
     setModalTitle('Profile Photo');
@@ -64,6 +64,7 @@ export function StudentProfile() {
     setModalTitle('Banner Photo');
     setOpenProfileModal(true);
   };
+  */
 
   const handleProfileChange = () => {
     setModalType('profile');

@@ -53,26 +53,6 @@ export function SponsorProfile() {
     role?: string;
   }
 
-  useEffect(() => {
-  const token = localStorage.getItem('accessToken');
-  try {
-    if (!token) {
-      setRole(Role.Unknown);
-      return;
-    }
-    const payload = jwtDecode<JwtPayload>(token);
-    const decoded = payload.role?.toLowerCase();
-
-    if (Object.values(Role).includes(decoded as Role)) {
-      setRole(decoded as Role);
-    } else {
-      setRole(Role.Unknown);
-    }
-  } catch {
-    setRole(Role.Unknown);
-  }
-}, []);
-
   const handleAvatarChange = () => {
     setModalType('avatar');
     setModalContent(<EditAvatar avatar={userData?.logo ?? PLACEHOLDER_AVATAR} />);

@@ -39,31 +39,6 @@ export function AlumniProfile() {
   const userRole = useSelector((state: RootState) => state.user.role); // the id of the local user
   const userId = useSelector((state: RootState) => state.user.id); // the id of the local user
 
-  interface JwtPayload {
-    role?: string;
-  }
-
-  useEffect(() => {
-  const token = localStorage.getItem('accessToken');
-  try {
-    if (!token) {
-      setRole(Role.Unknown);
-      return;
-    }
-    const payload = jwtDecode<JwtPayload>(token);
-    const decoded = payload.role?.toLowerCase();
-
-    if (Object.values(Role).includes(decoded as Role)) {
-      setRole(decoded as Role);
-    } else {
-      setRole(Role.Unknown);
-    }
-  } catch {
-    setRole(Role.Unknown);
-  }
-}, []);
-
-
   const handleAvatarChange = () => {
     setModalType('avatar');
     setOpenProfileModal(true);
