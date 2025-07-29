@@ -9,7 +9,7 @@ export interface Member {
   "phoneNumber": string,
   "desc": string,
   "memberID": string | null,
-  "cv": string | null,
+  "hasCV": string | null,
   "subGroup": string | null,
   "photo": string | null,
 

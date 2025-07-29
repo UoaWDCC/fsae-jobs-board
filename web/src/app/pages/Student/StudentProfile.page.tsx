@@ -12,8 +12,6 @@ import {
 } from '@mantine/core';
 import styles from '../../styles/StudentProfile.module.css';
 import { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../../store';
 import EditModal from '../../components/Modal/EditModal';
 import { EditStudentProfile } from '../../components/Modal/EditStudentProfile';
 import { EditAvatar } from '../../components/Modal/EditAvatar';
