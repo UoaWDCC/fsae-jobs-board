@@ -9,67 +9,59 @@ import EditModal from '../../components/Modal/EditModal';
 import EditAlumniProfile from '../../components/Modal/EditAlumniProfile';
 import { EditAvatar } from '../../components/Modal/EditAvatar';
 import { EditBannerModal } from '../../components/Modal/EditBannerModal';
+import { useParams, useNavigate } from 'react-router-dom';
+import { fetchAlumniById } from '@/api/alumni';
+import { fetchJobsByPublisherId } from '@/api/job';
+import { Alumni } from '@/models/alumni.model';
+import { Job } from "@/models/job.model";
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../app/store';
 import { jwtDecode } from 'jwt-decode';
 import DeactivateAccountModal from '../../components/Modal/DeactivateAccountModal';
 
+const PLACEHOLDER_BANNER = "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80"
+const PLACEHOLDER_AVATAR = "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png"
+
+
 export function AlumniProfile() {
-  // UseState for future modal implementation
+  const { id } = useParams();
+  const navigate = useNavigate();
+
   const [openModal, setOpenModal] = useState(false);
   const [deactivateModalOpen, setDeactivateModalOpen] = useState(false); // look better into this stuff. im not really sure how we are using the modals :3
   const [modalType, setModalType] = useState('');
   const [openProfileModal, setOpenProfileModal] = useState(false);
   const [modalContent, setModalContent] = useState<React.ReactNode>(null);
   const [showMoreDescription, setShowMoreDescription] = useState(false);
-  const [role, setRole] = useState<Role>(Role.Alumni); // Dummy role, replace with actual role from Redux store
   const [modalTitle, setModalTitle] = useState('');
-
-  console.log(
-    'Change this SponsorPage component to use real role from Redux store once user integration is implemented'
-  );
-
-  interface JwtPayload {
-    role?: string;
-  }
-
-  useEffect(() => {
-  const token = localStorage.getItem('accessToken');
-  try {
-    if (!token) {
-      setRole(Role.Unknown);
-      return;
-    }
-    const payload = jwtDecode<JwtPayload>(token);
-    const decoded = payload.role?.toLowerCase();
-
-    if (Object.values(Role).includes(decoded as Role)) {
-      setRole(decoded as Role);
-    } else {
-      setRole(Role.Unknown);
-    }
-  } catch {
-    setRole(Role.Unknown);
-  }
-}, []);
-
+  const [isLocalProfile, setIsLocalProfile] = useState(false) // Is this profile this user's profile (aka. should we show the edit button)
+  
+  const userRole = useSelector((state: RootState) => state.user.role); // the id of the local user
+  const userId = useSelector((state: RootState) => state.user.id); // the id of the local user
 
   const handleAvatarChange = () => {
     setModalType('avatar');
     setOpenProfileModal(true);
-    setModalContent(<EditAvatar avatar={userData?.avatar} />);
+    // Alumni avatar doesnt exist in the model yet
+    //setModalContent(<EditAvatar avatar={userData?.avatar} />);
+    setModalContent(<EditAvatar avatar={""} />);
     setModalTitle('Profile Photo');
   };
 
   const handleBannerChange = () => {
     setModalType('banner');
     setOpenProfileModal(true);
-    setModalContent(<EditBannerModal banner={userData?.banner} />)
+    // Banner doesnt exist in alumni model yet
+    //setModalContent(<EditBannerModal banner={userData?.banner} />)
+    setModalContent(<EditBannerModal banner={""} />)
     setModalTitle('Banner Photo');
   };
-
+  
   const handleProfileChange = () => {
+    if (!userData) return;
     setOpenProfileModal(true);
     setModalContent(
-      <EditAlumniProfile userData={userData} close={() => setOpenProfileModal(false)} />
+      <EditAlumniProfile userData={userData} setUserData={setUserData} close={() => setOpenProfileModal(false)} />
     );
     setModalTitle('Edit Profile');
   };
@@ -84,72 +76,50 @@ export function AlumniProfile() {
     setOpenModal(true);
   };
 
+  const [userData, setUserData] = useState<Alumni | null>(null);
   const handleDeactivateAccount = (reason: string) => {
     console.log('Account deactivated:', reason);
     setDeactivateModalOpen(false);
     // trigger backend call to deactivate account.
   };
 
-  // Dummy data for alumni userData
-  const [userData, setUserData] = useState({
-    alumniName: 'Eliza Smith',
-    companyField: 'Company',
-    subgroup: 'Subgroup',
-    dateJoined: '2024',
-    email: 'elizasmith@example.com',
-    phone: '+1234567890',
-    description:
-      ' Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque ut tristique lacus, eget euismod enim. Fusce suscipit at tortor sed pretium. Integer et pretium orci. Integer velit purus, gravida quis tincidunt ac, pretium sed lorem. Sed sagittis neque tincidunt, auctor ante vitae, ultricies risus. Aenean quis sem sed dolor feugiat tincidunt. Etiam purus justo, ullamcorper in cursus volutpat, luctus in dolor. Donec sed purus tristique, rhoncus erat ut, ullamcorper dolor. Pellentesque tincidunt eros id neque egestas, sed luctus sapien elementum. Etiam bibendum ex est, ac consequat turpis facilisis id. Mauris scelerisque purus quis leo fermentum, at semper nisl mattis. Vivamus vel ornare lectus. Nullam dictum felis et commodo lacinia. Etiam tempor placerat sapien quis maximus. Ut pellentesque libero ac sollicitudin accumsan. Sed vel dolor bibendum, egestas metus nec, eleifend mauris. Integer imperdiet eros vitae nibh interdum volutpat. Etiam et ultrices massa. Cras gravida facilisis sapien. Ut eleifend varius risus, eget bibendum dui blandit ac. Vivamus tempor varius massa, sed suscipit mauris interdum eu. Proin sed commodo ex, ac cursus nisl. Integer ut tincidunt augue. Cras molestie libero erat. Nunc justo felis, sodales auctor dapibus sit amet, dapibus ut turpis. Sed nec sagittis nisl. Cras eget condimentum est. Cras nulla lorem, venenatis euismod gravida quis, fermentum vel mauris. Fusce et ipsum et lorem egestas volutpat. Duis nec imperdiet ante. Quisque et ligula accumsan, eleifend urna sit amet, cursus dolor. Nullam ut erat diam. Ut non lacinia erat, eu pretium nisl. Vestibulum mattis sapien in tristique commodo. Integer faucibus leo at turpis rhoncus, eu hendrerit ex dignissim. Nulla facilisi. Donec eget turpis ac odio pretium iaculis. Sed imperdiet sollicitudin viverra. In consequat justo velit, aliquet ultricies leo efficitur laoreet. Nullam quis elementum diam. Sed in sodales est. Integer malesuada semper tortor eu feugiat. Morbi tincidunt turpis bibendum consequat cursus. Aenean faucibus felis sit amet porta interdum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Mauris dui magna, lobortis quis quam non, dictum bibendum libero. ',
-    avatar:
-      'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png',
-    banner:
-      'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80',
-  });
-  // Add code to fetch data from our database when it will be connected
+  
 
-  const [jobData, setJobData] = useState<JobCardProps[]>([
-    {
-      title: 'Job Title',
-      description:
-        ' Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque ut tristique lacus, eget euismod enim. Fusce suscipit at tortor sed pretium. Integer et pretium orci. Integer velit purus, gravida quis tincidunt ac, pretium sed lorem. Sed sagittis neque tincidunt, auctor ante vitae, ultricies risus. Aenean quis sem sed dolor feugiat tincidunt. Etiam purus justo, ullamcorper in cursus volutpat, luctus in dolor. Donec sed purus tristique, rhoncus erat ut, ullamcorper dolor. Pellentesque tincidunt eros id neque egestas, sed luctus sapien elementum. Etiam bibendum ex est, ac consequat turpis facilisis id. Mauris scelerisque purus quis leo fermentum, at semper nisl mattis. Vivamus vel ornare lectus. Nullam dictum felis et commodo lacinia. Etiam tempor placerat sapien quis maximus. Ut pellentesque libero ac sollicitudin accumsan. Sed vel dolor bibendum, egestas metus nec, eleifend mauris. Integer imperdiet eros vitae nibh interdum volutpat. Etiam et ultrices massa. Cras gravida facilisis sapien. Ut eleifend varius risus, eget bibendum dui blandit ac. Vivamus tempor varius massa, sed suscipit mauris interdum eu. Proin sed commodo ex, ac cursus nisl. Integer ut tincidunt augue. Cras molestie libero erat. Nunc justo felis, sodales auctor dapibus sit amet, dapibus ut turpis. Sed nec sagittis nisl. Cras eget condimentum est. Cras nulla lorem, venenatis euismod gravida quis, fermentum vel mauris. Fusce et ipsum et lorem egestas volutpat. Duis nec imperdiet ante. Quisque et ligula accumsan, eleifend urna sit amet, cursus dolor. Nullam ut erat diam. Ut non lacinia erat, eu pretium nisl. Vestibulum mattis sapien in tristique commodo. Integer faucibus leo at turpis rhoncus, eu hendrerit ex dignissim. Nulla facilisi. Donec eget turpis ac odio pretium iaculis. Sed imperdiet sollicitudin viverra. In consequat justo velit, aliquet ultricies leo efficitur laoreet. Nullam quis elementum diam. Sed in sodales est. Integer malesuada semper tortor eu feugiat. Morbi tincidunt turpis bibendum consequat cursus. Aenean faucibus felis sit amet porta interdum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Mauris dui magna, lobortis quis quam non, dictum bibendum libero. ',
-      subtitle: 'Subtitle',
-      jobLink: 'test',
-      jobID: '1234567',
-    },
-    {
-      title: 'Job Title',
-      description:
-        ' Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque ut tristique lacus, eget euismod enim. Fusce suscipit at tortor sed pretium. Integer et pretium orci. Integer velit purus, gravida quis tincidunt ac, pretium sed lorem. Sed sagittis neque tincidunt, auctor ante vitae, ultricies risus. Aenean quis sem sed dolor feugiat tincidunt. Etiam purus justo, ullamcorper in cursus volutpat, luctus in dolor. Donec sed purus tristique, rhoncus erat ut, ullamcorper dolor. Pellentesque tincidunt eros id neque egestas, sed luctus sapien elementum. Etiam bibendum ex est, ac consequat turpis facilisis id. Mauris scelerisque purus quis leo fermentum, at semper nisl mattis. Vivamus vel ornare lectus. Nullam dictum felis et commodo lacinia. Etiam tempor placerat sapien quis maximus. Ut pellentesque libero ac sollicitudin accumsan. Sed vel dolor bibendum, egestas metus nec, eleifend mauris. Integer imperdiet eros vitae nibh interdum volutpat. Etiam et ultrices massa. Cras gravida facilisis sapien. Ut eleifend varius risus, eget bibendum dui blandit ac. Vivamus tempor varius massa, sed suscipit mauris interdum eu. Proin sed commodo ex, ac cursus nisl. Integer ut tincidunt augue. Cras molestie libero erat. Nunc justo felis, sodales auctor dapibus sit amet, dapibus ut turpis. Sed nec sagittis nisl. Cras eget condimentum est. Cras nulla lorem, venenatis euismod gravida quis, fermentum vel mauris. Fusce et ipsum et lorem egestas volutpat. Duis nec imperdiet ante. Quisque et ligula accumsan, eleifend urna sit amet, cursus dolor. Nullam ut erat diam. Ut non lacinia erat, eu pretium nisl. Vestibulum mattis sapien in tristique commodo. Integer faucibus leo at turpis rhoncus, eu hendrerit ex dignissim. Nulla facilisi. Donec eget turpis ac odio pretium iaculis. Sed imperdiet sollicitudin viverra. In consequat justo velit, aliquet ultricies leo efficitur laoreet. Nullam quis elementum diam. Sed in sodales est. Integer malesuada semper tortor eu feugiat. Morbi tincidunt turpis bibendum consequat cursus. Aenean faucibus felis sit amet porta interdum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Mauris dui magna, lobortis quis quam non, dictum bibendum libero. ',
-      subtitle: 'Subtitle',
-      jobLink: 'test',
-      jobID: '1234567',
-    },
-    {
-      title: 'Job Title',
-      description:
-        ' Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque ut tristique lacus, eget euismod enim. Fusce suscipit at tortor sed pretium. Integer et pretium orci. Integer velit purus, gravida quis tincidunt ac, pretium sed lorem. Sed sagittis neque tincidunt, auctor ante vitae, ultricies risus. Aenean quis sem sed dolor feugiat tincidunt. Etiam purus justo, ullamcorper in cursus volutpat, luctus in dolor. Donec sed purus tristique, rhoncus erat ut, ullamcorper dolor. Pellentesque tincidunt eros id neque egestas, sed luctus sapien elementum. Etiam bibendum ex est, ac consequat turpis facilisis id. Mauris scelerisque purus quis leo fermentum, at semper nisl mattis. Vivamus vel ornare lectus. Nullam dictum felis et commodo lacinia. Etiam tempor placerat sapien quis maximus. Ut pellentesque libero ac sollicitudin accumsan. Sed vel dolor bibendum, egestas metus nec, eleifend mauris. Integer imperdiet eros vitae nibh interdum volutpat. Etiam et ultrices massa. Cras gravida facilisis sapien. Ut eleifend varius risus, eget bibendum dui blandit ac. Vivamus tempor varius massa, sed suscipit mauris interdum eu. Proin sed commodo ex, ac cursus nisl. Integer ut tincidunt augue. Cras molestie libero erat. Nunc justo felis, sodales auctor dapibus sit amet, dapibus ut turpis. Sed nec sagittis nisl. Cras eget condimentum est. Cras nulla lorem, venenatis euismod gravida quis, fermentum vel mauris. Fusce et ipsum et lorem egestas volutpat. Duis nec imperdiet ante. Quisque et ligula accumsan, eleifend urna sit amet, cursus dolor. Nullam ut erat diam. Ut non lacinia erat, eu pretium nisl. Vestibulum mattis sapien in tristique commodo. Integer faucibus leo at turpis rhoncus, eu hendrerit ex dignissim. Nulla facilisi. Donec eget turpis ac odio pretium iaculis. Sed imperdiet sollicitudin viverra. In consequat justo velit, aliquet ultricies leo efficitur laoreet. Nullam quis elementum diam. Sed in sodales est. Integer malesuada semper tortor eu feugiat. Morbi tincidunt turpis bibendum consequat cursus. Aenean faucibus felis sit amet porta interdum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Mauris dui magna, lobortis quis quam non, dictum bibendum libero. ',
-      subtitle: 'Subtitle',
-      jobLink: 'test',
-      jobID: '1234567',
-    },
-    {
-      title: 'Job Title',
-      description:
-        ' Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque ut tristique lacus, eget euismod enim. Fusce suscipit at tortor sed pretium. Integer et pretium orci. Integer velit purus, gravida quis tincidunt ac, pretium sed lorem. Sed sagittis neque tincidunt, auctor ante vitae, ultricies risus. Aenean quis sem sed dolor feugiat tincidunt. Etiam purus justo, ullamcorper in cursus volutpat, luctus in dolor. Donec sed purus tristique, rhoncus erat ut, ullamcorper dolor. Pellentesque tincidunt eros id neque egestas, sed luctus sapien elementum. Etiam bibendum ex est, ac consequat turpis facilisis id. Mauris scelerisque purus quis leo fermentum, at semper nisl mattis. Vivamus vel ornare lectus. Nullam dictum felis et commodo lacinia. Etiam tempor placerat sapien quis maximus. Ut pellentesque libero ac sollicitudin accumsan. Sed vel dolor bibendum, egestas metus nec, eleifend mauris. Integer imperdiet eros vitae nibh interdum volutpat. Etiam et ultrices massa. Cras gravida facilisis sapien. Ut eleifend varius risus, eget bibendum dui blandit ac. Vivamus tempor varius massa, sed suscipit mauris interdum eu. Proin sed commodo ex, ac cursus nisl. Integer ut tincidunt augue. Cras molestie libero erat. Nunc justo felis, sodales auctor dapibus sit amet, dapibus ut turpis. Sed nec sagittis nisl. Cras eget condimentum est. Cras nulla lorem, venenatis euismod gravida quis, fermentum vel mauris. Fusce et ipsum et lorem egestas volutpat. Duis nec imperdiet ante. Quisque et ligula accumsan, eleifend urna sit amet, cursus dolor. Nullam ut erat diam. Ut non lacinia erat, eu pretium nisl. Vestibulum mattis sapien in tristique commodo. Integer faucibus leo at turpis rhoncus, eu hendrerit ex dignissim. Nulla facilisi. Donec eget turpis ac odio pretium iaculis. Sed imperdiet sollicitudin viverra. In consequat justo velit, aliquet ultricies leo efficitur laoreet. Nullam quis elementum diam. Sed in sodales est. Integer malesuada semper tortor eu feugiat. Morbi tincidunt turpis bibendum consequat cursus. Aenean faucibus felis sit amet porta interdum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Mauris dui magna, lobortis quis quam non, dictum bibendum libero. ',
-      subtitle: 'Subtitle',
-      jobLink: 'test',
-      jobID: '1234567',
-    },
-  ]);
-  // dummy data for job opportunities
+  const [jobData, setJobData] = useState<JobCardProps[]>([]);
 
   useEffect(() => {
     // Logic to fetch data and setUserData
-  }, []);
+    const fetchUserData = async () => {
+      try {
+        const userData = await fetchAlumniById(id as string);
+        if (!userData) {
+          navigate("/404")
+          return;
+        }
+        setUserData(userData);
+        setIsLocalProfile(userData.id == userId);
+        const jobs: Job[] = await fetchJobsByPublisherId(id as string);
+        const jobsForJobCard = jobs.map((thisJob) => {
+          return {
+            title: thisJob.title,
+            subtitle: "Placeholder subtitle",
+            description: thisJob.description,
+            jobLink: "#", // TODO: correctly link to job details page
+            jobID: thisJob.id
+          }
+        })
+        setJobData(jobsForJobCard)
+      } catch (err) {
+        // TODO: proper error handling (eg. auth errors/forbidden pages etc.)
+        navigate("/404")
+      }
+    };
+    if (id) fetchUserData();
+   }, [id]);
 
   // methods to get elements based on user type
   const getElementBasedOnRole = (element: string) => {
-    switch (role) {
+    switch (userRole) {
       case 'sponsor':
         return getSponsorElements(element);
       case 'member':
@@ -182,6 +152,7 @@ export function AlumniProfile() {
   const getAlumniElements = (element: string) => {
     switch (element) {
       case 'profileBtn':
+        if (!isLocalProfile) return null;
         return (
           <Button
             onClick={handleProfileChange}
@@ -193,6 +164,7 @@ export function AlumniProfile() {
           </Button>
         );
       case 'addNewBtn':
+        if (!isLocalProfile) return null;
         return (
           <Button
             onClick={handleJobOpportunitiesChange}
@@ -234,24 +206,32 @@ export function AlumniProfile() {
           h={250}
           className={styles.banner}
           onClick={handleBannerChange}
-          style={{ backgroundImage: `url(${userData.banner})` }}
+          // TODO: userData?.banner ?? PLACEHOLDER_BANNER
+          // Alumni model doesnt currently have a banner field
+          style={{ backgroundImage: `url(${PLACEHOLDER_BANNER})`}}
         />
-        {userData?.alumniName && (
-          <Text className={styles.name}>
-            {userData.alumniName}
+        {(userData?.firstName && userData?.lastName) && (
+          <Text className={styles.name} pl={170} pt={140}>
+            {userData.firstName + " " + userData.lastName}
+          </Text>
+        )}
+        {userData?.subGroup && (
+          <Text size="xl" className={styles.subGroup} pl={170} pt={160}>
+            {userData.subGroup}
           </Text>
         )}
 
         <Avatar
-          src={userData?.avatar}
+          //TODO: Use alumni avatar (not in the model yet as of writing) src={userData?.avatar ?? PLACEHOLDER_AVATAR}
+          src={PLACEHOLDER_AVATAR}
           size={150}
           mt={-100}
           ml={10}
           className={styles.avatar}
           onClick={handleAvatarChange}
         />
-        <Text size="lg" className={styles.text}>
-          {userData.companyField}
+        <Text size="lg" mt={-30} ml={170} className={styles.text}>
+          {"Company Placeholder"}
         </Text>
       </Card>
 
@@ -266,7 +246,7 @@ export function AlumniProfile() {
             <Title order={5}>Contact</Title>
             <Box pl={15} mt={10} className={styles.box}>
               {userData?.email && <Text size="md">{userData.email}</Text>}
-              {userData?.phone && <Text size="lg">{userData.phone}</Text>}
+              {userData?.phoneNumber && <Text size="lg">{userData.phoneNumber}</Text>}
               {!userData && <Loader color="blue" />}
             </Box>
           </Box>
@@ -278,16 +258,16 @@ export function AlumniProfile() {
             <Title order={5}>About Me</Title>
             <Box pl={15} mt={10} className={styles.box}>
               {/* Conditionally render the full description based on showMore state */}
-              {userData?.description && (
+              {userData?.desc && (
                 <>
                   {showMoreDescription ? (
-                    <Text size="md">{userData.description}</Text>
+                    <Text size="md">{userData.desc}</Text>
                   ) : (
                     <>
-                      <Text size="md">{userData.description.substring(0, 1200)}</Text>
+                      <Text size="md">{userData.desc.substring(0, 1200)}</Text>
                     </>
                   )}
-                  {userData.description?.length > 1200 ? (
+                  {userData.desc?.length > 1200 ? (
                     <Button
                       variant="subtle"
                       size="sm"
@@ -302,7 +282,7 @@ export function AlumniProfile() {
                   ) : null}
                 </>
               )}
-              {!userData.description && <Loader color="blue" />}
+              {!userData?.desc && <Loader color="blue" />}
             </Box>
           </Box>
           <Box

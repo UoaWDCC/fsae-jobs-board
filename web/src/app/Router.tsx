@@ -110,15 +110,15 @@ const router = createBrowserRouter([
     ),
     children: [
       {
-        path: 'member',
+        path: 'member/:id',
         element: <StudentProfile />,
       },
       {
-        path: 'sponsor',
+        path: 'sponsor/:id',
         element: <SponsorProfile />,
       },
       {
-        path: 'alumni',
+        path: 'alumni/:id',
         element: <AlumniProfile />,
       },
       {
@@ -181,6 +181,7 @@ const router = createBrowserRouter([
     </ProtectedRoute>
   ),
 },
+
   {
     path: '*',
     element: (

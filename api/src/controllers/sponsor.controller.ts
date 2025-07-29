@@ -30,7 +30,7 @@ export class SponsorController {
   ) {}
 
   @authorize({
-    allowedRoles: [FsaeRole.SPONSOR],
+    allowedRoles: [FsaeRole.SPONSOR, FsaeRole.MEMBER, FsaeRole.ALUMNI],
   })
   @get('/user/sponsor/{id}')
   @response(200, {

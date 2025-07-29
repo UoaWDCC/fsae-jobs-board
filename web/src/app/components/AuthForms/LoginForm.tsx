@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 import { login } from '@/api/login';
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { setRole } from '@/app/features/user/userSlice';
+import { setRole, setId } from '@/app/features/user/userSlice';
 
 export function LoginForm() {
   const location = useLocation();
@@ -33,10 +33,11 @@ export function LoginForm() {
 
   async function onLogin() {
     try {
-      const { role } = await login(email, password);
+      const { role, id } = await login(email, password);
       console.log(role);
       dispatch(setRole(role));
-      // toast.success('Login Successful');
+      dispatch(setId(id));
+      toast.success('Login Successful');
 
       // Redirect based on role
       switch (role) {
@@ -44,16 +45,16 @@ export function LoginForm() {
           navigate('/verify', {state: { email: email, password: password}, replace: true});
           break;
         case 'admin':
-          navigate('/profile/admin', { replace: true });
+          navigate(`/profile/admin/${id}`, { replace: true });
           break;
         case 'alumni':
-          navigate('/profile/alumni', { replace: true });
+          navigate(`/profile/alumni/${id}`, { replace: true });
           break;
         case 'member':
-          navigate('/profile/member', { replace: true });
+          navigate(`/profile/member/${id}`, { replace: true });
           break;
         case 'sponsor':
-          navigate('/profile/sponsor', { replace: true });
+          navigate(`/profile/sponsor/${id}`, { replace: true });
           break;
         default:
           navigate('/'); // Default fallback

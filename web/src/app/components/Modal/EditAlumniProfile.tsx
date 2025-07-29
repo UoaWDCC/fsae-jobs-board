@@ -4,38 +4,55 @@ import { useMediaQuery } from '@mantine/hooks';
 import { useState } from 'react';
 import AlumniProfileTab from '../Tabs/AlumniProfileTab';
 import AlumniAboutTab from '../Tabs/AlumniAboutTab';
+import { Alumni } from '@/models/alumni.model';
+import { useSelector } from 'react-redux';
+import type { RootState } from '@/app/store';
+import { useEffect } from 'react';
+import { editAlumniById } from '@/api/alumni';
 
-interface UserData {
-  alumniName: string;
-  companyField: string;
-  phone: string;
-  description: string;
-}
-
-interface EditAlumniProfileProps {
-  userData: UserData;
-  close: () => void;
-}
-
-const EditAlumniProfile = ({ userData, close }: EditAlumniProfileProps) => {
+const EditAlumniProfile = ({ close, userData, setUserData }: { close: () => void , userData: Alumni | null, setUserData: React.Dispatch<React.SetStateAction<Alumni | null>>}) => {
   const [activeTab, setActiveTab] = useState('about');
   const [isModalOpen, setIsModalOpen] = useState(true);
+  const [newUserData, setNewUserData] = useState<Partial<Alumni> | null>(null); // partial because the database schema is currently messed up
   const tabOptions = [
     { value: 'profile', label: 'Profile' },
     { value: 'about', label: 'About Me' },
   ];
   const isMobile = useMediaQuery('(max-width: 430px)'); // mobile screen
+  const userId = useSelector((state: RootState) => state.user.id); // the id of the local user
 
   const renderContent = () => {
     switch (activeTab) {
       case 'profile':
-        return <AlumniProfileTab userData={userData} />;
+        return <AlumniProfileTab newUserData={newUserData} setNewUserData={setNewUserData} />;
       case 'about':
-        return <AlumniAboutTab userData={userData} />;
+        return <AlumniAboutTab newUserData={newUserData} setNewUserData={setNewUserData} />;
       default:
         return null;
     }
   };
+
+  const saveFields = async () => {
+    if (!newUserData) return;
+    if (!userData) return;
+
+    setUserData(newUserData as Alumni);
+
+    const partialAlumni: Partial<Alumni> = {};
+
+    (Object.keys(newUserData) as (keyof Alumni)[]).forEach((key) => {
+      if (newUserData[key] !== userData[key]) {
+        partialAlumni[key] = newUserData[key] as any;
+      }
+    });
+
+    close();
+    await editAlumniById(userId, partialAlumni);
+  }
+
+  useEffect(() => {
+    setNewUserData(userData);
+  }, [userData])
 
   return (
     <Box>
@@ -74,10 +91,10 @@ const EditAlumniProfile = ({ userData, close }: EditAlumniProfileProps) => {
           </Tabs.List>
 
           <Tabs.Panel value="profile" mt={30}>
-            <AlumniProfileTab userData={userData} />
+            <AlumniProfileTab newUserData={newUserData} setNewUserData={setNewUserData} />
           </Tabs.Panel>
           <Tabs.Panel value="about" mt={30}>
-            <AlumniAboutTab userData={userData} />
+            <AlumniAboutTab newUserData={newUserData} setNewUserData={setNewUserData} />
           </Tabs.Panel>
         </Tabs>
       )}
@@ -85,7 +102,7 @@ const EditAlumniProfile = ({ userData, close }: EditAlumniProfileProps) => {
         <Button className={styles.button1} onClick={close}>
           Cancel
         </Button>
-        <Button>Save</Button>
+        <Button onClick={saveFields}>Save</Button>
       </Box>
     </Box>
   );
