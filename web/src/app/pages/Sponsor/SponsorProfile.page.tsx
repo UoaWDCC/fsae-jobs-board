@@ -49,10 +49,6 @@ export function SponsorProfile() {
     'Change this SponsorPage component to use real role from Redux store once user integration is implemented'
   );
 
-   interface JwtPayload {
-    role?: string;
-  }
-
   const handleAvatarChange = () => {
     setModalType('avatar');
     setModalContent(<EditAvatar avatar={userData?.logo ?? PLACEHOLDER_AVATAR} />);

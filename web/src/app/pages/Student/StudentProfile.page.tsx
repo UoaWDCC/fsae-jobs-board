@@ -12,7 +12,6 @@ import {
 } from '@mantine/core';
 import styles from '../../styles/StudentProfile.module.css';
 import { useEffect, useState } from 'react';
-import { IconCertificate } from '@tabler/icons-react';
 import EditModal from '../../components/Modal/EditModal';
 import { EditStudentProfile } from '../../components/Modal/EditStudentProfile';
 import { EditAvatar } from '../../components/Modal/EditAvatar';
@@ -30,8 +29,10 @@ const PLACEHOLDER_AVATAR = "https://raw.githubusercontent.com/mantinedev/mantine
 
 
 export function StudentProfile() {
+  // UseState for future modal implementation
   const { id } = useParams();
   const navigate = useNavigate();
+  const hasCV = useSelector((state: RootState) => state.user.hasCV);
 
   const [modalType, setModalType] = useState('');
   const [deactivateModalOpen, setDeactivateModalOpen] = useState(false); // look better into this stuff. im not really sure how we are using the modals :3
@@ -73,6 +74,42 @@ export function StudentProfile() {
     setOpenProfileModal(true);
   };
 
+  const handleOpenCV = async () => {
+    if (!id) {
+      alert('Member ID invalid');
+      return;
+    }
+
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+      alert('No access token found');
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:3000/user/member/${id}/cv`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch CV');
+      }
+
+      // fetch CV as blob for opening in a new tab
+      const blob = await response.blob();
+
+      const url = window.URL.createObjectURL(blob);
+
+      window.open(url, '_blank');
+
+      setTimeout(() => window.URL.revokeObjectURL(url), 10000);
+    } catch (error) {
+      console.error('Error fetching CV:', error);
+      alert('Failed to load CV');
+    }
+  };
   const handleDeactivateAccount = (reason: string) => {
     console.log('Account deactivated:', reason);
     setDeactivateModalOpen(false);
@@ -277,9 +314,18 @@ export function StudentProfile() {
               </Box>
             </Box>
 
-            <ActionIcon variant="transparent" color="#ffffff" size={200} mt={-40}>
-              <IconCertificate width={90} height={90} stroke={1.5} />
-            </ActionIcon>
+            {userData?.hasCV && (
+              <ActionIcon variant="transparent" color="#ffffff" size={200} mt={-40}
+              onClick={handleOpenCV}
+              style={{ cursor: 'pointer' }}>
+                <img 
+                  src="/cv_white.png" 
+                  alt="CV Icon" 
+                  width={90} 
+                  height={90}
+                />
+              </ActionIcon>
+            )}
           </Box>
         </Grid.Col>
       </Grid>

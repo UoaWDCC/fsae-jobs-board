@@ -19,6 +19,7 @@ import {
   AuthorizationTags,
 } from '@loopback/authorization';
 import {FsaeAuthorizationProvider} from './auth/authorization/FsaeAuthorizationProvider';
+import {MulterProvider} from './provider/multer.provider';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
@@ -72,6 +73,8 @@ export class FsaeApiApplication extends BootMixin(
     this.bind(`services.passwordhasher`).toClass(PasswordHasherService);
     this.bind('services.generator').toClass(GeneratorService);
     this.bind('services.twilioService').toClass(TwilioService);
+
+    this.bind('services.Multer').toProvider(MulterProvider);
     registerAuthenticationStrategy(this, FSAEJwtStrategy);
 
     // Authorization
