@@ -1,16 +1,13 @@
 # syntax = docker/dockerfile:1
 
 # Adjust NODE_VERSION as desired
-ARG NODE_VERSION=18
+ARG NODE_VERSION=20
 FROM node:${NODE_VERSION}-slim as base
 
 LABEL fly_launch_runtime="Vite"
 
 # Vite app lives here
 WORKDIR /app
-
-ARG YARN_VERSION=1.22.22
-RUN npm install -g yarn@$YARN_VERSION --force
 
 # Throw-away build stage to reduce size of final image
 FROM base as build
@@ -19,13 +16,9 @@ FROM base as build
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y build-essential node-gyp pkg-config python-is-python3
 
-# Copy Yarn configuration files
-COPY .yarnrc.yml ./
-COPY .yarn/ ./.yarn/
-
 # Install node modules
-COPY --link package.json yarn.lock ./
-RUN yarn install --immutable --production=false
+COPY --link package.json package-lock.json ./
+RUN npm ci
 
 # Copy application code
 COPY --link . .
@@ -34,10 +27,10 @@ COPY --link . .
 ENV VITE_API_URL="https://wdcc-fsae-jobs-board-api.fly.dev"
 
 # Build application
-RUN yarn run build
+RUN npm run build
 
 # Remove development dependencies
-RUN yarn workspaces focus --production
+RUN npm prune --production
 
 # Final stage for app image
 FROM nginx
