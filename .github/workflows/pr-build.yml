@@ -16,20 +16,22 @@ jobs:
       - name: Set up Node.js (for Node projects)
         uses: actions/setup-node@v4
         with:
-          node-version: "20" # Choose your node version
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: "**/package-lock.json"
 
       - name: Install dependencies (web)
         working-directory: ./web
-        run: yarn install
+        run: npm ci
 
       - name: Build project (web)
         working-directory: ./web
-        run: yarn build
+        run: npm run build
 
       - name: Install dependencies (api)
         working-directory: ./api
-        run: yarn install
+        run: npm ci
 
       - name: Build project (api)
         working-directory: ./api
-        run: yarn build
+        run: npm run build
