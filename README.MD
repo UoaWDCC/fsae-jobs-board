@@ -9,7 +9,7 @@
 - Carl Dela Pena
 - Chalith Hewage
 - Dhruv Sawant
-- Erica Ngin
+- Treyson Tsen
 - Grace Zhongxin Xu
 - Krish Patel
 - Kyle Rosser
