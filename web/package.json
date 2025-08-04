@@ -39,8 +39,7 @@
     "react-router-dom": "^6.22.3",
     "react-toastify": "^10.0.5",
     "redux": "^5.0.1",
-    "redux-persist": "^6.0.0",
-    "yarn": "^1.22.22"
+    "redux-persist": "^6.0.0"
   },
   "devDependencies": {
     "@storybook/addon-essentials": "^8.0.0",
@@ -88,6 +87,5 @@
     "vite": "^5.2.10",
     "vite-tsconfig-paths": "^4.3.1",
     "vitest": "^1.5.2"
-  },
-  "packageManager": "yarn@4.3.1"
+  }
 }
