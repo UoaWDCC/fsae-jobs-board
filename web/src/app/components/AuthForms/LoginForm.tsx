@@ -40,9 +40,11 @@ export function LoginForm() {
       toast.success('Login Successful');
 
       // Redirect based on role
-      switch (userData.role) {
+      switch (role) {
         case 'unverified':
-          navigate('/verify', {state: { email: email, password: password}, replace: true});
+          //navigate('/verify', {state: { email: email, password: password}, replace: true}); TODO: restore verification
+        // Since verification is disabled, redirect to home page
+          navigate('/', { replace: true });
           break;
         case 'admin':
           navigate(`/profile/admin/${id}`, { replace: true });
