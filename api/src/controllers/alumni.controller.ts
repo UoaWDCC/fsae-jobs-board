@@ -18,9 +18,11 @@ import {
   response,
 } from '@loopback/rest';
 import {Alumni, FsaeRole} from '../models';
+import {AlumniProfileDto, AlumniProfileDtoFields} from '../dtos/alumni-profile.dto';
 import {AlumniRepository} from '../repositories';
 import { authenticate } from '@loopback/authentication';
 import { authorize } from '@loopback/authorization';
+import { ownerOnly } from '../decorators/owner-only.decorator';
 
 @authenticate('fsae-jwt')
 export class AlumniController {
@@ -30,32 +32,39 @@ export class AlumniController {
   ) {}
 
   @authorize({
-    allowedRoles: [FsaeRole.ALUMNI, FsaeRole.MEMBER, FsaeRole.SPONSOR],
+    allowedRoles: [FsaeRole.ALUMNI, FsaeRole.MEMBER, FsaeRole.SPONSOR, FsaeRole.ADMIN],
   })
   @get('/user/alumni/{id}')
   @response(200, {
     description: 'Alumni model instance',
     content: {
       'application/json': {
-        schema: getModelSchemaRef(Alumni, {includeRelations: true}),
+        schema: getModelSchemaRef(AlumniProfileDto, {
+          title: 'Alumni Profile',
+        }),
       },
     },
   })
-  async findById(
+  async getAlumniProfile(
     @param.path.string('id') id: string,
-    @param.filter(Alumni, {exclude: 'where'}) filter?: FilterExcludingWhere<Alumni>
-  ): Promise<Alumni> {
-    return this.alumniRepository.findById(id, filter);
+  ): Promise<AlumniProfileDto> {
+    const result = await this.alumniRepository.findById(id, {
+      fields: AlumniProfileDtoFields,
+    });
+    return result as AlumniProfileDto;
   }
 
   @authorize({
     allowedRoles: [FsaeRole.ALUMNI],
   })
+  @ownerOnly({
+    ownerField: 'id',
+  })
   @patch('/user/alumni/{id}')
   @response(204, {
     description: 'Alumni PATCH success',
   })
-  async updateById(
+  async updateAlumniProfile(
     @param.path.string('id') id: string,
     @requestBody({
       content: {
