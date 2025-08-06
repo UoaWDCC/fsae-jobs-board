@@ -64,7 +64,7 @@ export class FsaeUser extends Entity {
   @property({
     type: 'string',
     required: true,
-    default: "default_avatar.png"
+    default: "/default_avatar.png"
   })
   avatarURL: string;
 
