@@ -1,9 +1,8 @@
-export type createFSAEUserDto = {
+export type createFsaeUserDTO = {
   email: string;
-  username: string;
   password: string;
-  firstName?: string;
-  lastName?: string;
   phoneNumber?: string;
-  desc?: string;
+  description?: string;
+  avatarURL?: string;
+  bannerURL?: string;
 }

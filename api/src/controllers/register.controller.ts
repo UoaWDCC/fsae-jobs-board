@@ -6,93 +6,59 @@
 import { repository } from '@loopback/repository';
 import { AdminRepository, AlumniRepository, MemberRepository, SponsorRepository, VerificationRepository } from '../repositories';
 import { HttpErrors, post, requestBody } from '@loopback/rest';
-import { createFSAEUserDto } from './controller-types/register.controller.types';
-import { Admin, FsaeRole } from '../models';
+import { getModelSchemaRef } from '@loopback/rest';
+import { Admin, Alumni, FsaeRole, Member, Sponsor } from '../models';
 import { inject, service } from '@loopback/core';
-import {FsaeUserService,  PasswordHasherService } from '../services';
+import { FsaeUserService,  PasswordHasherService } from '../services';
 import { BindingKeys } from '../constants/binding-keys';
 import { TwilioService } from '../services/twilio.service';
 import { GeneratorService } from '../services/generator.service';
 
 export class RegisterController {
-        constructor(
-            @repository(AdminRepository) private adminRepository: AdminRepository,
-            @repository(AlumniRepository) private alumniRepository: AlumniRepository,
-            @repository(MemberRepository) private memberRepository: MemberRepository,
-            @repository(SponsorRepository) private sponsorRepository: SponsorRepository,
-            @service(FsaeUserService) private fsaeUserService: FsaeUserService,
-            @repository(VerificationRepository) private verificationRepository: VerificationRepository,
-            @inject(BindingKeys.PASSWORD_HASHER) private passwordHasher: PasswordHasherService,
-            @inject('services.generator') private generator: GeneratorService,
-            @inject('services.twilioService') private twilioService: TwilioService
-        ) { }
+  constructor(
+      @repository(AdminRepository) private adminRepository: AdminRepository,
+      @repository(AlumniRepository) private alumniRepository: AlumniRepository,
+      @repository(MemberRepository) private memberRepository: MemberRepository,
+      @repository(SponsorRepository) private sponsorRepository: SponsorRepository,
+      @service(FsaeUserService) private fsaeUserService: FsaeUserService,
+      @repository(VerificationRepository) private verificationRepository: VerificationRepository,
+      @inject(BindingKeys.PASSWORD_HASHER) private passwordHasher: PasswordHasherService,
+      @inject('services.generator') private generator: GeneratorService,
+      @inject('services.twilioService') private twilioService: TwilioService
+  ) { }
 
   @post('/register-admin')
   // Todo authorize only admin to register admin
   async registerAdmin(
     @requestBody({
-      description: 'The input of register function',
       content: {
         'application/json': {
-          schema: {
-            type: 'object',
-            required: ['email', 'password'],
-            properties: {
-              email: {
-                type: 'string',
-              },
-              password: {
-                type: 'string',
-              },
-              firstName: {
-                type: 'string',
-              },
-              lastName: {
-                type: 'string',
-              },
-              phoneNumber: {
-                type: 'string',
-              },
-              desc: {
-                type: 'string',
-              }
-            },
-          },
+          schema: getModelSchemaRef(Admin, {exclude: ['id', 'activated', 'verified', 'adminStatus', 'role', 'createdAt']}),
         },
-      }
-    })createUserDto: createFSAEUserDto): Promise<Admin> {
+      },
+    })createUserDto: Admin): Promise<Admin> {
       // Prevent duplicate user by email
       if (await this.fsaeUserService.doesUserExist(createUserDto.email)) {
         throw new HttpErrors.Conflict('Email already exists')
       }
 
-        let hashedPassword = await this.passwordHasher.hashPassword(createUserDto.password);
+      let hashedPassword = await this.passwordHasher.hashPassword(createUserDto.password);
 
-        let newAdmin = this.adminRepository.create({
-            email: createUserDto.email,
-            username: createUserDto.username,
-            password: hashedPassword,
-            firstName: createUserDto.firstName,
-            lastName: createUserDto.lastName,
-            phoneNumber: createUserDto.phoneNumber,
-            activated: true,
-            fsaeRole: FsaeRole.ADMIN,
-            desc: createUserDto.desc
-        });
+      let newAdmin = this.adminRepository.create({
+          email: createUserDto.email,
+          password: hashedPassword,
+          role: FsaeRole.ADMIN,
+          description: createUserDto.description,
+          phoneNumber: createUserDto.phoneNumber,
+          avatarURL: createUserDto.avatarURL,
+          bannerURL: createUserDto.bannerURL,
+          firstName: createUserDto.firstName,
+          lastName: createUserDto.lastName,
+      });
 
-        const { verification, verificationCode } = await this.sendVerificationEmail(createUserDto.email, createUserDto.firstName ? createUserDto.firstName : 'Administrator');
-        
-        await this.verificationRepository.create({
-            email: createUserDto.email,
-            verificationCode: verificationCode,
-            createdAt: Date.now(),
-            expiresAt: Date.now() + 1000*60*10,
-            twilioId: verification.sid,
-            fsaeRole: FsaeRole.ADMIN,
-            resentOnce: false
-        });
+      await this.initiateVerification(createUserDto.email, createUserDto.firstName)
 
-        return newAdmin;
+      return newAdmin;
     }
 
   @post('/register-member')
@@ -101,66 +67,36 @@ export class RegisterController {
       description: 'The input of register function',
       content: {
         'application/json': {
-          schema: {
-            type: 'object',
-            required: ['email', 'password', 'firstName', 'lastName', 'phoneNumber'],
-            properties: {
-              email: {
-                type: 'string',
-              },
-              password: {
-                type: 'string',
-              },
-              firstName: {
-                type: 'string',
-              },
-              lastName: {
-                type: 'string',
-              },
-              phoneNumber: {
-                type: 'string',
-              },
-              desc: {
-                type: 'string',
-              }
-            },
-          },
+          schema: getModelSchemaRef(Member, {exclude: [
+            'id', 'activated', 'verified', 'adminStatus', 'role', 'createdAt', 'cvData', 'cvFileName', 'cvMimeType', 'cvSize', 'cvUploadedAt', 'hasCV'
+          ]})
         },
       }
-    })createUserDto: createFSAEUserDto): Promise<Admin> {
+    })createUserDto: Member): Promise<Member> {
     // Prevent duplicate user by email
     if (await this.fsaeUserService.doesUserExist(createUserDto.email)) {
       throw new HttpErrors.Conflict('Email already exists')
     }
+      let hashedPassword = await this.passwordHasher.hashPassword(createUserDto.password);
 
-        let hashedPassword = await this.passwordHasher.hashPassword(createUserDto.password);
+      let newMember = this.memberRepository.create({
+          email: createUserDto.email,
+          password: hashedPassword,
+          role: FsaeRole.MEMBER,
+          description: createUserDto.description,
+          phoneNumber: createUserDto.phoneNumber,
+          avatarURL: createUserDto.avatarURL,
+          bannerURL: createUserDto.bannerURL,
+          firstName: createUserDto.firstName,
+          lastName: createUserDto.lastName,
+          lookingFor: createUserDto.lookingFor,
+          education: createUserDto.education,
+          skills: createUserDto.skills
+      });
 
-        let newMember = this.memberRepository.create({
-            email: createUserDto.email,
-            username: createUserDto.username,
-            password: hashedPassword,
-            firstName: createUserDto.firstName,
-            lastName: createUserDto.lastName,
-            phoneNumber: createUserDto.phoneNumber,
-            activated: true, // Default activate as all this HTTP body requires validation on required fields.
-            verified: false,
-            fsaeRole: FsaeRole.MEMBER,
-            desc: createUserDto.desc
-        });
+      await this.initiateVerification(createUserDto.email, createUserDto.firstName)
 
-        const { verification, verificationCode } = await this.sendVerificationEmail(createUserDto.email, createUserDto.firstName ? createUserDto.firstName : 'Member');
-        
-        await this.verificationRepository.create({
-            email: createUserDto.email,
-            verificationCode: verificationCode,
-            createdAt: Date.now(),
-            expiresAt: Date.now() + 1000*60*10,
-            twilioId: verification.sid,
-            fsaeRole: FsaeRole.MEMBER,
-            resentOnce: false
-        });
-
-        return newMember;
+      return newMember;
     }
 
   @post('/register-sponsor')
@@ -169,64 +105,32 @@ export class RegisterController {
       description: 'The input of register function',
       content: {
         'application/json': {
-          schema: {
-            type: 'object',
-            required: ['email', 'password', 'phoneNumber', 'company'],
-            properties: {
-              email: {
-                type: 'string',
-              },
-              password: {
-                type: 'string',
-              },
-              phoneNumber: {
-                type: 'string',
-              },
-              desc: {
-                type: 'string',
-              },
-              company: {
-                type: 'string',
-              }
-            },
-          },
+          schema: getModelSchemaRef(Sponsor, {exclude: ['id', 'activated', 'verified', 'adminStatus', 'role', 'createdAt']})
         },
       }
-    })createUserDto: createFSAEUserDto): Promise<Admin> {
+    })createUserDto: Sponsor): Promise<Sponsor> {
     // Prevent duplicate user by email
     if (await this.fsaeUserService.doesUserExist(createUserDto.email)) {
       throw new HttpErrors.Conflict('Email already exists')
     }
+      let hashedPassword = await this.passwordHasher.hashPassword(createUserDto.password);
 
-        let hashedPassword = await this.passwordHasher.hashPassword(createUserDto.password);
+      let newMember = this.sponsorRepository.create({
+          email: createUserDto.email,
+          password: hashedPassword,
+          role: FsaeRole.SPONSOR,
+          description: createUserDto.description,
+          phoneNumber: createUserDto.phoneNumber,
+          avatarURL: createUserDto.avatarURL,
+          bannerURL: createUserDto.bannerURL,
+          companyName: createUserDto.companyName,
+          websiteURL: createUserDto.websiteURL,
+          industry: createUserDto.industry
+      });
 
-        let newMember = this.sponsorRepository.create({
-            email: createUserDto.email,
-            username: createUserDto.username,
-            password: hashedPassword,
-            firstName: createUserDto.firstName,
-            lastName: createUserDto.lastName,
-            phoneNumber: createUserDto.phoneNumber,
-            activated: false,
-            verified: false,
-            fsaeRole: FsaeRole.SPONSOR,
-            desc: createUserDto.desc
-        });
+      await this.initiateVerification(createUserDto.email, createUserDto.companyName)
 
-        const { verification, verificationCode } = await this.sendVerificationEmail(createUserDto.email, createUserDto.firstName ? createUserDto.firstName : 'Sppnsor');
-        
-        await this.verificationRepository.create({
-            email: createUserDto.email,
-            verificationCode: verificationCode,
-            createdAt: Date.now(),
-            expiresAt: Date.now() + 1000*60*10,
-            twilioId: verification.sid,
-            fsaeRole: FsaeRole.SPONSOR,
-            resentOnce: false
-        });
-
-
-        return newMember;
+      return newMember;
     }
 
   @post('/register-alumni')
@@ -235,69 +139,46 @@ export class RegisterController {
       description: 'The input of register function',
       content: {
         'application/json': {
-          schema: {
-            type: 'object',
-            required: ['email', 'username', 'password', 'firstName', 'lastName', 'phoneNumber', 'company'],
-            properties: {
-              email: {
-                type: 'string',
-              },
-              password: {
-                type: 'string',
-              },
-              firstName: {
-                type: 'string',
-              },
-              lastName: {
-                type: 'string',
-              },
-              phoneNumber: {
-                type: 'string',
-              },
-              desc: {
-                type: 'string',
-              },
-              company: {
-                type: 'string',
-              }
-            },
-          },
+          schema: getModelSchemaRef(Alumni, {exclude: ['id', 'activated', 'verified', 'adminStatus', 'role', 'createdAt']})
         },
       }
-    })createUserDto: createFSAEUserDto): Promise<Admin> {
+    })createUserDto: Alumni): Promise<Alumni> {
     // Prevent duplicate user by email
     if (await this.fsaeUserService.doesUserExist(createUserDto.email)) {
       throw new HttpErrors.Conflict('Email already exists')
     }
+      let hashedPassword = await this.passwordHasher.hashPassword(createUserDto.password);
 
-        let hashedPassword = await this.passwordHasher.hashPassword(createUserDto.password);
+      let newAlumni = this.alumniRepository.create({
+        email: createUserDto.email,
+        password: hashedPassword,
+        role: FsaeRole.SPONSOR,
+        description: createUserDto.description,
+        phoneNumber: createUserDto.phoneNumber,
+        avatarURL: createUserDto.avatarURL,
+        bannerURL: createUserDto.bannerURL,
+        firstName: createUserDto.firstName,
+        lastName: createUserDto.lastName,
+        companyName: createUserDto.companyName
+      });
+      
+      await this.initiateVerification(createUserDto.email, createUserDto.firstName)
 
-        let newMember = this.alumniRepository.create({
-            email: createUserDto.email,
-            username: createUserDto.username,
-            password: hashedPassword,
-            firstName: createUserDto.firstName,
-            lastName: createUserDto.lastName,
-            phoneNumber: createUserDto.phoneNumber,
-            activated: false,
-            verified: false,
-            fsaeRole: FsaeRole.ALUMNI,
-            desc: createUserDto.desc
-        });
+      return newAlumni;
+    }
 
-        const { verification, verificationCode } = await this.sendVerificationEmail(createUserDto.email, createUserDto.firstName ? createUserDto.firstName : 'Alumni');
+    async initiateVerification(email: string, name: string): Promise<void> {
+      const { verification, verificationCode } = await this.sendVerificationEmail(email, name);
         
-        await this.verificationRepository.create({
-            email: createUserDto.email,
-            verificationCode: verificationCode,
-            createdAt: Date.now(),
-            expiresAt: Date.now() + 1000*60*10,
-            twilioId: verification.sid,
-            fsaeRole: FsaeRole.ALUMNI,
-            resentOnce: false
-        });
-
-        return newMember;
+      await this.verificationRepository.create({
+        email: email,
+        verificationCode: verificationCode,
+        createdAt: Date.now(),
+        expiresAt: Date.now() + 1000*60*10,
+        twilioId: verification.sid,
+        fsaeRole: FsaeRole.ADMIN,
+        resentOnce: false
+      });
     }
 
     async sendVerificationEmail(email: string, firstName: string) {
