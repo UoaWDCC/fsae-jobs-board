@@ -23,12 +23,15 @@ import {AlumniRepository} from '../repositories';
 import { authenticate } from '@loopback/authentication';
 import { authorize } from '@loopback/authorization';
 import { ownerOnly } from '../decorators/owner-only.decorator';
+import {inject} from '@loopback/core';
+import {SecurityBindings, UserProfile} from '@loopback/security';
 
 @authenticate('fsae-jwt')
 export class AlumniController {
   constructor(
     @repository(AlumniRepository)
     public alumniRepository : AlumniRepository,
+    @inject(SecurityBindings.USER) protected currentUserProfile: UserProfile,
   ) {}
 
   @authorize({
@@ -58,7 +61,6 @@ export class AlumniController {
   @response(204, {
     description: 'Alumni PATCH success',
   })
-  @authenticate('fsae-jwt')
   @authorize({
     allowedRoles: [FsaeRole.ALUMNI],
   })
@@ -76,11 +78,16 @@ export class AlumniController {
     })
     alumniDto: Partial<AlumniProfileDto>,
   ): Promise<void> {
+    console.log('Updating alumni profile with data:', alumniDto);
+    console.log('Alumni ID:', id);
     await this.alumniRepository.updateById(id, alumniDto);
   }
 
   @authorize({
-    allowedRoles: [FsaeRole.ADMIN],
+    allowedRoles: [FsaeRole.ADMIN, FsaeRole.ALUMNI],
+  })
+  @ownerOnly({
+    ownerField: 'id',
   })
   @del('/user/alumni/{id}')
   @response(204, {

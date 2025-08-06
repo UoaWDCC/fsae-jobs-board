@@ -1,5 +1,6 @@
 import {HttpErrors} from '@loopback/rest';
 import {UserProfile} from '@loopback/security';
+import { FsaeRole } from '../models';
 
 export interface OwnerOnlyOptions {
   /** index of the ID arg (default = 0) */
@@ -21,7 +22,11 @@ export function ownerOnly(options: OwnerOnlyOptions) {
 
       const user = (this as any).currentUserProfile as UserProfile;
       const userId = user?.id?.toString();
-      if (!userId) throw new HttpErrors.Unauthorized();
+      if (!userId) throw new HttpErrors.Unauthorized("UserID not found in user profile");
+      
+      if (user?.fsaeRole === FsaeRole.ADMIN) {
+        return original.apply(this, args);
+      }
 
       let ownerValue: string;
       if (!repoGetter) {
