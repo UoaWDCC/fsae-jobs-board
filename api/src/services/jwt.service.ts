@@ -60,7 +60,6 @@ export class JwtService implements TokenService{
     const securityUserProfile: UserProfile = {
       [securityId]: id,
       id: id,
-      //name: 'Test',
       roles: [role],
       fsaeRole: role,
       activated: activated

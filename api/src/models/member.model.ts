@@ -1,15 +1,53 @@
 import {Entity, model, property} from '@loopback/repository';
 import {FsaeUser} from './fsae-user.model';
+import { JobType } from './job-type';
+import { Education } from './education.model';
 
-@model({settings: {strict: false}})
+@model()
 export class Member extends FsaeUser {
   @property({
-    type: 'string',
-    id: true,
-    generated: true,
+    type: 'string', 
+    required: true
   })
-  memberID?: string;
+  firstName: string;
 
+  @property({
+    type: 'string', 
+    required: true
+  })
+  lastName: string;
+
+  @property({
+    type: 'string', 
+    required: true,
+    jsonSchema: {
+      enum: Object.values(JobType),
+    },
+  })
+  lookingFor: JobType;
+
+  @property({
+    type: 'array',
+    itemType: Education,
+    required: true,
+    default: [],
+  })
+  education: Education[];
+
+  @property({
+    type: 'array',
+    itemType: 'string',
+    required: true,
+    default: []
+  })
+  skills: string[];
+
+  /*
+    The following CV properties (cvData, cvFileName, cvMimeType, cvSize, cvUploadedAt and hasCV)
+    may be subject to change in the future (it would be desireable to store CVs in some way other
+    than embedding them in the Member model)
+    All of these CV properties (except for hasCV) are left as optional in the model.
+  */
   @property({
     type: 'buffer',
     mongodb: { dataType: 'binData' },
@@ -42,27 +80,12 @@ export class Member extends FsaeUser {
 
   @property({
     type: 'boolean',
+    required: true,
     default: false,
   })
-  hasCV?: boolean;
-  
-  // default values for optional fields
-  firstName?: string = 'Fsae';
-  lastName?: string = 'member';
-  // cv?: string = '';
-  subGroup?: string = 'Fsae club';
- 
-  // Indexer property to allow additional data
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [prop: string]: any;
+  hasCV: boolean;
 
   constructor(data?: Partial<Member>) {
     super(data);
   }
 }
-
-export interface MemberRelations {
-  // describe navigational properties here
-}
-
-export type MemberWithRelations = Member & MemberRelations;

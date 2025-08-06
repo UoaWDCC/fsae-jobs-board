@@ -3,5 +3,5 @@ export enum FsaeRole {
   MEMBER = 'member',
   SPONSOR = 'sponsor',
   ALUMNI = 'alumni',
-  UNkNOWN = 'unknown',
+  UNKNOWN = 'unknown',
 }
