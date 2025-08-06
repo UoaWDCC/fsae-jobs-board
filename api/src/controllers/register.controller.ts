@@ -55,7 +55,7 @@ export class RegisterController {
           firstName: createUserDto.firstName,
           lastName: createUserDto.lastName,
       });
-
+      
       await this.initiateVerification(createUserDto.email, createUserDto.firstName)
 
       return newAdmin;

@@ -1,12 +1,11 @@
 import {inject} from '@loopback/core';
 import {DefaultCrudRepository} from '@loopback/repository';
 import {MongoDbDataSource} from '../datasources';
-import {Admin, AdminRelations} from '../models';
+import {Admin} from '../models';
 
 export class AdminRepository extends DefaultCrudRepository<
   Admin,
-  typeof Admin.prototype.id,
-  AdminRelations
+  typeof Admin.prototype.id
 > {
   constructor(
     @inject('datasources.mongoDB') dataSource: MongoDbDataSource,
