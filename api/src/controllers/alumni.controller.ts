@@ -54,28 +54,29 @@ export class AlumniController {
     return result as AlumniProfileDto;
   }
 
+  @patch('/user/alumni/{id}')
+  @response(204, {
+    description: 'Alumni PATCH success',
+  })
+  @authenticate('fsae-jwt')
   @authorize({
     allowedRoles: [FsaeRole.ALUMNI],
   })
   @ownerOnly({
     ownerField: 'id',
   })
-  @patch('/user/alumni/{id}')
-  @response(204, {
-    description: 'Alumni PATCH success',
-  })
   async updateAlumniProfile(
     @param.path.string('id') id: string,
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(Alumni, {partial: true}),
+          schema: getModelSchemaRef(AlumniProfileDto, {partial: true}),
         },
       },
     })
-    alumni: Alumni,
+    alumniDto: Partial<AlumniProfileDto>,
   ): Promise<void> {
-    await this.alumniRepository.updateById(id, alumni);
+    await this.alumniRepository.updateById(id, alumniDto);
   }
 
   @authorize({
