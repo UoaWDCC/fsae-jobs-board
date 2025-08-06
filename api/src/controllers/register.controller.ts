@@ -13,6 +13,7 @@ import { FsaeUserService,  PasswordHasherService } from '../services';
 import { BindingKeys } from '../constants/binding-keys';
 import { TwilioService } from '../services/twilio.service';
 import { GeneratorService } from '../services/generator.service';
+import { CreateAdminDTO, CreateAlumniDTO, CreateMemberDTO, CreateSponsorDTO } from './controller-types/register.controller.types';
 
 export class RegisterController {
   constructor(
@@ -33,30 +34,30 @@ export class RegisterController {
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(Admin, {exclude: ['id', 'activated', 'verified', 'adminStatus', 'role', 'createdAt']}),
+          schema: getModelSchemaRef(CreateAdminDTO),
         },
       },
-    })createUserDto: Admin): Promise<Admin> {
+    })createAdminDTO: CreateAdminDTO): Promise<Admin> {
       // Prevent duplicate user by email
-      if (await this.fsaeUserService.doesUserExist(createUserDto.email)) {
+      if (await this.fsaeUserService.doesUserExist(createAdminDTO.email)) {
         throw new HttpErrors.Conflict('Email already exists')
       }
 
-      let hashedPassword = await this.passwordHasher.hashPassword(createUserDto.password);
+      let hashedPassword = await this.passwordHasher.hashPassword(createAdminDTO.password);
 
       let newAdmin = this.adminRepository.create({
-          email: createUserDto.email,
+          email: createAdminDTO.email,
           password: hashedPassword,
           role: FsaeRole.ADMIN,
-          description: createUserDto.description,
-          phoneNumber: createUserDto.phoneNumber,
-          avatarURL: createUserDto.avatarURL,
-          bannerURL: createUserDto.bannerURL,
-          firstName: createUserDto.firstName,
-          lastName: createUserDto.lastName,
+          description: createAdminDTO.description,
+          phoneNumber: createAdminDTO.phoneNumber,
+          avatarURL: createAdminDTO.avatarURL,
+          bannerURL: createAdminDTO.bannerURL,
+          firstName: createAdminDTO.firstName,
+          lastName: createAdminDTO.lastName,
       });
       
-      await this.initiateVerification(createUserDto.email, createUserDto.firstName)
+      await this.initiateVerification(createAdminDTO.email, createAdminDTO.firstName)
 
       return newAdmin;
     }
@@ -67,34 +68,32 @@ export class RegisterController {
       description: 'The input of register function',
       content: {
         'application/json': {
-          schema: getModelSchemaRef(Member, {exclude: [
-            'id', 'activated', 'verified', 'adminStatus', 'role', 'createdAt', 'cvData', 'cvFileName', 'cvMimeType', 'cvSize', 'cvUploadedAt', 'hasCV'
-          ]})
+          schema: getModelSchemaRef(CreateMemberDTO)
         },
       }
-    })createUserDto: Member): Promise<Member> {
+    })createMemberDTO: CreateMemberDTO): Promise<CreateMemberDTO> {
     // Prevent duplicate user by email
-    if (await this.fsaeUserService.doesUserExist(createUserDto.email)) {
+    if (await this.fsaeUserService.doesUserExist(createMemberDTO.email)) {
       throw new HttpErrors.Conflict('Email already exists')
     }
-      let hashedPassword = await this.passwordHasher.hashPassword(createUserDto.password);
+      let hashedPassword = await this.passwordHasher.hashPassword(createMemberDTO.password);
 
       let newMember = this.memberRepository.create({
-          email: createUserDto.email,
+          email: createMemberDTO.email,
           password: hashedPassword,
           role: FsaeRole.MEMBER,
-          description: createUserDto.description,
-          phoneNumber: createUserDto.phoneNumber,
-          avatarURL: createUserDto.avatarURL,
-          bannerURL: createUserDto.bannerURL,
-          firstName: createUserDto.firstName,
-          lastName: createUserDto.lastName,
-          lookingFor: createUserDto.lookingFor,
-          education: createUserDto.education,
-          skills: createUserDto.skills
+          description: createMemberDTO.description,
+          phoneNumber: createMemberDTO.phoneNumber,
+          avatarURL: createMemberDTO.avatarURL,
+          bannerURL: createMemberDTO.bannerURL,
+          firstName: createMemberDTO.firstName,
+          lastName: createMemberDTO.lastName,
+          lookingFor: createMemberDTO.lookingFor,
+          education: createMemberDTO.education,
+          skills: createMemberDTO.skills
       });
 
-      await this.initiateVerification(createUserDto.email, createUserDto.firstName)
+      await this.initiateVerification(createMemberDTO.email, createMemberDTO.firstName)
 
       return newMember;
     }
@@ -105,30 +104,30 @@ export class RegisterController {
       description: 'The input of register function',
       content: {
         'application/json': {
-          schema: getModelSchemaRef(Sponsor, {exclude: ['id', 'activated', 'verified', 'adminStatus', 'role', 'createdAt']})
+          schema: getModelSchemaRef(CreateSponsorDTO)
         },
       }
-    })createUserDto: Sponsor): Promise<Sponsor> {
+    })createSponsorDTO: CreateSponsorDTO): Promise<CreateSponsorDTO> {
     // Prevent duplicate user by email
-    if (await this.fsaeUserService.doesUserExist(createUserDto.email)) {
+    if (await this.fsaeUserService.doesUserExist(createSponsorDTO.email)) {
       throw new HttpErrors.Conflict('Email already exists')
     }
-      let hashedPassword = await this.passwordHasher.hashPassword(createUserDto.password);
+      let hashedPassword = await this.passwordHasher.hashPassword(createSponsorDTO.password);
 
       let newMember = this.sponsorRepository.create({
-          email: createUserDto.email,
+          email: createSponsorDTO.email,
           password: hashedPassword,
           role: FsaeRole.SPONSOR,
-          description: createUserDto.description,
-          phoneNumber: createUserDto.phoneNumber,
-          avatarURL: createUserDto.avatarURL,
-          bannerURL: createUserDto.bannerURL,
-          companyName: createUserDto.companyName,
-          websiteURL: createUserDto.websiteURL,
-          industry: createUserDto.industry
+          description: createSponsorDTO.description,
+          phoneNumber: createSponsorDTO.phoneNumber,
+          avatarURL: createSponsorDTO.avatarURL,
+          bannerURL: createSponsorDTO.bannerURL,
+          companyName: createSponsorDTO.companyName,
+          websiteURL: createSponsorDTO.websiteURL,
+          industry: createSponsorDTO.industry
       });
 
-      await this.initiateVerification(createUserDto.email, createUserDto.companyName)
+      await this.initiateVerification(createSponsorDTO.email, createSponsorDTO.companyName)
 
       return newMember;
     }
@@ -139,30 +138,30 @@ export class RegisterController {
       description: 'The input of register function',
       content: {
         'application/json': {
-          schema: getModelSchemaRef(Alumni, {exclude: ['id', 'activated', 'verified', 'adminStatus', 'role', 'createdAt']})
+          schema: getModelSchemaRef(CreateAlumniDTO)
         },
       }
-    })createUserDto: Alumni): Promise<Alumni> {
+    })createAlumniDTO: CreateAlumniDTO): Promise<CreateAlumniDTO> {
     // Prevent duplicate user by email
-    if (await this.fsaeUserService.doesUserExist(createUserDto.email)) {
+    if (await this.fsaeUserService.doesUserExist(createAlumniDTO.email)) {
       throw new HttpErrors.Conflict('Email already exists')
     }
-      let hashedPassword = await this.passwordHasher.hashPassword(createUserDto.password);
+      let hashedPassword = await this.passwordHasher.hashPassword(createAlumniDTO.password);
 
       let newAlumni = this.alumniRepository.create({
-        email: createUserDto.email,
+        email: createAlumniDTO.email,
         password: hashedPassword,
         role: FsaeRole.SPONSOR,
-        description: createUserDto.description,
-        phoneNumber: createUserDto.phoneNumber,
-        avatarURL: createUserDto.avatarURL,
-        bannerURL: createUserDto.bannerURL,
-        firstName: createUserDto.firstName,
-        lastName: createUserDto.lastName,
-        companyName: createUserDto.companyName
+        description: createAlumniDTO.description,
+        phoneNumber: createAlumniDTO.phoneNumber,
+        avatarURL: createAlumniDTO.avatarURL,
+        bannerURL: createAlumniDTO.bannerURL,
+        firstName: createAlumniDTO.firstName,
+        lastName: createAlumniDTO.lastName,
+        companyName: createAlumniDTO.companyName
       });
       
-      await this.initiateVerification(createUserDto.email, createUserDto.firstName)
+      await this.initiateVerification(createAlumniDTO.email, createAlumniDTO.firstName)
 
       return newAlumni;
     }

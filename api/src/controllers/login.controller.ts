@@ -183,7 +183,7 @@ export class LoginController {
   ): Promise<string | null> {
     return this.fsaeUserService.getUserRole(userEmail);
   }
-
+  /*
   @get('/user/whoami')
   @authenticate('fsae-jwt')
   @authorize({
@@ -242,7 +242,7 @@ export class LoginController {
       email: user.email,
       role: role,
     };
-  }
+  }*/
 
   async getUserToken(
     credentials: loginParams,

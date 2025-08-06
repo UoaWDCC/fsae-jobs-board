@@ -129,7 +129,7 @@ export class VerificationController {
         }
 
         // Check if properties are defined
-        if (!verification.email || !user.firstName || !verification.verificationCode) {
+        if (!verification.email || !verification.verificationCode) {
             throw new HttpErrors.InternalServerError('Required properties are missing');
         }
 
@@ -145,7 +145,13 @@ export class VerificationController {
         const verificationCode = await this.generator.generateCode();
 
         // Send a new verification email
-        const newVerification = await this.twilioService.sendVerificationEmail(verification.email, user.firstName, verificationCode);
+        let nameForVerificationEmail = "User"
+        if ('firstName' in user) {
+            nameForVerificationEmail = user.firstName
+        } else if ('companyName' in user) {
+            nameForVerificationEmail = user.companyName
+        }
+        const newVerification = await this.twilioService.sendVerificationEmail(verification.email, nameForVerificationEmail, verificationCode);
         
         // Create a new verification record
         await this.verificationRepository.create({
