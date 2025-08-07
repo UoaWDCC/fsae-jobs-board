@@ -59,7 +59,23 @@ export class RegisterController {
       
       await this.initiateVerification(createAdminDTO.email, createAdminDTO.firstName)
 
+<<<<<<< HEAD
       return newAdmin;
+=======
+        /* const { verification, verificationCode } = await this.sendVerificationEmail(createUserDto.email, createUserDto.firstName ? createUserDto.firstName : 'Administrator');
+        
+        await this.verificationRepository.create({
+            email: createUserDto.email,
+            verificationCode: verificationCode,
+            createdAt: Date.now(),
+            expiresAt: Date.now() + 1000*60*10,
+            twilioId: verification.sid,
+            fsaeRole: FsaeRole.ADMIN,
+            resentOnce: false
+        }); //TODO: Restore verification*/ 
+
+        return newAdmin;
+>>>>>>> origin/main
     }
 
   @post('/register-member')
@@ -71,6 +87,7 @@ export class RegisterController {
           schema: getModelSchemaRef(CreateMemberDTO)
         },
       }
+<<<<<<< HEAD
     })createMemberDTO: CreateMemberDTO): Promise<CreateMemberDTO> {
     // Prevent duplicate user by email
     if (await this.fsaeUserService.doesUserExist(createMemberDTO.email)) {
@@ -95,6 +112,43 @@ export class RegisterController {
 
       await this.initiateVerification(createMemberDTO.email, createMemberDTO.firstName)
 
+=======
+    })createUserDto: createFSAEUserDto): Promise<Admin> {
+      // Prevent duplicate user by email
+      if (await this.fsaeUserService.doesUserExist(createUserDto.email)) {
+        throw new HttpErrors.Conflict('Email already exists');
+      }
+
+      let hashedPassword = await this.passwordHasher.hashPassword(
+        createUserDto.password,
+      );
+
+      let newMember = this.memberRepository.create({
+        email: createUserDto.email,
+        username: createUserDto.username,
+        password: hashedPassword,
+        firstName: createUserDto.firstName,
+        lastName: createUserDto.lastName,
+        phoneNumber: createUserDto.phoneNumber,
+        activated: true, // Default activate as all this HTTP body requires validation on required fields.
+        verified: true, // TODO: restore verification
+        fsaeRole: FsaeRole.MEMBER,
+        desc: createUserDto.desc,
+      });
+
+      /* const { verification, verificationCode } = await this.sendVerificationEmail(createUserDto.email, createUserDto.firstName ? createUserDto.firstName : 'Member');
+        
+        await this.verificationRepository.create({
+            email: createUserDto.email,
+            verificationCode: verificationCode,
+            createdAt: Date.now(),
+            expiresAt: Date.now() + 1000*60*10,
+            twilioId: verification.sid,
+            fsaeRole: FsaeRole.MEMBER,
+            resentOnce: false
+        }); //TODO: Restore verification*/
+
+>>>>>>> origin/main
       return newMember;
     }
 
@@ -107,6 +161,7 @@ export class RegisterController {
           schema: getModelSchemaRef(CreateSponsorDTO)
         },
       }
+<<<<<<< HEAD
     })createSponsorDTO: CreateSponsorDTO): Promise<CreateSponsorDTO> {
     // Prevent duplicate user by email
     if (await this.fsaeUserService.doesUserExist(createSponsorDTO.email)) {
@@ -129,6 +184,43 @@ export class RegisterController {
 
       await this.initiateVerification(createSponsorDTO.email, createSponsorDTO.companyName)
 
+=======
+    })createUserDto: createFSAEUserDto): Promise<Admin> {
+      // Prevent duplicate user by email
+      if (await this.fsaeUserService.doesUserExist(createUserDto.email)) {
+        throw new HttpErrors.Conflict('Email already exists');
+      }
+
+      let hashedPassword = await this.passwordHasher.hashPassword(
+        createUserDto.password,
+      );
+
+      let newMember = this.sponsorRepository.create({
+        email: createUserDto.email,
+        username: createUserDto.username,
+        password: hashedPassword,
+        firstName: createUserDto.firstName,
+        lastName: createUserDto.lastName,
+        phoneNumber: createUserDto.phoneNumber,
+        activated: false,
+        verified: true, // TODO: restore verification
+        fsaeRole: FsaeRole.SPONSOR,
+        desc: createUserDto.desc,
+      });
+
+      /* const { verification, verificationCode } = await this.sendVerificationEmail(createUserDto.email, createUserDto.firstName ? createUserDto.firstName : 'Sppnsor');
+        
+        await this.verificationRepository.create({
+            email: createUserDto.email,
+            verificationCode: verificationCode,
+            createdAt: Date.now(),
+            expiresAt: Date.now() + 1000*60*10,
+            twilioId: verification.sid,
+            fsaeRole: FsaeRole.SPONSOR,
+            resentOnce: false
+        }); //TODO: Restore verification*/
+
+>>>>>>> origin/main
       return newMember;
     }
 
@@ -141,6 +233,7 @@ export class RegisterController {
           schema: getModelSchemaRef(CreateAlumniDTO)
         },
       }
+<<<<<<< HEAD
     })createAlumniDTO: CreateAlumniDTO): Promise<CreateAlumniDTO> {
     // Prevent duplicate user by email
     if (await this.fsaeUserService.doesUserExist(createAlumniDTO.email)) {
@@ -178,6 +271,44 @@ export class RegisterController {
         fsaeRole: FsaeRole.ADMIN,
         resentOnce: false
       });
+=======
+    })createUserDto: createFSAEUserDto): Promise<Admin> {
+      // Prevent duplicate user by email
+      if (await this.fsaeUserService.doesUserExist(createUserDto.email)) {
+        throw new HttpErrors.Conflict('Email already exists');
+      }
+
+      let hashedPassword = await this.passwordHasher.hashPassword(
+        createUserDto.password,
+      );
+
+      let newMember = this.alumniRepository.create({
+        email: createUserDto.email,
+        username: createUserDto.username,
+        password: hashedPassword,
+        firstName: createUserDto.firstName,
+        lastName: createUserDto.lastName,
+        phoneNumber: createUserDto.phoneNumber,
+        activated: false,
+        verified: true, // TODO: restore verification
+        fsaeRole: FsaeRole.ALUMNI,
+        desc: createUserDto.desc,
+      });
+
+      /*const { verification, verificationCode } = await this.sendVerificationEmail(createUserDto.email, createUserDto.firstName ? createUserDto.firstName : 'Alumni');
+        
+        await this.verificationRepository.create({
+            email: createUserDto.email,
+            verificationCode: verificationCode,
+            createdAt: Date.now(),
+            expiresAt: Date.now() + 1000*60*10,
+            twilioId: verification.sid,
+            fsaeRole: FsaeRole.ALUMNI,
+            resentOnce: false
+        });//TODO: Restore verification*/
+
+      return newMember;
+>>>>>>> origin/main
     }
 
     async sendVerificationEmail(email: string, firstName: string) {
