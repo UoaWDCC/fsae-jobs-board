@@ -40,7 +40,7 @@ export function LoginForm() {
       toast.success('Login Successful');
 
       // Redirect based on role
-      switch (userData.role) {
+      switch (role) {
         case 'unverified':
           navigate('/verify', {state: { email: email, password: password}, replace: true});
           break;
