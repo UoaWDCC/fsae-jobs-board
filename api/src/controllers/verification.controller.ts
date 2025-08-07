@@ -145,17 +145,14 @@ export class VerificationController {
         const verificationCode = await this.generator.generateCode();
 
         // Send a new verification email
-<<<<<<< HEAD
         let nameForVerificationEmail = "User"
         if ('firstName' in user) {
             nameForVerificationEmail = user.firstName
         } else if ('companyName' in user) {
             nameForVerificationEmail = user.companyName
         }
+        /*
         const newVerification = await this.twilioService.sendVerificationEmail(verification.email, nameForVerificationEmail, verificationCode);
-=======
-        /* const newVerification = await this.twilioService.sendVerificationEmail(verification.email, user.firstName, verificationCode);
->>>>>>> origin/main
         
         // Create a new verification record
         await this.verificationRepository.create({
@@ -166,7 +163,9 @@ export class VerificationController {
             verificationCode: verificationCode,
             twilioId: newVerification.sid,
             resentOnce: true
-        }); */
+        }); 
+        
+        */
 
         return true;
     }
