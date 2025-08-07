@@ -1,10 +1,5 @@
 import {
-  Count,
-  CountSchema,
-  Filter,
-  FilterExcludingWhere,
   repository,
-  Where,
 } from '@loopback/repository';
 import {
   post,
@@ -17,7 +12,7 @@ import {
   requestBody,
   response,
 } from '@loopback/rest';
-import {FsaeRole, Member} from '../models';
+import {FsaeRole} from '../models';
 import {MemberRepository} from '../repositories';
 import { authenticate } from '@loopback/authentication';
 import { authorize } from '@loopback/authorization';
