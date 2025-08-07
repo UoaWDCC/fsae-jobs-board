@@ -1,23 +1,14 @@
+import {repository,} from '@loopback/repository';
 import {
-  Count,
-  CountSchema,
-  Filter,
-  FilterExcludingWhere,
-  repository,
-  Where,
-} from '@loopback/repository';
-import {
-  post,
   param,
   get,
   getModelSchemaRef,
   patch,
-  put,
   del,
   requestBody,
   response,
 } from '@loopback/rest';
-import {Alumni, FsaeRole} from '../models';
+import {FsaeRole} from '../models';
 import {AlumniProfileDto, AlumniProfileDtoFields} from '../dtos/alumni-profile.dto';
 import {AlumniRepository} from '../repositories';
 import { authenticate } from '@loopback/authentication';
@@ -78,8 +69,6 @@ export class AlumniController {
     })
     alumniDto: Partial<AlumniProfileDto>,
   ): Promise<void> {
-    console.log('Updating alumni profile with data:', alumniDto);
-    console.log('Alumni ID:', id);
     await this.alumniRepository.updateById(id, alumniDto);
   }
 
