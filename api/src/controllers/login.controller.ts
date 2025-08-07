@@ -266,12 +266,30 @@ export class LoginController {
       throw new HttpErrors.Unauthorized('Invalid login credentials');
     }
 
+    // Check for missing required fields based on role
+    let hasMissingInfo = false;
+    const role = fsaeUser.role;
+    
+    // Define required fields for each role
+    if (role === FsaeRole.MEMBER) {
+      hasMissingInfo = !fsaeUser.firstName || fsaeUser.firstName === 'Fsae' ||
+                       !fsaeUser.lastName || fsaeUser.lastName === 'member' ||
+                       !fsaeUser.phoneNumber;
+    } else if (role === FsaeRole.ALUMNI) {
+      hasMissingInfo = !fsaeUser.firstName || fsaeUser.firstName === 'Fsae' ||
+                       !fsaeUser.lastName || fsaeUser.lastName === 'member' ||
+                       !fsaeUser.phoneNumber || !fsaeUser.company;
+    } else if (role === FsaeRole.SPONSOR) {
+      hasMissingInfo = !fsaeUser.company || !fsaeUser.name || !fsaeUser.phoneNumber;
+    }
+
     // Return Jwt Token
     let token = await this.jwtService.generateToken(fsaeUser);
     return {
       userId: fsaeUser.id as string,
       token: token,
       verified: fsaeUser.verified,
+      hasMissingInfo: hasMissingInfo,
     };
   }
 }
