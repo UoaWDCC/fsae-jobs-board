@@ -3,6 +3,7 @@ import { FsaeRole } from '../models';
 
 @model()
 export class AlumniProfileDto {
+  @property({type: 'string'}) id: string;
   @property({type: 'string'}) role: FsaeRole;
   @property({type: 'string'}) email: string;
   @property({type: 'string'}) username: string;
@@ -22,8 +23,7 @@ export class AlumniProfileDto {
   @property({type: 'string'}) lastName?: string;
   @property({type: 'string'}) subGroup?: string;
   @property({type: 'string'}) company?: string;
-
-  
+  //Thinking of having the createdAt field as well for potential future use.
 }
 
 export const AlumniProfileDtoFields = Object.fromEntries(
