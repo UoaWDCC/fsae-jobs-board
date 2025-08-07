@@ -3,7 +3,7 @@ import {FsaeUser} from './fsae-user.model';
 import { JobType } from './job-type';
 import { Education } from './education.model';
 
-@model()
+@model({settings: {strict: false}})
 export class Member extends FsaeUser {
   @property({
     type: 'string', 
@@ -23,13 +23,14 @@ export class Member extends FsaeUser {
     jsonSchema: {
       enum: Object.values(JobType),
     },
+    default: JobType.INTERNSHIP
   })
   lookingFor: JobType;
 
   @property({
     type: 'array',
     itemType: Education,
-    required: true,
+    required: false, // "required: true" demands non-empty arrays, so it is turned off here
     default: [],
   })
   education: Education[];
@@ -37,7 +38,7 @@ export class Member extends FsaeUser {
   @property({
     type: 'array',
     itemType: 'string',
-    required: true,
+    required: false, // "required: true" demands non-empty arrays, so it is turned off here
     default: []
   })
   skills: string[];
@@ -46,37 +47,36 @@ export class Member extends FsaeUser {
     The following CV properties (cvData, cvFileName, cvMimeType, cvSize, cvUploadedAt and hasCV)
     may be subject to change in the future (it would be desireable to store CVs in some way other
     than embedding them in the Member model)
-    All of these CV properties (except for hasCV) are left as optional in the model.
   */
   @property({
     type: 'buffer',
     mongodb: { dataType: 'binData' },
   })
-  cvData?: Buffer;
+  cvData: Buffer;
 
   @property({
     type: 'string',
     default: '',
   })
-  cvFileName?: string;
+  cvFileName: string;
 
   @property({
     type: 'string',
     default: '',
   })
-  cvMimeType?: string;
+  cvMimeType: string;
 
   @property({
     type: 'number',
     default: 0,
   })
-  cvSize?: number;
+  cvSize: number;
 
   @property({
     type: 'date',
     default: () => new Date(),
   })
-  cvUploadedAt?: Date;
+  cvUploadedAt: Date;
 
   @property({
     type: 'boolean',

@@ -11,14 +11,14 @@ export class Sponsor extends FsaeUser {
 
   @property({
     type: 'string', 
-    required: true,
+    required: false, // "required: true" demands non-empty strings, so it is turned off here
     default: ""
   })
   websiteURL: string;
 
   @property({
     type: 'string', 
-    required: true,
+    required: false, // "required: true" demands non-empty strings, so it is turned off here
     default: ""
   })
   industry: string;

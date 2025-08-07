@@ -17,7 +17,7 @@ export class Alumni extends FsaeUser {
 
   @property({
     type: 'string', 
-    required: true,
+    required: false,
     default: ""
   })
   companyName: string;
