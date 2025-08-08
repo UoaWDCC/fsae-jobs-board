@@ -23,7 +23,9 @@ describe('Tests successful user signup flow', () => {
     cy.task('deleteUsersByEmail', `validstudent@gmail.com`); // delete any existing user with this email
     fillFields('student');
     cy.get('button[type="submit"]').click();
-    cy.url().should('include', '/verify');
+    cy.url().should('include', '/login');
+    // '/verify' is the route for email verification which has not been implemented yet
+    // cy.url().should('include', '/verify');
   });
 
   it('should sign up a new sponsor user with valid fields filled', () => {
@@ -31,7 +33,8 @@ describe('Tests successful user signup flow', () => {
     cy.task('deleteUsersByEmail', `validsponsor@gmail.com`); // delete any existing user with this email
     fillFields('sponsor');
     cy.get('button[type="submit"]').click();
-    cy.url().should('include', '/verify');
+    cy.url().should('include', '/login');
+    // cy.url().should('include', '/verify');
   });
 
   it('should sign up a new alumni user with valid fields filled', () => {
@@ -39,7 +42,8 @@ describe('Tests successful user signup flow', () => {
     cy.task('deleteUsersByEmail', `validalumni@gmail.com`); // delete any existing user with this email
     fillFields('alumni');
     cy.get('button[type="submit"]').click();
-    cy.url().should('include', '/verify');
+    cy.url().should('include', '/login');
+    // cy.url().should('include', '/verify');
   });
 })
 
