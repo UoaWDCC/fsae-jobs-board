@@ -8,18 +8,25 @@ beforeEach(() => {
 });
 
 describe('Tests successful edits to about me section in member profile', () => {
-  it('should save first name locally', () => {
-    cy.get('input[name="firstName"]').clear().type('newFirstName');
-    cy.get('button[name="profileEditSave"]').click({ force: true }); // force click to bypass toast message
-    Cypress.on('uncaught:exception', (err, runnable) => {
-      return false; // prevent cypress from failing the test due to unimplemented endpoints
-    });
-
-    cy.get('[data-test="fullName"]')
-      .invoke('text')
-      .then((fullName) => {
-        const firstName = fullName.trim().split(' ')[0]; // split by space
-        expect(firstName).to.eq('newFirstName');
+  const nameFields = [
+    { field: 'first', position: 0 },
+    { field: 'last', position: 1 },
+  ];
+  // Testing ability to edit first and last name in the about me section
+  nameFields.forEach(({ field, position }) => {
+    it(`should save ${field} name locally`, () => {
+      cy.get(`input[name="${field}Name"]`).clear().type(`new${field}Name`);
+      cy.get('button[name="profileEditSave"]').click({ force: true }); // force click to bypass toast message
+      Cypress.on('uncaught:exception', (err, runnable) => {
+        return false; // prevent cypress from failing the test due to unimplemented endpoints
       });
+
+      cy.get('[data-test="fullName"]')
+        .invoke('text')
+        .then((fullName) => {
+          const name = fullName.trim().split(' ')[position]; // split by space
+          expect(name).to.eq(`new${field}Name`);
+        });
+    });
   });
 });
