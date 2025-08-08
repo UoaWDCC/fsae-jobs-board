@@ -159,18 +159,19 @@ export function StudentProfile() {
           style={{ backgroundImage: `url(${PLACEHOLDER_BANNER})` }}
         />
         {(userData?.firstName && userData?.lastName) && (
-          <Text className={styles.name} pl={170} pt={110}>
+          <Text data-test="fullName" className={styles.name} pl={170} pt={110}>
             {userData.firstName} {userData.lastName}
           </Text>
         )}
         {userData?.subGroup && (
-          <Text size="xl" className={styles.subgroup} pl={170} pt={160}>
+          <Text data-test="subGroup" size="xl" className={styles.subgroup} pl={170} pt={160}>
             {userData.subGroup}
           </Text>
         )}
 
         <Avatar
           //src={userData?.avatar}
+          data-test="avatar"
           src={PLACEHOLDER_AVATAR}
           size={150}
           mt={-100}
@@ -179,7 +180,7 @@ export function StudentProfile() {
           //onClick={handleAvatarChange}
         />
         {/* TODO: sort out what is going on here as member.jobType doesn't exist in the model currently:*/}
-        <Text size="xl" mt={-40} ml={170} pt={10} className={styles.text}>
+        <Text data-test="jobType" size="xl" mt={-40} ml={170} pt={10} className={styles.text}>
           Looking for: {"Internship"}
         </Text>
       </Card>
@@ -198,15 +199,15 @@ export function StudentProfile() {
           <Box ml={20} mt={20}>
             <Title order={5}>Contact</Title>
             <Box pl={15} mt={10} className={styles.box}>
-              {userData?.email && <Text size="lg">{userData.email}</Text>}
-              {userData?.phoneNumber && <Text size="lg">{userData.phoneNumber}</Text>}
+              {userData?.email && <Text data-test="email" size="lg">{userData.email}</Text>}
+              {userData?.phoneNumber && <Text data-test="phoneNumber" size="lg">{userData.phoneNumber}</Text>}
               {!userData && <Loader color="blue" />}
             </Box>
           </Box>
 
           <Box ml={20} mt={30}>
             <Title order={5}>Skills</Title>
-            <Box pl={15} mt={10} className={styles.box}>
+            <Box data-test="skillsContainer" pl={15} mt={10} className={styles.box}>
               {userData?.skills && (
                 <>
                   {showMoreSkills
@@ -222,6 +223,7 @@ export function StudentProfile() {
                       ))}
                   {userData.skills?.length > 5 && (
                     <Button
+                      data-test="viewMoreSkills"
                       variant="subtle"
                       size="sm"
                       pl={0}
@@ -248,10 +250,10 @@ export function StudentProfile() {
               {userData?.desc && (
                 <>
                   {showMoreDescription ? (
-                    <Text size="md">{userData.desc}</Text>
+                    <Text test-data="aboutMe" size="md">{userData.desc}</Text>
                   ) : (
                     <>
-                      <Text size="md">{userData.desc.substring(0, 1200)}</Text>
+                      <Text test-data="aboutMe" size="md">{userData.desc.substring(0, 1200)}</Text>
                     </>
                   )}
                   {userData.desc?.length > 1200 ? (
@@ -281,7 +283,7 @@ export function StudentProfile() {
             <Box>
               <Title order={5}>Education</Title>
 
-              <Box pl={15} mt={10} className={styles.box}>
+              <Box data-test="educationContainer" pl={15} mt={10} className={styles.box}>
                 {userData?.education && (
                   <>
                     {showMoreEducation
@@ -315,7 +317,7 @@ export function StudentProfile() {
             </Box>
 
             {userData?.hasCV && (
-              <ActionIcon variant="transparent" color="#ffffff" size={200} mt={-40}
+              <ActionIcon data-test="buttonCV" variant="transparent" color="#ffffff" size={200} mt={-40}
               onClick={handleOpenCV}
               style={{ cursor: 'pointer' }}>
                 <img 
