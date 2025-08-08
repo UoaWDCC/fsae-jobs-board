@@ -29,4 +29,13 @@ describe('Tests successful edits to about me section in member profile', () => {
         });
     });
   });
+
+  it('should save email address locally', () => {
+    cy.get('input[name="email"]').clear().type('newemail@gmail.com');
+    cy.get('button[name="profileEditSave"]').click({ force: true });
+    Cypress.on('uncaught:exception', (err, runnable) => {
+      return false; // prevent cypress from failing the test due to unimplemented endpoints
+    });
+    cy.get('p[data-test="email"]').should('contains.text', 'newemail@gmail.com');
+  });
 });
