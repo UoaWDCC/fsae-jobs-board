@@ -162,7 +162,9 @@ export const CVTab = () => {
 
   return (
     <Box className={styles.dropContainer}>
-      <Button mb="lg"
+      <Button 
+        name="removeCV"
+        mb="lg"
         leftSection={<IconTrash size={14} />}
         color="red"
         onClick={handleClearCV}
@@ -179,7 +181,7 @@ export const CVTab = () => {
             <IconUpload stroke={2} className={styles.dropIcon} />
             <Text>Drop your file here</Text>
             <Text>or</Text>
-              <Button onClick={() => openRef.current?.()} className={styles.dropButton}>
+              <Button name="addCV" onClick={() => openRef.current?.()} className={styles.dropButton}>
                 Browse
               </Button>
             <Text mt="xs" size="sm" c="dimmed">

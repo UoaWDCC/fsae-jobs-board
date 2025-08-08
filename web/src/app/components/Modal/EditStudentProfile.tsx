@@ -115,10 +115,10 @@ export const EditStudentProfile = ({ close, userData, setUserData }: { close: ()
         </Tabs>
       )}
       <Box className={styles.buttonContainer}>
-        <Button className={styles.button1} onClick={close}>
+        <Button name="profileEditCancel" className={styles.button1} onClick={close}>
           Cancel
         </Button>
-        <Button onClick={saveFields}>Save</Button>
+        <Button name="profileEditSave" onClick={saveFields}>Save</Button>
       </Box>
     </Box>
   );

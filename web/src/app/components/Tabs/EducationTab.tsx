@@ -6,12 +6,12 @@ export const EducationTab = () => {
     <Box>
       <Box className={styles.box}>
         <Box style={{ flex: 1 }} className={styles.input}>
-          <TextInput label="University" size="md"/>
-          <TextInput label="Majors" size="md"/>
+          <TextInput name="university" label="University" size="md"/>
+          <TextInput name="majors" label="Majors" size="md"/>
         </Box>
         <Box style={{ flex: 1 }} className={styles.input}>
-          <TextInput label="Degree" size="md" />
-          <TextInput label="Graduation Year" size="md"/>
+          <TextInput name="degree" label="Degree" size="md" />
+          <TextInput name="graduationYear" label="Graduation Year" size="md"/>
         </Box>
       </Box>
     </Box>

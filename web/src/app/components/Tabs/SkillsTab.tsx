@@ -34,6 +34,7 @@ export const SkillsTab: React.FC = () => {
         }}
       >
         <TextInput
+          name="skills"
           value={newSkill}
           onChange={(event) => setNewSkill(event.currentTarget.value)}
           placeholder="Add a skill"
@@ -41,7 +42,7 @@ export const SkillsTab: React.FC = () => {
           size="md"
           classNames={{ wrapper: styles.wrapper }}
         />
-        <Button onClick={handleAddSkill} className={styles.addButton}>
+        <Button name="addSkill" onClick={handleAddSkill} className={styles.addButton}>
           Add
         </Button>
       </Flex>

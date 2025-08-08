@@ -12,17 +12,18 @@ export const AboutTab = ({ newUserData, setNewUserData }: { newUserData: Partial
     <Box>
       <Box className={styles.box}>
         <Box style={{ flex: 1 }} className={styles.input}>
-          <TextInput value={newUserData?.firstName} onChange={handleFieldChange("firstName")} label="First Name" size="md" />
-          <TextInput value={newUserData?.lastName} onChange={handleFieldChange("lastName")} label="Last Name" size="md" />
-          <TextInput value={newUserData?.email} onChange={handleFieldChange("email")} label="Email" size="md" />
+          <TextInput value={newUserData?.firstName} onChange={handleFieldChange("firstName")} name="firstName" label="First Name" size="md" />
+          <TextInput value={newUserData?.lastName} onChange={handleFieldChange("lastName")} name="lastName" label="Last Name" size="md" />
+          <TextInput value={newUserData?.email} onChange={handleFieldChange("email")} name="email" label="Email" size="md" />
         </Box>
         <Box style={{ flex: 1 }} className={styles.input}>
-          <TextInput value={newUserData?.phoneNumber} onChange={handleFieldChange("phoneNumber")} label="Phone Number" size="md" />
-          <TextInput label="Subgroup" size="md" />
-          <TextInput label="Looking For" size="md" />
+          <TextInput value={newUserData?.phoneNumber} onChange={handleFieldChange("phoneNumber")} name="phoneNumber" label="Phone Number" size="md" />
+          <TextInput name="subgroup" label="Subgroup" size="md" />
+          <TextInput name="lookingFor" label="Looking For" size="md" />
         </Box>
       </Box>
       <Textarea
+        name="aboutMe"
         label="About Me"
         value={newUserData?.desc} 
         onChange={handleFieldChange("desc")}
