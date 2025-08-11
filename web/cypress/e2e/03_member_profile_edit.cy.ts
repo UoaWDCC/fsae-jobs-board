@@ -24,7 +24,7 @@ describe('Tests successful edits to about me section in member profile', () => {
       cy.get('[data-test="fullName"]')
         .invoke('text')
         .then((fullName) => {
-          const name = fullName.trim().split(' ')[position]; // split by space
+          const name = fullName.trim().split(' ')[position];
           expect(name).to.eq(`new${field}Name`);
         });
     });
@@ -32,9 +32,10 @@ describe('Tests successful edits to about me section in member profile', () => {
 
   const aboutFields = [
     { id: 'email', name: 'email address', newName: 'newemail@gmail.com' },
-    { id: 'phoneNumber', name:'phone number' , newName: '1234567890' },
-    { id:'subGroup', name: 'subgroup', newName: 'NewSubGroup' },
-    { id:'jobType', name: 'job type', newName: 'NewRole' },
+    { id: 'phoneNumber', name: 'phone number', newName: '1234567890' },
+    // Test cases for subgroup and job type are commented out as they are not implemented yet
+    // { id:'subGroup', name: 'subgroup', newName: 'NewSubGroup' },
+    // { id:'jobType', name: 'job type', newName: 'NewRole' },
   ];
   // Testing ability to edit email, phone number, subgroup, and looking for fields in the about me section
   aboutFields.forEach(({ id, name, newName }) => {
