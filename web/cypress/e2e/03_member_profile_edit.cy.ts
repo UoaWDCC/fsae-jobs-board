@@ -30,12 +30,21 @@ describe('Tests successful edits to about me section in member profile', () => {
     });
   });
 
-  it('should save email address locally', () => {
-    cy.get('input[name="email"]').clear().type('newemail@gmail.com');
-    cy.get('button[name="profileEditSave"]').click({ force: true });
-    Cypress.on('uncaught:exception', (err, runnable) => {
-      return false; // prevent cypress from failing the test due to unimplemented endpoints
+  const aboutFields = [
+    { id: 'email', name: 'email address', newName: 'newemail@gmail.com' },
+    { id: 'phoneNumber', name:'phone number' , newName: '1234567890' },
+    { id:'subGroup', name: 'subgroup', newName: 'NewSubGroup' },
+    { id:'jobType', name: 'job type', newName: 'NewRole' },
+  ];
+  // Testing ability to edit email, phone number, subgroup, and looking for fields in the about me section
+  aboutFields.forEach(({ id, name, newName }) => {
+    it(`should save ${name} locally`, () => {
+      cy.get(`input[name="${id}"]`).clear().type(newName);
+      cy.get('button[name="profileEditSave"]').click({ force: true });
+      Cypress.on('uncaught:exception', (err, runnable) => {
+        return false; // prevent cypress from failing the test due to unimplemented endpoints
+      });
+      cy.get(`p[data-test="${id}"]`).should('contains.text', newName);
     });
-    cy.get('p[data-test="email"]').should('contains.text', 'newemail@gmail.com');
   });
 });
