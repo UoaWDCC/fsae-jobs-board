@@ -89,10 +89,10 @@ export class JobController {
     return jobAd;
   }
 
-  // TEMPORARY: Remove protection for testing job ads
-  // @authorize({
-  //   allowedRoles: [FsaeRole.ALUMNI, FsaeRole.SPONSOR],
-  // })
+  // Only alumni and sponsors can update jobs
+  @authorize({
+    allowedRoles: [FsaeRole.ALUMNI, FsaeRole.SPONSOR],
+  })
   @patch('/job/{id}')
   @response(204, {
     description: 'Updating job details by ID',
@@ -109,27 +109,25 @@ export class JobController {
     jobAd: JobAd,
   ): Promise<void> {
     const existingjobAd = await this.jobAdRepository.findById(id);
-    // TEMPORARY: Remove protection for testing job ads
-    // if (existingjobAd.publisherID !== this.currentUserProfile.id.toString()) {
-    //   throw new HttpErrors.Unauthorized('You are not authorized to update this job posting');
-    // }
+    if (existingjobAd.publisherID !== this.currentUserProfile.id.toString()) {
+      throw new HttpErrors.Unauthorized('You are not authorized to update this job posting');
+    }
     await this.jobAdRepository.updateById(id, jobAd);
   }
 
-  // TEMPORARY: Remove protection for testing job ads
-  // @authorize({
-  //   allowedRoles: [FsaeRole.ALUMNI, FsaeRole.SPONSOR],
-  // })
+  // Only alumni and sponsors can delete jobs
+  @authorize({
+    allowedRoles: [FsaeRole.ALUMNI, FsaeRole.SPONSOR],
+  })
   @del('/job/{id}')
   @response(204, {
     description: 'Deleting job postings by ID',
   })
   async deleteById(@param.path.string('id') id: string): Promise<void> {
     const existingJobAd = await this.jobAdRepository.findById(id);
-    // TEMPORARY: Remove protection for testing job ads
-    // if (existingJobAd.publisherID.toString() !== this.currentUserProfile.id.toString()) {
-    //   throw new HttpErrors.Unauthorized('You are not authorized to delete this job posting');
-    // }
+    if (existingJobAd.publisherID.toString() !== this.currentUserProfile.id.toString()) {
+      throw new HttpErrors.Unauthorized('You are not authorized to delete this job posting');
+    }
     await this.jobAdRepository.deleteById(id);
   }
 }
