@@ -18,7 +18,7 @@ export const AboutTab = ({ newUserData, setNewUserData }: { newUserData: Partial
         </Box>
         <Box style={{ flex: 1 }} className={styles.input}>
           <TextInput value={newUserData?.phoneNumber} onChange={handleFieldChange("phoneNumber")} name="phoneNumber" label="Phone Number" size="md" />
-          <TextInput name="subgroup" label="Subgroup" size="md" />
+          <TextInput name="subGroup" label="Subgroup" size="md" />
           <TextInput name="lookingFor" label="Looking For" size="md" />
         </Box>
       </Box>
