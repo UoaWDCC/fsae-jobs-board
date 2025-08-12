@@ -250,10 +250,10 @@ export function StudentProfile() {
               {userData?.desc && (
                 <>
                   {showMoreDescription ? (
-                    <Text test-data="aboutMe" size="md">{userData.desc}</Text>
+                    <Text data-test="aboutMe" size="md">{userData.desc}</Text>
                   ) : (
                     <>
-                      <Text test-data="aboutMe" size="md">{userData.desc.substring(0, 1200)}</Text>
+                      <Text data-test="aboutMe" size="md">{userData.desc.substring(0, 1200)}</Text>
                     </>
                   )}
                   {userData.desc?.length > 1200 ? (
