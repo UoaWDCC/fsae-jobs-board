@@ -299,6 +299,7 @@ export function StudentProfile() {
                         ))}
                     {userData.education?.length > 4 && (
                       <Button
+                        data-test="showMoreEducation"
                         variant="subtle"
                         size="sm"
                         pl={0}
