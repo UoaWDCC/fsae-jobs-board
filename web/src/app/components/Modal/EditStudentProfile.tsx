@@ -94,7 +94,7 @@ export const EditStudentProfile = ({ close, userData, setUserData }: { close: ()
         >
           <Tabs.List>
             {tabOptions.map((tab) => (
-              <Tabs.Tab key={tab.value} value={tab.value}>
+              <Tabs.Tab data-test={`${tab.value}TabEditButton`} key={tab.value} value={tab.value}>
                 {tab.label}
               </Tabs.Tab>
             ))}
