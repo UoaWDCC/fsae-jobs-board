@@ -256,7 +256,7 @@ export class LoginController {
     }
 
     let fsaeUser = userSearchResults[0];
-
+    
     // Verify Credentials
     let passwordsMatched = await this.passwordHasher.comparePassword(
       credentials.password,
@@ -270,17 +270,21 @@ export class LoginController {
     let hasMissingInfo = false;
     const role = fsaeUser.role;
     
-    // Define required fields for each role
-    if (role === FsaeRole.MEMBER) {
-      hasMissingInfo = !fsaeUser.firstName || fsaeUser.firstName === 'Fsae' ||
-                       !fsaeUser.lastName || fsaeUser.lastName === 'member' ||
-                       !fsaeUser.phoneNumber;
+    // Define required fields for each role (check for both missing and empty strings)
+    if (role === FsaeRole.MEMBER) {  
+      hasMissingInfo = !fsaeUser.firstName || fsaeUser.firstName === '' ||
+                       !fsaeUser.lastName || fsaeUser.lastName === '' ||
+                       !fsaeUser.phoneNumber || fsaeUser.phoneNumber === '';
+                       
     } else if (role === FsaeRole.ALUMNI) {
-      hasMissingInfo = !fsaeUser.firstName || fsaeUser.firstName === 'Fsae' ||
-                       !fsaeUser.lastName || fsaeUser.lastName === 'member' ||
-                       !fsaeUser.phoneNumber || !fsaeUser.company;
+      hasMissingInfo = !fsaeUser.firstName || fsaeUser.firstName === '' ||
+                       !fsaeUser.lastName || fsaeUser.lastName === '' ||
+                       !fsaeUser.phoneNumber || fsaeUser.phoneNumber === '' ||
+                       !fsaeUser.company || fsaeUser.company === '';
     } else if (role === FsaeRole.SPONSOR) {
-      hasMissingInfo = !fsaeUser.company || !fsaeUser.name || !fsaeUser.phoneNumber;
+      hasMissingInfo = !fsaeUser.company || fsaeUser.company === '' ||
+                       !fsaeUser.name || fsaeUser.name === '' ||
+                       !fsaeUser.phoneNumber || fsaeUser.phoneNumber === '';
     }
 
     // Return Jwt Token
