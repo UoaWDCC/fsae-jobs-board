@@ -33,10 +33,18 @@ export function LoginForm() {
 
   async function onLogin() {
     try {
-      const { role, id } = await login(email, password);
+      const { role, id, hasMissingInfo } = await login(email, password);
       console.log(role);
       dispatch(setRole(role));
       dispatch(setId(id));
+
+      // Check if profile needs completion
+      if (hasMissingInfo && role !== 'admin') {
+        navigate('/complete-profile', { replace: true });
+        return;
+      }
+
+      // Only show success toast if profile is complete
       toast.success('Login Successful');
 
       // Redirect based on role

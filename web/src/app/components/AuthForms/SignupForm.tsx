@@ -116,11 +116,11 @@ const SignupForm = ({ role }: { role: Role }) => {
     const formData = new FormData(event.target as HTMLFormElement);
     const data = Object.fromEntries(formData.entries());
 
-    // Todo: Redirect or do something after successful registration
+    // After successful registration, navigate to login page with credentials
     if (role === Role.Member) {
-      register_member(data as unknown as createFSAEUserDto).then((response) => {
+      register_member(data as unknown as createFSAEUserDto).then(() => {
         toast.success('Student Registration Successful');
-        //navigate('/verify', { TODO: restore verification
+        // Redirect to login page with credentials
         navigate('/login', {
           state: {
             email: formData.get('email'),
@@ -132,9 +132,9 @@ const SignupForm = ({ role }: { role: Role }) => {
         toast.error(error.toString());
       })
     } else if (role === Role.Sponsor) {
-      register_sponsor(data as unknown as createFSAEUserDto).then((response) => {
+      register_sponsor(data as unknown as createFSAEUserDto).then(() => {
         toast.success('Sponsor Registration Successful');
-        //navigate('/verify', { TODO: restore verification
+        // Redirect to login page with credentials
         navigate('/login', {
           state: {
             email: formData.get('email'),
@@ -146,9 +146,9 @@ const SignupForm = ({ role }: { role: Role }) => {
         toast.error(error.toString());
       })
     } else if (role === Role.Alumni) {
-      register_alumni(data as unknown as createFSAEUserDto).then((response) => {
+      register_alumni(data as unknown as createFSAEUserDto).then(() => {
         toast.success('Alumni Registration Successful');
-        //navigate('/verify', { TODO: restore verification
+        // Redirect to login page with credentials
         navigate('/login', {
           state: {
             email: formData.get('email'),

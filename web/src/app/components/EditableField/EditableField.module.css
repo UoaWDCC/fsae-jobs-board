@@ -1,0 +1,38 @@
+.value {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+  min-height: 32px;
+}
+
+.value:hover {
+  background-color: var(--mantine-color-gray-1);
+}
+
+.editingContainer {
+  width: 100%;
+  max-width: 400px;
+}
+
+.editInput {
+  width: 100%;
+}
+
+.readOnly {
+  color: var(--mantine-color-gray-7);
+}
+
+/* Dark theme support */
+[data-mantine-color-scheme="dark"] .value:hover {
+  background-color: var(--mantine-color-dark-5);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .editingContainer {
+    max-width: 100%;
+  }
+}
