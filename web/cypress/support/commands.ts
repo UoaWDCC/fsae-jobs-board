@@ -35,3 +35,17 @@
 //     }
 //   }
 // }
+
+Cypress.Commands.add('makeApiRequest', (method: string, url: string) => {
+  cy.window().then((win) => {
+    const token = win.localStorage.getItem('accessToken') || '';
+    cy.log('TOKEN', token);
+    return cy.request({
+      method: method,
+      url: url,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+  });
+});
