@@ -1,4 +1,5 @@
-import { Card, Avatar, Text, Box, Title, Button, Grid, Flex, Loader } from '@mantine/core';
+import { Card, Avatar, Box, Title, Button, Grid, Flex, Loader } from '@mantine/core';
+import { EditableField } from '../../components/EditableField';
 import styles from '../../styles/SponsorProfile.module.css';
 import { useEffect, useState } from 'react';
 import { IconPlus } from '@tabler/icons-react';
@@ -33,7 +34,6 @@ export function SponsorProfile() {
   const [modalTitle, setModalTitle] = useState('');
   const [openProfileModal, setOpenProfileModal] = useState(false);
 
-  const [showMoreDescription, setShowMoreDescription] = useState(false);
 
   const [userData, setUserData] = useState<Sponsor | null>(null);
   const [jobData, setJobData] = useState<JobCardProps[]>([]);
@@ -41,6 +41,7 @@ export function SponsorProfile() {
   const [newUserData, setNewUserData] = useState<Partial<Sponsor> | null>(null); // partial because the database schema is currently messed up
 
   const [isLocalProfile, setIsLocalProfile] = useState(false) // Is this profile this user's profile (aka. should we show the edit button)
+  const [isCompanyNameEditing, setIsCompanyNameEditing] = useState(false);
   
   const userRole = useSelector((state: RootState) => state.user.role); // the id of the local user
   const userId = useSelector((state: RootState) => state.user.id); // the id of the local user
@@ -206,11 +207,28 @@ export function SponsorProfile() {
           onClick={handleBannerChange}
           style={{ backgroundImage: `url(${PLACEHOLDER_BANNER})` }}
         />
-        {userData?.name && (
-          <Text className={styles.name} pl={170} pt={140}>
-            {userData.name}
-          </Text>
-        )}
+        <Box pl={170} pt={140}>
+          <EditableField
+            value={userData?.name || ''}
+            label="Company Name"
+            placeholder="Click to add company name"
+            fieldName="name"
+            userId={id as string}
+            userRole="sponsor"
+            onUpdate={(_, value) => {
+              if (userData) {
+                setUserData({ ...userData, name: value });
+              }
+            }}
+            editable={isLocalProfile}
+            required
+            validation={(value) => {
+              if (!value.trim()) return 'Company name is required';
+              return null;
+            }}
+            onEditingChange={setIsCompanyNameEditing}
+          />
+        </Box>
 
         <Avatar
           src={userData?.logo ?? PLACEHOLDER_AVATAR}
@@ -220,9 +238,22 @@ export function SponsorProfile() {
           className={styles.avatar}
           onClick={handleAvatarChange}
         />
-        <Text size="lg" mt={-30} ml={170} className={styles.text}>
-          {userData?.industry}
-        </Text>
+        <Box pl={170} pt={160} className={`${styles.sponsorIndustryContainer} ${isCompanyNameEditing ? styles.shifted : ''}`}>
+          <EditableField
+            value={userData?.industry || ''}
+            label="Industry"
+            placeholder="Click to add industry"
+            fieldName="industry"
+            userId={id as string}
+            userRole="sponsor"
+            onUpdate={(_, value) => {
+              if (userData) {
+                setUserData({ ...userData, industry: value });
+              }
+            }}
+            editable={isLocalProfile}
+          />
+        </Box>
       </Card>
 
       <Flex className={styles.profileBtn}>
@@ -235,9 +266,64 @@ export function SponsorProfile() {
           <Box ml={20} mt={15}>
             <Title order={5}>Contact</Title>
             <Box pl={15} mt={10} className={styles.box}>
-              {userData?.email && <Text size="md">{userData.email}</Text>}
-              {userData?.phoneNumber && <Text size="lg">{userData.phoneNumber}</Text>}
-              {!userData && <Loader color="blue" />}
+              {userData ? (
+                <>
+                  <EditableField
+                    value={userData.email}
+                    label="Email"
+                    placeholder="Click to add email"
+                    fieldName="email"
+                    userId={id as string}
+                    userRole="sponsor"
+                    type="email"
+                    onUpdate={(_, value) => {
+                      setUserData({ ...userData, email: value });
+                    }}
+                    editable={isLocalProfile}
+                    required
+                    validation={(value) => {
+                      const emailPattern = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i;
+                      if (!emailPattern.test(value)) return 'Please enter a valid email';
+                      return null;
+                    }}
+                  />
+                  <EditableField
+                    value={userData.phoneNumber}
+                    label="Phone Number"
+                    placeholder="Click to add phone number"
+                    fieldName="phoneNumber"
+                    userId={id as string}
+                    userRole="sponsor"
+                    type="tel"
+                    onUpdate={(_, value) => {
+                      setUserData({ ...userData, phoneNumber: value });
+                    }}
+                    editable={isLocalProfile}
+                    required
+                  />
+                  <EditableField
+                    value={userData.websiteURL || ''}
+                    label="Website"
+                    placeholder="Click to add website URL"
+                    fieldName="websiteURL"
+                    userId={id as string}
+                    userRole="sponsor"
+                    type="text"
+                    onUpdate={(_, value) => {
+                      setUserData({ ...userData, websiteURL: value });
+                    }}
+                    editable={isLocalProfile}
+                    validation={(value) => {
+                      if (value && !value.match(/^https?:\/\/.+/)) {
+                        return 'Please enter a valid URL (starting with http:// or https://)';
+                      }
+                      return null;
+                    }}
+                  />
+                </>
+              ) : (
+                <Loader color="blue" />
+              )}
             </Box>
           </Box>
         </Grid.Col>
@@ -247,32 +333,25 @@ export function SponsorProfile() {
             {/* ABOUT ME SECTION */}
             <Title order={5}>About Me</Title>
             <Box pl={15} mt={10} className={styles.box}>
-              {/* Conditionally render the full description based on showMore state */}
-              {userData?.desc && (
-                <>
-                  {showMoreDescription ? (
-                    <Text size="md">{userData.desc}</Text>
-                  ) : (
-                    <>
-                      <Text size="md">{userData.desc.substring(0, 1200)}</Text>
-                    </>
-                  )}
-                  {userData.desc?.length > 1200 ? (
-                    <Button
-                      variant="subtle"
-                      size="sm"
-                      pl={0}
-                      pr={0}
-                      pt={0}
-                      pb={0}
-                      onClick={() => setShowMoreDescription(!showMoreDescription)}
-                    >
-                      {showMoreDescription ? 'Show less' : 'View more'}
-                    </Button>
-                  ) : null}
-                </>
+              {userData ? (
+                <EditableField
+                  value={userData.desc || ''}
+                  label="About Us"
+                  placeholder="Click to add a description about your company..."
+                  fieldName="desc"
+                  userId={id as string}
+                  userRole="sponsor"
+                  type="textarea"
+                  onUpdate={(_, value) => {
+                    setUserData({ ...userData, desc: value });
+                  }}
+                  editable={isLocalProfile}
+                  maxLength={1500}
+                  minRows={4}
+                />
+              ) : (
+                <Loader color="blue" />
               )}
-              {!userData?.desc && <Loader color="blue" />}
             </Box>
           </Box>
           <Box
