@@ -19,7 +19,6 @@ describe('Tests successful edits to about me section in member profile', () => {
       Cypress.on('uncaught:exception', (err, runnable) => {
         return false; // prevent cypress from failing the test due to unimplemented endpoints
       });
-
       cy.get('[data-test="fullName"]')
         .invoke('text')
         .then((fullName) => {
@@ -60,7 +59,7 @@ describe('Tests successful edits to education section in member profile', () => 
   it('should add a new education entry locally', () => {
     let initialEducationCount = 0;
     cy.get('button[data-test="showMoreEducation"]').click();
-    cy.get('div[data-test="educationContainer"]') // replace with your selector for the container
+    cy.get('div[data-test="educationContainer"]')
       .children()
       .its('length')
       .then((count: number) => {
@@ -75,6 +74,8 @@ describe('Tests successful edits to education section in member profile', () => 
         Cypress.on('uncaught:exception', (err, runnable) => {
           return false; // prevent cypress from failing the test due to unimplemented endpoints
         });
+        // checking to see if a new education element was added to the container
+        // it is made up of 2 elemenets, so we check for 2 more than initial count
         cy.get('div[data-test="educationContainer"]')
           .children()
           .its('length')
@@ -87,7 +88,7 @@ describe('Tests successful edits to skills section in member profile', () => {
   it('should add a new skill locally', () => {
     let initialSkillsCount = 0;
     cy.get('button[data-test="viewMoreSkills"]').click();
-    cy.get('div[data-test="skillsContainer"]') // replace with your selector for the container
+    cy.get('div[data-test="skillsContainer"]')
       .children()
       .its('length')
       .then((count: number) => {
@@ -100,6 +101,7 @@ describe('Tests successful edits to skills section in member profile', () => {
         Cypress.on('uncaught:exception', (err, runnable) => {
           return false; // prevent cypress from failing the test due to unimplemented endpoints
         });
+        // checking if a new skill element was added to the container
         cy.get('div[data-test="skillsContainer"]')
           .children()
           .its('length')
@@ -120,6 +122,7 @@ describe('Tests successful edits to CV section in member profile', () => {
     Cypress.on('uncaught:exception', (err, runnable) => {
       return false; // prevent cypress from failing the test due to unimplemented endpoints
     });
+    // checking in database to see if the CV file was uploaded successfully
     cy.url().then((url) => {
       const id = url.split('/').pop() || '';
       cy.log('ID', id);
@@ -140,6 +143,7 @@ describe('Tests successful edits to CV section in member profile', () => {
     Cypress.on('uncaught:exception', (err, runnable) => {
       return false; // prevent cypress from failing the test due to unimplemented endpoints
     });
+    // checking in database to see if the CV file was deleted successfully
     cy.url().then((url) => {
       const id = url.split('/').pop() || '';
       cy.log('ID', id);
