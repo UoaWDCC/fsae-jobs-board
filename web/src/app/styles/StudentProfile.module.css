@@ -93,11 +93,6 @@
   color: var(--mantine-color-customWhite-1);
   pointer-events: auto;
   z-index: 10;
-  transition: transform 0.2s ease;
-}
-
-.subgroupContainer.shifted {
-  transform: translateY(50px);
 }
 
 .box {

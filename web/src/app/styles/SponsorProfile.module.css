@@ -50,21 +50,6 @@
   color: var(--mantine-color-customWhite-1);
 }
 
-.alumniSubgroupContainer {
-  transition: transform 0.2s ease;
-}
-
-.alumniSubgroupContainer.shifted {
-  transform: translateY(50px);
-}
-
-.sponsorIndustryContainer {
-  transition: transform 0.2s ease;
-}
-
-.sponsorIndustryContainer.shifted {
-  transform: translateY(50px);
-}
 
 .box {
   border-left: 2px solid var(--mantine-color-customAzureBlue-1);

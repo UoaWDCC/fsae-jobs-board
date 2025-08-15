@@ -48,9 +48,6 @@ export function StudentProfile() {
 
   const [userData, setUserData] = useState<Member | null>(null);
   const [isLocalProfile, setIsLocalProfile] = useState(false) // Is this profile this user's profile (aka. should we show the edit button)
-  const [isFirstNameEditing, setIsFirstNameEditing] = useState(false);
-  const [isLastNameEditing, setIsLastNameEditing] = useState(false);
-  const isAnyNameEditing = isFirstNameEditing || isLastNameEditing;
   
   const userRole = useSelector((state: RootState) => state.user.role); // the id of the local user
   const userId = useSelector((state: RootState) => state.user.id); // the id of the local user
@@ -183,7 +180,6 @@ export function StudentProfile() {
             }}
             className={styles.firstName}
             size={undefined}
-            onEditingChange={setIsFirstNameEditing}
           />
           <EditableField
             value={userData?.lastName || ''}
@@ -204,10 +200,9 @@ export function StudentProfile() {
             }}
             className={styles.lastName}
             size={undefined}
-            onEditingChange={setIsLastNameEditing}
           />
         </Box>
-        <Box className={`${styles.subgroupContainer} ${isAnyNameEditing ? styles.shifted : ''}`}>
+        <Box className={styles.subgroupContainer}>
           <EditableField
             value={userData?.subGroup || ''}
             placeholder="FSAE sub-team"

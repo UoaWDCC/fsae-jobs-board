@@ -4,7 +4,6 @@ import {
   Textarea,
   ActionIcon,
   Group,
-  Box,
   Loader,
 } from '@mantine/core';
 import { useState, useEffect } from 'react';
@@ -28,7 +27,6 @@ interface EditableFieldProps {
   minRows?: number;
   className?: string;
   size?: string;
-  onEditingChange?: (isEditing: boolean) => void;
 }
 
 export function EditableField({
@@ -47,7 +45,6 @@ export function EditableField({
   minRows = 3,
   className,
   size = 'lg',
-  onEditingChange,
 }: EditableFieldProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(value || '');
@@ -116,7 +113,6 @@ export function EditableField({
       // Update local state
       onUpdate(fieldName, editValue);
       setIsEditing(false);
-      onEditingChange?.(false);
       toast.success(`${label || fieldName} updated successfully`);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to update field';
@@ -130,7 +126,6 @@ export function EditableField({
   const handleCancel = () => {
     setEditValue(originalValue);
     setIsEditing(false);
-    onEditingChange?.(false);
     setError(null);
   };
 
@@ -173,65 +168,67 @@ export function EditableField({
   }
 
   if (isEditing) {
-    return (
-      <Box className={styles.editingContainer}>
-        {type === 'textarea' ? (
-          <Textarea
-            value={editValue}
-            onChange={(e) => handleValueChange(e.target.value)}
-            onKeyDown={handleKeyDown}
-            error={currentError}
-            placeholder={placeholder}
-            autosize
-            minRows={minRows}
-            maxLength={maxLength}
-            autoFocus
-            className={styles.editInput}
-            styles={{
-              input: currentError && required ? { borderColor: 'var(--mantine-color-red-5)' } : undefined
-            }}
-          />
-        ) : (
-          <TextInput
-            value={editValue}
-            onChange={(e) => handleValueChange(e.target.value)}
-            onKeyDown={handleKeyDown}
-            type={type}
-            error={currentError}
-            placeholder={placeholder}
-            maxLength={maxLength}
-            autoFocus
-            className={styles.editInput}
-            styles={{
-              input: currentError && required ? { borderColor: 'var(--mantine-color-red-5)' } : undefined
-            }}
-          />
-        )}
-        
-        <Group gap="xs" mt="xs">
-          <ActionIcon
-            onClick={handleSave}
-            loading={isLoading}
-            variant="filled"
-            color={!hasChanges || !isValid ? "gray" : "green"}
-            size="sm"
-            disabled={isLoading || !hasChanges || !isValid}
-            title={!hasChanges ? "No changes to save" : !isValid ? "Please fix errors first" : "Save changes"}
-          >
-            {isLoading ? <Loader size="xs" /> : <IconCheck size={14} />}
-          </ActionIcon>
-          <ActionIcon
-            onClick={handleCancel}
-            variant="light"
-            color="red"
-            size="sm"
-            disabled={isLoading}
-            title="Cancel editing"
-          >
-            <IconX size={14} />
-          </ActionIcon>
-        </Group>
-      </Box>
+    const buttonGroup = (
+      <Group gap={4}>
+        <ActionIcon
+          onClick={handleSave}
+          loading={isLoading}
+          variant="filled"
+          color={!hasChanges || !isValid ? "gray" : "green"}
+          size="xs"
+          disabled={isLoading || !hasChanges || !isValid}
+          title={!hasChanges ? "No changes to save" : !isValid ? "Please fix errors first" : "Save changes"}
+        >
+          {isLoading ? <Loader size="xs" /> : <IconCheck size={12} />}
+        </ActionIcon>
+        <ActionIcon
+          onClick={handleCancel}
+          variant="light"
+          color="red"
+          size="xs"
+          disabled={isLoading}
+          title="Cancel editing"
+        >
+          <IconX size={12} />
+        </ActionIcon>
+      </Group>
+    );
+
+    return type === 'textarea' ? (
+      <Textarea
+        value={editValue}
+        onChange={(e) => handleValueChange(e.target.value)}
+        onKeyDown={handleKeyDown}
+        error={currentError}
+        placeholder={placeholder}
+        autosize
+        minRows={minRows}
+        maxLength={maxLength}
+        autoFocus
+        className={styles.editInput}
+        styles={{
+          input: currentError && required ? { borderColor: 'var(--mantine-color-red-5)' } : undefined
+        }}
+        rightSection={buttonGroup}
+        rightSectionWidth={60}
+      />
+    ) : (
+      <TextInput
+        value={editValue}
+        onChange={(e) => handleValueChange(e.target.value)}
+        onKeyDown={handleKeyDown}
+        type={type}
+        error={currentError}
+        placeholder={placeholder}
+        maxLength={maxLength}
+        autoFocus
+        className={styles.editInput}
+        styles={{
+          input: currentError && required ? { borderColor: 'var(--mantine-color-red-5)' } : undefined
+        }}
+        rightSection={buttonGroup}
+        rightSectionWidth={60}
+      />
     );
   }
 
@@ -239,10 +236,7 @@ export function EditableField({
     <Text 
       size={size as any} 
       className={className || styles.value}
-      onClick={() => {
-        setIsEditing(true);
-        onEditingChange?.(true);
-      }}
+      onClick={() => setIsEditing(true)}
     >
       {value || (
         <Text component="span" c="dimmed" fs="italic">

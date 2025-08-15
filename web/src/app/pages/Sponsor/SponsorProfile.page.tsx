@@ -41,7 +41,6 @@ export function SponsorProfile() {
   const [newUserData, setNewUserData] = useState<Partial<Sponsor> | null>(null); // partial because the database schema is currently messed up
 
   const [isLocalProfile, setIsLocalProfile] = useState(false) // Is this profile this user's profile (aka. should we show the edit button)
-  const [isCompanyNameEditing, setIsCompanyNameEditing] = useState(false);
   
   const userRole = useSelector((state: RootState) => state.user.role); // the id of the local user
   const userId = useSelector((state: RootState) => state.user.id); // the id of the local user
@@ -225,8 +224,7 @@ export function SponsorProfile() {
             validation={(value) => {
               if (!value.trim()) return 'Company name is required';
               return null;
-            }}
-            onEditingChange={setIsCompanyNameEditing}
+}}
           />
         </Box>
 
@@ -238,7 +236,7 @@ export function SponsorProfile() {
           className={styles.avatar}
           onClick={handleAvatarChange}
         />
-        <Box pl={170} pt={160} className={`${styles.sponsorIndustryContainer} ${isCompanyNameEditing ? styles.shifted : ''}`}>
+        <Box pl={170} pt={160}>
           <EditableField
             value={userData?.industry || ''}
             label="Industry"

@@ -36,9 +36,6 @@ export function AlumniProfile() {
   const [showMoreDescription, setShowMoreDescription] = useState(false);
   const [modalTitle, setModalTitle] = useState('');
   const [isLocalProfile, setIsLocalProfile] = useState(false) // Is this profile this user's profile (aka. should we show the edit button)
-  const [isFirstNameEditing, setIsFirstNameEditing] = useState(false);
-  const [isLastNameEditing, setIsLastNameEditing] = useState(false);
-  const isAnyNameEditing = isFirstNameEditing || isLastNameEditing;
   
   const userRole = useSelector((state: RootState) => state.user.role); // the id of the local user
   const userId = useSelector((state: RootState) => state.user.id); // the id of the local user
@@ -233,8 +230,7 @@ export function AlumniProfile() {
               validation={(value) => {
                 if (!value.trim()) return 'First name is required';
                 return null;
-              }}
-              onEditingChange={setIsFirstNameEditing}
+}}
             />
             <EditableField
               value={userData?.lastName || ''}
@@ -253,12 +249,11 @@ export function AlumniProfile() {
               validation={(value) => {
                 if (!value.trim()) return 'Last name is required';
                 return null;
-              }}
-              onEditingChange={setIsLastNameEditing}
+}}
             />
           </Flex>
         </Box>
-        <Box pl={170} pt={160} className={`${styles.alumniSubgroupContainer} ${isAnyNameEditing ? styles.shifted : ''}`}>
+        <Box pl={170} pt={160}>
           <EditableField
             value={userData?.subGroup || ''}
             label="Sub Group"
