@@ -70,10 +70,18 @@ export function ProfileCompletion({ userId, userRole, onComplete }: ProfileCompl
   const [profileData, setProfileData] = useState<Record<string, any>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [missingFields, setMissingFields] = useState<string[]>([]);
+  const [requiredFieldsToShow, setRequiredFieldsToShow] = useState<RequiredField[]>([]);
+  const [optionalFieldsToShow, setOptionalFieldsToShow] = useState<RequiredField[]>([]);
 
   const fields = fieldsByRole[userRole] || [];
   const requiredFields = fields.filter(f => f.required);
   const optionalFields = fields.filter(f => !f.required);
+
+  // Helper function to check if a field is truly empty (matches backend logic)
+  const isFieldEmpty = (fieldName: string): boolean => {
+    const value = profileData[fieldName];
+    return !value || value.trim() === '';
+  };
 
   useEffect(() => {
     fetchUserProfile();
@@ -98,12 +106,23 @@ export function ProfileCompletion({ userId, userRole, onComplete }: ProfileCompl
       const data = await response.json();
       setProfileData(data);
       
-      // Check for missing required fields
+      // Check for missing required fields (only truly empty fields, not placeholder values)
       const missing = requiredFields
-        .filter(field => !data[field.name] || data[field.name] === getDefaultValue(field.name))
+        .filter(field => !data[field.name] || data[field.name].trim() === '')
         .map(field => field.name);
       
       setMissingFields(missing);
+
+      // Set fields to show based on what's initially empty (these will remain visible during editing)
+      const emptyRequiredFields = requiredFields.filter(field => 
+        !data[field.name] || data[field.name].trim() === ''
+      );
+      const emptyOptionalFields = optionalFields.filter(field => 
+        !data[field.name] || data[field.name].trim() === ''
+      );
+      
+      setRequiredFieldsToShow(emptyRequiredFields);
+      setOptionalFieldsToShow(emptyOptionalFields);
     } catch (error) {
       toast.error('Failed to load profile data');
       console.error(error);
@@ -146,16 +165,14 @@ export function ProfileCompletion({ userId, userRole, onComplete }: ProfileCompl
         return newErrors;
       });
     }
+  };
 
-    // Update missing fields list
-    const field = fields.find(f => f.name === fieldName);
-    if (field?.required) {
-      if (value && value !== getDefaultValue(fieldName)) {
-        setMissingFields(prev => prev.filter(f => f !== fieldName));
-      } else if (!missingFields.includes(fieldName)) {
-        setMissingFields(prev => [...prev, fieldName]);
-      }
-    }
+  // Check if all required fields are complete (for submit validation)
+  const areAllRequiredFieldsComplete = (): boolean => {
+    return requiredFields.every(field => {
+      const value = profileData[field.name];
+      return value && value.trim() !== '';
+    });
   };
 
   const validateForm = (): boolean => {
@@ -163,7 +180,7 @@ export function ProfileCompletion({ userId, userRole, onComplete }: ProfileCompl
     
     requiredFields.forEach(field => {
       const value = profileData[field.name];
-      if (!value || value === getDefaultValue(field.name)) {
+      if (!value || value.trim() === '') {
         newErrors[field.name] = `${field.label} is required`;
       } else if (field.validation) {
         const error = field.validation(value);
@@ -228,7 +245,9 @@ export function ProfileCompletion({ userId, userRole, onComplete }: ProfileCompl
     );
   }
 
-  const hasRequiredFields = missingFields.length > 0;
+  const hasRequiredFields = requiredFieldsToShow.length > 0;
+  const hasOptionalFields = optionalFieldsToShow.length > 0;
+  const hasAnyFieldsToShow = hasRequiredFields || hasOptionalFields;
 
   return (
     <Card shadow="sm" padding="xl" radius="md" className={styles.container}>
@@ -244,26 +263,48 @@ export function ProfileCompletion({ userId, userRole, onComplete }: ProfileCompl
           </Alert>
         )}
 
+        {!hasAnyFieldsToShow && (
+          <Alert
+            icon={<IconAlertCircle size="1rem" />}
+            title="Profile Complete"
+            color="green"
+            variant="light"
+          >
+            Your profile is complete! All required information has been filled in.
+          </Alert>
+        )}
+
         <div>
           <Title order={2} mb="sm">
-            {hasRequiredFields ? 'Complete Your Profile' : 'Edit Profile'}
+            {hasRequiredFields ? 'Complete Your Profile' : hasAnyFieldsToShow ? 'Edit Profile' : 'Profile Complete'}
           </Title>
-          <Text c="dimmed" size="sm">
-            Fields marked with <Text component="span" c="red" inline>*</Text> are required
-          </Text>
+          {hasAnyFieldsToShow && (
+            <Text c="dimmed" size="sm">
+              Fields marked with <Text component="span" c="red" inline>*</Text> are required
+            </Text>
+          )}
         </div>
 
         {/* Required Fields Section */}
-        {requiredFields.length > 0 && (
+        {requiredFieldsToShow.length > 0 && (
           <div>
             <Group gap="xs" mb="md">
               <Text fw={500}>Required Information</Text>
-              <Badge color="red" variant="light" size="sm">
-                {missingFields.length} missing
-              </Badge>
+              {(() => {
+                const missingCount = requiredFields.filter(field => isFieldEmpty(field.name)).length;
+                return (
+                  <Badge 
+                    color={missingCount === 0 ? "green" : "red"} 
+                    variant="light" 
+                    size="sm"
+                  >
+                    {missingCount === 0 ? "Complete" : `${missingCount} missing`}
+                  </Badge>
+                );
+              })()}
             </Group>
             <Stack gap="md">
-              {requiredFields.map(field => (
+              {requiredFieldsToShow.map(field => (
                 <div key={field.name}>
                   {field.type === 'textarea' ? (
                     <Textarea
@@ -303,11 +344,11 @@ export function ProfileCompletion({ userId, userRole, onComplete }: ProfileCompl
         )}
 
         {/* Optional Fields Section */}
-        {optionalFields.length > 0 && (
+        {optionalFieldsToShow.length > 0 && (
           <div>
             <Text fw={500} mb="md">Optional Information</Text>
             <Stack gap="md">
-              {optionalFields.map(field => (
+              {optionalFieldsToShow.map(field => (
                 <div key={field.name}>
                   {field.type === 'textarea' ? (
                     <Textarea
@@ -332,23 +373,34 @@ export function ProfileCompletion({ userId, userRole, onComplete }: ProfileCompl
         )}
 
         <Group justify="space-between" mt="xl">
-          {!hasRequiredFields && (
+          {!hasAnyFieldsToShow ? (
             <Button
-              variant="subtle"
               onClick={() => navigate(`/profile/${userRole.toLowerCase()}/${userId}`)}
               disabled={submitting}
             >
-              Cancel
+              Go to Profile
             </Button>
+          ) : (
+            <>
+              {!hasRequiredFields && (
+                <Button
+                  variant="subtle"
+                  onClick={() => navigate(`/profile/${userRole.toLowerCase()}/${userId}`)}
+                  disabled={submitting}
+                >
+                  Cancel
+                </Button>
+              )}
+              <Button
+                loading={submitting}
+                onClick={handleSubmit}
+                disabled={!areAllRequiredFieldsComplete()}
+                style={{ marginLeft: hasRequiredFields ? 'auto' : undefined }}
+              >
+                {hasRequiredFields ? 'Complete Profile' : 'Save Changes'}
+              </Button>
+            </>
           )}
-          <Button
-            loading={submitting}
-            onClick={handleSubmit}
-            disabled={hasRequiredFields && missingFields.length > 0}
-            style={{ marginLeft: hasRequiredFields ? 'auto' : undefined }}
-          >
-            {hasRequiredFields ? 'Complete Profile' : 'Save Changes'}
-          </Button>
         </Group>
       </Stack>
     </Card>
