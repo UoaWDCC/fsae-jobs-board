@@ -32,7 +32,6 @@ export function StudentProfile() {
   // UseState for future modal implementation
   const { id } = useParams();
   const navigate = useNavigate();
-  const hasCV = useSelector((state: RootState) => state.user.hasCV);
 
   const [modalType, setModalType] = useState('');
   const [deactivateModalOpen, setDeactivateModalOpen] = useState(false); // look better into this stuff. im not really sure how we are using the modals :3
@@ -125,20 +124,8 @@ export function StudentProfile() {
           navigate("/404")
           return;
         }
-        // Temporary injection of placeholder fields as currently the database model doesnt have any
-        const userDataModifiedWithPlaceholders = userData ? {
-          ...userData,
-          skills: ['Placeholder1', 'Placeholder2', 'Placeholder3', 'React', 'C#', 'Git'],
-          education: [
-            'Major(s): Master of Software Engineering',
-            'Expected Graduation Date: 2026',
-            'Major(s): Part II Bachelor of Software Engineering',
-            'Graduation Date: 2024',
-            'Major(s): Bachelor of Science',
-            'Graduation Date: 2024',
-          ],
-        } : null
-        setUserData(userDataModifiedWithPlaceholders);
+        
+        setUserData(userData);
         setIsLocalProfile(userData.id == userId);
       } catch (err) {
         // TODO: proper error handling (eg. auth errors/forbidden pages etc.)

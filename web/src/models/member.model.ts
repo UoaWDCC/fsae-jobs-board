@@ -1,18 +1,17 @@
-export interface Member {
-  "id": string,
-  "email": string,
-  "activated": boolean,
-  "verified": boolean,
-  "role": string
-  "firstName": string,
-  "lastName": string,
-  "phoneNumber": string,
-  "desc": string,
-  "memberID": string | null,
-  "hasCV": string | null,
-  "subGroup": string | null,
-  "photo": string | null,
+import { Education } from "./education.model";
+import { FsaeUser } from "./fsae-user.model";
+import { JobType } from "./job-type";
 
-  "education" : string[] | null, // not in the database model yet
-  "skills" : string[] | null, // not in the database model yet
+export interface Member extends FsaeUser{
+  firstName: string;
+  lastName: string;
+  lookingFor: JobType;
+  education: Education[];
+  skills: string[];
+  cvData: Buffer;
+  cvFileName: string;
+  cvMimeType: string;
+  cvSize: number;
+  cvUploadedAt: Date;
+  hasCV: boolean;
 }
