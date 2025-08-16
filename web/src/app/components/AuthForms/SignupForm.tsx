@@ -144,7 +144,7 @@ const SignupForm = ({ role }: { role: Role }) => {
         toast.error(error.toString());
       })
     } else if (role === Role.Sponsor) {
-      register_sponsor(data as unknown as createFSAEUserDto).then((response) => {
+      register_sponsor(sanitisedData as unknown as createFSAEUserDto).then((response) => {
         // toast.success('Sponsor Registration Successful');
         navigate('/verify', {
           state: {
@@ -157,7 +157,7 @@ const SignupForm = ({ role }: { role: Role }) => {
         toast.error(error.toString());
       })
     } else if (role === Role.Alumni) {
-      register_alumni(data as unknown as createFSAEUserDto).then((response) => {
+      register_alumni(sanitisedData as unknown as createFSAEUserDto).then((response) => {
         // toast.success('Alumni Registration Successful');
         navigate('/verify', {
           state: {

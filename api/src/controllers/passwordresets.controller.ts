@@ -57,7 +57,7 @@ export class passwordResetsController {
         resetToken,
         createdAt: Date.now(),
         expiresAt: Date.now() + 1000 * 60 * 60 * 2, // 2 hours from now
-        fsaeRole : role,
+        role : role,
         twilioId: passwordResetEmail.sid,
       });
 

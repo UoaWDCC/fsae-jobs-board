@@ -215,7 +215,7 @@ export class LoginController {
     @inject(SecurityBindings.USER) currentUser: UserProfile,
   ): Promise<whoAmIResponse> {
     const userId = currentUser.id;
-    const role = currentUser.fsaeRole;
+    const role = currentUser.role;
 
     let user;
     switch (role) {

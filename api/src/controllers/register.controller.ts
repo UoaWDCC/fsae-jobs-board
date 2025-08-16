@@ -77,7 +77,7 @@ export class RegisterController {
     }
       let hashedPassword = await this.passwordHasher.hashPassword(createMemberDTO.password);
 
-      let newMember = this.memberRepository.create({
+      let newMember = await this.memberRepository.create({
           email: createMemberDTO.email,
           password: hashedPassword,
           role: FsaeRole.MEMBER,
@@ -93,7 +93,6 @@ export class RegisterController {
       });
 
       //await this.initiateVerification(createMemberDTO.email, createMemberDTO.firstName)
-
       return newMember;
     }
 
@@ -113,7 +112,7 @@ export class RegisterController {
     }
       let hashedPassword = await this.passwordHasher.hashPassword(createSponsorDTO.password);
 
-      let newMember = this.sponsorRepository.create({
+      let newMember = await this.sponsorRepository.create({
           email: createSponsorDTO.email,
           password: hashedPassword,
           role: FsaeRole.SPONSOR,
@@ -147,7 +146,7 @@ export class RegisterController {
     }
       let hashedPassword = await this.passwordHasher.hashPassword(createAlumniDTO.password);
 
-      let newAlumni = this.alumniRepository.create({
+      let newAlumni = await this.alumniRepository.create({
         email: createAlumniDTO.email,
         password: hashedPassword,
         role: FsaeRole.SPONSOR,
@@ -174,7 +173,7 @@ export class RegisterController {
         createdAt: Date.now(),
         expiresAt: Date.now() + 1000*60*10,
         twilioId: verification.sid,
-        fsaeRole: FsaeRole.ADMIN,
+        role: FsaeRole.ADMIN,
         resentOnce: false
       });
     }

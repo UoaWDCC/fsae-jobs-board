@@ -17,8 +17,9 @@ export class FsaeUser extends Entity {
     jsonSchema: {
       enum: Object.values(FsaeRole),
     },
+    default: FsaeRole.UNKNOWN
   })
-  role: FsaeRole = FsaeRole.UNKNOWN;
+  role: FsaeRole;
 
   @property({
     type: 'string', 

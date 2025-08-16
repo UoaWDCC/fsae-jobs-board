@@ -22,7 +22,7 @@ export class FsaeAuthorizationProvider implements Provider<Authorizer> {
     }
 
     // Check if role alllowed
-    const clientRole = userProfile.fsaeRole;
+    const clientRole = userProfile.role;
     const allowedRoles = metadata.allowedRoles;
     if (allowedRoles === undefined || allowedRoles.length === 0) {
       return AuthorizationDecision.DENY

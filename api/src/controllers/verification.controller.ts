@@ -66,7 +66,7 @@ export class VerificationController {
             throw new HttpErrors.BadRequest('Verification code expired, new code sent to email');
         }
 
-        const roleRepository = this.repositoryMap[verification.fsaeRole as 'member' | 'alumni' | 'sponsor' | 'admin'];
+        const roleRepository = this.repositoryMap[verification.role as 'member' | 'alumni' | 'sponsor' | 'admin'];
 
         if (!roleRepository) {
             throw new HttpErrors.InternalServerError('User role invalid');
@@ -110,7 +110,7 @@ export class VerificationController {
             throw new HttpErrors.NotFound('Verification record not found');
         }
 
-        const roleRepository = this.repositoryMap[verification.fsaeRole as 'member' | 'alumni' | 'sponsor' | 'admin'];
+        const roleRepository = this.repositoryMap[verification.role as 'member' | 'alumni' | 'sponsor' | 'admin'];
         if (!roleRepository) {
             throw new HttpErrors.InternalServerError('Role repository not found');
         }
@@ -157,7 +157,7 @@ export class VerificationController {
         // Create a new verification record
         await this.verificationRepository.create({
             email: verification.email,
-            fsaeRole: verification.fsaeRole,
+            role: verification.role,
             createdAt: Date.now(),
             expiresAt: Date.now() + 1000 * 60 * 10,
             verificationCode: verificationCode,
