@@ -23,10 +23,28 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../app/store';
 import { jwtDecode } from 'jwt-decode';
 import DeactivateAccountModal from '../../components/Modal/DeactivateAccountModal';
+import { JobType } from '@/models/job-type';
+import { SubGroup } from '@/models/subgroup.model';
         
 const PLACEHOLDER_BANNER = "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80"
 const PLACEHOLDER_AVATAR = "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png"
 
+const jobTypeDisplayMap: Record<JobType, string> = {
+  [JobType.GRAD_ROLE]: "Graduate Role",
+  [JobType.INTERNSHIP]: "Internship",
+  [JobType.PART_TIME]: "Part-time work",
+  [JobType.NOT_FOR_HIRE]: "None"
+}
+
+const subGroupDisplayMap: Record<SubGroup, string> = {
+  [SubGroup.UNKNOWN]: "Team Member",
+  [SubGroup.BUSINESS]: "Business Team",
+  [SubGroup.COMPOSITES]: "Composites Team",
+  [SubGroup.MECHANICAL]: "Mechanical Team",
+  [SubGroup.ELECTRICAL]: "Electrical Team",
+  [SubGroup.AUTONOMOUS]: "Autonomous Team",
+  [SubGroup.RACE_TEAM]: "Race Team",
+}
 
 export function StudentProfile() {
   // UseState for future modal implementation
@@ -142,32 +160,29 @@ export function StudentProfile() {
           h={250}
           className={styles.banner}
           //onClick={handleBannerChange}
-          //style={{ backgroundImage: `url(${userData.banner})` }}
-          style={{ backgroundImage: `url(${PLACEHOLDER_BANNER})` }}
+          style={userData?.bannerURL ? { backgroundImage: `url(${userData?.bannerURL})` }: {}}
         />
         {(userData?.firstName && userData?.lastName) && (
-          <Text className={styles.name} pl={170} pt={110}>
+          <Text className={styles.name} pl={170} pt={150}>
             {userData.firstName} {userData.lastName}
           </Text>
         )}
         {userData?.subGroup && (
-          <Text size="xl" className={styles.subgroup} pl={170} pt={160}>
-            {userData.subGroup}
+          <Text size="xl" className={styles.subgroup} pl={170} pt={190}>
+            {subGroupDisplayMap[userData.subGroup]}
           </Text>
         )}
 
         <Avatar
-          //src={userData?.avatar}
-          src={PLACEHOLDER_AVATAR}
+          src={userData?.avatarURL}
           size={150}
           mt={-100}
           ml={10}
           className={styles.avatar}
           //onClick={handleAvatarChange}
         />
-        {/* TODO: sort out what is going on here as member.jobType doesn't exist in the model currently:*/}
-        <Text size="xl" mt={-40} ml={170} pt={10} className={styles.text}>
-          Looking for: {"Internship"}
+        <Text size="sm" mt={-50} ml={170} pt={10}>
+          {userData?.lookingFor ? `Looking for: ${jobTypeDisplayMap[userData.lookingFor]}` : ""}
         </Text>
       </Card>
 
@@ -232,16 +247,16 @@ export function StudentProfile() {
             <Title order={5}>About Me</Title>
             <Box pl={15} mt={10} className={styles.box}>
               {/* Conditionally render the full description based on showMore state */}
-              {userData?.desc && (
+              {userData?.description && (
                 <>
                   {showMoreDescription ? (
-                    <Text size="md">{userData.desc}</Text>
+                    <Text size="md">{userData.description}</Text>
                   ) : (
                     <>
-                      <Text size="md">{userData.desc.substring(0, 1200)}</Text>
+                      <Text size="md">{userData.description.substring(0, 1200)}</Text>
                     </>
                   )}
-                  {userData.desc?.length > 1200 ? (
+                  {userData.description?.length > 1200 ? (
                     <Button
                       size="sm"
                       variant="subtle"
@@ -256,7 +271,7 @@ export function StudentProfile() {
                   ) : null}
                 </>
               )}
-              {!userData?.desc && <Loader color="blue" />}
+              {!userData?.description && <Loader color="blue" />}
             </Box>
           </Box>
           <Box
@@ -273,14 +288,20 @@ export function StudentProfile() {
                   <>
                     {showMoreEducation
                       ? userData.education.map((education) => (
-                          <Text size="md" key={education}>
-                            {education}
-                          </Text>
+                        <Box key={education.id}>
+                          <Text size="md" fw="bold" >{education.schoolName}</Text>
+                          <Text size="md">{education.degreeName}, {education.major}</Text>
+                          <Text size="sm">{education.startYear} – {education.endYear ? education.endYear : "Present"}</Text>
+                          {education.grade ? <Text size="sm">{`Grade: ${education.grade}`}</Text> : null}
+                        </Box>
                         ))
                       : userData.education.slice(0, 4).map((education) => (
-                          <Text size="md" key={education}>
-                            {education}
-                          </Text>
+                          <Box key={education.id}>
+                          <Text size="md" fw="bold" >{education.schoolName}</Text>
+                          <Text size="md">{education.degreeName}, {education.major}</Text>
+                          <Text size="sm">{education.startYear} – {education.endYear ? education.endYear : "Present"}</Text>
+                          {education.grade ? <Text size="sm">{`Grade: ${education.grade}`}</Text> : null}
+                        </Box>
                         ))}
                     {userData.education?.length > 4 && (
                       <Button

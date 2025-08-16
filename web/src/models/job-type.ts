@@ -1,5 +1,6 @@
 export enum JobType {
-  INTERNSHIP = 'Internship',
-  PART_YIME = 'Part-time',
-  GRAD_ROLE = 'Graduate Role'
+  NOT_FOR_HIRE = 'NOT_FOR_HIRE',
+  INTERNSHIP = 'INTERNSHIP',
+  PART_TIME = 'PART_TIME',
+  GRAD_ROLE = 'GRADUATE_ROLE',
 }
