@@ -21,8 +21,44 @@
   width: 100%;
 }
 
+/* Match input styling to hover outline dimensions */
+.editInput input,
+.editInput textarea {
+  padding: 4px 8px !important;
+  border-radius: 4px !important;
+  font-size: inherit !important;
+}
+
+
+/* Special styling for subgroup to match its hover outline */
+.subgroup .editInput input,
+.subgroup .editInput textarea {
+  color: var(--mantine-color-customWhite-1) !important;
+  font-size: 1.25rem !important;
+  font-style: italic !important;
+  background: transparent !important;
+  border: none !important;
+}
+
 .readOnly {
   color: var(--mantine-color-gray-7);
+}
+
+.hoverOnly {
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-radius 0.2s ease;
+}
+
+.hoverOnly:hover {
+  background-color: var(--mantine-color-gray-1);
+  border-radius: 4px;
+  padding: 4px 8px;
+}
+
+/* Dark theme support */
+[data-mantine-color-scheme="dark"] .hoverOnly:hover {
+  background-color: var(--mantine-color-dark-5);
+  padding: 4px 8px;
 }
 
 /* Dark theme support */

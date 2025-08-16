@@ -202,21 +202,21 @@ export function StudentProfile() {
             size={undefined}
           />
         </Box>
-        <Box className={styles.subgroupContainer}>
-          <EditableField
-            value={userData?.subGroup || ''}
-            placeholder="FSAE sub-team"
-            fieldName="subGroup"
-            userId={id as string}
-            userRole="member"
-            onUpdate={(_, value) => {
-              if (userData) {
-                setUserData({ ...userData, subGroup: value });
-              }
-            }}
-            editable={isLocalProfile}
-          />
-        </Box>
+        <EditableField
+          value={userData?.subGroup || ''}
+          placeholder="FSAE sub-team"
+          fieldName="subGroup"
+          userId={id as string}
+          userRole="member"
+          onUpdate={(_, value) => {
+            if (userData) {
+              setUserData({ ...userData, subGroup: value });
+            }
+          }}
+          editable={isLocalProfile}
+          className={styles.subgroupField}
+          size="xl"
+        />
 
         <Avatar
           //src={userData?.avatar}
@@ -250,6 +250,7 @@ export function StudentProfile() {
               {userData ? (
                 <>
                   <EditableField
+                    size="lg"
                     value={userData.email}
                     label="Email"
                     placeholder="Click to add email"
@@ -269,6 +270,7 @@ export function StudentProfile() {
                     }}
                   />
                   <EditableField
+                    size="lg"
                     value={userData.phoneNumber}
                     label="Phone Number"
                     placeholder="Click to add phone number"
@@ -331,6 +333,7 @@ export function StudentProfile() {
             <Box pl={15} mt={10} className={styles.box}>
               {userData ? (
                 <EditableField
+                  size="md"
                   value={userData.desc}
                   label="About Me"
                   placeholder="Click to add a description about yourself..."

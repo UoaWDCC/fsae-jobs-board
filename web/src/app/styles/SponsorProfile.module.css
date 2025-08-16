@@ -42,6 +42,72 @@
   position: absolute;
   font-size: xx-large;
   color: var(--mantine-color-customWhite-1);
+  display: flex;
+  gap: 0.45rem;
+}
+
+.firstName {
+  color: var(--mantine-color-customWhite-1) !important;
+  font-size: xx-large !important;
+  font-weight: bold !important;
+  background: transparent !important;
+  cursor: pointer;
+  border: none;
+  padding: 4px 0px 4px 8px;
+  min-height: auto;
+  pointer-events: auto !important;
+  transition: background-color 0.2s ease, border-radius 0.2s ease;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.lastName {
+  color: var(--mantine-color-customWhite-1) !important;
+  font-size: xx-large !important;
+  font-weight: bold !important;
+  background: transparent !important;
+  cursor: pointer;
+  border: none;
+  padding: 4px 8px 4px 0px;
+  min-height: auto;
+  transition: background-color 0.2s ease, border-radius 0.2s ease;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.firstName:hover,
+.lastName:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 4px;
+}
+
+/* Make input fields match hover dimensions exactly */
+.firstName input,
+.lastName input {
+  padding: 4px 0px 4px 8px !important;
+  font-size: xx-large !important;
+  font-weight: bold !important;
+  color: var(--mantine-color-customWhite-1) !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  line-height: 1.2 !important;
+  height: auto !important;
+  min-height: auto !important;
+  margin: 0 !important;
+  vertical-align: baseline !important;
+}
+
+.lastName input {
+  padding: 4px 8px 4px 0px !important;
+}
+
+/* Disable hover effects during editing */
+.firstName input:hover,
+.lastName input:hover {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 
 .subgroup {
@@ -81,6 +147,49 @@
 .button_admin_root:hover {
   background-color: hsl(0, 75%, 40%);
   color: var(--mantine-color-customWhite-1);
+}
+
+.companyName {
+  color: var(--mantine-color-customWhite-1) !important;
+  font-size: xx-large !important;
+  font-weight: bold !important;
+  background: transparent !important;
+  cursor: pointer;
+  border: none;
+  padding: 4px 8px 4px 0px;
+  min-height: auto;
+  pointer-events: auto !important;
+  transition: background-color 0.2s ease, border-radius 0.2s ease;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.companyName:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 4px;
+}
+
+/* Make input fields match hover dimensions exactly */
+.companyName input {
+  padding: 4px 8px 4px 0px !important;
+  font-size: xx-large !important;
+  font-weight: bold !important;
+  color: var(--mantine-color-customWhite-1) !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  line-height: 1.2 !important;
+  height: auto !important;
+  min-height: auto !important;
+  margin: 0 !important;
+  vertical-align: baseline !important;
+}
+
+/* Disable hover effects during editing */
+.companyName input:hover {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 
 @media (min-width: 501px) {

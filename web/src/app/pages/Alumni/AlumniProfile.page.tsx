@@ -1,4 +1,4 @@
-import { Card, Avatar, Box, Title, Button, Grid, Flex, Loader, Image } from '@mantine/core';
+import { Card, Avatar, Box, Title, Button, Grid, Flex, Loader, Image, Text } from '@mantine/core';
 import { EditableField } from '../../components/EditableField';
 import styles from '../../styles/SponsorProfile.module.css';
 import { useEffect, useState } from 'react';
@@ -211,53 +211,52 @@ export function AlumniProfile() {
           // Alumni model doesnt currently have a banner field
           style={{ backgroundImage: `url(${PLACEHOLDER_BANNER})`}}
         />
-        <Box pl={170} pt={140}>
-          <Flex gap="md" align="flex-start">
-            <EditableField
-              value={userData?.firstName || ''}
-              label="First Name"
-              placeholder="Click to add first name"
-              fieldName="firstName"
-              userId={id as string}
-              userRole="alumni"
-              onUpdate={(_, value) => {
-                if (userData) {
-                  setUserData({ ...userData, firstName: value });
-                }
-              }}
-              editable={isLocalProfile}
-              required
-              validation={(value) => {
-                if (!value.trim()) return 'First name is required';
-                return null;
-}}
-            />
-            <EditableField
-              value={userData?.lastName || ''}
-              label="Last Name"
-              placeholder="Click to add last name"
-              fieldName="lastName"
-              userId={id as string}
-              userRole="alumni"
-              onUpdate={(_, value) => {
-                if (userData) {
-                  setUserData({ ...userData, lastName: value });
-                }
-              }}
-              editable={isLocalProfile}
-              required
-              validation={(value) => {
-                if (!value.trim()) return 'Last name is required';
-                return null;
-}}
-            />
-          </Flex>
+        <Box className={styles.name} pl={170} pt={140}>
+          <EditableField
+            value={userData?.firstName || ''}
+            placeholder="First name"
+            fieldName="firstName"
+            userId={id as string}
+            userRole="alumni"
+            onUpdate={(_, value) => {
+              if (userData) {
+                setUserData({ ...userData, firstName: value });
+              }
+            }}
+            editable={isLocalProfile}
+            required
+            validation={(value) => {
+              if (!value.trim()) return 'First name is required';
+              return null;
+            }}
+            className={styles.firstName}
+            size={undefined}
+          />
+          <EditableField
+            value={userData?.lastName || ''}
+            placeholder="Last name"
+            fieldName="lastName"
+            userId={id as string}
+            userRole="alumni"
+            onUpdate={(_, value) => {
+              if (userData) {
+                setUserData({ ...userData, lastName: value });
+              }
+            }}
+            editable={isLocalProfile}
+            required
+            validation={(value) => {
+              if (!value.trim()) return 'Last name is required';
+              return null;
+            }}
+            className={styles.lastName}
+            size={undefined}
+          />
         </Box>
         <Box pl={170} pt={160}>
           <EditableField
             value={userData?.subGroup || ''}
-            label="Sub Group"
-            placeholder="Click to add your FSAE sub-team"
+            placeholder="FSAE sub-team"
             fieldName="subGroup"
             userId={id as string}
             userRole="alumni"
@@ -267,6 +266,8 @@ export function AlumniProfile() {
               }
             }}
             editable={isLocalProfile}
+            className={styles.subGroup}
+            size="xl"
           />
         </Box>
 
@@ -279,22 +280,9 @@ export function AlumniProfile() {
           className={styles.avatar}
           onClick={handleAvatarChange}
         />
-        <Box pl={170} pt={180}>
-          <EditableField
-            value={userData?.company || ''}
-            label="Company"
-            placeholder="Click to add your company"
-            fieldName="company"
-            userId={id as string}
-            userRole="alumni"
-            onUpdate={(_, value) => {
-              if (userData) {
-                setUserData({ ...userData, company: value });
-              }
-            }}
-            editable={isLocalProfile}
-          />
-        </Box>
+        <Text size="lg" mt={-30} ml={170} className={styles.text}>
+          {"Company Placeholder"}
+        </Text>
       </Card>
 
       <Flex className={styles.profileBtn}>
@@ -310,9 +298,9 @@ export function AlumniProfile() {
               {userData ? (
                 <>
                   <EditableField
+                    size="md"
                     value={userData.email}
-                    label="Email"
-                    placeholder="Click to add email"
+                    placeholder="Email"
                     fieldName="email"
                     userId={id as string}
                     userRole="alumni"
@@ -329,9 +317,9 @@ export function AlumniProfile() {
                     }}
                   />
                   <EditableField
+                    size="lg"
                     value={userData.phoneNumber}
-                    label="Phone Number"
-                    placeholder="Click to add phone number"
+                    placeholder="Phone number"
                     fieldName="phoneNumber"
                     userId={id as string}
                     userRole="alumni"
@@ -357,9 +345,9 @@ export function AlumniProfile() {
             <Box pl={15} mt={10} className={styles.box}>
               {userData ? (
                 <EditableField
+                  size="md"
                   value={userData.desc || ''}
-                  label="About Me"
-                  placeholder="Click to add a description about yourself..."
+                  placeholder="Tell us about yourself..."
                   fieldName="desc"
                   userId={id as string}
                   userRole="alumni"

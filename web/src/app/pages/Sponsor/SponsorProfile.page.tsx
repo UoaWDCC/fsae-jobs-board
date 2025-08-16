@@ -206,11 +206,10 @@ export function SponsorProfile() {
           onClick={handleBannerChange}
           style={{ backgroundImage: `url(${PLACEHOLDER_BANNER})` }}
         />
-        <Box pl={170} pt={140}>
+        <Box className={styles.name} pl={170} pt={140}>
           <EditableField
             value={userData?.name || ''}
-            label="Company Name"
-            placeholder="Click to add company name"
+            placeholder="Company name"
             fieldName="name"
             userId={id as string}
             userRole="sponsor"
@@ -225,6 +224,8 @@ export function SponsorProfile() {
               if (!value.trim()) return 'Company name is required';
               return null;
 }}
+            className={styles.companyName}
+            size={undefined}
           />
         </Box>
 
@@ -236,10 +237,9 @@ export function SponsorProfile() {
           className={styles.avatar}
           onClick={handleAvatarChange}
         />
-        <Box pl={170} pt={160}>
+        <Box mt={-30} ml={170} className={styles.text}>
           <EditableField
             value={userData?.industry || ''}
-            label="Industry"
             placeholder="Click to add industry"
             fieldName="industry"
             userId={id as string}
@@ -250,6 +250,7 @@ export function SponsorProfile() {
               }
             }}
             editable={isLocalProfile}
+            size="lg"
           />
         </Box>
       </Card>
@@ -267,6 +268,7 @@ export function SponsorProfile() {
               {userData ? (
                 <>
                   <EditableField
+                    size="md"
                     value={userData.email}
                     label="Email"
                     placeholder="Click to add email"
@@ -286,6 +288,7 @@ export function SponsorProfile() {
                     }}
                   />
                   <EditableField
+                    size="lg"
                     value={userData.phoneNumber}
                     label="Phone Number"
                     placeholder="Click to add phone number"
@@ -298,25 +301,6 @@ export function SponsorProfile() {
                     }}
                     editable={isLocalProfile}
                     required
-                  />
-                  <EditableField
-                    value={userData.websiteURL || ''}
-                    label="Website"
-                    placeholder="Click to add website URL"
-                    fieldName="websiteURL"
-                    userId={id as string}
-                    userRole="sponsor"
-                    type="text"
-                    onUpdate={(_, value) => {
-                      setUserData({ ...userData, websiteURL: value });
-                    }}
-                    editable={isLocalProfile}
-                    validation={(value) => {
-                      if (value && !value.match(/^https?:\/\/.+/)) {
-                        return 'Please enter a valid URL (starting with http:// or https://)';
-                      }
-                      return null;
-                    }}
                   />
                 </>
               ) : (
@@ -333,6 +317,7 @@ export function SponsorProfile() {
             <Box pl={15} mt={10} className={styles.box}>
               {userData ? (
                 <EditableField
+                  size="md"
                   value={userData.desc || ''}
                   label="About Us"
                   placeholder="Click to add a description about your company..."

@@ -194,55 +194,55 @@ export function EditableField({
       </Group>
     );
 
-    return type === 'textarea' ? (
-      <Textarea
-        value={editValue}
-        onChange={(e) => handleValueChange(e.target.value)}
-        onKeyDown={handleKeyDown}
-        error={currentError}
-        placeholder={placeholder}
-        autosize
-        minRows={minRows}
-        maxLength={maxLength}
-        autoFocus
-        className={styles.editInput}
-        styles={{
-          input: currentError && required ? { borderColor: 'var(--mantine-color-red-5)' } : undefined
-        }}
-        rightSection={buttonGroup}
-        rightSectionWidth={60}
-      />
-    ) : (
-      <TextInput
-        value={editValue}
-        onChange={(e) => handleValueChange(e.target.value)}
-        onKeyDown={handleKeyDown}
-        type={type}
-        error={currentError}
-        placeholder={placeholder}
-        maxLength={maxLength}
-        autoFocus
-        className={styles.editInput}
-        styles={{
-          input: currentError && required ? { borderColor: 'var(--mantine-color-red-5)' } : undefined
-        }}
-        rightSection={buttonGroup}
-        rightSectionWidth={60}
-      />
+    return (
+      <div className={`editing ${className || ''}`}>
+        {type === 'textarea' ? (
+          <Textarea
+            value={editValue}
+            onChange={(e) => handleValueChange(e.target.value)}
+            onKeyDown={handleKeyDown}
+            error={currentError}
+            placeholder={placeholder}
+            autosize
+            minRows={minRows}
+            maxLength={maxLength}
+            autoFocus
+            className={styles.editInput}
+            styles={{
+              input: currentError && required ? { borderColor: 'var(--mantine-color-red-5)' } : undefined
+            }}
+            rightSection={buttonGroup}
+            rightSectionWidth={60}
+          />
+        ) : (
+          <TextInput
+            value={editValue}
+            onChange={(e) => handleValueChange(e.target.value)}
+            onKeyDown={handleKeyDown}
+            type={type}
+            error={currentError}
+            placeholder={placeholder}
+            maxLength={maxLength}
+            autoFocus
+            className={styles.editInput}
+            styles={{
+              input: currentError && required ? { borderColor: 'var(--mantine-color-red-5)' } : undefined
+            }}
+            rightSection={buttonGroup}
+            rightSectionWidth={60}
+          />
+        )}
+      </div>
     );
   }
 
   return (
     <Text 
       size={size as any} 
-      className={className || styles.value}
+      className={`${styles.hoverOnly} ${className || ''}`}
       onClick={() => setIsEditing(true)}
     >
-      {value || (
-        <Text component="span" c="dimmed" fs="italic">
-          {placeholder || 'Click to add...'}
-        </Text>
-      )}
+      {value || placeholder || 'Click to add...'}
     </Text>
   );
 }
