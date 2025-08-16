@@ -2,6 +2,7 @@ import {Entity, model, property} from '@loopback/repository';
 import {FsaeUser} from './fsae-user.model';
 import { JobType } from './job-type';
 import { Education } from './education.model';
+import { SubGroup } from './subgroup.model';
 
 @model({settings: {strict: false}})
 export class Member extends FsaeUser {
@@ -23,9 +24,19 @@ export class Member extends FsaeUser {
     jsonSchema: {
       enum: Object.values(JobType),
     },
-    default: JobType.INTERNSHIP
+    default: JobType.NOT_FOR_HIRE
   })
   lookingFor: JobType;
+
+  @property({
+    type: 'string', 
+    required: true,
+    jsonSchema: {
+      enum: Object.values(SubGroup),
+    },
+    default: SubGroup.UNKNOWN
+  })
+  subGroup: SubGroup;
 
   @property({
     type: 'array',

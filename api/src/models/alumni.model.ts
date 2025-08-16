@@ -1,5 +1,6 @@
 import {model, property} from '@loopback/repository';
 import {FsaeUser} from './index';
+import { SubGroup } from './subgroup.model';
 
 @model()
 export class Alumni extends FsaeUser {
@@ -14,6 +15,16 @@ export class Alumni extends FsaeUser {
     required: true
   })
   lastName: string;
+
+  @property({
+    type: 'string', 
+    required: true,
+    jsonSchema: {
+      enum: Object.values(SubGroup),
+    },
+    default: SubGroup.UNKNOWN
+  })
+  subGroup: SubGroup;
 
   @property({
     type: 'string', 
