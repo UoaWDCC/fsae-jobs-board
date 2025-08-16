@@ -258,16 +258,16 @@ export function AlumniProfile() {
             <Title order={5}>About Me</Title>
             <Box pl={15} mt={10} className={styles.box}>
               {/* Conditionally render the full description based on showMore state */}
-              {userData?.desc && (
+              {userData?.description && (
                 <>
                   {showMoreDescription ? (
-                    <Text size="md">{userData.desc}</Text>
+                    <Text size="md">{userData.description}</Text>
                   ) : (
                     <>
-                      <Text size="md">{userData.desc.substring(0, 1200)}</Text>
+                      <Text size="md">{userData.description.substring(0, 1200)}</Text>
                     </>
                   )}
-                  {userData.desc?.length > 1200 ? (
+                  {userData.description?.length > 1200 ? (
                     <Button
                       variant="subtle"
                       size="sm"
@@ -282,7 +282,7 @@ export function AlumniProfile() {
                   ) : null}
                 </>
               )}
-              {!userData?.desc && <Loader color="blue" />}
+              {!userData?.description && <Loader color="blue" />}
             </Box>
           </Box>
           <Box

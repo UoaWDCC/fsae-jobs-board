@@ -255,7 +255,6 @@ export function StudentProfile() {
                   ) : null}
                 </>
               )}
-              {!userData?.description && <Loader color="blue" />}
             </Box>
           </Box>
           <Box

@@ -19,9 +19,6 @@ import { RootState } from '../../../app/store';
 import { jwtDecode } from 'jwt-decode';
 import DeactivateAccountModal from '../../components/Modal/DeactivateAccountModal';
 
-const PLACEHOLDER_BANNER = "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png"
-const PLACEHOLDER_AVATAR = "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png"
-
 export function SponsorProfile() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -44,11 +41,7 @@ export function SponsorProfile() {
   
   const userRole = useSelector((state: RootState) => state.user.role); // the id of the local user
   const userId = useSelector((state: RootState) => state.user.id); // the id of the local user
-
-  console.log(
-    'Change this SponsorPage component to use real role from Redux store once user integration is implemented'
-  );
-
+/*
   const handleAvatarChange = () => {
     setModalType('avatar');
     setModalContent(<EditAvatar avatar={userData?.logo ?? PLACEHOLDER_AVATAR} />);
@@ -61,7 +54,7 @@ export function SponsorProfile() {
     setModalContent(<EditBannerModal banner={PLACEHOLDER_BANNER} />);
     setModalTitle('Banner Photo');
     setOpenProfileModal(true);
-  };
+  };*/
 
   const handleProfileChange = () => {
     setModalType('profile');
@@ -203,24 +196,24 @@ export function SponsorProfile() {
         <Card.Section
           h={250}
           className={styles.banner}
-          onClick={handleBannerChange}
-          style={{ backgroundImage: `url(${PLACEHOLDER_BANNER})` }}
+          //onClick={handleBannerChange}
+          style={{ backgroundImage: `url(${userData?.bannerURL})` }}
         />
-        {userData?.name && (
-          <Text className={styles.name} pl={170} pt={140}>
-            {userData.name}
+        {userData?.companyName && (
+          <Text className={styles.name} pl={170} pt={170}>
+            {userData.companyName}
           </Text>
         )}
 
         <Avatar
-          src={userData?.logo ?? PLACEHOLDER_AVATAR}
+          src={userData?.avatarURL}
           size={150}
           mt={-100}
           ml={10}
           className={styles.avatar}
-          onClick={handleAvatarChange}
+          //onClick={handleAvatarChange}
         />
-        <Text size="lg" mt={-30} ml={170} className={styles.text}>
+        <Text size="lg" mt={-50} ml={170} className={styles.text}>
           {userData?.industry}
         </Text>
       </Card>
@@ -245,19 +238,19 @@ export function SponsorProfile() {
         <Grid.Col span={{ md: 9, xs: 12 }}>
           <Box mx={20} mt={10}>
             {/* ABOUT ME SECTION */}
-            <Title order={5}>About Me</Title>
+            <Title order={5}>About</Title>
             <Box pl={15} mt={10} className={styles.box}>
               {/* Conditionally render the full description based on showMore state */}
-              {userData?.desc && (
+              {userData?.description && (
                 <>
                   {showMoreDescription ? (
-                    <Text size="md">{userData.desc}</Text>
+                    <Text size="md">{userData.description}</Text>
                   ) : (
                     <>
-                      <Text size="md">{userData.desc.substring(0, 1200)}</Text>
+                      <Text size="md">{userData.description.substring(0, 1200)}</Text>
                     </>
                   )}
-                  {userData.desc?.length > 1200 ? (
+                  {userData.description?.length > 1200 ? (
                     <Button
                       variant="subtle"
                       size="sm"
@@ -272,7 +265,6 @@ export function SponsorProfile() {
                   ) : null}
                 </>
               )}
-              {!userData?.desc && <Loader color="blue" />}
             </Box>
           </Box>
           <Box
