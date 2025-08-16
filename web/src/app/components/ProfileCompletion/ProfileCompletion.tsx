@@ -220,6 +220,7 @@ export function ProfileCompletion({ userId, userRole, onComplete }: ProfileCompl
       }
 
       toast.success('Profile updated successfully!');
+      localStorage.removeItem('profileIncomplete');
       
       if (onComplete) {
         onComplete();

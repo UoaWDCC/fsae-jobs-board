@@ -40,6 +40,7 @@ export function LoginForm() {
 
       // Check if profile needs completion
       if (hasMissingInfo && role !== 'admin') {
+        localStorage.setItem('profileIncomplete', 'true');
         navigate('/complete-profile', { replace: true });
         return;
       }
