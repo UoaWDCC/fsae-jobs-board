@@ -149,7 +149,7 @@ export class RegisterController {
       let newAlumni = await this.alumniRepository.create({
         email: createAlumniDTO.email,
         password: hashedPassword,
-        role: FsaeRole.SPONSOR,
+        role: FsaeRole.ALUMNI,
         description: createAlumniDTO.description,
         phoneNumber: createAlumniDTO.phoneNumber,
         avatarURL: createAlumniDTO.avatarURL,
