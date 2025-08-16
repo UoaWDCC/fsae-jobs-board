@@ -11,7 +11,8 @@ export class Member extends FsaeUser {
   memberID?: string;
 
   @property({
-    type: 'buffer',
+    type: 'string',
+    format: 'binary',
     mongodb: { dataType: 'binData' },
   })
   cvData?: Buffer;
@@ -46,11 +47,9 @@ export class Member extends FsaeUser {
   })
   hasCV?: boolean;
   
-  // default values for optional fields
-  firstName?: string = 'Fsae';
-  lastName?: string = 'member';
-  // cv?: string = '';
-  subGroup?: string = 'Fsae club';
+  // firstName, lastName, and subGroup are already defined in parent FsaeUser class with @property decorators
+  // Default values are set in the parent class or during registration
+
  
   // Indexer property to allow additional data
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

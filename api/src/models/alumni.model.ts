@@ -10,11 +10,8 @@ export class Alumni extends FsaeUser {
   })
   alumniID?: string;
 
-  // default values for optional fields
-  firstName?: string = 'Fsae';
-  lastName?: string = 'alumni';
-  subGroup?: string = 'Fsae club';
-  company?: string = 'Fsae club';
+  // firstName, lastName, subGroup, and company are already defined in parent FsaeUser class with @property decorators
+  // Default values are set in the parent class or during registration
 
   // Indexer property to allow additional data
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

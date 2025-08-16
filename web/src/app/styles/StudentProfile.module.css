@@ -41,12 +41,93 @@
   position: absolute;
   font-size: 40px;
   color: var(--mantine-color-customWhite-1);
+  z-index: 50;
+  display: flex;
+  gap: 0.45rem;
 }
 
-.subgroup {
+.firstName {
+  color: var(--mantine-color-customWhite-1) !important;
+  font-size: 40px !important;
+  font-weight: bold !important;
+  background: transparent !important;
+  cursor: pointer;
+  border: none;
+  padding: 4px 0px 4px 8px;
+  min-height: auto;
+  pointer-events: auto !important;
+  transition: background-color 0.2s ease, border-radius 0.2s ease;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.lastName {
+  color: var(--mantine-color-customWhite-1) !important;
+  font-size: 40px !important;
+  font-weight: bold !important;
+  background: transparent !important;
+  cursor: pointer;
+  border: none;
+  padding: 4px 8px 4px 0px;
+  min-height: auto;
+  transition: background-color 0.2s ease, border-radius 0.2s ease;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.firstName:hover,
+.lastName:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 4px;
+}
+
+/* Make input fields match hover dimensions exactly */
+.firstName input,
+.lastName input {
+  padding: 4px 0px 4px 8px !important;
+  font-size: 2rem !important;
+  font-weight: bold !important;
+  color: var(--mantine-color-customWhite-1) !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  line-height: 1.2 !important;
+  height: auto !important;
+  min-height: auto !important;
+  margin: 0 !important;
+  vertical-align: baseline !important;
+}
+
+.lastName input {
+  padding: 4px 8px 4px 0px !important;
+}
+
+/* Disable hover effects during editing */
+.firstName input:hover,
+.lastName input:hover {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+
+
+.subgroupField {
   position: absolute;
-  font-style: italic;
-  color: var(--mantine-color-customWhite-1);
+  pointer-events: auto;
+  z-index: 10;
+  margin-left: 170px;
+  margin-top: 160px;
+  color: var(--mantine-color-customWhite-1) !important;
+  font-size: 1.25rem !important;
+  font-style: italic !important;
+  font-weight: 500 !important;
+  background: transparent !important;
+}
+
+.subgroupField:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 4px;
 }
 
 .box {
@@ -60,6 +141,17 @@
     font-size: 2rem;
     font-weight: bold;
   }
+  
+  .firstName,
+  .lastName {
+    font-size: 2rem !important;
+  }
+  
+  .subgroupField {
+    margin-left: 170px;
+    margin-top: 180px;
+    font-size: 1.25rem !important;
+  }
 }
 
 @media (max-width: 500px) {
@@ -68,6 +160,19 @@
     padding-top: 280px;
     font-size: 2rem;
     font-weight: bold;
+  }
+  
+  .firstName,
+  .lastName {
+    font-size: 2rem !important;
+  }
+  
+  .subgroupField {
+    margin-top: 330px;
+    margin-left: 50%;
+    transform: translateX(-50%);
+    font-size: 1rem !important;
+    opacity: 70%;
   }
 }
 
@@ -110,22 +215,5 @@
   .profileBtn {
     justify-content: flex-end;
     margin-right: 20px;
-  }
-}
-
-@media (max-width: 500px) {
-  .subgroup {
-    padding-top: 330px;
-    font-size: 1rem;
-    opacity: 70%;
-    align-self: center;
-    justify-content: center;
-  }
-}
-@media (min-width: 501px) {
-  .subgroup {
-    padding-left: 170px;
-    padding-top: 180px;
-    font-size: 1.25rem;
   }
 }

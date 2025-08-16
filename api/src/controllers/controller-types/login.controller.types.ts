@@ -7,6 +7,7 @@ export type loginResponse = {
   userId: string,
   token: string,
   verified: boolean;
+  hasMissingInfo?: boolean;
 }
 
 export type whoAmIResponse = {

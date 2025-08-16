@@ -10,13 +10,8 @@ export class Sponsor extends FsaeUser {
   })
   sponsorID?: string;
 
-  // default values for optional fields
-  subGroup?: string = 'Fsae club';
-  company?: string = 'Fsae club';
-  websiteURL?: string = '';
-  tier?: string = '';
-  industry?: string = '';
-  name?: string = 'Sponsor';
+  // name, websiteURL, industry, and tier are already defined in parent FsaeUser class with @property decorators
+  // The issue with field persistence is probably related to schema inheritance or validation
 
   // Indexer property to allow additional data
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

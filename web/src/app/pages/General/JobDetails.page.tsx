@@ -4,8 +4,11 @@ import { Center, Container, Title, Text, Paper, Loader, Flex, Button } from '@ma
 import { Job } from '@/models/job.model';
 import { fetchJobById } from '@/api/job';
 import { JobDetail } from '@/app/components/JobDetail/JobDetail';
+import { useProfileCompletionGuard } from '../../../hooks/useProfileCompletionGuard';
 
 export function JobDetailsPage() {
+  useProfileCompletionGuard();
+  
   const { id } = useParams();
   const navigate = useNavigate();
   const [job, setJob] = useState<Job | null>(null);

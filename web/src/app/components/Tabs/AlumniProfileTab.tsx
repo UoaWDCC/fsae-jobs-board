@@ -9,6 +9,14 @@ const AlumniProfileTab = ({ newUserData, setNewUserData }: { newUserData: Partia
     setNewUserData({...newUserData, [field]: event.currentTarget.value});
   }
 
+  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const fullName = event.currentTarget.value;
+    const names = fullName.split(' ');
+    const firstName = names[0] || '';
+    const lastName = names.slice(1).join(' ') || '';
+    setNewUserData({...newUserData, firstName, lastName});
+  }
+
   return (
     <Box>
       <Box className={styles.box}>
@@ -17,23 +25,30 @@ const AlumniProfileTab = ({ newUserData, setNewUserData }: { newUserData: Partia
             label="Name"
             size="md"
             mb={20}
-            
+            value={`${newUserData?.firstName || ''} ${newUserData?.lastName || ''}`.trim()}
+            onChange={handleNameChange}
           />
-          <TextInput label="Current Role" size="md" mb={20} />
+          <TextInput 
+            label="Current Role" 
+            size="md" 
+            mb={20} 
+            value={newUserData?.subGroup || ''} 
+            onChange={handleFieldChange("subGroup")} 
+          />
         </Box>
         <Box style={{ flex: 1 }}>
           <TextInput
             label="Company"
             size="md"
             mb={20}
-            value={newUserData?.company as string} 
+            value={newUserData?.company || ''} 
             onChange={handleFieldChange("company")}
           />
           <TextInput
             label="Phone"
             size="md"
             mb={20}
-            value={newUserData?.phoneNumber as string} 
+            value={newUserData?.phoneNumber || ''} 
             onChange={handleFieldChange("phoneNumber")}
           />
         </Box>

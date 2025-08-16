@@ -256,7 +256,7 @@ export class LoginController {
     }
 
     let fsaeUser = userSearchResults[0];
-
+    
     // Verify Credentials
     let passwordsMatched = await this.passwordHasher.comparePassword(
       credentials.password,
@@ -266,12 +266,34 @@ export class LoginController {
       throw new HttpErrors.Unauthorized('Invalid login credentials');
     }
 
+    // Check for missing required fields based on role
+    let hasMissingInfo = false;
+    const role = fsaeUser.role;
+    
+    // Define required fields for each role (check for both missing and empty strings)
+    if (role === FsaeRole.MEMBER) {  
+      hasMissingInfo = !fsaeUser.firstName || fsaeUser.firstName === '' ||
+                       !fsaeUser.lastName || fsaeUser.lastName === '' ||
+                       !fsaeUser.phoneNumber || fsaeUser.phoneNumber === '';
+                       
+    } else if (role === FsaeRole.ALUMNI) {
+      hasMissingInfo = !fsaeUser.firstName || fsaeUser.firstName === '' ||
+                       !fsaeUser.lastName || fsaeUser.lastName === '' ||
+                       !fsaeUser.phoneNumber || fsaeUser.phoneNumber === '' ||
+                       !fsaeUser.company || fsaeUser.company === '';
+    } else if (role === FsaeRole.SPONSOR) {
+      hasMissingInfo = !fsaeUser.company || fsaeUser.company === '' ||
+                       !fsaeUser.name || fsaeUser.name === '' ||
+                       !fsaeUser.phoneNumber || fsaeUser.phoneNumber === '';
+    }
+
     // Return Jwt Token
     let token = await this.jwtService.generateToken(fsaeUser);
     return {
       userId: fsaeUser.id as string,
       token: token,
       verified: fsaeUser.verified,
+      hasMissingInfo: hasMissingInfo,
     };
   }
 }
