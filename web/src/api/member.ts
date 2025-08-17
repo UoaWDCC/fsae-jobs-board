@@ -7,14 +7,15 @@ export async function fetchMemberById(id: string): Promise<Member | null> {
     // Return the data as Member
     return res.data as Member;
   } catch (e) {
-    throw Error(`An unknown error occurred trying to fetch member profile by id: ${id}`);
+    throw Error(`An unknown error occurred trying to fetch member profile by id: ${id}\n${e}`);
   }
 }
 
 export async function editMemberById(id: string, newMember: Partial<Member>) {
+  console.log(newMember)
   try {
     await apiInstance.patch(`user/member/${id}`, newMember);
   } catch (e) {
-    throw Error(`An unknown error occurred trying to edit member profile by id: ${id}`);
+    throw Error(`An unknown error occurred trying to edit member profile by id: ${id}\n${e}`);
   }
 }
