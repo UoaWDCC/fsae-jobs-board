@@ -18,8 +18,8 @@ const AlumniAboutTab = ({ newUserData, setNewUserData }: { newUserData: Partial<
           minRows={10}
           maxRows={15}
           autosize
-          value={newUserData?.desc as string} 
-          onChange={handleFieldChange("desc")}
+          value={newUserData?.description as string} 
+          onChange={handleFieldChange("description")}
         ></Textarea>
       ) : (
         <Textarea
@@ -27,8 +27,8 @@ const AlumniAboutTab = ({ newUserData, setNewUserData }: { newUserData: Partial<
           minRows={5}
           maxRows={20}
           autosize
-          value={newUserData?.desc as string} 
-          onChange={handleFieldChange("desc")}
+          value={newUserData?.description as string} 
+          onChange={handleFieldChange("description")}
         ></Textarea>
       )}
     </Box>
