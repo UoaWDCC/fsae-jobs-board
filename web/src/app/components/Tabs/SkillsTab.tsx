@@ -1,26 +1,43 @@
 import React, { useState } from 'react';
 import { Box, Button, Flex, TextInput } from '@mantine/core';
 import styles from '../Modal/Modal.module.css';
+import { Member } from '@/models/member.model';
 
-export const SkillsTab: React.FC = () => {
-  const [skills, setSkills] = useState<string[]>([]);
-  const [newSkill, setNewSkill] = useState<string>('');
+export const SkillsTab = ({
+  newUserData,
+  setNewUserData,
+}: {
+  newUserData: Partial<Member> | null;
+  setNewUserData: React.Dispatch<React.SetStateAction<Partial<Member> | null>>;
+}) => {
+  const [newSkill, setNewSkill] = useState<string>("");
 
-  const handleUpperCase = (string: string): string => {
-    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
-  };
+  const skills = newUserData?.skills ?? [];
+
+  const toTitleCase = (s: string): string =>
+    s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
 
   const handleAddSkill = (): void => {
-    const trimmedSkill = newSkill.trim();
-    const upperCaseSkill = handleUpperCase(trimmedSkill);
-    if (upperCaseSkill && !skills.includes(upperCaseSkill)) {
-      setSkills((current) => [...current, upperCaseSkill]);
-      setNewSkill('');
-    }
+    const trimmed = newSkill.trim();
+    if (!trimmed) return;
+
+    const normalized = toTitleCase(trimmed);
+
+    setNewUserData((prev) => {
+      const prevSkills = prev?.skills ?? [];
+      if (prevSkills.includes(normalized)) return prev ?? {};
+      return { ...(prev ?? {}), skills: [...prevSkills, normalized] };
+    });
+
+    setNewSkill("");
   };
 
   const handleRemoveValue = (skillToRemove: string): void => {
-    setSkills((prevSkills) => prevSkills.filter((skill) => skill !== skillToRemove));
+    setNewUserData((prev) => {
+      const prevSkills = prev?.skills ?? [];
+      const nextSkills = prevSkills.filter((s) => s !== skillToRemove);
+      return { ...(prev ?? {}), skills: nextSkills };
+    });
   };
 
   return (
@@ -29,13 +46,11 @@ export const SkillsTab: React.FC = () => {
         align="flex-end"
         gap="sm"
         justify="center"
-        classNames={{
-          root: styles.skillRoot,
-        }}
+        classNames={{ root: styles.skillRoot }}
       >
         <TextInput
           value={newSkill}
-          onChange={(event) => setNewSkill(event.currentTarget.value)}
+          onChange={(e) => setNewSkill(e.currentTarget.value)}
           placeholder="Add a skill"
           label="Your Skills"
           size="md"
@@ -45,22 +60,22 @@ export const SkillsTab: React.FC = () => {
           Add
         </Button>
       </Flex>
+
       <Flex
         mt="md"
         gap="sm"
         wrap="wrap"
-        classNames={{
-          root: styles.skillContainer,
-        }}
+        classNames={{ root: styles.skillContainer }}
       >
-        {skills.map((skill) => (
+        {(skills as string[]).map((skill) => (
           <Button
             key={skill}
             variant="default"
             onClick={() => handleRemoveValue(skill)}
             className={styles.skillButton}
           >
-            {skill} <span style={{ marginLeft: '8px', cursor: 'pointer' }}>x</span>
+            {skill}
+            <span style={{ marginLeft: 8, cursor: "pointer" }}>x</span>
           </Button>
         ))}
       </Flex>
