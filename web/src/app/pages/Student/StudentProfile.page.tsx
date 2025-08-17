@@ -165,7 +165,7 @@ export function StudentProfile() {
           className={styles.avatar}
           //onClick={handleAvatarChange}
         />
-        <Text size="sm" mt={-50} ml={170} pt={10}>
+        <Text size="md" mt={-55} ml={170} pt={10}>
           {userData?.lookingFor ? `Looking for: ${jobTypeDisplayMap[userData.lookingFor]}` : ""}
         </Text>
       </Card>
