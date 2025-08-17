@@ -6,9 +6,9 @@ import { Alumni } from '@/models/alumni.model';
 const AlumniAboutTab = ({ newUserData, setNewUserData }: { newUserData: Partial<Alumni> | null, setNewUserData: React.Dispatch<React.SetStateAction<Partial<Alumni> | null>>}) => {
 
   const isMobile = useMediaQuery('(max-width: 430px)'); //mobile screen
-  const handleFieldChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setNewUserData({...newUserData, [field]: event.currentTarget.value});
-  }
+  const handleInputChange = (field: keyof Alumni) => (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setNewUserData({...newUserData, [field]: event.currentTarget.value});
+    }
 
   return (
     <Box>
@@ -19,7 +19,7 @@ const AlumniAboutTab = ({ newUserData, setNewUserData }: { newUserData: Partial<
           maxRows={15}
           autosize
           value={newUserData?.description as string} 
-          onChange={handleFieldChange("description")}
+          onChange={handleInputChange("description")}
         ></Textarea>
       ) : (
         <Textarea
@@ -28,7 +28,7 @@ const AlumniAboutTab = ({ newUserData, setNewUserData }: { newUserData: Partial<
           maxRows={20}
           autosize
           value={newUserData?.description as string} 
-          onChange={handleFieldChange("description")}
+          onChange={handleInputChange("description")}
         ></Textarea>
       )}
     </Box>
