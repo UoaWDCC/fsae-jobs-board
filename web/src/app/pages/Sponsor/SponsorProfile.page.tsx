@@ -1,4 +1,4 @@
-import { Card, Avatar, Text, Box, Title, Button, Grid, Flex, Loader } from '@mantine/core';
+import { Card, Avatar, Text, Box, Title, Button, Grid, Flex, Loader, Anchor } from '@mantine/core';
 import styles from '../../styles/SponsorProfile.module.css';
 import { useEffect, useState } from 'react';
 import { IconPlus } from '@tabler/icons-react';
@@ -230,6 +230,7 @@ export function SponsorProfile() {
             <Box pl={15} mt={10} className={styles.box}>
               {userData?.email && <Text size="md">{userData.email}</Text>}
               {userData?.phoneNumber && <Text size="lg">{userData.phoneNumber}</Text>}
+              {userData?.websiteURL && <Anchor href={userData.websiteURL.replace(/^(https?:\/\/)?/i, 'https://')} target="_blank">Visit Website</Anchor>}
               {!userData && <Loader color="blue" />}
             </Box>
           </Box>
