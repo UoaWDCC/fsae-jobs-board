@@ -12,7 +12,7 @@ import {
 import {authenticate} from '@loopback/authentication';
 import {authorize} from '@loopback/authorization';
 
-import {FsaeRole, FsaeUser} from '../models';
+import {Alumni, FsaeRole, FsaeUser, Member, Sponsor} from '../models';
 import {
   AlumniRepository,
   MemberRepository,
@@ -73,13 +73,15 @@ export class AdminController {
       this.sponsorRepository.find(),
     ]);
 
-    const toReview = (u: FsaeUser, role: FsaeRole): AdminReview => {
+    const toReview = (u: Alumni | Member | Sponsor, role: FsaeRole): AdminReview => {
       const id = u.id.toString();
 
-      const name =
-        u.lastName && u.lastName !== '-'
-          ? `${u.firstName} ${u.lastName}`
-          : u.firstName;
+      let name = ""
+      if ('firstName' in u) {
+        name = `${u.firstName} ${u.lastName}`
+      } else if ('companyName' in u) {
+        name = u.companyName
+      }
 
       // `createdAt` may not exist → fall back to ObjectId timestamp
       const created =
@@ -166,8 +168,8 @@ export class AdminController {
         targetType: role.toLowerCase(),
         targetId: id,
         metadata: {
-          firstName: user.firstName,
-          lastName: user.lastName,
+          //firstName: user.firstName,  // Issue: sponsors do not have a firstName/lastName.. only company name. Unify to a single name field?
+          //lastName: user.lastName,
           memberType: role,
         },
         timestamp: new Date().toISOString(),

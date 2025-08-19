@@ -155,8 +155,8 @@ export class ApplicationController {
 
     let jobIDs: string[] = [];
     if (
-      currentUser.fsaeRole === FsaeRole.ALUMNI ||
-      currentUser.fsaeRole === FsaeRole.SPONSOR
+      currentUser.role === FsaeRole.ALUMNI ||
+      currentUser.role === FsaeRole.SPONSOR
     ) {
       const jobs = await this.jobAdRepository.find({
         where: {publisherID: currentUser.id},
@@ -168,8 +168,8 @@ export class ApplicationController {
     if (jobID) {
       // If alumni/sponsor ensure jobID is in their jobs
       if (
-        (currentUser.fsaeRole === FsaeRole.ALUMNI ||
-          currentUser.fsaeRole === FsaeRole.SPONSOR) &&
+        (currentUser.role === FsaeRole.ALUMNI ||
+          currentUser.role === FsaeRole.SPONSOR) &&
         !jobIDs.includes(jobID)
       ) {
         throw new HttpErrors.Forbidden(

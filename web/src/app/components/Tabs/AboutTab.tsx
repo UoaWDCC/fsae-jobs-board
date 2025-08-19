@@ -1,13 +1,24 @@
-import { Box, TextInput, Textarea } from '@mantine/core';
+import { Box, Select, TextInput, Textarea } from '@mantine/core';
 import styles from '../Modal/Modal.module.css';
 import { Member } from '@/models/member.model';
+import { jobTypeDisplayMap, subGroupDisplayMap } from '@/app/utils/field-display-maps';
+
+const jobTypeOptions = Object.entries(jobTypeDisplayMap).map(([value, label]) => ({
+  value,
+  label,
+}));
+
+const subGroupOptions = Object.entries(subGroupDisplayMap).map(([value, label]) => ({
+  value,
+  label,
+}));
 
 export const AboutTab = ({ newUserData, setNewUserData }: { newUserData: Partial<Member> | null, setNewUserData: React.Dispatch<React.SetStateAction<Partial<Member> | null>>}) => {
   
   const handleFieldChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setNewUserData({...newUserData, [field]: event.currentTarget.value});
   }
-  
+
   return (
     <Box>
       <Box className={styles.box}>
@@ -24,8 +35,9 @@ export const AboutTab = ({ newUserData, setNewUserData }: { newUserData: Partial
       </Box>
       <Textarea
         label="About Me"
-        value={newUserData?.desc || ''} 
-        onChange={handleFieldChange("desc")}
+        value={newUserData?.description} 
+        onChange={handleFieldChange("description")}
+
         size="md"
         classNames={{
           input: styles.area,

@@ -1,29 +1,39 @@
 import {model, property} from '@loopback/repository';
 import {FsaeUser} from './index';
+import { SubGroup } from './subgroup.model';
 
-@model({settings: {strict: false}})
+@model()
 export class Alumni extends FsaeUser {
   @property({
-    type: 'string',
-    id: true,
-    generated: true,
+    type: 'string', 
+    required: true
   })
-  alumniID?: string;
+  firstName: string;
 
-  // firstName, lastName, subGroup, and company are already defined in parent FsaeUser class with @property decorators
-  // Default values are set in the parent class or during registration
+  @property({
+    type: 'string', 
+    required: true
+  })
+  lastName: string;
 
-  // Indexer property to allow additional data
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [prop: string]: any;
+  @property({
+    type: 'string', 
+    required: true,
+    jsonSchema: {
+      enum: Object.values(SubGroup),
+    },
+    default: SubGroup.UNKNOWN
+  })
+  subGroup: SubGroup;
+
+  @property({
+    type: 'string', 
+    required: false,
+    default: ""
+  })
+  companyName: string;
 
   constructor(data?: Partial<Alumni>) {
     super(data);
   }
 }
-
-export interface AlumniRelations {
-  // describe navigational properties here
-}
-
-export type AlumniWithRelations = Alumni & AlumniRelations;

@@ -66,7 +66,7 @@ export class VerificationController {
             throw new HttpErrors.BadRequest('Verification code expired, new code sent to email');
         }
 
-        const roleRepository = this.repositoryMap[verification.fsaeRole as 'member' | 'alumni' | 'sponsor' | 'admin'];
+        const roleRepository = this.repositoryMap[verification.role as 'member' | 'alumni' | 'sponsor' | 'admin'];
 
         if (!roleRepository) {
             throw new HttpErrors.InternalServerError('User role invalid');
@@ -110,7 +110,7 @@ export class VerificationController {
             throw new HttpErrors.NotFound('Verification record not found');
         }
 
-        const roleRepository = this.repositoryMap[verification.fsaeRole as 'member' | 'alumni' | 'sponsor' | 'admin'];
+        const roleRepository = this.repositoryMap[verification.role as 'member' | 'alumni' | 'sponsor' | 'admin'];
         if (!roleRepository) {
             throw new HttpErrors.InternalServerError('Role repository not found');
         }
@@ -129,7 +129,7 @@ export class VerificationController {
         }
 
         // Check if properties are defined
-        if (!verification.email || !user.firstName || !verification.verificationCode) {
+        if (!verification.email || !verification.verificationCode) {
             throw new HttpErrors.InternalServerError('Required properties are missing');
         }
 
@@ -145,18 +145,27 @@ export class VerificationController {
         const verificationCode = await this.generator.generateCode();
 
         // Send a new verification email
-        /* const newVerification = await this.twilioService.sendVerificationEmail(verification.email, user.firstName, verificationCode);
+        let nameForVerificationEmail = "User"
+        if ('firstName' in user) {
+            nameForVerificationEmail = user.firstName
+        } else if ('companyName' in user) {
+            nameForVerificationEmail = user.companyName
+        }
+        /*
+        const newVerification = await this.twilioService.sendVerificationEmail(verification.email, nameForVerificationEmail, verificationCode);
         
         // Create a new verification record
         await this.verificationRepository.create({
             email: verification.email,
-            fsaeRole: verification.fsaeRole,
+            role: verification.role,
             createdAt: Date.now(),
             expiresAt: Date.now() + 1000 * 60 * 10,
             verificationCode: verificationCode,
             twilioId: newVerification.sid,
             resentOnce: true
-        }); */
+        }); 
+        
+        */
 
         return true;
     }

@@ -83,7 +83,7 @@ export class MemberController {
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(Member, {partial: true}),
+          schema: getModelSchemaRef(Member, {partial: true, exclude: ['cvData']}),
         },
       },
     })

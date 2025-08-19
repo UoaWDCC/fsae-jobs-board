@@ -19,9 +19,8 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../app/store';
 import { jwtDecode } from 'jwt-decode';
 import DeactivateAccountModal from '../../components/Modal/DeactivateAccountModal';
-
-const PLACEHOLDER_BANNER = "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80"
-const PLACEHOLDER_AVATAR = "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png"
+import { subGroupDisplayMap } from '@/app/utils/field-display-maps';
+import { SubGroup } from '@/models/subgroup.model';
 
 
 export function AlumniProfile() {
@@ -40,6 +39,7 @@ export function AlumniProfile() {
   const userRole = useSelector((state: RootState) => state.user.role); // the id of the local user
   const userId = useSelector((state: RootState) => state.user.id); // the id of the local user
 
+  /*
   const handleAvatarChange = () => {
     setModalType('avatar');
     setOpenProfileModal(true);
@@ -56,7 +56,7 @@ export function AlumniProfile() {
     //setModalContent(<EditBannerModal banner={userData?.banner} />)
     setModalContent(<EditBannerModal banner={""} />)
     setModalTitle('Banner Photo');
-  };
+  };*/
   
   const handleProfileChange = () => {
     if (!userData) return;
@@ -206,10 +206,8 @@ export function AlumniProfile() {
         <Card.Section
           h={250}
           className={styles.banner}
-          onClick={handleBannerChange}
-          // TODO: userData?.banner ?? PLACEHOLDER_BANNER
-          // Alumni model doesnt currently have a banner field
-          style={{ backgroundImage: `url(${PLACEHOLDER_BANNER})`}}
+          //onClick={handleBannerChange}
+          style={{ backgroundImage: `url(${userData?.bannerURL})`}}
         />
         <Box className={styles.name} pl={170} pt={140}>
           <EditableField
@@ -262,7 +260,7 @@ export function AlumniProfile() {
             userRole="alumni"
             onUpdate={(_, value) => {
               if (userData) {
-                setUserData({ ...userData, subGroup: value });
+                setUserData({ ...userData, subGroup: value as SubGroup });
               }
             }}
             editable={isLocalProfile}
@@ -270,18 +268,16 @@ export function AlumniProfile() {
             size="xl"
           />
         </Box>
-
         <Avatar
-          //TODO: Use alumni avatar (not in the model yet as of writing) src={userData?.avatar ?? PLACEHOLDER_AVATAR}
-          src={PLACEHOLDER_AVATAR}
+          src={userData?.avatarURL}
           size={150}
           mt={-100}
           ml={10}
           className={styles.avatar}
-          onClick={handleAvatarChange}
+          //onClick={handleAvatarChange}
         />
-        <Text size="lg" mt={-30} ml={170} className={styles.text}>
-          {"Company Placeholder"}
+        <Text size="lg" mt={-50} ml={170} className={styles.text}>
+          {`${userData?.subGroup ? subGroupDisplayMap[userData?.subGroup] : ""}`}
         </Text>
       </Card>
 
@@ -346,14 +342,14 @@ export function AlumniProfile() {
               {userData ? (
                 <EditableField
                   size="md"
-                  value={userData.desc || ''}
+                  value={userData.description || ''}
                   placeholder="Tell us about yourself..."
-                  fieldName="desc"
+                  fieldName="description"
                   userId={id as string}
                   userRole="alumni"
                   type="textarea"
                   onUpdate={(_, value) => {
-                    setUserData({ ...userData, desc: value });
+                    setUserData({ ...userData, description: value });
                   }}
                   editable={isLocalProfile}
                   maxLength={1500}
