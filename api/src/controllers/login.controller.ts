@@ -26,7 +26,7 @@ import {
   MemberRepository,
   SponsorRepository,
 } from '../repositories';
-import {FsaeRole, FsaeUser} from '../models';
+import {Alumni, Member, Sponsor, Admin} from '../models';
 import {FsaeUserService, JwtService, PasswordHasherService} from '../services';
 import {SecurityBindings, UserProfile} from '@loopback/security';
 import {authorize} from '@loopback/authorization';
@@ -73,7 +73,7 @@ export class LoginController {
       where: {
         email: credentials.email,
       },
-    })) as FsaeUser[];
+    })) as Admin[];
 
     return this.getUserToken(credentials, userSearchResults);
   }
@@ -106,7 +106,7 @@ export class LoginController {
       where: {
         email: credentials.email,
       },
-    })) as FsaeUser[];
+    })) as Sponsor[];
 
     return this.getUserToken(credentials, userSearchResults);
   }
@@ -139,7 +139,7 @@ export class LoginController {
       where: {
         email: credentials.email,
       },
-    })) as FsaeUser[];
+    })) as Member[];
 
     return this.getUserToken(credentials, userSearchResults);
   }
@@ -172,7 +172,7 @@ export class LoginController {
       where: {
         email: credentials.email,
       },
-    })) as FsaeUser[];
+    })) as Alumni[];
 
     return this.getUserToken(credentials, userSearchResults);
   }
@@ -246,7 +246,7 @@ export class LoginController {
 
   async getUserToken(
     credentials: loginParams,
-    userSearchResults: FsaeUser[],
+    userSearchResults: (Member | Alumni | Sponsor | Admin)[],
   ): Promise<loginResponse> {
     // If no user found, invalid credientials
     if (userSearchResults.length === 0) {
@@ -268,24 +268,29 @@ export class LoginController {
 
     // Check for missing required fields based on role
     let hasMissingInfo = false;
-    const role = fsaeUser.role;
     
     // Define required fields for each role (check for both missing and empty strings)
-    if (role === FsaeRole.MEMBER) {  
-      hasMissingInfo = !fsaeUser.firstName || fsaeUser.firstName === '' ||
-                       !fsaeUser.lastName || fsaeUser.lastName === '' ||
-                       !fsaeUser.phoneNumber || fsaeUser.phoneNumber === '';
-                       
-    } else if (role === FsaeRole.ALUMNI) {
-      hasMissingInfo = !fsaeUser.firstName || fsaeUser.firstName === '' ||
-                       !fsaeUser.lastName || fsaeUser.lastName === '' ||
-                       !fsaeUser.phoneNumber || fsaeUser.phoneNumber === '' ||
-                       !fsaeUser.company || fsaeUser.company === '';
-    } else if (role === FsaeRole.SPONSOR) {
-      hasMissingInfo = !fsaeUser.company || fsaeUser.company === '' ||
-                       !fsaeUser.name || fsaeUser.name === '' ||
-                       !fsaeUser.phoneNumber || fsaeUser.phoneNumber === '';
-    }
+    switch (userSearchResults[0].constructor) {
+      case Member:
+        if (fsaeUser instanceof Member) {
+          hasMissingInfo = !fsaeUser.firstName ||
+                          !fsaeUser.lastName;
+        }
+        break;
+      case Alumni:
+        if (fsaeUser instanceof Alumni) {
+          hasMissingInfo = !fsaeUser.firstName ||
+                           !fsaeUser.lastName;
+        }
+        break;
+      case Sponsor:
+        if (fsaeUser instanceof Sponsor) {
+          hasMissingInfo = !fsaeUser.companyName;
+        }
+        break;
+      default:
+      throw new HttpErrors.InternalServerError('Unrecognized role');
+  }
 
     // Return Jwt Token
     let token = await this.jwtService.generateToken(fsaeUser);
