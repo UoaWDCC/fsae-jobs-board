@@ -19,7 +19,7 @@ export class FsaeUser extends Entity {
       enum: Object.values(FsaeRole),
     },
   })
-  role: FsaeRole=FsaeRole.UNkNOWN;
+  role: FsaeRole;
 
   // Common fields
   @property({type: 'string', required: true})
@@ -62,8 +62,17 @@ export class FsaeUser extends Entity {
   Sponsor: company, websiteURL, tier, industry, name;
   these fields are optional and redefined in the derived classes
   */
-  @property({type: 'string'}) firstName?: string; //member/Alumni
-  @property({type: 'string'}) lastName?: string; //member/Alumni
+  @property({
+    type: 'string',
+    default: 'Fsae',
+  }) 
+  firstName?: string; //member/Alumni
+  
+  @property({
+    type: 'string', 
+    default: 'member',
+  }) 
+  lastName?: string; //member/Alumni
   @property({type: 'string'}) cv?: string; // Member
   @property({type: 'string'}) subGroup?: string; // Member/Alumni
   @property({type: 'string'}) company?: string; // Alumni/Sponsor

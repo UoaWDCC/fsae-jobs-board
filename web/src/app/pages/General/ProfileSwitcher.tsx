@@ -1,8 +1,11 @@
 import { useLocation, Outlet, Navigate } from 'react-router-dom';
 import { RootState } from '../../store';
 import { useSelector } from 'react-redux';
+import { useProfileCompletionGuard } from '../../../hooks/useProfileCompletionGuard';
 
 function ProfileSwitcher() {
+  useProfileCompletionGuard();
+  
   // Not directly used here, but could be for future enhancements (e.g., conditional redirects)
   const location = useLocation();
 

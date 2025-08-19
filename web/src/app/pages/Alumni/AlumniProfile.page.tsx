@@ -1,4 +1,5 @@
-import { Card, Avatar, Text, Box, Title, Button, Grid, Flex, Loader, Image } from '@mantine/core';
+import { Card, Avatar, Box, Title, Button, Grid, Flex, Loader, Image, Text } from '@mantine/core';
+import { EditableField } from '../../components/EditableField';
 import styles from '../../styles/SponsorProfile.module.css';
 import { useEffect, useState } from 'react';
 import { IconPlus } from '@tabler/icons-react';
@@ -210,16 +211,65 @@ export function AlumniProfile() {
           // Alumni model doesnt currently have a banner field
           style={{ backgroundImage: `url(${PLACEHOLDER_BANNER})`}}
         />
-        {(userData?.firstName && userData?.lastName) && (
-          <Text className={styles.name} pl={170} pt={140}>
-            {userData.firstName + " " + userData.lastName}
-          </Text>
-        )}
-        {userData?.subGroup && (
-          <Text size="xl" className={styles.subGroup} pl={170} pt={160}>
-            {userData.subGroup}
-          </Text>
-        )}
+        <Box className={styles.name} pl={170} pt={140}>
+          <EditableField
+            value={userData?.firstName || ''}
+            placeholder="First name"
+            fieldName="firstName"
+            userId={id as string}
+            userRole="alumni"
+            onUpdate={(_, value) => {
+              if (userData) {
+                setUserData({ ...userData, firstName: value });
+              }
+            }}
+            editable={isLocalProfile}
+            required
+            validation={(value) => {
+              if (!value.trim()) return 'First name is required';
+              return null;
+            }}
+            className={styles.firstName}
+            size={undefined}
+          />
+          <EditableField
+            value={userData?.lastName || ''}
+            placeholder="Last name"
+            fieldName="lastName"
+            userId={id as string}
+            userRole="alumni"
+            onUpdate={(_, value) => {
+              if (userData) {
+                setUserData({ ...userData, lastName: value });
+              }
+            }}
+            editable={isLocalProfile}
+            required
+            validation={(value) => {
+              if (!value.trim()) return 'Last name is required';
+              return null;
+            }}
+            className={styles.lastName}
+            size={undefined}
+          />
+        </Box>
+        <Box pl={170} pt={160}>
+          <EditableField
+            value={userData?.subGroup || ''}
+            placeholder="FSAE sub-team"
+            fieldName="subGroup"
+            userId={id as string}
+            userRole="alumni"
+            onUpdate={(_, value) => {
+              if (userData) {
+                setUserData({ ...userData, subGroup: value });
+              }
+            }}
+            editable={isLocalProfile}
+            className={styles.subGroup}
+            size="xl"
+          />
+        </Box>
 
         <Avatar
           //TODO: Use alumni avatar (not in the model yet as of writing) src={userData?.avatar ?? PLACEHOLDER_AVATAR}
@@ -245,9 +295,45 @@ export function AlumniProfile() {
           <Box ml={20} mt={15}>
             <Title order={5}>Contact</Title>
             <Box pl={15} mt={10} className={styles.box}>
-              {userData?.email && <Text size="md">{userData.email}</Text>}
-              {userData?.phoneNumber && <Text size="lg">{userData.phoneNumber}</Text>}
-              {!userData && <Loader color="blue" />}
+              {userData ? (
+                <>
+                  <EditableField
+                    size="md"
+                    value={userData.email}
+                    placeholder="Email"
+                    fieldName="email"
+                    userId={id as string}
+                    userRole="alumni"
+                    type="email"
+                    onUpdate={(_, value) => {
+                      setUserData({ ...userData, email: value });
+                    }}
+                    editable={isLocalProfile}
+                    required
+                    validation={(value) => {
+                      const emailPattern = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i;
+                      if (!emailPattern.test(value)) return 'Please enter a valid email';
+                      return null;
+                    }}
+                  />
+                  <EditableField
+                    size="lg"
+                    value={userData.phoneNumber}
+                    placeholder="Phone number"
+                    fieldName="phoneNumber"
+                    userId={id as string}
+                    userRole="alumni"
+                    type="tel"
+                    onUpdate={(_, value) => {
+                      setUserData({ ...userData, phoneNumber: value });
+                    }}
+                    editable={isLocalProfile}
+                    required
+                  />
+                </>
+              ) : (
+                <Loader color="blue" />
+              )}
             </Box>
           </Box>
         </Grid.Col>
@@ -257,32 +343,25 @@ export function AlumniProfile() {
             {/* ABOUT ME SECTION */}
             <Title order={5}>About Me</Title>
             <Box pl={15} mt={10} className={styles.box}>
-              {/* Conditionally render the full description based on showMore state */}
-              {userData?.desc && (
-                <>
-                  {showMoreDescription ? (
-                    <Text size="md">{userData.desc}</Text>
-                  ) : (
-                    <>
-                      <Text size="md">{userData.desc.substring(0, 1200)}</Text>
-                    </>
-                  )}
-                  {userData.desc?.length > 1200 ? (
-                    <Button
-                      variant="subtle"
-                      size="sm"
-                      pl={0}
-                      pr={0}
-                      pt={0}
-                      pb={0}
-                      onClick={() => setShowMoreDescription(!showMoreDescription)}
-                    >
-                      {showMoreDescription ? 'Show less' : 'View more'}
-                    </Button>
-                  ) : null}
-                </>
+              {userData ? (
+                <EditableField
+                  size="md"
+                  value={userData.desc || ''}
+                  placeholder="Tell us about yourself..."
+                  fieldName="desc"
+                  userId={id as string}
+                  userRole="alumni"
+                  type="textarea"
+                  onUpdate={(_, value) => {
+                    setUserData({ ...userData, desc: value });
+                  }}
+                  editable={isLocalProfile}
+                  maxLength={1500}
+                  minRows={4}
+                />
+              ) : (
+                <Loader color="blue" />
               )}
-              {!userData?.desc && <Loader color="blue" />}
             </Box>
           </Box>
           <Box
