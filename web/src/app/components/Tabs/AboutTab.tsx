@@ -15,14 +15,10 @@ const subGroupOptions = Object.entries(subGroupDisplayMap).map(([value, label]) 
 
 export const AboutTab = ({ newUserData, setNewUserData }: { newUserData: Partial<Member> | null, setNewUserData: React.Dispatch<React.SetStateAction<Partial<Member> | null>>}) => {
   
-  const handleInputChange = (field: keyof Member) => (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleFieldChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setNewUserData({...newUserData, [field]: event.currentTarget.value});
   }
 
-  const handleSelectChange = (field: keyof Member) => (value: string | null) => {
-    setNewUserData((prev) => ({ ...(prev ?? {}), [field]: value ?? '' }));
-  }
-  
   return (
     <Box>
       <Box className={styles.box}>
@@ -40,7 +36,7 @@ export const AboutTab = ({ newUserData, setNewUserData }: { newUserData: Partial
       <Textarea
         label="About Me"
         value={newUserData?.description} 
-        onChange={handleInputChange("description")}
+        onChange={handleFieldChange("description")}
 
         size="md"
         classNames={{

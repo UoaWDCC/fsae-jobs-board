@@ -187,7 +187,7 @@ export function StudentProfile() {
           userRole="member"
           onUpdate={(_, value) => {
             if (userData) {
-              setUserData({ ...userData, subGroup: value });
+              setUserData({ ...userData, subGroup: value as SubGroup });
             }
           }}
           editable={isLocalProfile}
@@ -317,7 +317,7 @@ export function StudentProfile() {
                   userRole="member"
                   type="textarea"
                   onUpdate={(_, value) => {
-                    setUserData({ ...userData, desc: value });
+                    setUserData({ ...userData, description: value });
                   }}
                   editable={isLocalProfile}
                   maxLength={1500}

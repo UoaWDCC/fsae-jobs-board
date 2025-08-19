@@ -20,6 +20,7 @@ import { RootState } from '../../../app/store';
 import { jwtDecode } from 'jwt-decode';
 import DeactivateAccountModal from '../../components/Modal/DeactivateAccountModal';
 import { subGroupDisplayMap } from '@/app/utils/field-display-maps';
+import { SubGroup } from '@/models/subgroup.model';
 
 
 export function AlumniProfile() {
@@ -259,7 +260,7 @@ export function AlumniProfile() {
             userRole="alumni"
             onUpdate={(_, value) => {
               if (userData) {
-                setUserData({ ...userData, subGroup: value });
+                setUserData({ ...userData, subGroup: value as SubGroup });
               }
             }}
             editable={isLocalProfile}
@@ -348,7 +349,7 @@ export function AlumniProfile() {
                   userRole="alumni"
                   type="textarea"
                   onUpdate={(_, value) => {
-                    setUserData({ ...userData, desc: value });
+                    setUserData({ ...userData, description: value });
                   }}
                   editable={isLocalProfile}
                   maxLength={1500}
