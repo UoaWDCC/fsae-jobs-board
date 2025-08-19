@@ -30,7 +30,7 @@ export class Member extends FsaeUser {
 
   @property({
     type: 'string', 
-    required: true,
+    required: false,
     jsonSchema: {
       enum: Object.values(SubGroup),
     },
