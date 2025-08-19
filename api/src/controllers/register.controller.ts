@@ -57,8 +57,9 @@ export class RegisterController {
           lastName: createAdminDTO.lastName,
       });
       
-      //await this.initiateVerification(createAdminDTO.email, createAdminDTO.firstName)
-      return newAdmin
+      //await this.initiateVerification(createAdminDTO.email, createAdminDTO.firstName) //TODO: Restore verification*/
+
+        return newAdmin;
     }
 
   @post('/register-member')
@@ -92,7 +93,8 @@ export class RegisterController {
           skills: createMemberDTO.skills
       });
 
-      //await this.initiateVerification(createMemberDTO.email, createMemberDTO.firstName)
+      //await this.initiateVerification(createMemberDTO.email, createMemberDTO.firstName) //TODO: Restore verification*/
+      
       return newMember;
     }
 
@@ -125,7 +127,7 @@ export class RegisterController {
           industry: createSponsorDTO.industry
       });
 
-      //await this.initiateVerification(createSponsorDTO.email, createSponsorDTO.companyName)
+      //await this.initiateVerification(createSponsorDTO.email, createSponsorDTO.companyName) //TODO: Restore verification*/
 
       return newMember;
     }
@@ -159,14 +161,14 @@ export class RegisterController {
         companyName: createAlumniDTO.companyName
       });
       
-      //await this.initiateVerification(createAlumniDTO.email, createAlumniDTO.firstName)
+      //await this.initiateVerification(createAlumniDTO.email, createAlumniDTO.firstName) //TODO: Restore verification*/
 
       return newAlumni;
     }
 
     async initiateVerification(email: string, name: string): Promise<void> {
       const { verification, verificationCode } = await this.sendVerificationEmail(email, name);
-        
+
       await this.verificationRepository.create({
         email: email,
         verificationCode: verificationCode,

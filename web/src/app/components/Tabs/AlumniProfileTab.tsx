@@ -19,6 +19,14 @@ const AlumniProfileTab = ({ newUserData, setNewUserData }: { newUserData: Partia
     setNewUserData((prev) => ({ ...(prev ?? {}), [field]: value ?? '' }));
   }
 
+  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const fullName = event.currentTarget.value;
+    const names = fullName.split(' ');
+    const firstName = names[0] || '';
+    const lastName = names.slice(1).join(' ') || '';
+    setNewUserData({...newUserData, firstName, lastName});
+  }
+
   return (
     <Box>
       <Box className={styles.box}>
@@ -31,6 +39,7 @@ const AlumniProfileTab = ({ newUserData, setNewUserData }: { newUserData: Partia
           <TextInput value={newUserData?.phoneNumber as string} onChange={handleInputChange("phoneNumber")} label="Phone Number" size="md" mb={20} />
           <TextInput value={newUserData?.companyName as string} onChange={handleInputChange("companyName")} label="Company" size="md" mb={20} />
           <Select value={newUserData?.subGroup} data={subGroupOptions} onChange={handleSelectChange("subGroup")} label="Subgroup" size="md" mb={20}/>
+
         </Box>
       </Box>
     </Box>

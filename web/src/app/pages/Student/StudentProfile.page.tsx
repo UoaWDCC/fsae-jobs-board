@@ -1,15 +1,5 @@
-import {
-  Card,
-  Avatar,
-  Text,
-  Box,
-  Title,
-  Button,
-  Grid,
-  ActionIcon,
-  Flex,
-  Loader,
-} from '@mantine/core';
+import { Card, Avatar, Text, Box, Title, Button, Grid, ActionIcon, Flex, Loader } from '@mantine/core';
+import { EditableField } from '../../components/EditableField';
 import styles from '../../styles/StudentProfile.module.css';
 import { useEffect, useState } from 'react';
 import EditModal from '../../components/Modal/EditModal';
@@ -44,6 +34,7 @@ export function StudentProfile() {
   const [showMoreDescription, setShowMoreDescription] = useState(false);
   const [showMoreSkills, setShowMoreSkills] = useState(false);
   const [showMoreEducation, setShowMoreEducation] = useState(false);
+
 
   const [userData, setUserData] = useState<Member | null>(null);
   const [isLocalProfile, setIsLocalProfile] = useState(false) // Is this profile this user's profile (aka. should we show the edit button)
@@ -126,7 +117,6 @@ export function StudentProfile() {
           navigate("/404")
           return;
         }
-        
         setUserData(userData);
         setIsLocalProfile(userData.id == userId);
       } catch (err) {
@@ -146,16 +136,64 @@ export function StudentProfile() {
           //onClick={handleBannerChange}
           style={userData?.bannerURL ? { backgroundImage: `url(${userData?.bannerURL})` }: {}}
         />
-        {(userData?.firstName && userData?.lastName) && (
-          <Text className={styles.name} pl={170} pt={150}>
-            {userData.firstName} {userData.lastName}
-          </Text>
-        )}
-        {userData?.subGroup && (
-          <Text size="xl" className={styles.subgroup} pl={170} pt={190}>
-            {subGroupDisplayMap[userData.subGroup]}
-          </Text>
-        )}
+
+        <Box className={styles.name} pl={160} pt={110}>
+          <EditableField
+            value={userData?.firstName || ''}
+            placeholder="First name"
+            fieldName="firstName"
+            userId={id as string}
+            userRole="member"
+            onUpdate={(_, value) => {
+              if (userData) {
+                setUserData({ ...userData, firstName: value });
+              }
+            }}
+            editable={isLocalProfile}
+            required
+            validation={(value) => {
+              if (!value.trim()) return 'First name is required';
+              return null;
+            }}
+            className={styles.firstName}
+            size={undefined}
+          />
+          <EditableField
+            value={userData?.lastName || ''}
+            placeholder="Last name"
+            fieldName="lastName"
+            userId={id as string}
+            userRole="member"
+            onUpdate={(_, value) => {
+              if (userData) {
+                setUserData({ ...userData, lastName: value });
+              }
+            }}
+            editable={isLocalProfile}
+            required
+            validation={(value) => {
+              if (!value.trim()) return 'Last name is required';
+              return null;
+            }}
+            className={styles.lastName}
+            size={undefined}
+          />
+        </Box>
+        <EditableField
+          value={userData?.subGroup || ''}
+          placeholder="FSAE sub-team"
+          fieldName="subGroup"
+          userId={id as string}
+          userRole="member"
+          onUpdate={(_, value) => {
+            if (userData) {
+              setUserData({ ...userData, subGroup: value });
+            }
+          }}
+          editable={isLocalProfile}
+          className={styles.subgroupField}
+          size="xl"
+        />
 
         <Avatar
           src={userData?.avatarURL}
@@ -184,9 +222,47 @@ export function StudentProfile() {
           <Box ml={20} mt={20}>
             <Title order={5}>Contact</Title>
             <Box pl={15} mt={10} className={styles.box}>
-              {userData?.email && <Text size="lg">{userData.email}</Text>}
-              {userData?.phoneNumber && <Text size="lg">{userData.phoneNumber}</Text>}
-              {!userData && <Loader color="blue" />}
+              {userData ? (
+                <>
+                  <EditableField
+                    size="lg"
+                    value={userData.email}
+                    label="Email"
+                    placeholder="Click to add email"
+                    fieldName="email"
+                    userId={id as string}
+                    userRole="member"
+                    type="email"
+                    onUpdate={(_, value) => {
+                      setUserData({ ...userData, email: value });
+                    }}
+                    editable={isLocalProfile}
+                    required
+                    validation={(value) => {
+                      const emailPattern = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i;
+                      if (!emailPattern.test(value)) return 'Please enter a valid email';
+                      return null;
+                    }}
+                  />
+                  <EditableField
+                    size="lg"
+                    value={userData.phoneNumber}
+                    label="Phone Number"
+                    placeholder="Click to add phone number"
+                    fieldName="phoneNumber"
+                    userId={id as string}
+                    userRole="member"
+                    type="tel"
+                    onUpdate={(_, value) => {
+                      setUserData({ ...userData, phoneNumber: value });
+                    }}
+                    editable={isLocalProfile}
+                    required
+                  />
+                </>
+              ) : (
+                <Loader color="blue" />
+              )}
             </Box>
           </Box>
 
@@ -230,30 +306,25 @@ export function StudentProfile() {
           <Box mx={20} mt={20}>
             <Title order={5}>About Me</Title>
             <Box pl={15} mt={10} className={styles.box}>
-              {/* Conditionally render the full description based on showMore state */}
-              {userData?.description && (
-                <>
-                  {showMoreDescription ? (
-                    <Text size="md">{userData.description}</Text>
-                  ) : (
-                    <>
-                      <Text size="md">{userData.description.substring(0, 1200)}</Text>
-                    </>
-                  )}
-                  {userData.description?.length > 1200 ? (
-                    <Button
-                      size="sm"
-                      variant="subtle"
-                      pl={0}
-                      pr={0}
-                      pt={0}
-                      pb={0}
-                      onClick={() => setShowMoreDescription(!showMoreDescription)}
-                    >
-                      {showMoreDescription ? 'Show less' : 'View more'}
-                    </Button>
-                  ) : null}
-                </>
+              {userData ? (
+                <EditableField
+                  size="md"
+                  value={userData.description}
+                  label="About Me"
+                  placeholder="Click to add a description about yourself..."
+                  fieldName="description"
+                  userId={id as string}
+                  userRole="member"
+                  type="textarea"
+                  onUpdate={(_, value) => {
+                    setUserData({ ...userData, desc: value });
+                  }}
+                  editable={isLocalProfile}
+                  maxLength={1500}
+                  minRows={4}
+                />
+              ) : (
+                <Loader color="blue" />
               )}
             </Box>
           </Box>

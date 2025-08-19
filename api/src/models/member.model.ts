@@ -94,7 +94,15 @@ export class Member extends FsaeUser {
     required: true,
     default: false,
   })
-  hasCV: boolean;
+  hasCV?: boolean;
+  
+  // firstName, lastName, and subGroup are already defined in parent FsaeUser class with @property decorators
+  // Default values are set in the parent class or during registration
+
+ 
+  // Indexer property to allow additional data
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [prop: string]: any;
 
   constructor(data?: Partial<Member>) {
     super(data);

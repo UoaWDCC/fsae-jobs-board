@@ -1,4 +1,5 @@
 import { Card, Avatar, Text, Box, Title, Button, Grid, Flex, Loader, Anchor } from '@mantine/core';
+import { EditableField } from '../../components/EditableField';
 import styles from '../../styles/SponsorProfile.module.css';
 import { useEffect, useState } from 'react';
 import { IconPlus } from '@tabler/icons-react';
@@ -30,7 +31,6 @@ export function SponsorProfile() {
   const [modalTitle, setModalTitle] = useState('');
   const [openProfileModal, setOpenProfileModal] = useState(false);
 
-  const [showMoreDescription, setShowMoreDescription] = useState(false);
 
   const [userData, setUserData] = useState<Sponsor | null>(null);
   const [jobData, setJobData] = useState<JobCardProps[]>([]);
@@ -199,11 +199,28 @@ export function SponsorProfile() {
           //onClick={handleBannerChange}
           style={{ backgroundImage: `url(${userData?.bannerURL})` }}
         />
-        {userData?.companyName && (
-          <Text className={styles.name} pl={170} pt={170}>
-            {userData.companyName}
-          </Text>
-        )}
+        <Box className={styles.name} pl={170} pt={140}>
+          <EditableField
+            value={userData?.name || ''}
+            placeholder="Company name"
+            fieldName="name"
+            userId={id as string}
+            userRole="sponsor"
+            onUpdate={(_, value) => {
+              if (userData) {
+                setUserData({ ...userData, name: value });
+              }
+            }}
+            editable={isLocalProfile}
+            required
+            validation={(value) => {
+              if (!value.trim()) return 'Company name is required';
+              return null;
+            }}
+            className={styles.companyName}
+            size={undefined}
+          />
+        </Box>
 
         <Avatar
           src={userData?.avatarURL}
@@ -213,9 +230,22 @@ export function SponsorProfile() {
           className={styles.avatar}
           //onClick={handleAvatarChange}
         />
-        <Text size="lg" mt={-50} ml={170} className={styles.text}>
-          {userData?.industry}
-        </Text>
+        <Box mt={-30} ml={170} className={styles.text}>
+          <EditableField
+            value={userData?.industry || ''}
+            placeholder="Click to add industry"
+            fieldName="industry"
+            userId={id as string}
+            userRole="sponsor"
+            onUpdate={(_, value) => {
+              if (userData) {
+                setUserData({ ...userData, industry: value });
+              }
+            }}
+            editable={isLocalProfile}
+            size="lg"
+          />
+        </Box>
       </Card>
 
       <Flex className={styles.profileBtn}>
@@ -228,10 +258,47 @@ export function SponsorProfile() {
           <Box ml={20} mt={15}>
             <Title order={5}>Contact</Title>
             <Box pl={15} mt={10} className={styles.box}>
-              {userData?.email && <Text size="md">{userData.email}</Text>}
-              {userData?.phoneNumber && <Text size="lg">{userData.phoneNumber}</Text>}
-              {userData?.websiteURL && <Anchor href={userData.websiteURL.replace(/^(https?:\/\/)?/i, 'https://')} target="_blank">Visit Website</Anchor>}
-              {!userData && <Loader color="blue" />}
+              {userData ? (
+                <>
+                  <EditableField
+                    size="md"
+                    value={userData.email}
+                    label="Email"
+                    placeholder="Click to add email"
+                    fieldName="email"
+                    userId={id as string}
+                    userRole="sponsor"
+                    type="email"
+                    onUpdate={(_, value) => {
+                      setUserData({ ...userData, email: value });
+                    }}
+                    editable={isLocalProfile}
+                    required
+                    validation={(value) => {
+                      const emailPattern = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i;
+                      if (!emailPattern.test(value)) return 'Please enter a valid email';
+                      return null;
+                    }}
+                  />
+                  <EditableField
+                    size="lg"
+                    value={userData.phoneNumber}
+                    label="Phone Number"
+                    placeholder="Click to add phone number"
+                    fieldName="phoneNumber"
+                    userId={id as string}
+                    userRole="sponsor"
+                    type="tel"
+                    onUpdate={(_, value) => {
+                      setUserData({ ...userData, phoneNumber: value });
+                    }}
+                    editable={isLocalProfile}
+                    required
+                  />
+                </>
+              ) : (
+                <Loader color="blue" />
+              )}
             </Box>
           </Box>
         </Grid.Col>
@@ -241,30 +308,25 @@ export function SponsorProfile() {
             {/* ABOUT ME SECTION */}
             <Title order={5}>About</Title>
             <Box pl={15} mt={10} className={styles.box}>
-              {/* Conditionally render the full description based on showMore state */}
-              {userData?.description && (
-                <>
-                  {showMoreDescription ? (
-                    <Text size="md">{userData.description}</Text>
-                  ) : (
-                    <>
-                      <Text size="md">{userData.description.substring(0, 1200)}</Text>
-                    </>
-                  )}
-                  {userData.description?.length > 1200 ? (
-                    <Button
-                      variant="subtle"
-                      size="sm"
-                      pl={0}
-                      pr={0}
-                      pt={0}
-                      pb={0}
-                      onClick={() => setShowMoreDescription(!showMoreDescription)}
-                    >
-                      {showMoreDescription ? 'Show less' : 'View more'}
-                    </Button>
-                  ) : null}
-                </>
+              {userData ? (
+                <EditableField
+                  size="md"
+                  value={userData.description || ''}
+                  label="About Us"
+                  placeholder="Click to add a description about your company..."
+                  fieldName="description"
+                  userId={id as string}
+                  userRole="sponsor"
+                  type="textarea"
+                  onUpdate={(_, value) => {
+                    setUserData({ ...userData, desc: value });
+                  }}
+                  editable={isLocalProfile}
+                  maxLength={1500}
+                  minRows={4}
+                />
+              ) : (
+                <Loader color="blue" />
               )}
             </Box>
           </Box>

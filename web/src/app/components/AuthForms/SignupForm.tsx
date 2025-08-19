@@ -146,7 +146,8 @@ const SignupForm = ({ role }: { role: Role }) => {
     } else if (role === Role.Sponsor) {
       register_sponsor(sanitisedData as unknown as createFSAEUserDto).then((response) => {
         // toast.success('Sponsor Registration Successful');
-        navigate('/verify', {
+        //navigate('/verify', { TODO: restore verification
+        navigate('/login', {
           state: {
             email: formData.get('email'),
             password: formData.get('password'),
@@ -159,7 +160,8 @@ const SignupForm = ({ role }: { role: Role }) => {
     } else if (role === Role.Alumni) {
       register_alumni(sanitisedData as unknown as createFSAEUserDto).then((response) => {
         // toast.success('Alumni Registration Successful');
-        navigate('/verify', {
+        //navigate('/verify', { TODO: restore verification
+        navigate('/login', {
           state: {
             email: formData.get('email'),
             password: formData.get('password'),

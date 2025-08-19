@@ -27,20 +27,21 @@ export const AboutTab = ({ newUserData, setNewUserData }: { newUserData: Partial
     <Box>
       <Box className={styles.box}>
         <Box style={{ flex: 1 }} className={styles.input}>
-          <TextInput value={newUserData?.firstName} onChange={handleInputChange("firstName")} label="First Name" size="md" />
-          <TextInput value={newUserData?.lastName} onChange={handleInputChange("lastName")} label="Last Name" size="md" />
-          <TextInput value={newUserData?.email} onChange={handleInputChange("email")} label="Email" size="md" />
+          <TextInput value={newUserData?.firstName || ''} onChange={handleFieldChange("firstName")} label="First Name" size="md" />
+          <TextInput value={newUserData?.lastName || ''} onChange={handleFieldChange("lastName")} label="Last Name" size="md" />
+          <TextInput value={newUserData?.email || ''} onChange={handleFieldChange("email")} label="Email" size="md" />
         </Box>
         <Box style={{ flex: 1 }} className={styles.input}>
-          <TextInput value={newUserData?.phoneNumber} onChange={handleInputChange("phoneNumber")} label="Phone Number" size="md" />
-          <Select value={newUserData?.subGroup} data={subGroupOptions} onChange={handleSelectChange("subGroup")} label="Subgroup" size="md" />
-          <Select value={newUserData?.lookingFor} data={jobTypeOptions} onChange={handleSelectChange("lookingFor")} label="Looking for" size="md" />
+          <TextInput value={newUserData?.phoneNumber || ''} onChange={handleFieldChange("phoneNumber")} label="Phone Number" size="md" />
+          <TextInput value={newUserData?.subGroup || ''} onChange={handleFieldChange("subGroup")} label="Subgroup" size="md" />
+          <TextInput label="Looking For" size="md" />
         </Box>
       </Box>
       <Textarea
         label="About Me"
         value={newUserData?.description} 
         onChange={handleInputChange("description")}
+
         size="md"
         classNames={{
           input: styles.area,

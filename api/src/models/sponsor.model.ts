@@ -16,6 +16,7 @@ export class Sponsor extends FsaeUser {
   })
   websiteURL: string;
 
+
   @property({
     type: 'string', 
     required: false, // "required: true" demands non-empty strings, so it is turned off here
