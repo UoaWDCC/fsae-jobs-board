@@ -201,14 +201,14 @@ export function SponsorProfile() {
         />
         <Box className={styles.name} pl={170} pt={140}>
           <EditableField
-            value={userData?.name || ''}
+            value={userData?.companyName || ''}
             placeholder="Company name"
-            fieldName="name"
+            fieldName="companyName"
             userId={id as string}
             userRole="sponsor"
             onUpdate={(_, value) => {
               if (userData) {
-                setUserData({ ...userData, name: value });
+                setUserData({ ...userData, companyName: value });
               }
             }}
             editable={isLocalProfile}
@@ -319,7 +319,7 @@ export function SponsorProfile() {
                   userRole="sponsor"
                   type="textarea"
                   onUpdate={(_, value) => {
-                    setUserData({ ...userData, desc: value });
+                    setUserData({ ...userData, description: value });
                   }}
                   editable={isLocalProfile}
                   maxLength={1500}
