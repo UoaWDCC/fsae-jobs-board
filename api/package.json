@@ -40,6 +40,8 @@
     "!*/__tests__"
   ],
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.872.0",
+    "@aws-sdk/s3-request-presigner": "^3.872.0",
     "@loopback/authentication": "^11.0.3",
     "@loopback/authorization": "^0.15.3",
     "@loopback/boot": "^7.0.0",
@@ -51,13 +53,13 @@
     "@types/jsonwebtoken": "^9.0.6",
     "bcryptjs": "^2.4.3",
     "dotenv": "^16.4.5",
-    "multer": "latest",
     "jsonwebtoken": "^9.0.2",
     "loopback-connector-mongodb": "^6.2.0",
     "mongodb": "^6.15.0",
     "multer": "^2.0.2",
     "tslib": "^2.0.0",
-    "twilio": "^5.3.0"
+    "twilio": "^5.3.0",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@loopback/build": "^11.0.0",
@@ -66,6 +68,7 @@
     "@types/bcryptjs": "^2.4.6",
     "@types/multer": "^2.0.0",
     "@types/node": "^16.18.86",
+    "@types/uuid": "^10.0.0",
     "eslint": "^8.57.0",
     "source-map-support": "^0.5.21",
     "typescript": "~5.2.2"
