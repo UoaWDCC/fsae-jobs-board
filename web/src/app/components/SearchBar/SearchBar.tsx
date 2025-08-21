@@ -8,24 +8,26 @@ interface SearchBarProps {
   setSearch: (search: string) => void;
   title: string;
   placeholder: string;
-  onSearch?: (value?: string) => void;
+  onSearch?: () => void; // do nothing
 }
 
 const SearchBar: FC<SearchBarProps> = ({ search, setSearch, title, placeholder, onSearch }) => {
   const [input, setInput] = useState(search);
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => setInput(event.target.value);
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setInput(event.target.value);
+  };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
       setSearch(input);
-      if (onSearch) onSearch(input);
+      if (onSearch) onSearch();
     }
   };
 
   const handleSearchClick = () => {
     setSearch(input);
-    if (onSearch) onSearch(input);
+    if (onSearch) onSearch();
   };
 
   return (

@@ -1,35 +1,47 @@
 import { apiInstance } from "@/api/ApiInstance";
 import { Job } from "@/models/job.model";
 
+// TODO : 
+// [] Filter
+// [] Pagination
+// [] Sorting
+// [] Search
+
+// Using the API class to fetch jobs
 export async function fetchJobs(search?: string): Promise<Job[]> {
   try {
-    console.log('[api/job] fetchJobs search=', search);
-    const res = await apiInstance.get('job', { params: search ? { search } : {} });
+    const res = await apiInstance.get("job", {
+      params: search ? { search } : {},
+    });
+    // Return the data as an array of Job objects
     return res.data as Job[];
   } catch (e) {
-    console.error('[api/job] fetchJobs error', e);
-    throw Error('An unknown error occurred trying to fetch jobs');
+    throw Error("An unknown error occurred trying to fetch jobs");
   }
 }
 
+// Using the API class to fetch jobs
 export async function fetchJobById(id: string): Promise<Job | null> {
   try {
-    console.log('[api/job] fetchJobById', id);
     const res = await apiInstance.get(`job/${id}`);
+    // Return the data as Job
     return res.data as Job;
   } catch (e) {
-    console.error('[api/job] fetchJobById error', e);
     throw Error(`An unknown error occurred trying to fetch job details by id: ${id}`);
   }
 }
 
 export async function fetchJobsByPublisherId(publisherId: string): Promise<Job[]> {
   try {
-    console.log('[api/job] fetchJobsByPublisherId', publisherId);
+    const filter = {
+      where: {
+        publisherID: publisherId,
+      }
+    };
     const res = await apiInstance.get(`job?filter[where][publisherID]=${publisherId}`);
+    // Return the data as an array of Job objects
     return res.data as Job[];
   } catch (e) {
-    console.error('[api/job] fetchJobsByPublisherId error', e);
-    throw Error('An unknown error occurred trying to fetch jobs');
+    throw Error("An unknown error occurred trying to fetch jobs");
   }
 }

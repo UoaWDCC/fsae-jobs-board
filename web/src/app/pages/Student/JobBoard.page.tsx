@@ -24,11 +24,9 @@ export function JobBoard() {
     };
   }, []);
 
-  const handleSearch = (value?: string) => {
-  setSearch(value ?? searchInput);
+  const handleSearch = () => {
+    setSearch(searchInput);
   };
-
-// carl : pagination reset is handled inside JobListing (to fix previous issue with pagination not resetting on search)
 
   return (
     <Grid justify="center" align="center">

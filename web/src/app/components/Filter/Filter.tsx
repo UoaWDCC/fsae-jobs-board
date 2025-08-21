@@ -35,14 +35,11 @@ const Filter: FC<FilterProps> = ({
     { value: 'other', label: 'Other' },
   ];
   const [isModalOpen, setIsModalOpen] = useState(false);
+
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
   const [isPortrait, setIsPortrait] = useState(window.innerHeight > window.innerWidth);
-
-  const openModalWithLog = () => openModal();
-  const closeModalWithLog = () => closeModal();
-  const handleRolesChange = (values: string[]) => setFilterRoles(values);
-  const handleFieldsChange = (values: string[]) => setFilterFields(values);
+  const [useRolesFilter, setUseRolesFilter] = useState(useRoles);
 
   return (
     <>
@@ -51,11 +48,11 @@ const Filter: FC<FilterProps> = ({
           <Title fs="italic" className={styles.filterHeading}>
             Filters
           </Title>
-          {useRoles ? (
+          {useRolesFilter ? (
             <Stack>
               <Checkbox.Group
                 value={filterRoles}
-                onChange={handleRolesChange}
+                onChange={setFilterRoles}
                 label="Role Type"
                 labelProps={{ style: { color: color } }}
                 classNames={{ label: styles.filterSubheading }}
@@ -76,7 +73,7 @@ const Filter: FC<FilterProps> = ({
           <Stack>
             <Checkbox.Group
               value={filterFields}
-              onChange={handleFieldsChange}
+              onChange={setFilterFields}
               label={useRoles ? 'Fields' : 'Industry'}
               labelProps={{ style: { color: color } }}
               classNames={{ label: styles.filterSubheading }}
@@ -102,24 +99,24 @@ const Filter: FC<FilterProps> = ({
               rightSection={<IconArrowDown size={14} />}
               variant="transparent"
               size="lg"
-              onClick={openModalWithLog}
+              onClick={openModal}
             >
               Filter
             </Button>
           </Flex>
-            <Modal
+          <Modal
             opened={isModalOpen}
-            onClose={closeModalWithLog}
+            onClose={closeModal}
             centered
             classNames={{ content: styles.modal, header: styles.modalHeader }}
           >
             <Stack>
               <Checkbox.Group
-                  value={filterRoles}
-                  onChange={handleRolesChange}
-                  label="Role Type"
-                  classNames={{ label: styles.filterSubheading }}
-                >
+                value={filterRoles}
+                onChange={setFilterRoles}
+                label="Role Type"
+                classNames={{ label: styles.filterSubheading }}
+              >
                 {roles.map((role) => (
                   <Checkbox
                     key={role.value}
@@ -135,7 +132,7 @@ const Filter: FC<FilterProps> = ({
             <Stack>
               <Checkbox.Group
                 value={filterFields}
-                onChange={handleFieldsChange}
+                onChange={setFilterFields}
                 label="Fields"
                 classNames={{ label: styles.filterSubheading }}
               >
