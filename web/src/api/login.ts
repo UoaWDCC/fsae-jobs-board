@@ -31,7 +31,7 @@ export async function login(email: string, password: string) {
       email,
       password,
     });
-    console.log(res.data);
+    // console.log(res.data);
     const { userId, token, verified, hasMissingInfo } = res.data;
 
     if (!verified) {
