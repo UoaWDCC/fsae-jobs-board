@@ -6,23 +6,16 @@ import { rem } from '@mantine/core';
 
 export interface JobCarouselProps {
   jobs: JobCardProps[];
-  onJobDeleted?: () => void;
-  onEditJob?: (jobData: JobCardProps) => void;
 }
 
 export function JobCarousel(data: JobCarouselProps) {
   // Map over the job data and create a JobCard for each job
   const jobCards = data.jobs.map((job, idx) => (
-    <JobCard 
-      key={job.id + idx} 
-      data={job} 
-      onJobDeleted={data.onJobDeleted}
-      onEditJob={data.onEditJob}
-    />
+    <JobCard key={job.title + job.jobID + idx} data={job} />
   ));
 
   const slides = jobCards.map((jobCard, idx) => (
-    <Carousel.Slide key={jobCard.key ?? jobCard.props.data.id + idx}>{jobCard}</Carousel.Slide>
+    <Carousel.Slide key={jobCard.key ?? '' + idx * 2}>{jobCard}</Carousel.Slide>
   ));
 
   return (
