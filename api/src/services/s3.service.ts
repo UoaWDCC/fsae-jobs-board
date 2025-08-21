@@ -57,4 +57,50 @@ export class s3Service {
       throw new Error(`Failed to upload file: ${error.message}`);
     }
   };
+
+  async getDownloadUrl(key: string): Promise<string> {
+    const command = new GetObjectCommand({
+      Bucket: this.bucketName,
+      Key: key
+    });
+
+    try {
+      const url = await getSignedUrl(this.s3Client, command, { expiresIn: 3600 });
+      console.log(`Download URL generated: ${url}`);
+      return url;
+    } catch (error) {
+      throw new Error(`Failed to generate download URL: ${error.message}`);
+    }
+  }
+
+  async deleteFile(key: string): Promise<void> {
+    const deleteParams = {
+      Bucket: this.bucketName,
+      Key: key
+    };
+
+    try {
+      await this.s3Client.send(new DeleteObjectCommand(deleteParams));
+      console.log(`File deleted successfully. Key: ${key}`);
+    } catch (error) {
+      throw new Error(`Failed to delete file: ${error.message}`);
+    }
+  }
+
+  async getPreviewUrl(key: string): Promise<string> {
+    try {
+      const command = new GetObjectCommand({
+        Bucket: this.bucketName,
+        Key: key,
+        ResponseContentDisposition: 'inline' // show in browser
+      });
+      
+      return await getSignedUrl(this.s3Client, command, { expiresIn: 900 });
+    } catch (error) {
+      console.error('Error generating preview URL:', error);
+      throw new Error(`Failed to generate preview URL: ${error.message}`);
+    }
+  }
 }
+
+export const s3ServiceInstance = new s3Service();

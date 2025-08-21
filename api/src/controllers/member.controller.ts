@@ -16,6 +16,7 @@ import {
   del,
   requestBody,
   response,
+  HttpErrors,
 } from '@loopback/rest';
 import {FsaeRole, Member} from '../models';
 import {MemberRepository} from '../repositories';
@@ -25,6 +26,7 @@ import {inject} from '@loopback/core';
 import {Request, RestBindings, Response} from '@loopback/rest';
 import {SecurityBindings, UserProfile} from '@loopback/security';
 import multer from 'multer';
+import { s3Service, s3ServiceInstance } from '../services/s3.service';
 
 const storage = multer.memoryStorage();
 const upload = multer({
@@ -83,7 +85,7 @@ export class MemberController {
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(Member, {partial: true, exclude: ['cvData']}),
+          schema: getModelSchemaRef(Member, {partial: true, exclude: ['cvUrl']}),
         },
       },
     })
@@ -155,18 +157,24 @@ export class MemberController {
 
         console.log('Member ID:', memberId);
 
-        const binaryData = file.buffer;
-
         try {
+          const { key, url } = await s3ServiceInstance.uploadFile(
+            file.buffer, 
+            file.originalname, 
+            file.mimetype
+          );
+          
+          // Store S3 Url in MongoDB
           await this.memberRepository.updateById(memberId, {
-            cvData: binaryData,
+            cvS3Key: key,
+            cvUrl: url,
             cvFileName: file.originalname,
             cvMimeType: file.mimetype,
             cvSize: file.size,
             cvUploadedAt: new Date(),
             hasCV: true,
           });
-
+          
           resolve({
             success: true,
             message: 'CV uploaded successfully',
@@ -174,12 +182,13 @@ export class MemberController {
             size: file.size,
           });
         } catch (error) {
-          console.error('CV upload error:', error);
+          console.error('S3 upload error:', error);
           resolve({
             success: false,
-            message: 'Failed to save CV data',
+            message: 'Failed to upload CV to storage',
           });
         }
+
       });
     });
   }
@@ -192,49 +201,49 @@ export class MemberController {
   @response(200, {
     description: 'Return member CV file',
     content: {
-      'application/pdf': {
-        schema: {type: 'string', format: 'binary'},
-      },
-      'application/msword': {
-        schema: {type: 'string', format: 'binary'},
-      },
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': {
-        schema: {type: 'string', format: 'binary'},
-      },
-    },
-  })
-  @response(404, {
-    description: 'CV not found',
-    content: {
       'application/json': {
         schema: {
           type: 'object',
           properties: {
-            message: {type: 'string'},
+            url: {type: 'string'},
+            fileName: {type: 'string'},
+            mimeType: {type: 'string'},
           },
         },
       },
     },
   })
+  @response(404, {
+    description: 'CV not found',
+  })
   async downloadCV(
     @param.path.string('id') id: string,
     @inject(RestBindings.Http.RESPONSE) response: Response,
-  ): Promise<void> {
+  ): Promise<{url: string; fileName: string; mimeType: string} | void> {
     try {
       const member = await this.memberRepository.findById(id);
       
-      if (!member.cvData || !member.cvFileName) {
+      if (!member.cvUrl || !member.cvS3Key || !member.cvFileName) {
         response.status(404).json({ message: 'CV not found' });
         return;
       }
 
-      const cvBuffer = member.cvData as unknown as Buffer;
+      let cvUrl;
+      const fileExt = member.cvFileName.split('.').pop()?.toLowerCase();
       
-      response.setHeader('Content-Type', member.cvMimeType || 'application/pdf');
-      response.setHeader('Content-Disposition', `inline; filename="${member.cvFileName}"`);
-      response.setHeader('Content-Length', cvBuffer.length.toString());
+      if (fileExt === 'pdf') {
+        // Generate preview URL for PDFs
+        cvUrl = await s3ServiceInstance.getPreviewUrl(member.cvS3Key);
+      } else {
+        // Generate download URL otherwise
+        cvUrl = await s3ServiceInstance.getDownloadUrl(member.cvS3Key);
+      }
       
-      response.send(cvBuffer);
+      return {
+        url: cvUrl,
+        fileName: member.cvFileName,
+        mimeType: member.cvMimeType,
+      };
       
     } catch (error) {
       console.error('CV download error:', error);
@@ -254,9 +263,11 @@ export class MemberController {
   ): Promise<void> {
     const member = await this.memberRepository.findById(id);
     
-    if (member) {
+    if (member && member.cvS3Key) {
+      await s3ServiceInstance.deleteFile(member.cvS3Key);
       await this.memberRepository.updateById(id, {
-        cvData: undefined,
+        cvUrl: '',
+        cvS3Key: '',
         cvFileName: '',
         cvMimeType: '',
         cvSize: 0,
@@ -265,7 +276,6 @@ export class MemberController {
       });
     }
   }
-
 
   @authorize({
     allowedRoles: [FsaeRole.ADMIN],
@@ -277,4 +287,25 @@ export class MemberController {
   async deleteById(@param.path.string('id') id: string): Promise<void> {
     await this.memberRepository.deleteById(id);
   }
+
+  // // Hiding s3bucket details from preview or download URLs
+  // @authorize({
+  //   allowedRoles: [FsaeRole.MEMBER, FsaeRole.ADMIN],
+  // })
+  // @authenticate('fsae-jwt')
+  // @get('/files/serve/{id}')
+  // @response(200)
+  // async serveFile(
+  //   @param.path.string('id') id: string,
+  //   @inject(RestBindings.Http.RESPONSE) response: Response,
+  // ): Promise<void> {
+  //   const member = await this.memberRepository.findById(id);
+    
+  //   if (!member.cvS3Key) {
+  //     throw new HttpErrors.NotFound('File not found');
+  //   }
+    
+  //   const url = await s3ServiceInstance.getDownloadUrl(member.cvS3Key);
+  //   response.redirect(url);
+  // }
 }

@@ -60,10 +60,16 @@ export class Member extends FsaeUser {
     than embedding them in the Member model)
   */
   @property({
-    type: 'buffer',
-    mongodb: { dataType: 'binData' },
+    type: 'string',
+    default: '',
   })
-  cvData: Buffer;
+  cvUrl: string;
+
+  @property({
+    type: 'string',
+    default: '',
+  })
+  cvS3Key: string;
 
   @property({
     type: 'string',
