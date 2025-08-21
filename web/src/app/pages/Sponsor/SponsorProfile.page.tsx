@@ -9,41 +9,25 @@ import { EditAvatar } from '@/app/components/Modal/EditAvatar';
 import { EditBannerModal } from '@/app/components/Modal/EditBannerModal';
 import { EditSponsorProfile } from '@/app/components/Modal/EditSponsorProfile';
 import EditModal from '@/app/components/Modal/EditModal';
-import { fetchSponsorById } from '@/api/sponsor';
-import { useParams, useNavigate } from 'react-router-dom';
-import { Sponsor } from '@/models/sponsor.model';
+import { JobDetailEditor } from '@/app/components/JobDetail/JobDetailEditor';
+import { loadJobsWithErrorHandling, convertJobToCardProps } from '@/api/job';
 import { Job } from '@/models/job.model';
-import { fetchJobsByPublisherId } from '@/api/job';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../app/store';
-import { jwtDecode } from 'jwt-decode';
-import DeactivateAccountModal from '../../components/Modal/DeactivateAccountModal';
-
-const PLACEHOLDER_BANNER = "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png"
-const PLACEHOLDER_AVATAR = "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png"
 
 export function SponsorProfile() {
-  const { id } = useParams();
-  const navigate = useNavigate();
-
+  // UseState for future modal implementation
   const [openModal, setOpenModal] = useState(false);
   const [modalType, setModalType] = useState('');
-  const [deactivateModalOpen, setDeactivateModalOpen] = useState(false); // look better into this stuff. im not really sure how we are using the modals :3
   const [modalContent, setModalContent] = useState<React.ReactNode>(null);
   const [modalTitle, setModalTitle] = useState('');
   const [openProfileModal, setOpenProfileModal] = useState(false);
+  const [openJobEditorModal, setOpenJobEditorModal] = useState(false);
+  const [editingJob, setEditingJob] = useState<JobCardProps | undefined>(undefined);
 
   const [showMoreDescription, setShowMoreDescription] = useState(false);
-
-  const [userData, setUserData] = useState<Sponsor | null>(null);
-  const [jobData, setJobData] = useState<JobCardProps[]>([]);
-
-  const [newUserData, setNewUserData] = useState<Partial<Sponsor> | null>(null); // partial because the database schema is currently messed up
-
-  const [isLocalProfile, setIsLocalProfile] = useState(false) // Is this profile this user's profile (aka. should we show the edit button)
-  
-  const userRole = useSelector((state: RootState) => state.user.role); // the id of the local user
-  const userId = useSelector((state: RootState) => state.user.id); // the id of the local user
+  // const Role = useSelector((state: RootState) => state.user.role);
+  const [role, setRole] = useState<Role>(Role.Sponsor); // Dummy role for testing, replace with Redux store value
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [loading, setLoading] = useState(true);
 
   console.log(
     'Change this SponsorPage component to use real role from Redux store once user integration is implemented'
@@ -51,74 +35,81 @@ export function SponsorProfile() {
 
   const handleAvatarChange = () => {
     setModalType('avatar');
-    setModalContent(<EditAvatar avatar={userData?.logo ?? PLACEHOLDER_AVATAR} />);
+    setModalContent(<EditAvatar avatar={userData?.avatar} />);
     setModalTitle('Profile Photo');
     setOpenProfileModal(true);
   };
 
   const handleBannerChange = () => {
     setModalType('banner');
-    setModalContent(<EditBannerModal banner={PLACEHOLDER_BANNER} />);
+    setModalContent(<EditBannerModal banner={userData?.banner} />);
     setModalTitle('Banner Photo');
     setOpenProfileModal(true);
   };
 
   const handleProfileChange = () => {
     setModalType('profile');
-    setModalContent(<EditSponsorProfile userData={userData} setUserData={setUserData} close={() => setOpenProfileModal(false)}/>);
+    setModalContent(<EditSponsorProfile />);
     setModalTitle('Edit Profile');
     setOpenProfileModal(true);
   };
 
   const handleJobOpportunitiesChange = () => {
-    setModalType('jobOpportunities');
-    setOpenModal(true);
+    setEditingJob(undefined); // Clear editing state for new job
+    setOpenJobEditorModal(true);
   };
 
-  //wtf?? shouldve been done but idefk whats happening here
+  const handleEditJob = (jobData: JobCardProps) => {
+    setEditingJob(jobData);
+    setOpenJobEditorModal(true);
+  };
+
+  const handleJobSaved = () => {
+    setOpenJobEditorModal(false);
+    setEditingJob(undefined);
+    loadJobs(); // Refresh the job list
+  };
+
+  const handleJobEditorCancel = () => {
+    setOpenJobEditorModal(false);
+    setEditingJob(undefined);
+  };
+
   const handleDeactivateUserChange = () => {
     setModalType('deactivateUser');
     setOpenModal(true);
   };
 
-  const handleDeactivateAccount = (reason: string) => {
-    console.log('Account deactivated:', reason);
-    setDeactivateModalOpen(false);
-    // trigger backend call to deactivate account.
+  // Dummy data for company userData
+  const [userData, setUserData] = useState({
+    sponsorName: 'Sponsor Name',
+    sponsorField: 'Field of Specialization',
+    subgroup: 'Subgroup',
+    dateJoined: '2024',
+    email: 'johndoe@example.com',
+    phone: '+1234567890',
+    description:
+      ' Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque ut tristique lacus, eget euismod enim. Fusce suscipit at tortor sed pretium. Integer et pretium orci. Integer velit purus, gravida quis tincidunt ac, pretium sed lorem. Sed sagittis neque tincidunt, auctor ante vitae, ultricies risus. Aenean quis sem sed dolor feugiat tincidunt. Etiam purus justo, ullamcorper in cursus volutpat, luctus in dolor. Donec sed purus tristique, rhoncus erat ut, ullamcorper dolor. Pellentesque tincidunt eros id neque egestas, sed luctus sapien elementum. Etiam bibendum ex est, ac consequat turpis facilisis id. Mauris scelerisque purus quis leo fermentum, at semper nisl mattis. Vivamus vel ornare lectus. Nullam dictum felis et commodo lacinia. Etiam tempor placerat sapien quis maximus. Ut pellentesque libero ac sollicitudin accumsan. Sed vel dolor bibendum, egestas metus nec, eleifend mauris. Integer imperdiet eros vitae nibh interdum volutpat. Etiam et ultrices massa. Cras gravida facilisis sapien. Ut eleifend varius risus, eget bibendum dui blandit ac. Vivamus tempor varius massa, sed suscipit mauris interdum eu. Proin sed commodo ex, ac cursus nisl. Integer ut tincidunt augue. Cras molestie libero erat. Nunc justo felis, sodales auctor dapibus sit amet, dapibus ut turpis. Sed nec sagittis nisl. Cras eget condimentum est. Cras nulla lorem, venenatis euismod gravida quis, fermentum vel mauris. Fusce et ipsum et lorem egestas volutpat. Duis nec imperdiet ante. Quisque et ligula accumsan, eleifend urna sit amet, cursus dolor. Nullam ut erat diam. Ut non lacinia erat, eu pretium nisl. Vestibulum mattis sapien in tristique commodo. Integer faucibus leo at turpis rhoncus, eu hendrerit ex dignissim. Nulla facilisi. Donec eget turpis ac odio pretium iaculis. Sed imperdiet sollicitudin viverra. In consequat justo velit, aliquet ultricies leo efficitur laoreet. Nullam quis elementum diam. Sed in sodales est. Integer malesuada semper tortor eu feugiat. Morbi tincidunt turpis bibendum consequat cursus. Aenean faucibus felis sit amet porta interdum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Mauris dui magna, lobortis quis quam non, dictum bibendum libero. ',
+    avatar:
+      'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png',
+    banner: 'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png',
+  });
+
+  // Fetch jobs from the database
+  const loadJobs = async () => {
+    setLoading(true);
+    const fetchedJobs = await loadJobsWithErrorHandling();
+    setJobs(fetchedJobs);
+    setLoading(false);
   };
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const userData = await fetchSponsorById(id as string);
-        if (!userData) {
-          navigate("/404")
-          return;
-        }
-        setUserData(userData);
-        setIsLocalProfile(userData.id == userId);
-        const jobs: Job[] = await fetchJobsByPublisherId(id as string);
-        const jobsForJobCard = jobs.map((thisJob) => {
-          return {
-            title: thisJob.title,
-            subtitle: "Placeholder subtitle",
-            description: thisJob.description,
-            jobLink: "#", // TODO: correctly link to job details page
-            jobID: thisJob.id
-          }
-        })
-        setJobData(jobsForJobCard)
-      } catch (err) {
-        // TODO: proper error handling (eg. auth errors/forbidden pages etc.)
-        navigate("/404")
-      }
-    };
-    if (id) fetchUserData();
-  }, [id]);
+    loadJobs();
+  }, []);
 
   // methods to get elements based on user type
   const getElementBasedOnRole = (element: string) => {
-    switch (userRole) {
+    switch (role) {
       case 'sponsor':
         return getSponsorElements(element);
       case 'member':
@@ -133,7 +124,6 @@ export function SponsorProfile() {
   const getSponsorElements = (element: string) => {
     switch (element) {
       case 'profileBtn':
-        if (!isLocalProfile) return null;
         return (
           <Button
             onClick={handleProfileChange}
@@ -183,7 +173,7 @@ export function SponsorProfile() {
       case 'profileBtn':
         return (
           <Button
-             onClick={() => setDeactivateModalOpen(true)}
+            onClick={handleDeactivateUserChange}
             classNames={{
               root: styles.button_admin_root,
             }}
@@ -204,24 +194,24 @@ export function SponsorProfile() {
           h={250}
           className={styles.banner}
           onClick={handleBannerChange}
-          style={{ backgroundImage: `url(${PLACEHOLDER_BANNER})` }}
+          style={{ backgroundImage: `url(${userData.banner})` }}
         />
-        {userData?.name && (
-          <Text className={styles.name} pl={170} pt={140}>
-            {userData.name}
+        {userData?.sponsorName && (
+          <Text className={styles.name}>
+            {userData.sponsorName}
           </Text>
         )}
 
         <Avatar
-          src={userData?.logo ?? PLACEHOLDER_AVATAR}
+          src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png"
           size={150}
           mt={-100}
           ml={10}
           className={styles.avatar}
           onClick={handleAvatarChange}
         />
-        <Text size="lg" mt={-30} ml={170} className={styles.text}>
-          {userData?.industry}
+        <Text size="lg" className={styles.text}>
+          {userData.sponsorField}
         </Text>
       </Card>
 
@@ -236,7 +226,7 @@ export function SponsorProfile() {
             <Title order={5}>Contact</Title>
             <Box pl={15} mt={10} className={styles.box}>
               {userData?.email && <Text size="md">{userData.email}</Text>}
-              {userData?.phoneNumber && <Text size="lg">{userData.phoneNumber}</Text>}
+              {userData?.phone && <Text size="lg">{userData.phone}</Text>}
               {!userData && <Loader color="blue" />}
             </Box>
           </Box>
@@ -248,16 +238,16 @@ export function SponsorProfile() {
             <Title order={5}>About Me</Title>
             <Box pl={15} mt={10} className={styles.box}>
               {/* Conditionally render the full description based on showMore state */}
-              {userData?.desc && (
+              {userData?.description && (
                 <>
                   {showMoreDescription ? (
-                    <Text size="md">{userData.desc}</Text>
+                    <Text size="md">{userData.description}</Text>
                   ) : (
                     <>
-                      <Text size="md">{userData.desc.substring(0, 1200)}</Text>
+                      <Text size="md">{userData.description.substring(0, 1200)}</Text>
                     </>
                   )}
-                  {userData.desc?.length > 1200 ? (
+                  {userData.description?.length > 1200 ? (
                     <Button
                       variant="subtle"
                       size="sm"
@@ -272,7 +262,7 @@ export function SponsorProfile() {
                   ) : null}
                 </>
               )}
-              {!userData?.desc && <Loader color="blue" />}
+              {!userData.description && <Loader color="blue" />}
             </Box>
           </Box>
           <Box
@@ -300,7 +290,19 @@ export function SponsorProfile() {
                 {getElementBasedOnRole('addNewBtn')}
               </Flex>
               <Flex mt={15} justify={'center'} align={'center'}>
-                <JobCarousel jobs={jobData} />
+                {loading ? (
+                  <Loader size="lg" />
+                ) : jobs.length > 0 ? (
+                  <JobCarousel 
+                    jobs={jobs.map(convertJobToCardProps)} 
+                    onJobDeleted={loadJobs}
+                    onEditJob={handleEditJob}
+                  />
+                ) : (
+                  <Text c="dimmed" size="lg">
+                    No job opportunities available
+                  </Text>
+                )}
               </Flex>
             </Box>
           </Box>
@@ -313,10 +315,11 @@ export function SponsorProfile() {
         title={modalTitle}
       ></EditModal>
 
-      <DeactivateAccountModal
-        onClose={() => setDeactivateModalOpen(false)}
-        onConfirm={handleDeactivateAccount}
-        opened={deactivateModalOpen}
+      <EditModal
+        opened={openJobEditorModal}
+        close={() => setOpenJobEditorModal(false)}
+        content={<JobDetailEditor initialData={editingJob} onSave={handleJobSaved} onCancel={handleJobEditorCancel} />}
+        title={editingJob ? "Edit Job" : "Create New Job"}
       />
     </Box>
   );
