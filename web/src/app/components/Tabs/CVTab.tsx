@@ -179,9 +179,9 @@ export const CVTab = () => {
             <IconUpload stroke={2} className={styles.dropIcon} />
             <Text>Drop your file here</Text>
             <Text>or</Text>
-              <Button onClick={() => {
-                setTimeout(() => openRef.current?.(), 10);
-              }} className={styles.dropButton}>
+              <Button
+                className={styles.dropButton}
+              >
                 Browse
               </Button>
             <Text mt="xs" size="sm" c="dimmed">
@@ -204,7 +204,6 @@ export const CVTab = () => {
               <Button
                 leftSection={<IconUpload size={14} />}
                 variant="default"
-                onClick={() => openRef.current?.()}
                 className={styles.mobileButton}
               >
                 Upload CV
