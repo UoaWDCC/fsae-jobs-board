@@ -10,7 +10,8 @@ export interface Member extends FsaeUser{
   subGroup: SubGroup;
   education: Education[];
   skills: string[];
-  cvData: Buffer;
+  cvUrl: String;
+  cvS3Key: string;
   cvFileName: string;
   cvMimeType: string;
   cvSize: number;

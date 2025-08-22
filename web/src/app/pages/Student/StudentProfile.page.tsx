@@ -89,9 +89,7 @@ export function StudentProfile() {
         throw new Error('Failed to fetch CV');
       }
 
-      // fetch CV as blob for opening in a new tab
       const blob = await response.blob();
-
       const url = window.URL.createObjectURL(blob);
 
       window.open(url, '_blank');
@@ -114,6 +112,7 @@ export function StudentProfile() {
       try {
         const userData = await fetchMemberById(id as string);
         if (!userData) {
+          console.error('User data not found');
           navigate("/404")
           return;
         }
@@ -121,6 +120,7 @@ export function StudentProfile() {
         setIsLocalProfile(userData.id == userId);
       } catch (err) {
         // TODO: proper error handling (eg. auth errors/forbidden pages etc.)
+        console.error('Error fetching user data:', err);
         navigate("/404")
       }
     };
