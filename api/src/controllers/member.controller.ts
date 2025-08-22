@@ -240,7 +240,11 @@ export class MemberController {
         return;
       }
       const s3Object = await s3ServiceInstance.getObject(member.cvS3Key);
-
+      const fileName =
+        (s3Object.Metadata && s3Object.Metadata.originalfilename) ||
+        member.cvFileName ||
+        'cvFile';
+      
       // convert S3 stream to Buffer
       const chunks: Uint8Array[] = [];
       for await (const chunk of s3Object.Body as any) {
@@ -249,6 +253,7 @@ export class MemberController {
       const buffer = Buffer.concat(chunks);
       
       response.setHeader('Content-Type', member.cvMimeType);
+      response.set('Content-Disposition', `inline; filename="${fileName}"`);
       response.setHeader(
         'Content-Disposition',
         `inline; filename="${member.cvFileName}"`,

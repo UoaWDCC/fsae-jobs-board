@@ -49,6 +49,9 @@ export class s3Service {
       Body: fileBuffer,
       ContentType: mimeType,
       CacheControl: cacheControl,
+      Metadata: {
+        originalfilename: fileName
+      }
     };
 
     try {
