@@ -1,7 +1,10 @@
 import { Grid, Flex, Pagination } from '@mantine/core';
 import styles from '../StudentBoard/StudentBoard.module.css';
 import { useState, useEffect, FC } from 'react';
-import Alumni from './Alumni'
+import AlumniCard from './Alumni'
+import { fetchAlumni } from '@/api/alumni';
+import { Alumni } from '@/models/alumni.model';
+import { Link } from 'react-router-dom';
 
 interface AlumniListingProp {}
 
@@ -9,6 +12,7 @@ const AlumniListing: FC<AlumniListingProp> = ({}) => {
   const [alumniPerPage, setAlumniPerPage] = useState<number>(16);
   const [activePage, setActivePage] = useState(1);
   const [isPortrait, setIsPortrait] = useState(window.innerHeight > window.innerWidth);
+  const [alumniList, setAlumniList] = useState<Alumni[]>([]);
 
   const updateItemsPerPage = () => {
     setIsPortrait(window.innerHeight > window.innerWidth);
@@ -29,20 +33,12 @@ const AlumniListing: FC<AlumniListingProp> = ({}) => {
     };
   }, []);
 
-  const baseAlumni = {
-    name: '',
-    role: '',
-    company: '',
-    avatar:
-      'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png',
-  };
-
-  const alumniList = Array.from({ length: 70 }, (_, index) => ({
-    ...baseAlumni,
-    name: index < 10 ? `John Doe${index + 1}` : `Student ${index + 1}`,
-    role: index < 10 ? `Race Engineer${index + 1}` : ` Research & development Leader`,
-    company: index < 10 ? `Datacom` : ` Xero`,
-  }));
+  useEffect(() => {
+    fetchAlumni().then(data => {
+      console.log('Fetched alumni data:', data);
+      setAlumniList(data);
+    });
+  }, []);
 
   // Calculate the indices for slicing the student list
   const startIndex = (activePage - 1) * alumniPerPage;
@@ -64,12 +60,14 @@ const AlumniListing: FC<AlumniListingProp> = ({}) => {
             key={index}
             className={styles.studentCard}
           >
-            <Alumni
-              name={alumni.name}
-              company={alumni.company}
-              role={alumni.role}
-              avatar={alumni.avatar}
-            />
+           <Link to={`/alumni/${alumni.id}`} style={{ textDecoration: 'none' }}>
+              <AlumniCard
+                name={`${alumni.firstName} ${alumni.lastName}`}
+                company={alumni.companyName}
+                role={alumni.role}
+                avatarURL={alumni.avatarURL}
+              />
+            </Link>
           </Grid.Col>
         ))}
       </Grid>

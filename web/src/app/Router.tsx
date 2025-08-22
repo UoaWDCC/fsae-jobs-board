@@ -183,6 +183,14 @@ const router = createBrowserRouter([
     ),
   },
   {
+    path: '/alumni/:id',
+    element: (
+      <AppLayout>
+        <AlumniProfile />
+      </AppLayout>
+    ),
+  },
+  {
   path: '/admin-dashboard',
   element: (
     <ProtectedRoute allowedRoles={[Role.Admin]}>
