@@ -19,8 +19,6 @@ export class SponsorProfileDto {
         default: "-",
     })
     avatar: string;
-    @property({type: 'string'}) firstName?: string;
-    @property({type: 'string'}) lastName?: string;
     @property({type: 'string'}) company?: string;
     @property({type: 'string'}) websiteURL?: string;
     @property({type: 'string'}) tier?: string;

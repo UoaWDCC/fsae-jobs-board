@@ -71,7 +71,7 @@ export class SponsorController {
         },
       },
     })
-    sponsorDto: SponsorProfileDto,
+    sponsorDto: Partial<SponsorProfileDto>,
   ): Promise<void> {
     await this.sponsorRepository.updateById(id, sponsorDto);
   }
