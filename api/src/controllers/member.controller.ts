@@ -158,6 +158,18 @@ export class MemberController {
         console.log('Member ID:', memberId);
 
         try {
+          const existingMember = await this.memberRepository.findById(memberId);
+          // If user has existing CV, delete the existing file from S3
+          if (existingMember.cvS3Key) {
+            console.log(`Deleting existing CV file: ${existingMember.cvS3Key}`);
+            try {
+              await s3ServiceInstance.deleteFile(existingMember.cvS3Key);
+              console.log('Successfully deleted existing CV file');
+            } catch (err) {
+              console.error('Error deleting existing CV file:', err);
+            }
+          }
+
           const { key, url } = await s3ServiceInstance.uploadFile(
             file.buffer, 
             file.originalname, 
