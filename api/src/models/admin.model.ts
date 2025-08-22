@@ -1,28 +1,21 @@
 import {Entity, model, property} from '@loopback/repository';
 import {FsaeUser} from './fsae-user.model';
 
-@model({settings: {strict: false}})
+@model()
 export class Admin extends FsaeUser {
-  // Define well-known properties here
+  @property({
+    type: 'string', 
+    required: true
+  })
+  firstName: string;
 
   @property({
-    type: 'boolean',
-    required: true,
-    default: false,
+    type: 'string', 
+    required: true
   })
-  verified: boolean;
-
-  // Indexer property to allow additional data
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [prop: string]: any;
-
+  lastName: string;
+  
   constructor(data?: Partial<Admin>) {
     super(data);
   }
 }
-
-export interface AdminRelations {
-  // describe navigational properties here
-}
-
-export type AdminWithRelations = Admin & AdminRelations;

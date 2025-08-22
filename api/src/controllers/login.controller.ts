@@ -26,7 +26,7 @@ import {
   MemberRepository,
   SponsorRepository,
 } from '../repositories';
-import {FsaeRole, FsaeUser} from '../models';
+import {Alumni, Member, Sponsor, Admin} from '../models';
 import {FsaeUserService, JwtService, PasswordHasherService} from '../services';
 import {SecurityBindings, UserProfile} from '@loopback/security';
 import {authorize} from '@loopback/authorization';
@@ -73,7 +73,7 @@ export class LoginController {
       where: {
         email: credentials.email,
       },
-    })) as FsaeUser[];
+    })) as Admin[];
 
     return this.getUserToken(credentials, userSearchResults);
   }
@@ -106,7 +106,7 @@ export class LoginController {
       where: {
         email: credentials.email,
       },
-    })) as FsaeUser[];
+    })) as Sponsor[];
 
     return this.getUserToken(credentials, userSearchResults);
   }
@@ -139,7 +139,7 @@ export class LoginController {
       where: {
         email: credentials.email,
       },
-    })) as FsaeUser[];
+    })) as Member[];
 
     return this.getUserToken(credentials, userSearchResults);
   }
@@ -172,7 +172,7 @@ export class LoginController {
       where: {
         email: credentials.email,
       },
-    })) as FsaeUser[];
+    })) as Alumni[];
 
     return this.getUserToken(credentials, userSearchResults);
   }
@@ -183,7 +183,7 @@ export class LoginController {
   ): Promise<string | null> {
     return this.fsaeUserService.getUserRole(userEmail);
   }
-
+  /*
   @get('/user/whoami')
   @authenticate('fsae-jwt')
   @authorize({
@@ -215,7 +215,7 @@ export class LoginController {
     @inject(SecurityBindings.USER) currentUser: UserProfile,
   ): Promise<whoAmIResponse> {
     const userId = currentUser.id;
-    const role = currentUser.fsaeRole;
+    const role = currentUser.role;
 
     let user;
     switch (role) {
@@ -242,11 +242,11 @@ export class LoginController {
       email: user.email,
       role: role,
     };
-  }
+  }*/
 
   async getUserToken(
     credentials: loginParams,
-    userSearchResults: FsaeUser[],
+    userSearchResults: (Member | Alumni | Sponsor | Admin)[],
   ): Promise<loginResponse> {
     // If no user found, invalid credientials
     if (userSearchResults.length === 0) {
@@ -256,7 +256,7 @@ export class LoginController {
     }
 
     let fsaeUser = userSearchResults[0];
-
+    
     // Verify Credentials
     let passwordsMatched = await this.passwordHasher.comparePassword(
       credentials.password,
@@ -266,12 +266,39 @@ export class LoginController {
       throw new HttpErrors.Unauthorized('Invalid login credentials');
     }
 
+    // Check for missing required fields based on role
+    let hasMissingInfo = false;
+    
+    // Define required fields for each role (check for both missing and empty strings)
+    switch (userSearchResults[0].constructor) {
+      case Member:
+        if (fsaeUser instanceof Member) {
+          hasMissingInfo = !fsaeUser.firstName ||
+                          !fsaeUser.lastName;
+        }
+        break;
+      case Alumni:
+        if (fsaeUser instanceof Alumni) {
+          hasMissingInfo = !fsaeUser.firstName ||
+                           !fsaeUser.lastName;
+        }
+        break;
+      case Sponsor:
+        if (fsaeUser instanceof Sponsor) {
+          hasMissingInfo = !fsaeUser.companyName;
+        }
+        break;
+      default:
+      throw new HttpErrors.InternalServerError('Unrecognized role');
+  }
+
     // Return Jwt Token
     let token = await this.jwtService.generateToken(fsaeUser);
     return {
       userId: fsaeUser.id as string,
       token: token,
       verified: fsaeUser.verified,
+      hasMissingInfo: hasMissingInfo,
     };
   }
 }

@@ -153,8 +153,7 @@ export class ActivationController {
     if (!sponsor) {
       throw new HttpErrors.NotFound(`Sponsor with id ${id} not found.`);
     }
-    await this.sponsorRepository.updateById(id, { activated: true });
-    await this.logAdminAction('activated-sponsor', 'sponsor', id, sponsor.firstName ?? '', sponsor.lastName ?? '');
+    await this.logAdminAction('activated-sponsor', 'sponsor', id, sponsor.companyName ?? '', "");
   }
 
   // Method to deactivate a sponsor
@@ -171,8 +170,7 @@ export class ActivationController {
     if (!sponsor) {
       throw new HttpErrors.NotFound(`Sponsor with id ${id} not found.`);
     }
-    await this.sponsorRepository.updateById(id, { activated: false });
-    await this.logAdminAction('deactivated-sponsor', 'sponsor', id, sponsor.firstName ?? '', sponsor.lastName ?? '');
+    await this.logAdminAction('deactivated-sponsor', 'sponsor', id, sponsor.companyName, "");
   }
 
   // Method to activate a member
