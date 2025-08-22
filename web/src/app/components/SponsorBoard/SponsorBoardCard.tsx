@@ -4,10 +4,10 @@ import { Image } from '@mantine/core';
 
 // dummy data -- change later when we have real data
 export interface SponsorBoardCardProps {
-  sponsorTitle: string;
-  imageLink: string;
-  sponsorIndsutry: string;
-  sponsorLink: string;
+  companyName: string;
+  avatarURL: string;
+  industry: string;
+  websiteURL: string;
 }
 
 export function SponsorBoardCard({
@@ -18,7 +18,7 @@ export function SponsorBoardCard({
   isOneColumn?: boolean;
 }) {
   const handleSponsorLink = () => {
-    console.log('Sponsor Link: ', data.sponsorLink);
+    console.log('Sponsor Link: ', data.websiteURL);
   };
 
   return (
@@ -38,7 +38,7 @@ export function SponsorBoardCard({
         >
           <AspectRatio ratio={4 / 3}>
             <Image
-              src={data.imageLink}
+              src={data.avatarURL}
               alt="sponsor image"
               fallbackSrc="/sponsor_placeholder.png"
               radius="md"
@@ -57,7 +57,7 @@ export function SponsorBoardCard({
           <Flex justify={'space-between'}>
             {/* Sponsor Title */}
             <Text fw={500} size="xl" className={styles.text} ml={isOneColumn ? 'auto': 'xs'}>
-              {data.sponsorTitle}
+              {data.companyName}
             </Text>
           </Flex>
 
@@ -71,7 +71,7 @@ export function SponsorBoardCard({
             onClick={handleSponsorLink}
             w="100%"
           >
-            {data.sponsorIndsutry}
+            {data.industry}
           </Button>
         </Flex>
       </Flex>

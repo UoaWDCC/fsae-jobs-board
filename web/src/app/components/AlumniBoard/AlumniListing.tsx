@@ -35,7 +35,6 @@ const AlumniListing: FC<AlumniListingProp> = ({}) => {
 
   useEffect(() => {
     fetchAlumni().then(data => {
-      console.log('Fetched alumni data:', data);
       setAlumniList(data);
     });
   }, []);
