@@ -1,31 +1,37 @@
 import {model, property} from '@loopback/repository';
-import { FsaeRole } from '../models';
+import {FsaeRole} from '../models';
+import {SubGroup} from '../models/subgroup.model';
 
 @model()
 export class AlumniProfileDto {
   @property({type: 'string'}) id: string;
-  @property({type: 'string'}) role: FsaeRole;
+
   @property({type: 'string'}) email: string;
-  @property({type: 'string'}) username: string;
-  @property({type: 'string', required: false, default: ''}) phoneNumber?: string;
+
+  @property({type: 'string'}) phoneNumber?: string;
+
+  @property({type: 'string'}) description?: string;
+
+  @property({type: 'string'}) avatarURL?: string;
+
+  @property({type: 'string'}) bannerURL?: string;
+
+  @property({type: 'string'}) role: FsaeRole;
+
+  @property({type: 'string'}) firstName: string; 
+
+  @property({type: 'string'}) lastName: string; 
+
   @property({
     type: 'string',
-    required: false,
+    jsonSchema: {enum: Object.values(SubGroup)},
+    default: SubGroup.UNKNOWN,
   })
-  desc?: string;
-  @property({
-    type: 'string',
-    required: true,
-    default: "-",
-  })
-  avatar: string;
-  @property({type: 'string'}) firstName?: string;
-  @property({type: 'string'}) lastName?: string;
-  @property({type: 'string'}) subGroup?: string;
-  @property({type: 'string'}) company?: string;
-  //Thinking of having the createdAt field as well for potential future use.
+  subGroup?: SubGroup; 
+
+  @property({type: 'string'}) companyName?: string; 
 }
 
 export const AlumniProfileDtoFields = Object.fromEntries(
-  Object.keys(new AlumniProfileDto()).map(k => [k, true])
+  Object.keys(new AlumniProfileDto()).map(k => [k, true]),
 );
