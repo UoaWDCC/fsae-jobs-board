@@ -41,11 +41,14 @@ export class s3Service {
     const fileExtension = fileName.split('.').pop() || '';
     const key = `${uuidv4()}.${fileExtension}`;
 
+    const cacheControl = this.getFileCacheControl(fileExtension);
+
     const uploadParams = {
       Bucket: this.bucketName,
       Key: key,
       Body: fileBuffer,
-      ContentType: mimeType
+      ContentType: mimeType,
+      CacheControl: cacheControl,
     };
 
     try {
@@ -57,6 +60,28 @@ export class s3Service {
       throw new Error(`Failed to upload file: ${error.message}`);
     }
   };
+
+  // determine cache control per file type
+  private getFileCacheControl(fileExtension: string): string {
+    switch (fileExtension) {
+      case 'pdf':
+      case 'doc':
+      case 'docx':
+        // 1 week
+        return 'public, max-age=604800, must-revalidate';
+        
+      // this can be used for avatar images in the future
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+        // 2 weeks
+        return 'public, max-age=1209600, must-revalidate';
+        
+      default:
+        // 24hrs
+        return 'public, max-age=86400, must-revalidate';
+    }
+  }
 
   async getDownloadUrl(key: string): Promise<string> {
     const command = new GetObjectCommand({
