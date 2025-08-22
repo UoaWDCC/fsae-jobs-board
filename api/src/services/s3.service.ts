@@ -126,6 +126,14 @@ export class s3Service {
       throw new Error(`Failed to generate preview URL: ${error.message}`);
     }
   }
+
+  async getObject(key: string) {
+    const command = new GetObjectCommand({
+      Bucket: this.bucketName,
+      Key: key
+    });
+    return await this.s3Client.send(command);
+  }
 }
 
 export const s3ServiceInstance = new s3Service();

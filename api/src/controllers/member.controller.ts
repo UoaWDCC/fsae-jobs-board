@@ -231,7 +231,7 @@ export class MemberController {
   async downloadCV(
     @param.path.string('id') id: string,
     @inject(RestBindings.Http.RESPONSE) response: Response,
-  ): Promise<{url: string; fileName: string; mimeType: string} | void> {
+  ): Promise<{url: string; fileName: string; mimeType: string, object: object} | void> {
     try {
       const member = await this.memberRepository.findById(id);
       
@@ -239,23 +239,22 @@ export class MemberController {
         response.status(404).json({ message: 'CV not found' });
         return;
       }
+      const s3Object = await s3ServiceInstance.getObject(member.cvS3Key);
 
-      let cvUrl;
-      const fileExt = member.cvFileName.split('.').pop()?.toLowerCase();
-      
-      if (fileExt === 'pdf') {
-        // Generate preview URL for PDFs
-        cvUrl = await s3ServiceInstance.getPreviewUrl(member.cvS3Key);
-      } else {
-        // Generate download URL otherwise
-        cvUrl = await s3ServiceInstance.getDownloadUrl(member.cvS3Key);
+      // convert S3 stream to Buffer
+      const chunks: Uint8Array[] = [];
+      for await (const chunk of s3Object.Body as any) {
+        chunks.push(chunk);
       }
+      const buffer = Buffer.concat(chunks);
       
-      return {
-        url: cvUrl,
-        fileName: member.cvFileName,
-        mimeType: member.cvMimeType,
-      };
+      response.setHeader('Content-Type', member.cvMimeType);
+      response.setHeader(
+        'Content-Disposition',
+        `inline; filename="${member.cvFileName}"`,
+      );
+
+      response.send(buffer);
       
     } catch (error) {
       console.error('CV download error:', error);
@@ -299,25 +298,4 @@ export class MemberController {
   async deleteById(@param.path.string('id') id: string): Promise<void> {
     await this.memberRepository.deleteById(id);
   }
-
-  // // Hiding s3bucket details from preview or download URLs
-  // @authorize({
-  //   allowedRoles: [FsaeRole.MEMBER, FsaeRole.ADMIN],
-  // })
-  // @authenticate('fsae-jwt')
-  // @get('/files/serve/{id}')
-  // @response(200)
-  // async serveFile(
-  //   @param.path.string('id') id: string,
-  //   @inject(RestBindings.Http.RESPONSE) response: Response,
-  // ): Promise<void> {
-  //   const member = await this.memberRepository.findById(id);
-    
-  //   if (!member.cvS3Key) {
-  //     throw new HttpErrors.NotFound('File not found');
-  //   }
-    
-  //   const url = await s3ServiceInstance.getDownloadUrl(member.cvS3Key);
-  //   response.redirect(url);
-  // }
 }
