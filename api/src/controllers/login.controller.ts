@@ -288,6 +288,12 @@ export class LoginController {
           hasMissingInfo = !fsaeUser.companyName;
         }
         break;
+      case Admin:
+        if (fsaeUser instanceof Admin) {
+          hasMissingInfo = !fsaeUser.firstName ||
+                           !fsaeUser.lastName;
+        }
+        break;
       default:
       throw new HttpErrors.InternalServerError('Unrecognized role');
   }
