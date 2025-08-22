@@ -29,6 +29,7 @@ import { authenticate, AuthenticationBindings } from '@loopback/authentication';
 import { authorize } from '@loopback/authorization';
 import {inject} from '@loopback/core';
 import { UserProfile} from '@loopback/security';
+
 export class ActivationController {
   constructor(
   @repository(AlumniRepository)
@@ -112,11 +113,11 @@ export class ActivationController {
     description: 'Activate alumni',
   })
   async activateAlumni(@param.path.string('id') id: string): Promise<void> {
-    await this.alumniRepository.updateById(id, { activated: true });
     const alumni = await this.alumniRepository.findById(id);
     if (!alumni) {
       throw new HttpErrors.NotFound(`Alumni with id ${id} not found.`);
     }
+    await this.alumniRepository.updateById(id, { activated: true });
     await this.logAdminAction('activated-alumni', 'alumni', id, alumni.firstName ?? '', alumni.lastName ?? '');
   }
 
@@ -130,11 +131,11 @@ export class ActivationController {
     description: 'Deactivate alumni',
   })
   async deactivateAlumni(@param.path.string('id') id: string): Promise<void> {
-    await this.alumniRepository.updateById(id, { activated: false });
     const alumni = await this.alumniRepository.findById(id);
     if (!alumni) {
       throw new HttpErrors.NotFound(`Alumni with id ${id} not found.`);
     }
+    await this.alumniRepository.updateById(id, { activated: false });
     await this.logAdminAction('deactivated-alumni', 'alumni', id, alumni.firstName ?? '', alumni.lastName ?? '');
   }
 
@@ -148,7 +149,6 @@ export class ActivationController {
     description: 'Activate sponsor',
   })
   async activateSponsor(@param.path.string('id') id: string): Promise<void> {
-    await this.sponsorRepository.updateById(id, { activated: true });
     const sponsor = await this.sponsorRepository.findById(id);
     if (!sponsor) {
       throw new HttpErrors.NotFound(`Sponsor with id ${id} not found.`);
@@ -166,7 +166,6 @@ export class ActivationController {
     description: 'Deactivate sponsor',
   })
   async deactivateSponsor(@param.path.string('id') id: string): Promise<void> {
-    await this.sponsorRepository.updateById(id, { activated: false });
     const sponsor = await this.sponsorRepository.findById(id);
     if (!sponsor) {
       throw new HttpErrors.NotFound(`Sponsor with id ${id} not found.`);
@@ -184,11 +183,11 @@ export class ActivationController {
     description: 'Activate member',
   })
   async activateMember(@param.path.string('id') id: string): Promise<void> {
-    await this.memberRepository.updateById(id, { activated: true });
     const member = await this.memberRepository.findById(id);
     if (!member) {
       throw new HttpErrors.NotFound(`Member with id ${id} not found.`);
     }
+    await this.memberRepository.updateById(id, { activated: true });
     await this.logAdminAction('activated-member', 'member', id, member.firstName ?? '', member.lastName ?? '');
   }
 
@@ -202,11 +201,11 @@ export class ActivationController {
     description: 'Deactivate member',
   })
   async deactivateMember(@param.path.string('id') id: string): Promise<void> {
-    await this.memberRepository.updateById(id, { activated: false });
     const member = await this.memberRepository.findById(id);
     if (!member) {
       throw new HttpErrors.NotFound(`Member with id ${id} not found.`);
     }
+    await this.memberRepository.updateById(id, { activated: false });
     await this.logAdminAction('deactivated-member', 'member', id, member.firstName ?? '', member.lastName ?? '');
   }
 
