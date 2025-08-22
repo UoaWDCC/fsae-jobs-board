@@ -30,6 +30,27 @@ export class SponsorController {
   ) {}
 
   @authorize({
+    allowedRoles: [FsaeRole.ALUMNI, FsaeRole.MEMBER, FsaeRole.SPONSOR, FsaeRole.ADMIN],
+  })
+  @get('/user/sponsor')
+  @response(200, {
+    description: 'Array of Sponsor model instances',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'array',
+          items: getModelSchemaRef(Sponsor, {includeRelations: true}),
+        },
+      },
+    },
+  })
+  async find(
+    @param.filter(Sponsor) filter?: Filter<Sponsor>,
+  ): Promise<Sponsor[]> {
+    return this.sponsorRepository.find(filter);
+  }
+
+  @authorize({
     allowedRoles: [FsaeRole.SPONSOR, FsaeRole.MEMBER, FsaeRole.ALUMNI],
   })
   @get('/user/sponsor/{id}')

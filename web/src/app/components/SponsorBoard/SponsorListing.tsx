@@ -4,6 +4,8 @@ import { FC, useEffect, useState } from 'react';
 import { chunk } from 'lodash';
 import SponsorBoardCard, { SponsorBoardCardProps } from './SponsorBoardCard';
 import { useMediaQuery } from '@mantine/hooks';
+import { Sponsor } from '@/models/sponsor.model';
+import { fetchSponsors } from '@/api/sponsor';
 
 interface JobListingProps {
   filterRoles: string[];
@@ -14,6 +16,7 @@ const SponsorListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
   const [itemsPerPage, setItemsPerPage] = useState<number>(4);
   const isBase = useMediaQuery('(max-width: 48em)'); // check if screen size is base
   const [isOneColumn, setIsOneColumn] = useState<boolean>(false);
+  const [jobListings, setJobListings] = useState<SponsorBoardCardProps[]>([]);
 
   const updateItemsPerPage = () => {
     if (window.innerWidth > 1920) {
@@ -41,160 +44,20 @@ const SponsorListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
     else setIsOneColumn(isBase);
   }, [isBase]);
 
-  // TODO: change this into actual data from backend, and apply filters & search
-  const jobListings: SponsorBoardCardProps[] = [
-    {
-      sponsorTitle: 'Sponsor',
-      sponsorIndsutry: 'Industry',
-      imageLink: '/sponsor_placeholder.png',
-      sponsorLink: 'http://localhost:5173/',
-    },
-    {
-      sponsorTitle: '3M',
-      sponsorIndsutry: 'Industry',
-      imageLink: '/sponsors_placeholder/3m.png',
-      sponsorLink: 'http://localhost:5173/',
-    },
-    {
-      sponsorTitle: 'Ace Motorsport Karting',
-      sponsorIndsutry: 'Industry',
-      imageLink: '/sponsors_placeholder/ace_motorsport_karting.png',
-      sponsorLink: 'http://localhost:5173/',
-    },
-    {
-      sponsorTitle: 'Altair',
-      sponsorIndsutry: 'Industry',
-      imageLink: '/sponsors_placeholder/altair.png',
-      sponsorLink: 'http://localhost:5173/',
-    },
-    {
-      sponsorTitle: 'Altium',
-      sponsorIndsutry: 'Industry',
-      imageLink: '/sponsors_placeholder/altium.png',
-      sponsorLink: 'http://localhost:5173/',
-    },
-    {
-      sponsorTitle: 'AMK',
-      sponsorIndsutry: 'Industry',
-      imageLink: '/sponsors_placeholder/AMK.png',
-      sponsorLink: 'http://localhost:5173/',
-    },
-    {
-      sponsorTitle: 'Ansys',
-      sponsorIndsutry: 'Industry',
-      imageLink: '/sponsors_placeholder/ansys.png',
-      sponsorLink: 'http://localhost:5173/',
-    },
-    {
-      sponsorTitle: 'C-Tech',
-      sponsorIndsutry: 'Industry',
-      imageLink: '/sponsors_placeholder/c-tech.png',
-      sponsorLink: 'http://localhost:5173/',
-    },
-    {
-      sponsorTitle: 'Cadpro',
-      sponsorIndsutry: 'Industry',
-      imageLink: '/sponsors_placeholder/cadpro.png',
-      sponsorLink: 'http://localhost:5173/',
-    },
-    {
-      sponsorTitle: 'Crown',
-      sponsorIndsutry: 'Industry',
-      imageLink: '/sponsors_placeholder/crown.png',
-      sponsorLink: 'http://localhost:5173/',
-    },
-    {
-      sponsorTitle: 'Tengtools',
-      sponsorIndsutry: 'Industry',
-      imageLink: '/sponsors_placeholder/tengtools.png',
-      sponsorLink: 'http://localhost:5173/',
-    },
-    {
-      sponsorTitle: 'CompanyZone',
-      sponsorIndsutry: 'Industry',
-      imageLink: '/sponsors_placeholder/tradezone.png',
-      sponsorLink: 'http://localhost:5173/',
-    },
-    {
-      sponsorTitle: 'Company Name',
-      sponsorIndsutry: 'Industry',
-      imageLink: '/sponsor_placeholder.png',
-      sponsorLink: 'http://localhost:5173/',
-    },
-    {
-      sponsorTitle: '3M',
-      sponsorIndsutry: 'Industry',
-      imageLink: '/sponsors_placeholder/3m.png',
-      sponsorLink: 'http://localhost:5173/',
-    },
-    {
-      sponsorTitle: 'Ace Motorsport Karting',
-      sponsorIndsutry: 'Industry',
-      imageLink: '/sponsors_placeholder/ace_motorsport_karting.png',
-      sponsorLink: 'http://localhost:5173/',
-    },
-    {
-      sponsorTitle: 'Altair',
-      sponsorIndsutry: 'Industry',
-      imageLink: '/sponsors_placeholder/altair.png',
-      sponsorLink: 'http://localhost:5173/',
-    },
-    {
-      sponsorTitle: 'Altium',
-      sponsorIndsutry: 'Industry',
-      imageLink: '/sponsors_placeholder/altium.png',
-      sponsorLink: 'http://localhost:5173/',
-    },
-    {
-      sponsorTitle: 'AMK',
-      sponsorIndsutry: 'Industry',
-      imageLink: '/sponsors_placeholder/AMK.png',
-      sponsorLink: 'http://localhost:5173/',
-    },
-    {
-      sponsorTitle: 'Ansys',
-      sponsorIndsutry: 'Industry',
-      imageLink: '/sponsors_placeholder/ansys.png',
-      sponsorLink: 'http://localhost:5173/',
-    },
-    {
-      sponsorTitle: 'C-Tech',
-      sponsorIndsutry: 'Industry',
-      imageLink: '/sponsors_placeholder/c-tech.png',
-      sponsorLink: 'http://localhost:5173/',
-    },
-    {
-      sponsorTitle: 'Cadpro',
-      sponsorIndsutry: 'Industry',
-      imageLink: '/sponsors_placeholder/cadpro.png',
-      sponsorLink: 'http://localhost:5173/',
-    },
-    {
-      sponsorTitle: 'Crown',
-      sponsorIndsutry: 'Industry',
-      imageLink: '/sponsors_placeholder/crown.png',
-      sponsorLink: 'http://localhost:5173/',
-    },
-    {
-      sponsorTitle: 'Tengtools',
-      sponsorIndsutry: 'Industry',
-      imageLink: '/sponsors_placeholder/tengtools.png',
-      sponsorLink: 'http://localhost:5173/',
-    },
-    {
-      sponsorTitle: 'CompanyZone',
-      sponsorIndsutry: 'Industry',
-      imageLink: '/sponsors_placeholder/tradezone.png',
-      sponsorLink: 'http://localhost:5173/',
-    },
-  ];
+    useEffect(() => {
+      fetchSponsors().then(data => {
+        setJobListings(data);
+      });
+    }, []);
+
 
   // chunk all listings into respective count according to screen size for per page display
   // TODO: filter the jobListings before chunking
   const chunkedJobListings = chunk(jobListings, itemsPerPage);
 
-  const jobListingItems = chunkedJobListings[activePage - 1].map((item, idx) => (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+  const currentPageListings = chunkedJobListings[activePage - 1] ?? [];
+  const jobListingItems = currentPageListings.map((item, idx) => (
+    <div key={idx} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
       <SponsorBoardCard data={item} isOneColumn={isOneColumn} />
     </div>
   ));
