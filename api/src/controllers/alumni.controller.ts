@@ -30,7 +30,7 @@ export class AlumniController {
   ) {}
 
   @authorize({
-    allowedRoles: [FsaeRole.ALUMNI],
+    allowedRoles: [FsaeRole.ALUMNI, FsaeRole.MEMBER, FsaeRole.SPONSOR],
   })
   @get('/user/alumni/{id}')
   @response(200, {

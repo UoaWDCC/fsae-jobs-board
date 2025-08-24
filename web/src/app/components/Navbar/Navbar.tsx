@@ -31,6 +31,8 @@ function Navbar() {
   }
 
   const role = useSelector((state: RootState) => state.user.role);
+  const id = useSelector((state: RootState) => state.user.id);
+
   // Define navigation links based on user type
   const navLinks: { [key in Role]: { path: string; label: string }[] } = {
     [Role.Member]: [
@@ -39,19 +41,20 @@ function Navbar() {
       { path: '/alumni', label: 'Alumni' },
     ],
     [Role.Sponsor]: [
-      { path: '/members', label: 'Students' },
+      { path: '/students', label: 'Students' },
       { path: '/alumni', label: 'Alumni' },
     ],
     [Role.Alumni]: [
-      { path: '/members', label: 'Students' },
+      { path: '/students', label: 'Students' },
       { path: '/sponsors', label: 'Sponsors' },
       { path: '/alumni', label: 'Alumni' },
     ],
     [Role.Admin]: [
       { path: '/jobs', label: 'Job Board' },
-      { path: '/members', label: 'Students' },
+      { path: '/students', label: 'Students' },
       { path: '/sponsors', label: 'Sponsors' },
       { path: '/alumni', label: 'Alumni' },
+      {path: '/admin-dashboard', label: 'Dashboard'},
     ],
     [Role.Unknown]: [],
   };
@@ -64,9 +67,9 @@ function Navbar() {
   const handleProfileClick = () => {
     if (role) {
       const profilePath = {
-        [Role.Member]: '/profile/member',
-        [Role.Sponsor]: '/profile/sponsor',
-        [Role.Alumni]: '/profile/alumni',
+        [Role.Member]: `/profile/member/${id}`,
+        [Role.Sponsor]: `/profile/sponsor/${id}`,
+        [Role.Alumni]: `/profile/alumni/${id}`,
         [Role.Admin]: '/profile/admin',
         [Role.Unknown]: '/profile/unknown',
       }[role as Role];

@@ -12,7 +12,8 @@ export interface UserState {
   lastName: string;
   phoneNumber: string;
   desc?: string;
-  role?: Role; // Allow for null (unauthenticated)  
+  role?: Role; // Allow for null (unauthenticated) 
+  hasCV?: boolean;
   // ... other user data (name, email, etc.) as needed
 }
 
@@ -25,22 +26,37 @@ const initialState: UserState = {
   firstName: '',
   lastName: '',
   phoneNumber: '',
+  hasCV: false,
 };
 
 const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
+    // setId
+    setId(state, action: PayloadAction<string>) {
+      state.id = action.payload;
+    },
+    // resetUser
     resetUser() {
       return initialState;
     },
+    // setRole
     setRole(state, action: PayloadAction<Role>) {
       const role = action.payload as Role;
       state.role = role;
+    },
+    // setUser
+    setUser(state, action: PayloadAction<Partial<UserState>>) {
+      Object.assign(state, action.payload);
+    },
+    //setCVStatus
+    setCVStatus: (state, action: PayloadAction<{hasCV: boolean;}>) => {
+      state.hasCV = action.payload.hasCV;
     },
     // ... other reducers for user actions (e.g., login, logout, update profile)
   },
 });
 
-export const { setRole, resetUser } = userSlice.actions;
+export const { setRole, setId, resetUser, setUser, setCVStatus } = userSlice.actions;
 export default userSlice.reducer;

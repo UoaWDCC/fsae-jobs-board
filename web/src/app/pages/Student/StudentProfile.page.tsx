@@ -12,15 +12,30 @@ import {
 } from '@mantine/core';
 import styles from '../../styles/StudentProfile.module.css';
 import { useEffect, useState } from 'react';
-import { IconCertificate } from '@tabler/icons-react';
 import EditModal from '../../components/Modal/EditModal';
 import { EditStudentProfile } from '../../components/Modal/EditStudentProfile';
 import { EditAvatar } from '../../components/Modal/EditAvatar';
 import { EditBannerModal } from '../../components/Modal/EditBannerModal';
+import { Member } from '@/models/member.model';
+import { fetchMemberById } from '@/api/member';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../app/store';
+import { jwtDecode } from 'jwt-decode';
+import DeactivateAccountModal from '../../components/Modal/DeactivateAccountModal';
+        
+const PLACEHOLDER_BANNER = "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80"
+const PLACEHOLDER_AVATAR = "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png"
+
 
 export function StudentProfile() {
   // UseState for future modal implementation
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const hasCV = useSelector((state: RootState) => state.user.hasCV);
+
   const [modalType, setModalType] = useState('');
+  const [deactivateModalOpen, setDeactivateModalOpen] = useState(false); // look better into this stuff. im not really sure how we are using the modals :3
   const [openProfileModal, setOpenProfileModal] = useState(false);
   const [modalContent, setModalContent] = useState<React.ReactNode>(null);
   const [modalTitle, setModalTitle] = useState('');
@@ -29,9 +44,17 @@ export function StudentProfile() {
   const [showMoreSkills, setShowMoreSkills] = useState(false);
   const [showMoreEducation, setShowMoreEducation] = useState(false);
 
-  const handleAvatarChange = () => {
+  const [userData, setUserData] = useState<Member | null>(null);
+  const [isLocalProfile, setIsLocalProfile] = useState(false) // Is this profile this user's profile (aka. should we show the edit button)
+  
+  const userRole = useSelector((state: RootState) => state.user.role); // the id of the local user
+  const userId = useSelector((state: RootState) => state.user.id); // the id of the local user
+
+  // TODO: avatar and banner doesnt exist in the member model yet
+
+  /*const handleAvatarChange = () => {
     setModalType('avatar');
-    setModalContent(<EditAvatar avatar={userData?.avatar} />);
+    setModalContent(<EditAvatar avatar={userData?.photo} />);
     setModalTitle('Profile Photo');
     setOpenProfileModal(true);
   };
@@ -42,43 +65,88 @@ export function StudentProfile() {
     setModalTitle('Banner Photo');
     setOpenProfileModal(true);
   };
+  */
 
   const handleProfileChange = () => {
     setModalType('profile');
-    setModalContent(<EditStudentProfile close={() => setOpenProfileModal(false)} />);
+    setModalContent(<EditStudentProfile userData={userData} setUserData={setUserData} close={() => setOpenProfileModal(false)} />);
     setModalTitle('Edit Profile');
     setOpenProfileModal(true);
   };
 
-  // Dummy data for userData
-  const [userData, setUserData] = useState({
-    firstName: 'John',
-    lastName: 'Doe',
-    jobType: 'Internship',
-    subgroup: 'Composite',
-    dateJoined: '2024',
-    email: 'johndoe@example.com',
-    phone: '+1234567890',
-    skills: ['HTML', 'CSS', 'JavaScript', 'React', 'C#', 'Git'],
-    description:
-      ' Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque ut tristique lacus, eget euismod enim. Fusce suscipit at tortor sed pretium. Integer et pretium orci. Integer velit purus, gravida quis tincidunt ac, pretium sed lorem. Sed sagittis neque tincidunt, auctor ante vitae, ultricies risus. Aenean quis sem sed dolor feugiat tincidunt. Etiam purus justo, ullamcorper in cursus volutpat, luctus in dolor. Donec sed purus tristique, rhoncus erat ut, ullamcorper dolor. Pellentesque tincidunt eros id neque egestas, sed luctus sapien elementum. Etiam bibendum ex est, ac consequat turpis facilisis id. Mauris scelerisque purus quis leo fermentum, at semper nisl mattis. Vivamus vel ornare lectus. Nullam dictum felis et commodo lacinia. Etiam tempor placerat sapien quis maximus. Ut pellentesque libero ac sollicitudin accumsan. Sed vel dolor bibendum, egestas metus nec, eleifend mauris. Integer imperdiet eros vitae nibh interdum volutpat. Etiam et ultrices massa. Cras gravida facilisis sapien. Ut eleifend varius risus, eget bibendum dui blandit ac. Vivamus tempor varius massa, sed suscipit mauris interdum eu. Proin sed commodo ex, ac cursus nisl. Integer ut tincidunt augue. Cras molestie libero erat. Nunc justo felis, sodales auctor dapibus sit amet, dapibus ut turpis. Sed nec sagittis nisl. Cras eget condimentum est. Cras nulla lorem, venenatis euismod gravida quis, fermentum vel mauris. Fusce et ipsum et lorem egestas volutpat. Duis nec imperdiet ante. Quisque et ligula accumsan, eleifend urna sit amet, cursus dolor. Nullam ut erat diam. Ut non lacinia erat, eu pretium nisl. Vestibulum mattis sapien in tristique commodo. Integer faucibus leo at turpis rhoncus, eu hendrerit ex dignissim. Nulla facilisi. Donec eget turpis ac odio pretium iaculis. Sed imperdiet sollicitudin viverra. In consequat justo velit, aliquet ultricies leo efficitur laoreet. Nullam quis elementum diam. Sed in sodales est. Integer malesuada semper tortor eu feugiat. Morbi tincidunt turpis bibendum consequat cursus. Aenean faucibus felis sit amet porta interdum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Mauris dui magna, lobortis quis quam non, dictum bibendum libero. ',
-    education: [
-      'Major(s): Master of Software Engineering',
-      'Expected Graduation Date: 2026',
-      'Major(s): Part II Bachelor of Software Engineering',
-      'Graduation Date: 2024',
-      'Major(s): Bachelor of Science',
-      'Graduation Date: 2024',
-    ],
-    avatar:
-      'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png',
-    banner: 'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png',
-  });
-  // Add code to fetch data from our database when it will be connected
+  const handleOpenCV = async () => {
+    if (!id) {
+      alert('Member ID invalid');
+      return;
+    }
+
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+      alert('No access token found');
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:3000/user/member/${id}/cv`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch CV');
+      }
+
+      // fetch CV as blob for opening in a new tab
+      const blob = await response.blob();
+
+      const url = window.URL.createObjectURL(blob);
+
+      window.open(url, '_blank');
+
+      setTimeout(() => window.URL.revokeObjectURL(url), 10000);
+    } catch (error) {
+      console.error('Error fetching CV:', error);
+      alert('Failed to load CV');
+    }
+  };
+  const handleDeactivateAccount = (reason: string) => {
+    console.log('Account deactivated:', reason);
+    setDeactivateModalOpen(false);
+    // trigger backend call to deactivate account.
+  };
 
   useEffect(() => {
     // Logic to fetch data and setUserData
-  }, []);
+    const fetchUserData = async () => {
+      try {
+        const userData = await fetchMemberById(id as string);
+        if (!userData) {
+          navigate("/404")
+          return;
+        }
+        // Temporary injection of placeholder fields as currently the database model doesnt have any
+        const userDataModifiedWithPlaceholders = userData ? {
+          ...userData,
+          skills: ['Placeholder1', 'Placeholder2', 'Placeholder3', 'React', 'C#', 'Git'],
+          education: [
+            'Major(s): Master of Software Engineering',
+            'Expected Graduation Date: 2026',
+            'Major(s): Part II Bachelor of Software Engineering',
+            'Graduation Date: 2024',
+            'Major(s): Bachelor of Science',
+            'Graduation Date: 2024',
+          ],
+        } : null
+        setUserData(userDataModifiedWithPlaceholders);
+        setIsLocalProfile(userData.id == userId);
+      } catch (err) {
+        // TODO: proper error handling (eg. auth errors/forbidden pages etc.)
+        navigate("/404")
+      }
+    };
+    if (id) fetchUserData();
+  }, [id]);
 
   return (
     <Box className={styles.container}>
@@ -86,37 +154,43 @@ export function StudentProfile() {
         <Card.Section
           h={250}
           className={styles.banner}
-          onClick={handleBannerChange}
-          style={{ backgroundImage: `url(${userData.banner})` }}
+          //onClick={handleBannerChange}
+          //style={{ backgroundImage: `url(${userData.banner})` }}
+          style={{ backgroundImage: `url(${PLACEHOLDER_BANNER})` }}
         />
-        {userData?.firstName && (
-          <Text className={styles.name}>
+        {(userData?.firstName && userData?.lastName) && (
+          <Text className={styles.name} pl={170} pt={110}>
             {userData.firstName} {userData.lastName}
           </Text>
         )}
-        {userData?.subgroup && (
-          <Text size="xl" className={styles.subgroup}>
-            {userData.subgroup} since {userData.dateJoined}
+        {userData?.subGroup && (
+          <Text size="xl" className={styles.subgroup} pl={170} pt={160}>
+            {userData.subGroup}
           </Text>
         )}
 
         <Avatar
-          src={userData?.avatar}
+          //src={userData?.avatar}
+          src={PLACEHOLDER_AVATAR}
           size={150}
           mt={-100}
           ml={10}
           className={styles.avatar}
-          onClick={handleAvatarChange}
+          //onClick={handleAvatarChange}
         />
-        <Text size="xl" className={styles.text}>
-          Looking for: {userData.jobType}
+        {/* TODO: sort out what is going on here as member.jobType doesn't exist in the model currently:*/}
+        <Text size="xl" mt={-40} ml={170} pt={10} className={styles.text}>
+          Looking for: {"Internship"}
         </Text>
       </Card>
 
-      <Flex className={styles.profileBtn}>
+      <Flex style={{ display: 'flex', justifyContent: 'flex-end', marginRight: '20px' }}>
+        {/* Conditionally render the edit button based on whether this is the logged in user's profile */}
+        {isLocalProfile ? 
         <Button size="md" onClick={handleProfileChange}>
           Edit Profile
         </Button>
+        : null}
       </Flex>
 
       <Grid>
@@ -125,7 +199,7 @@ export function StudentProfile() {
             <Title order={5}>Contact</Title>
             <Box pl={15} mt={10} className={styles.box}>
               {userData?.email && <Text size="lg">{userData.email}</Text>}
-              {userData?.phone && <Text size="lg">{userData.phone}</Text>}
+              {userData?.phoneNumber && <Text size="lg">{userData.phoneNumber}</Text>}
               {!userData && <Loader color="blue" />}
             </Box>
           </Box>
@@ -161,7 +235,7 @@ export function StudentProfile() {
                   )}
                 </>
               )}
-              {!userData.skills && <Loader color="blue" />}
+              {!userData?.skills && <Loader color="blue" />}
             </Box>
           </Box>
         </Grid.Col>
@@ -171,16 +245,16 @@ export function StudentProfile() {
             <Title order={5}>About Me</Title>
             <Box pl={15} mt={10} className={styles.box}>
               {/* Conditionally render the full description based on showMore state */}
-              {userData?.description && (
+              {userData?.desc && (
                 <>
                   {showMoreDescription ? (
-                    <Text size="md">{userData.description}</Text>
+                    <Text size="md">{userData.desc}</Text>
                   ) : (
                     <>
-                      <Text size="md">{userData.description.substring(0, 1200)}</Text>
+                      <Text size="md">{userData.desc.substring(0, 1200)}</Text>
                     </>
                   )}
-                  {userData.description?.length > 1200 ? (
+                  {userData.desc?.length > 1200 ? (
                     <Button
                       size="sm"
                       variant="subtle"
@@ -195,7 +269,7 @@ export function StudentProfile() {
                   ) : null}
                 </>
               )}
-              {!userData.description && <Loader color="blue" />}
+              {!userData?.desc && <Loader color="blue" />}
             </Box>
           </Box>
           <Box
@@ -236,13 +310,22 @@ export function StudentProfile() {
                     )}
                   </>
                 )}
-                {!userData.education && <Loader color="blue" />}
+                {!userData?.education && <Loader color="blue" />}
               </Box>
             </Box>
 
-            <ActionIcon variant="transparent" color="#ffffff" size={200} mt={-40}>
-              <IconCertificate width={90} height={90} stroke={1.5} />
-            </ActionIcon>
+            {userData?.hasCV && (
+              <ActionIcon variant="transparent" color="#ffffff" size={200} mt={-40}
+              onClick={handleOpenCV}
+              style={{ cursor: 'pointer' }}>
+                <img 
+                  src="/cv_white.png" 
+                  alt="CV Icon" 
+                  width={90} 
+                  height={90}
+                />
+              </ActionIcon>
+            )}
           </Box>
         </Grid.Col>
       </Grid>
@@ -253,6 +336,12 @@ export function StudentProfile() {
         content={modalContent}
         title={modalTitle}
       ></EditModal>
+
+      <DeactivateAccountModal
+        onClose={() => setDeactivateModalOpen(false)}
+        onConfirm={handleDeactivateAccount}
+        opened={deactivateModalOpen}
+      />
     </Box>
   );
 }

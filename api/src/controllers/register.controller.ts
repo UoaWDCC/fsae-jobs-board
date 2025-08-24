@@ -80,7 +80,7 @@ export class RegisterController {
             desc: createUserDto.desc
         });
 
-        const { verification, verificationCode } = await this.sendVerificationEmail(createUserDto.email, createUserDto.firstName ? createUserDto.firstName : 'Administrator');
+        /* const { verification, verificationCode } = await this.sendVerificationEmail(createUserDto.email, createUserDto.firstName ? createUserDto.firstName : 'Administrator');
         
         await this.verificationRepository.create({
             email: createUserDto.email,
@@ -90,7 +90,7 @@ export class RegisterController {
             twilioId: verification.sid,
             fsaeRole: FsaeRole.ADMIN,
             resentOnce: false
-        });
+        }); //TODO: Restore verification*/ 
 
         return newAdmin;
     }
@@ -128,27 +128,29 @@ export class RegisterController {
         },
       }
     })createUserDto: createFSAEUserDto): Promise<Admin> {
-    // Prevent duplicate user by email
-    if (await this.fsaeUserService.doesUserExist(createUserDto.email)) {
-      throw new HttpErrors.Conflict('Email already exists')
-    }
+      // Prevent duplicate user by email
+      if (await this.fsaeUserService.doesUserExist(createUserDto.email)) {
+        throw new HttpErrors.Conflict('Email already exists');
+      }
 
-        let hashedPassword = await this.passwordHasher.hashPassword(createUserDto.password);
+      let hashedPassword = await this.passwordHasher.hashPassword(
+        createUserDto.password,
+      );
 
-        let newMember = this.memberRepository.create({
-            email: createUserDto.email,
-            username: createUserDto.username,
-            password: hashedPassword,
-            firstName: createUserDto.firstName,
-            lastName: createUserDto.lastName,
-            phoneNumber: createUserDto.phoneNumber,
-            activated: true, // Default activate as all this HTTP body requires validation on required fields.
-            verified: false,
-            fsaeRole: FsaeRole.MEMBER,
-            desc: createUserDto.desc
-        });
+      let newMember = this.memberRepository.create({
+        email: createUserDto.email,
+        username: createUserDto.username,
+        password: hashedPassword,
+        firstName: createUserDto.firstName,
+        lastName: createUserDto.lastName,
+        phoneNumber: createUserDto.phoneNumber,
+        activated: true, // Default activate as all this HTTP body requires validation on required fields.
+        verified: true, // TODO: restore verification
+        fsaeRole: FsaeRole.MEMBER,
+        desc: createUserDto.desc,
+      });
 
-        const { verification, verificationCode } = await this.sendVerificationEmail(createUserDto.email, createUserDto.firstName ? createUserDto.firstName : 'Member');
+      /* const { verification, verificationCode } = await this.sendVerificationEmail(createUserDto.email, createUserDto.firstName ? createUserDto.firstName : 'Member');
         
         await this.verificationRepository.create({
             email: createUserDto.email,
@@ -158,9 +160,9 @@ export class RegisterController {
             twilioId: verification.sid,
             fsaeRole: FsaeRole.MEMBER,
             resentOnce: false
-        });
+        }); //TODO: Restore verification*/
 
-        return newMember;
+      return newMember;
     }
 
   @post('/register-sponsor')
@@ -193,27 +195,29 @@ export class RegisterController {
         },
       }
     })createUserDto: createFSAEUserDto): Promise<Admin> {
-    // Prevent duplicate user by email
-    if (await this.fsaeUserService.doesUserExist(createUserDto.email)) {
-      throw new HttpErrors.Conflict('Email already exists')
-    }
+      // Prevent duplicate user by email
+      if (await this.fsaeUserService.doesUserExist(createUserDto.email)) {
+        throw new HttpErrors.Conflict('Email already exists');
+      }
 
-        let hashedPassword = await this.passwordHasher.hashPassword(createUserDto.password);
+      let hashedPassword = await this.passwordHasher.hashPassword(
+        createUserDto.password,
+      );
 
-        let newMember = this.sponsorRepository.create({
-            email: createUserDto.email,
-            username: createUserDto.username,
-            password: hashedPassword,
-            firstName: createUserDto.firstName,
-            lastName: createUserDto.lastName,
-            phoneNumber: createUserDto.phoneNumber,
-            activated: false,
-            verified: false,
-            fsaeRole: FsaeRole.SPONSOR,
-            desc: createUserDto.desc
-        });
+      let newMember = this.sponsorRepository.create({
+        email: createUserDto.email,
+        username: createUserDto.username,
+        password: hashedPassword,
+        firstName: createUserDto.firstName,
+        lastName: createUserDto.lastName,
+        phoneNumber: createUserDto.phoneNumber,
+        activated: false,
+        verified: true, // TODO: restore verification
+        fsaeRole: FsaeRole.SPONSOR,
+        desc: createUserDto.desc,
+      });
 
-        const { verification, verificationCode } = await this.sendVerificationEmail(createUserDto.email, createUserDto.firstName ? createUserDto.firstName : 'Sppnsor');
+      /* const { verification, verificationCode } = await this.sendVerificationEmail(createUserDto.email, createUserDto.firstName ? createUserDto.firstName : 'Sppnsor');
         
         await this.verificationRepository.create({
             email: createUserDto.email,
@@ -223,10 +227,9 @@ export class RegisterController {
             twilioId: verification.sid,
             fsaeRole: FsaeRole.SPONSOR,
             resentOnce: false
-        });
+        }); //TODO: Restore verification*/
 
-
-        return newMember;
+      return newMember;
     }
 
   @post('/register-alumni')
@@ -265,27 +268,29 @@ export class RegisterController {
         },
       }
     })createUserDto: createFSAEUserDto): Promise<Admin> {
-    // Prevent duplicate user by email
-    if (await this.fsaeUserService.doesUserExist(createUserDto.email)) {
-      throw new HttpErrors.Conflict('Email already exists')
-    }
+      // Prevent duplicate user by email
+      if (await this.fsaeUserService.doesUserExist(createUserDto.email)) {
+        throw new HttpErrors.Conflict('Email already exists');
+      }
 
-        let hashedPassword = await this.passwordHasher.hashPassword(createUserDto.password);
+      let hashedPassword = await this.passwordHasher.hashPassword(
+        createUserDto.password,
+      );
 
-        let newMember = this.alumniRepository.create({
-            email: createUserDto.email,
-            username: createUserDto.username,
-            password: hashedPassword,
-            firstName: createUserDto.firstName,
-            lastName: createUserDto.lastName,
-            phoneNumber: createUserDto.phoneNumber,
-            activated: false,
-            verified: false,
-            fsaeRole: FsaeRole.ALUMNI,
-            desc: createUserDto.desc
-        });
+      let newMember = this.alumniRepository.create({
+        email: createUserDto.email,
+        username: createUserDto.username,
+        password: hashedPassword,
+        firstName: createUserDto.firstName,
+        lastName: createUserDto.lastName,
+        phoneNumber: createUserDto.phoneNumber,
+        activated: false,
+        verified: true, // TODO: restore verification
+        fsaeRole: FsaeRole.ALUMNI,
+        desc: createUserDto.desc,
+      });
 
-        const { verification, verificationCode } = await this.sendVerificationEmail(createUserDto.email, createUserDto.firstName ? createUserDto.firstName : 'Alumni');
+      /*const { verification, verificationCode } = await this.sendVerificationEmail(createUserDto.email, createUserDto.firstName ? createUserDto.firstName : 'Alumni');
         
         await this.verificationRepository.create({
             email: createUserDto.email,
@@ -295,9 +300,9 @@ export class RegisterController {
             twilioId: verification.sid,
             fsaeRole: FsaeRole.ALUMNI,
             resentOnce: false
-        });
+        });//TODO: Restore verification*/
 
-        return newMember;
+      return newMember;
     }
 
     async sendVerificationEmail(email: string, firstName: string) {

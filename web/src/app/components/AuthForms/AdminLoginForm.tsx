@@ -20,7 +20,7 @@ export function AdminLoginForm() {
   const theme = useMantineTheme();
   const handleLoginAs = (role: Role) => {
     // Simulate successful login (to be replaced with the actual authentication logic)
-    const mockToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
+    const mockToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYWRtaW4ifQ...';
     localStorage.setItem('accessToken', mockToken);
     // If authentication is successful: Update Redux store with role
     dispatch(setRole(role));

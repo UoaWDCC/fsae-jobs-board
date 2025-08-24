@@ -39,7 +39,7 @@
     "react-router-dom": "^6.22.3",
     "react-toastify": "^10.0.5",
     "redux": "^5.0.1",
-    "yarn": "^1.22.22"
+    "redux-persist": "^6.0.0"
   },
   "devDependencies": {
     "@storybook/addon-essentials": "^8.0.0",
@@ -58,6 +58,7 @@
     "@types/node": "^22.15.17",
     "@types/react": "^18.2.65",
     "@types/react-dom": "^18.2.21",
+    "@types/redux-persist": "^4.0.0",
     "@typescript-eslint/eslint-plugin": "^7.2.0",
     "@typescript-eslint/parser": "^7.2.0",
     "@vitejs/plugin-react": "^4.2.1",
@@ -86,6 +87,5 @@
     "vite": "^5.2.10",
     "vite-tsconfig-paths": "^4.3.1",
     "vitest": "^1.5.2"
-  },
-  "packageManager": "yarn@4.3.1"
+  }
 }

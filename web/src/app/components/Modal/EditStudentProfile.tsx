@@ -5,11 +5,19 @@ import { SkillsTab } from '../Tabs/SkillsTab';
 import { CVTab } from '../Tabs/CVTab';
 import styles from './Modal.module.css';
 import { useMediaQuery } from '@mantine/hooks';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { Member } from '@/models/member.model';
+import { editMemberById } from '@/api/member';
+import { useSelector } from 'react-redux';
+import type { RootState } from '@/app/store';
 
-export const EditStudentProfile = ({ close }: { close: () => void }) => {
+export const EditStudentProfile = ({ close, userData, setUserData }: { close: () => void , userData: Member | null, setUserData: React.Dispatch<React.SetStateAction<Member | null>>}) => {
   const [activeTab, setActiveTab] = useState('about');
   const [isModalOpen, setIsModalOpen] = useState(true);
+  const [newUserData, setNewUserData] = useState<Partial<Member> | null>(null); // partial because the database schema is currently messed up
+
+  const userId = useSelector((state: RootState) => state.user.id); // the id of the local user
+
   const tabOptions = [
     { value: 'about', label: 'About Me' },
     { value: 'education', label: 'Education' },
@@ -22,7 +30,7 @@ export const EditStudentProfile = ({ close }: { close: () => void }) => {
   const renderContent = () => {
     switch (activeTab) {
       case 'about':
-        return <AboutTab />;
+        return <AboutTab newUserData={newUserData} setNewUserData={setNewUserData} />;
       case 'education':
         return <EducationTab />;
       case 'skills':
@@ -33,6 +41,28 @@ export const EditStudentProfile = ({ close }: { close: () => void }) => {
         return null;
     }
   };
+
+  const saveFields = async () => {
+    if (!newUserData) return;
+    if (!userData) return;
+
+    setUserData(newUserData as Member);
+
+    const partialMember: Partial<Member> = {};
+
+    (Object.keys(newUserData) as (keyof Member)[]).forEach((key) => {
+      if (newUserData[key] !== userData[key]) {
+        partialMember[key] = newUserData[key] as any;
+      }
+    });
+
+    close();
+    await editMemberById(userId, partialMember);
+  }
+
+  useEffect(() => {
+    setNewUserData(userData);
+  }, [userData])
 
   return (
     <Box>
@@ -71,7 +101,7 @@ export const EditStudentProfile = ({ close }: { close: () => void }) => {
           </Tabs.List>
 
           <Tabs.Panel value="about" mt={30}>
-            <AboutTab />
+            <AboutTab newUserData={newUserData} setNewUserData={setNewUserData}/>
           </Tabs.Panel>
           <Tabs.Panel value="education" mt={30}>
             <EducationTab />
@@ -88,7 +118,7 @@ export const EditStudentProfile = ({ close }: { close: () => void }) => {
         <Button className={styles.button1} onClick={close}>
           Cancel
         </Button>
-        <Button>Save</Button>
+        <Button onClick={saveFields}>Save</Button>
       </Box>
     </Box>
   );

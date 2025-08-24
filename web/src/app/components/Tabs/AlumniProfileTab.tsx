@@ -1,27 +1,13 @@
 import { Box, TextInput } from '@mantine/core';
 import styles from '../Modal/Modal.module.css';
 import { useState } from 'react';
+import { Alumni } from '@/models/alumni.model';
 
-interface UserData {
-  alumniName: string;
-  companyField: string;
-  phone: string;
-}
+const AlumniProfileTab = ({ newUserData, setNewUserData }: { newUserData: Partial<Alumni> | null, setNewUserData: React.Dispatch<React.SetStateAction<Partial<Alumni> | null>>}) => {
 
-const AlumniProfileTab = ({ userData }: { userData: UserData }) => {
-  const [formData, setFormData] = useState<UserData>({
-    alumniName: userData.alumniName || '',
-    companyField: userData.companyField || '',
-    phone: userData.phone || '',
-  });
-
-  const handleInputChange =
-    (field: keyof UserData) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      setFormData({
-        ...formData,
-        [field]: event.currentTarget.value,
-      });
-    };
+  const handleFieldChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setNewUserData({...newUserData, [field]: event.currentTarget.value});
+  }
 
   return (
     <Box>
@@ -31,8 +17,7 @@ const AlumniProfileTab = ({ userData }: { userData: UserData }) => {
             label="Name"
             size="md"
             mb={20}
-            value={formData.alumniName}
-            onChange={handleInputChange('alumniName')}
+            
           />
           <TextInput label="Current Role" size="md" mb={20} />
         </Box>
@@ -41,15 +26,15 @@ const AlumniProfileTab = ({ userData }: { userData: UserData }) => {
             label="Company"
             size="md"
             mb={20}
-            value={formData.companyField}
-            onChange={handleInputChange('companyField')}
+            value={newUserData?.company as string} 
+            onChange={handleFieldChange("company")}
           />
           <TextInput
             label="Phone"
             size="md"
             mb={20}
-            value={formData.phone}
-            onChange={handleInputChange('phone')}
+            value={newUserData?.phoneNumber as string} 
+            onChange={handleFieldChange("phoneNumber")}
           />
         </Box>
       </Box>
