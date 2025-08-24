@@ -47,7 +47,7 @@ export class Verification extends Entity {
 
   @property({
     type: 'string',
-    required: true,
+    required: false,
   })
   twilioId: string;
 
