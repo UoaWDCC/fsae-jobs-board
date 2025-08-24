@@ -11,7 +11,7 @@ import { Admin, FsaeRole } from '../models';
 import { inject, service } from '@loopback/core';
 import {FsaeUserService,  PasswordHasherService } from '../services';
 import { BindingKeys } from '../constants/binding-keys';
-import { TwilioService } from '../services/twilio.service';
+import { ResendService } from '../services/resend.service';
 import { GeneratorService } from '../services/generator.service';
 
 export class RegisterController {
@@ -24,7 +24,7 @@ export class RegisterController {
             @repository(VerificationRepository) private verificationRepository: VerificationRepository,
             @inject(BindingKeys.PASSWORD_HASHER) private passwordHasher: PasswordHasherService,
             @inject('services.generator') private generator: GeneratorService,
-            @inject('services.twilioService') private twilioService: TwilioService
+            @inject('services.resendService') private resendService: ResendService
         ) { }
 
   @post('/register-admin')
@@ -145,22 +145,21 @@ export class RegisterController {
         lastName: createUserDto.lastName,
         phoneNumber: createUserDto.phoneNumber,
         activated: true, // Default activate as all this HTTP body requires validation on required fields.
-        verified: true, // TODO: restore verification
+        verified: false, // TODO: restore verification
         fsaeRole: FsaeRole.MEMBER,
         desc: createUserDto.desc,
       });
 
-      /* const { verification, verificationCode } = await this.sendVerificationEmail(createUserDto.email, createUserDto.firstName ? createUserDto.firstName : 'Member');
+      const { verification, verificationCode } = await this.sendVerificationEmail(createUserDto.email, createUserDto.firstName ? createUserDto.firstName : 'Member');
         
         await this.verificationRepository.create({
             email: createUserDto.email,
             verificationCode: verificationCode,
             createdAt: Date.now(),
             expiresAt: Date.now() + 1000*60*10,
-            twilioId: verification.sid,
             fsaeRole: FsaeRole.MEMBER,
             resentOnce: false
-        }); //TODO: Restore verification*/
+        });
 
       return newMember;
     }
@@ -307,7 +306,7 @@ export class RegisterController {
 
     async sendVerificationEmail(email: string, firstName: string) {
         var verificationCode = await this.generator.generateCode();
-        var verification = await this.twilioService.sendVerificationEmail(email, firstName, verificationCode);
+        var verification = await this.resendService.sendVerificationEmail(email, firstName, verificationCode);
         return { verification, verificationCode };
     }
 }

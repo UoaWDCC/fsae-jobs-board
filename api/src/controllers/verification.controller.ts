@@ -14,7 +14,7 @@ import {
     SponsorRepository,
     AdminRepository,
 } from '../repositories';
-import { TwilioService, GeneratorService } from '../services';
+import { ResendService, GeneratorService } from '../services';
 
 export class VerificationController {
     constructor(
@@ -24,7 +24,7 @@ export class VerificationController {
         @repository(SponsorRepository) private sponsorRepository: SponsorRepository,
         @repository(VerificationRepository) private verificationRepository: VerificationRepository,
         @inject('services.generator') private generator: GeneratorService,
-        @inject('services.twilioService') private twilioService: TwilioService
+        @inject('services.resendService') private resendService: ResendService
     ) { }
 
     @post('/verify')
@@ -138,13 +138,11 @@ export class VerificationController {
         } catch (error) {
             // Do nothing
         }
-        
-        await this.twilioService.verifyUser(verification.twilioId);
 
         const verificationCode = await this.generator.generateCode();
 
         // Send a new verification email
-        /* const newVerification = await this.twilioService.sendVerificationEmail(verification.email, user.firstName, verificationCode);
+         const newVerification = await this.resendService.sendVerificationEmail(verification.email, user.firstName, verificationCode);
         
         // Create a new verification record
         await this.verificationRepository.create({
@@ -153,16 +151,15 @@ export class VerificationController {
             createdAt: Date.now(),
             expiresAt: Date.now() + 1000 * 60 * 10,
             verificationCode: verificationCode,
-            twilioId: newVerification.sid,
             resentOnce: true
-        }); */
+        }); 
 
         return true;
     }
 
     async sendVerificationEmail(email: string, firstName: string) {
         var verificationCode = await this.generator.generateCode();
-        var verification = await this.twilioService.sendVerificationEmail(email, firstName, verificationCode);
+        var verification = await this.resendService.sendVerificationEmail(email, firstName, verificationCode);
         return { verification, verificationCode };
     }
 
