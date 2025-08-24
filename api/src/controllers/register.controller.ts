@@ -76,21 +76,21 @@ export class RegisterController {
             lastName: createUserDto.lastName,
             phoneNumber: createUserDto.phoneNumber,
             activated: true,
+            verified: false,
             fsaeRole: FsaeRole.ADMIN,
             desc: createUserDto.desc
         });
 
-        /* const { verification, verificationCode } = await this.sendVerificationEmail(createUserDto.email, createUserDto.firstName ? createUserDto.firstName : 'Administrator');
+        const { verification, verificationCode } = await this.sendVerificationEmail(createUserDto.email, createUserDto.firstName ? createUserDto.firstName : 'Administrator');
         
         await this.verificationRepository.create({
             email: createUserDto.email,
             verificationCode: verificationCode,
             createdAt: Date.now(),
             expiresAt: Date.now() + 1000*60*10,
-            twilioId: verification.sid,
             fsaeRole: FsaeRole.ADMIN,
             resentOnce: false
-        }); //TODO: Restore verification*/ 
+        });
 
         return newAdmin;
     }
@@ -145,7 +145,7 @@ export class RegisterController {
         lastName: createUserDto.lastName,
         phoneNumber: createUserDto.phoneNumber,
         activated: true, // Default activate as all this HTTP body requires validation on required fields.
-        verified: false, // TODO: restore verification
+        verified: false,
         fsaeRole: FsaeRole.MEMBER,
         desc: createUserDto.desc,
       });
@@ -211,22 +211,21 @@ export class RegisterController {
         lastName: createUserDto.lastName,
         phoneNumber: createUserDto.phoneNumber,
         activated: false,
-        verified: true, // TODO: restore verification
+        verified: false,
         fsaeRole: FsaeRole.SPONSOR,
         desc: createUserDto.desc,
       });
 
-      /* const { verification, verificationCode } = await this.sendVerificationEmail(createUserDto.email, createUserDto.firstName ? createUserDto.firstName : 'Sppnsor');
+      const { verification, verificationCode } = await this.sendVerificationEmail(createUserDto.email, createUserDto.firstName ? createUserDto.firstName : 'Sponsor');
         
         await this.verificationRepository.create({
             email: createUserDto.email,
             verificationCode: verificationCode,
             createdAt: Date.now(),
             expiresAt: Date.now() + 1000*60*10,
-            twilioId: verification.sid,
             fsaeRole: FsaeRole.SPONSOR,
             resentOnce: false
-        }); //TODO: Restore verification*/
+        });
 
       return newMember;
     }
@@ -284,22 +283,21 @@ export class RegisterController {
         lastName: createUserDto.lastName,
         phoneNumber: createUserDto.phoneNumber,
         activated: false,
-        verified: true, // TODO: restore verification
+        verified: false,
         fsaeRole: FsaeRole.ALUMNI,
         desc: createUserDto.desc,
       });
 
-      /*const { verification, verificationCode } = await this.sendVerificationEmail(createUserDto.email, createUserDto.firstName ? createUserDto.firstName : 'Alumni');
+      const { verification, verificationCode } = await this.sendVerificationEmail(createUserDto.email, createUserDto.firstName ? createUserDto.firstName : 'Alumni');
         
         await this.verificationRepository.create({
             email: createUserDto.email,
             verificationCode: verificationCode,
             createdAt: Date.now(),
             expiresAt: Date.now() + 1000*60*10,
-            twilioId: verification.sid,
             fsaeRole: FsaeRole.ALUMNI,
             resentOnce: false
-        });//TODO: Restore verification*/
+        });
 
       return newMember;
     }
