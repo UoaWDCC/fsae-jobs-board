@@ -51,7 +51,7 @@ export class VerificationController {
             where: { email },
         });
         
-        // console.log(verification);
+        console.log(verification);
 
         if (!verification) {
             throw new HttpErrors.NotFound('Verification not found');
@@ -79,7 +79,6 @@ export class VerificationController {
 
         await roleRepository.updateById(user.id, { verified: true });
         await this.verificationRepository.deleteById(verification.id);
-        await this.twilioService.verifyUser(verification.twilioId);
 
         return true;
     }
