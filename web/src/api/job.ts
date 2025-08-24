@@ -3,10 +3,10 @@ import { Job } from "@/models/job.model";
 import { JobCardProps } from "@/app/components/JobCardCarousel/JobCard";
 
 // TODO : 
-// [] Filter
-// [] Pagination
-// [] Sorting
-// [] Search
+// [] Filter - Carl - Done
+// [] Pagination - Carl - Done
+// [] Sorting - Carl - Sorts with job upload date, not alphabetical. Double check with Ben what type of sorting is needed.
+// [] Search - Carl - Done
 
 // Using the API class to fetch jobs
 export async function fetchJobs(search?: string): Promise<Job[]> {
@@ -68,7 +68,7 @@ export function convertJobToCardProps(job: Job): JobCardProps {
     title: job.title,
     specialisation: job.specialisation,
     description: job.description,
-    roleType: job.roleType,
+    roleType: job.roleType ?? "Unknown",
     salary: job.salary,
     applicationDeadline: job.applicationDeadline,
     datePosted: job.datePosted,
