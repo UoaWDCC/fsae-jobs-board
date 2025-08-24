@@ -1,3 +1,5 @@
+import fs from 'fs';
+import path from 'path';
 import {Resend} from 'resend';
 import {BindingScope, injectable} from '@loopback/core';
 
@@ -15,12 +17,22 @@ export class ResendService {
     firstName: string,
     verificationCode: string,
   ) {
+    const templatePath = path.join(
+      __dirname,
+      '../email-templates/email-verification.html',
+    );
+    let templateHtml = fs.readFileSync(templatePath, 'utf8');
+
+    templateHtml = templateHtml
+      .replace('{{first_name}}', firstName)
+      .replace('{{verification_code}}', verificationCode);
+
     const verification = await this.client.emails
       .send({
         from: 'delivered@resend.dev',
         to: [email],
-        subject: 'Verify your email',
-        html: `<strong>IT WORKS! ${firstName} ${verificationCode}</strong>`,
+        subject: 'Verify Your Email Address',
+        html: templateHtml,
       })
       .catch(error => {
         console.error('Resend API Error Details:', error.message, error);

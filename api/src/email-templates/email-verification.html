@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://db.onlinewebfonts.com/c/6dd2f2510b4a00a5461b2455928209c2?family=Brandon+Grot+W01+Light" rel="stylesheet">
+    <link href="https://db.onlinewebfonts.com/c/d3efaa9e1254d57aeb7ce4ee1e0f35ef?family=Lulo+W00+One+Bold" rel="stylesheet">
+    <title>Email Verification</title>
+    <style type="text/css">
+        h1 { font-family: 'Lulo W00 One Bold', 'Arial', sans-serif; color: white; }
+        p { font-family: 'Brandon Grot W01 Light', 'Arial', sans-serif; color : white; }
+        a { font-family: 'Lulo W00 One Bold', 'Arial', sans-serif; }
+
+        .button {background-color:#0091ff; color: white;}
+        .button:hover {background-color:black; color: #0091ff;}
+        
+        u + #body a {color: white;}
+        u + #body a:hover {color: #0091ff}
+
+        .letter-spacing-container {
+            display: inline-block;
+            position: relative;
+        }
+        
+        .letter-spacing-container::before {
+            content: attr(data-text);
+            letter-spacing: 2px; /* Adjust the letter spacing as needed */
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        
+        .letter-spacing-container span {
+            visibility: hidden;
+        }
+        
+        .letter-spacing-container span::before {
+            content: attr(data-text);
+            letter-spacing: normal; /* No spacing for the last character */
+        }
+
+        img {max-width: 400px; height: auto;}
+
+        @media screen and (max-width: 426px) {
+            img {max-width: 300px;}
+        }
+    </style>
+</head>
+
+<body id="body"
+    style="min-width: fit-content; width: 100%; margin: 0; padding: 0; background-color: black;">
+    <table width="100%"
+    style="height:20px; background-color: black;">
+        <tr>
+            <td>
+            </td>
+        </tr>
+    </table>
+
+    <table style="width: 100%; text-align: center;">
+        <tr>
+            <td>
+                <img src="https://static.wixstatic.com/media/539a8c_652e66dd070548768234da2b28c755d0~mv2.png/v1/fill/w_728,h_92,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/fsae47%20logo%20white%20%26%20orange.png"
+                     alt="F:SAE:47 Logo" style="height: auto;">
+            </td>
+        </tr>
+    </table>    
+
+    <table width="100%"
+    style="height:20px; background-color: black;">
+        <tr>
+            <td>
+            </td>
+        </tr>
+    </table>
+
+    <table width="100%"
+        style="margin: auto; width: 80%; background-color: black; padding: auto; border-collapse: collapse; border-width: 2px; border-color: rgb(247, 143, 31); border-style: solid;">
+        <tr>
+            <td style="min-width:320px; text-align: center; padding: 20px;">
+                <h1 style="font-size: 24px; font-weight: bold; margin: 5px 0;">Hello {{first_name}}</h1>
+                <h1 style="font-size: 24px; font-weight: bold; margin: 5px 0;">Thank you for registering to the F:SAE:47 Job Board!</h1>
+                <br>
+                <p style="font-size: x-large; margin: 10px 0;">Please use the code below to verify your email address and continue registration.</p>
+                <div style="border: 2px solid gray; width: fit-content; margin: 20px auto; padding-left: 40px; padding-right: 40px;">
+                    <h1 style="font-size: 24px; font-weight: bold;">{{verification_code}}</h1>
+                </div>
+                <!-- <p style="font-size: x-large; margin: 10px 0;">Please verify your email address by clicking the button below.</p>
+                <a href="http://localhost:5173/verify?token={{token}}"
+                    style="display: inline-block; padding: 12px 40px; margin: 20px 0; text-decoration: none; border-width: 2px; border-color: #0091ff; border-style: solid; font-size: 20px; font-weight: bold;"
+                    class="button">Verify Email
+                </a> -->
+                <p style="font-size: x-large; margin: 10px 0;">If you didn't create an account with us, you can safely ignore this email.</p>
+                <br>
+                <h1 style="font-size: x-large; margin: 10px 0;">Best regards,</h1>
+                <h1 style="font-size: x-large; margin: 10px 0;">The F:SAE:47 Team</h1>
+            </td>
+        </tr>
+    </table>
+
+    <table width="100%"
+    style="height:40px; background-color: black;">
+        <tr>
+            <td>
+            </td>
+        </tr>
+    </table>
+</body>
+
+</html>
