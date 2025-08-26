@@ -1,5 +1,4 @@
 import fs from 'fs';
-import path from 'path';
 import {Resend} from 'resend';
 import {BindingScope, injectable} from '@loopback/core';
 import {EMAIL_VERIFICATION_TEMPLATE_PATH, SENDER_EMAIL} from '../constants/email-constants.ts';
