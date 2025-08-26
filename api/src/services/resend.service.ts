@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import {Resend} from 'resend';
 import {BindingScope, injectable} from '@loopback/core';
+import {EMAIL_VERIFICATION_TEMPLATE_PATH, SENDER_EMAIL} from '../constants/email-constants.ts';
 
 @injectable({scope: BindingScope.TRANSIENT})
 export class ResendService {
@@ -11,11 +12,7 @@ export class ResendService {
   constructor() {
     const apiKey = process.env.RESEND_API_KEY || '';
     this.client = new Resend(apiKey);
-    const templatePath = path.join(
-      __dirname,
-      '../email-templates/email-verification.html',
-    );
-    this.htmlTemplate = fs.readFileSync(templatePath, 'utf8');
+    this.htmlTemplate = fs.readFileSync(EMAIL_VERIFICATION_TEMPLATE_PATH, 'utf8');
   }
 
   async sendVerificationEmail(
@@ -30,7 +27,7 @@ export class ResendService {
 
     const verification = await this.client.emails
       .send({
-        from: 'delivered@resend.dev',
+        from: SENDER_EMAIL, 
         to: [email],
         subject: 'Verify Your Email Address',
         html,
