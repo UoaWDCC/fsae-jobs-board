@@ -1,4 +1,4 @@
-import {repository,} from '@loopback/repository';
+import {Filter, repository,} from '@loopback/repository';
 import {
   param,
   get,
@@ -8,7 +8,7 @@ import {
   requestBody,
   response,
 } from '@loopback/rest';
-import {FsaeRole} from '../models';
+import {Alumni, FsaeRole} from '../models';
 import {AlumniProfileDto, AlumniProfileDtoFields} from '../dtos/alumni-profile.dto';
 import {AlumniRepository} from '../repositories';
 import { authenticate } from '@loopback/authentication';
