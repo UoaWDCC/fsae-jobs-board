@@ -1,9 +1,11 @@
 import { Text, Button, Paper, Flex, Container, AspectRatio } from '@mantine/core';
 import styles from './SponsorBoard.module.css';
 import { Image } from '@mantine/core';
+import { useNavigate } from 'react-router-dom';
 
 // dummy data -- change later when we have real data
 export interface SponsorBoardCardProps {
+  id: string;
   companyName: string;
   avatarURL: string;
   industry: string;
@@ -17,8 +19,10 @@ export function SponsorBoardCard({
   data: SponsorBoardCardProps;
   isOneColumn?: boolean;
 }) {
+  const navigate = useNavigate();
+
   const handleSponsorLink = () => {
-    console.log('Sponsor Link: ', data.websiteURL);
+    navigate(`/profile/sponsor/${data.id}`);
   };
 
   return (
@@ -54,10 +58,14 @@ export function SponsorBoardCard({
           justify={isOneColumn ? 'space-evenly' : 'space-between'}
           style={{ flex: isOneColumn ? 2 : 'auto' }}
         >
-          <Flex justify={'space-between'}>
+          <Flex justify={'space-between'} direction="column" gap="xs">
             {/* Sponsor Title */}
             <Text fw={500} size="xl" className={styles.text} ml={isOneColumn ? 'auto': 'xs'}>
               {data.companyName}
+            </Text>
+            {/* Industry */}
+            <Text size="sm" color="dimmed" ml={isOneColumn ? 'auto': 'xs'}>
+              {data.industry}
             </Text>
           </Flex>
 
@@ -71,7 +79,7 @@ export function SponsorBoardCard({
             onClick={handleSponsorLink}
             w="100%"
           >
-            {data.industry}
+            View Profile
           </Button>
         </Flex>
       </Flex>
