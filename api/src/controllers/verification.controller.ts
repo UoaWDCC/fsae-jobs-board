@@ -150,7 +150,7 @@ export class VerificationController {
       );
     }
 
-    // Delete the old verification record and notify Twilio to invalidate the old verification code on their end
+    // Delete the old verification record
     try {
       await this.verificationRepository.deleteById(verification.id);
     } catch (error) {
