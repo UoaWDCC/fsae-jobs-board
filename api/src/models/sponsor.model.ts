@@ -1,34 +1,30 @@
 import {Entity, model, property} from '@loopback/repository';
 import {FsaeUser} from './fsae-user.model';
 
-@model({settings: {strict: false}})
+@model()
 export class Sponsor extends FsaeUser {
   @property({
-    type: 'string',
-    id: true,
-    generated: true,
+    type: 'string', 
+    required: true
   })
-  sponsorID?: string;
+  companyName: string;
 
-  // default values for optional fields
-  subGroup?: string = 'Fsae club';
-  company?: string = 'Fsae club';
-  websiteURL?: string = '';
-  tier?: string = '';
-  industry?: string = '';
-  name?: string = 'Sponsor';
+  @property({
+    type: 'string', 
+    required: false, // "required: true" demands non-empty strings, so it is turned off here
+    default: ""
+  })
+  websiteURL: string;
 
-  // Indexer property to allow additional data
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [prop: string]: any;
+
+  @property({
+    type: 'string', 
+    required: false, // "required: true" demands non-empty strings, so it is turned off here
+    default: ""
+  })
+  industry: string;
 
   constructor(data?: Partial<Sponsor>) {
     super(data);
   }
 }
-
-export interface SponsorRelations {
-  // describe navigational properties here
-}
-
-export type SponsorWithRelations = Sponsor & SponsorRelations;

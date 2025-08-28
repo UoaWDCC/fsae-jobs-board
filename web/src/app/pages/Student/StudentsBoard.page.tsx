@@ -5,8 +5,11 @@ import Filter from '../../components/Filter/Filter';
 import SearchBar from '../../components/SearchBar/SearchBar';
 import styles from '../../components/StudentBoard/StudentBoard.module.css';
 import { ToTopButton } from '../../components/BackToTopButton/BackToTopButton';
+import { useProfileCompletionGuard } from '../../../hooks/useProfileCompletionGuard';
 
 export function StudentsBoard() {
+  useProfileCompletionGuard();
+  
   const [filterRoles, setFilterRoles] = useState<string[]>([]);
   const [filterFields, setFilterFields] = useState<string[]>([]);
   const [search, setSearch] = useState<string>('');

@@ -33,12 +33,12 @@ const fieldsByRole: { [key in Role]: Field[] } = {
     { label: 'Last Name', name: 'lastName' },
   ],
   [Role.Sponsor]: [
-    { label: 'Company', name: 'company' },
+    { label: 'Company', name: 'companyName' },
   ],
   [Role.Alumni]: [
     { label: 'First Name', name: 'firstName' },
     { label: 'Last Name', name: 'lastName' },
-    { label: 'Company', name: 'company' },
+    { label: 'Company', name: 'companyName' },
   ],
   [Role.Admin]: [],
   [Role.Unknown]: []
@@ -116,10 +116,22 @@ const SignupForm = ({ role }: { role: Role }) => {
     const formData = new FormData(event.target as HTMLFormElement);
     const data = Object.fromEntries(formData.entries());
 
-    // Todo: Redirect or do something after successful registration
+    const {terms, confirmPassword, ...sanitisedData} = data
+
+    if (!terms) {
+      toast.error("You must accept the terms and conditions");
+      return;
+    }
+    if (sanitisedData.password != confirmPassword) {
+      toast.error("You password and confirmed password do not match");
+      return;
+    }
+
+    // Note: the type createFSAEUserDto is not correct... whoever originally wrote this
+    // sort of gave up on type safety :/ (good opportunity for refactor in the future!)
     if (role === Role.Member) {
-      register_member(data as unknown as createFSAEUserDto).then((response) => {
-        toast.success('Student Registration Successful');
+      register_member(sanitisedData as unknown as createFSAEUserDto).then((response) => {
+        // toast.success('Student Registration Successful');
         //navigate('/verify', { TODO: restore verification
         navigate('/login', {
           state: {
@@ -132,8 +144,8 @@ const SignupForm = ({ role }: { role: Role }) => {
         toast.error(error.toString());
       })
     } else if (role === Role.Sponsor) {
-      register_sponsor(data as unknown as createFSAEUserDto).then((response) => {
-        toast.success('Sponsor Registration Successful');
+      register_sponsor(sanitisedData as unknown as createFSAEUserDto).then((response) => {
+        // toast.success('Sponsor Registration Successful');
         //navigate('/verify', { TODO: restore verification
         navigate('/login', {
           state: {
@@ -146,8 +158,8 @@ const SignupForm = ({ role }: { role: Role }) => {
         toast.error(error.toString());
       })
     } else if (role === Role.Alumni) {
-      register_alumni(data as unknown as createFSAEUserDto).then((response) => {
-        toast.success('Alumni Registration Successful');
+      register_alumni(sanitisedData as unknown as createFSAEUserDto).then((response) => {
+        // toast.success('Alumni Registration Successful');
         //navigate('/verify', { TODO: restore verification
         navigate('/login', {
           state: {
