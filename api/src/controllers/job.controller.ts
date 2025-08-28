@@ -15,7 +15,6 @@ import { ownerOnly } from '../decorators/owner-only.decorator';
 export class JobController {
   constructor(
     @repository(JobAdRepository) public jobAdRepository : JobAdRepository,
-    @repository(AdminLogRepository) private adminLogRepository: AdminLogRepository,
     @inject(AuthenticationBindings.CURRENT_USER) private currentUserProfile: UserProfile,
   ) {
     if(!this.jobAdRepository) {
@@ -121,12 +120,12 @@ export class JobController {
     if ('publisherID' in jobAd) {
       jobAd.publisherID = existingjobAd.publisherID;
     }
-
     await this.jobAdRepository.updateById(id, jobAd);
   }
 
+  // Only alumni and sponsors can delete jobs
   @authorize({
-    allowedRoles: [FsaeRole.ALUMNI, FsaeRole.SPONSOR, FsaeRole.ADMIN],
+    allowedRoles: [FsaeRole.ALUMNI, FsaeRole.SPONSOR],
   })
   @ownerOnly({
     ownerField: 'publisherID',
@@ -137,50 +136,11 @@ export class JobController {
   @response(204, {
     description: 'Deleting job postings by ID',
   })
-  async deleteById(
-    @param.path.string('id') id: string,
-    @requestBody({
-      required: false,
-      description: 'Optional reason for admin deletion',
-      content: {
-        'application/json': {
-          schema: {
-            type: 'object',
-            properties: {
-              reason: {type: 'string'},
-            },
-          },
-        },
-      },
-    })
-    body?: {reason?: string},
-  ): Promise<void> {
-    const job = await this.jobAdRepository.findById(id);
-
-    const currentUserId = this.currentUserProfile.id.toString();
-    const isAdmin = this.currentUserProfile.roles?.includes(FsaeRole.ADMIN);
-
-    const isOwner = job.publisherID.toString() === currentUserId;
-
-    if (!isOwner && !isAdmin) {
+  async deleteById(@param.path.string('id') id: string): Promise<void> {
+    const existingJobAd = await this.jobAdRepository.findById(id);
+    if (existingJobAd.publisherID.toString() !== this.currentUserProfile.id.toString()) {
       throw new HttpErrors.Unauthorized('You are not authorized to delete this job posting');
     }
-
     await this.jobAdRepository.deleteById(id);
-
-    if (isAdmin) {
-      await this.adminLogRepository.create({
-        adminId: currentUserId,
-        action: 'job-deletion',
-        targetType: 'job',
-        targetId: id,
-        metadata: {
-          jobTitle: job.title,
-          publisherId: job.publisherID,
-          reason: body?.reason,
-        },
-        timestamp: new Date().toISOString(),
-      });
-    }
   }
 }

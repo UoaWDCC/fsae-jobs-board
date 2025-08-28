@@ -10,30 +10,29 @@ import { EditAvatar } from '@/app/components/Modal/EditAvatar';
 import { EditBannerModal } from '@/app/components/Modal/EditBannerModal';
 import { EditSponsorProfile } from '@/app/components/Modal/EditSponsorProfile';
 import EditModal from '@/app/components/Modal/EditModal';
-import { fetchSponsorById } from '@/api/sponsor';
-import { useParams, useNavigate } from 'react-router-dom';
-import { Sponsor } from '@/models/sponsor.model';
+import { JobDetailEditor } from '@/app/components/JobDetail/JobDetailEditor';
+import { loadJobsWithErrorHandling, convertJobToCardProps } from '@/api/job';
 import { Job } from '@/models/job.model';
 import { fetchJobsByPublisherId } from '@/api/job';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../app/store';
 import { jwtDecode } from 'jwt-decode';
 import DeactivateAccountModal from '../../components/Modal/DeactivateAccountModal';
+import { Sponsor } from '@/models/sponsor.model';
 
 export function SponsorProfile() {
-  const { id } = useParams();
-  const navigate = useNavigate();
-
+  // UseState for future modal implementation
   const [openModal, setOpenModal] = useState(false);
   const [modalType, setModalType] = useState('');
-  const [deactivateModalOpen, setDeactivateModalOpen] = useState(false); // look better into this stuff. im not really sure how we are using the modals :3
   const [modalContent, setModalContent] = useState<React.ReactNode>(null);
   const [modalTitle, setModalTitle] = useState('');
   const [openProfileModal, setOpenProfileModal] = useState(false);
-
+  const [openJobEditorModal, setOpenJobEditorModal] = useState(false);
+  const [editingJob, setEditingJob] = useState<JobCardProps | undefined>(undefined);
 
   const [userData, setUserData] = useState<Sponsor | null>(null);
   const [jobData, setJobData] = useState<JobCardProps[]>([]);
+	const [jobs, setJobs] = useState<Job[]>([]);
 
   const [newUserData, setNewUserData] = useState<Partial<Sponsor> | null>(null); // partial because the database schema is currently messed up
 
@@ -44,74 +43,66 @@ export function SponsorProfile() {
 /*
   const handleAvatarChange = () => {
     setModalType('avatar');
-    setModalContent(<EditAvatar avatar={userData?.logo ?? PLACEHOLDER_AVATAR} />);
+    setModalContent(<EditAvatar avatar={userData?.avatar} />);
     setModalTitle('Profile Photo');
     setOpenProfileModal(true);
   };
 
   const handleBannerChange = () => {
     setModalType('banner');
-    setModalContent(<EditBannerModal banner={PLACEHOLDER_BANNER} />);
+    setModalContent(<EditBannerModal banner={userData?.banner} />);
     setModalTitle('Banner Photo');
     setOpenProfileModal(true);
   };*/
 
   const handleProfileChange = () => {
     setModalType('profile');
-    setModalContent(<EditSponsorProfile userData={userData} setUserData={setUserData} close={() => setOpenProfileModal(false)}/>);
+    setModalContent(<EditSponsorProfile />);
     setModalTitle('Edit Profile');
     setOpenProfileModal(true);
   };
 
   const handleJobOpportunitiesChange = () => {
-    setModalType('jobOpportunities');
-    setOpenModal(true);
+    setEditingJob(undefined); // Clear editing state for new job
+    setOpenJobEditorModal(true);
   };
 
-  //wtf?? shouldve been done but idefk whats happening here
+  const handleEditJob = (jobData: JobCardProps) => {
+    setEditingJob(jobData);
+    setOpenJobEditorModal(true);
+  };
+
+  const handleJobSaved = () => {
+    setOpenJobEditorModal(false);
+    setEditingJob(undefined);
+    loadJobs(); // Refresh the job list
+  };
+
+  const handleJobEditorCancel = () => {
+    setOpenJobEditorModal(false);
+    setEditingJob(undefined);
+  };
+
   const handleDeactivateUserChange = () => {
     setModalType('deactivateUser');
     setOpenModal(true);
   };
 
-  const handleDeactivateAccount = (reason: string) => {
-    console.log('Account deactivated:', reason);
-    setDeactivateModalOpen(false);
-    // trigger backend call to deactivate account.
+  // Fetch jobs from the database
+  const loadJobs = async () => {
+    setLoading(true);
+    const fetchedJobs = await loadJobsWithErrorHandling();
+    setJobs(fetchedJobs);
+    setLoading(false);
   };
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const userData = await fetchSponsorById(id as string);
-        if (!userData) {
-          navigate("/404")
-          return;
-        }
-        setUserData(userData);
-        setIsLocalProfile(userData.id == userId);
-        const jobs: Job[] = await fetchJobsByPublisherId(id as string);
-        const jobsForJobCard = jobs.map((thisJob) => {
-          return {
-            title: thisJob.title,
-            subtitle: "Placeholder subtitle",
-            description: thisJob.description,
-            jobLink: "#", // TODO: correctly link to job details page
-            jobID: thisJob.id
-          }
-        })
-        setJobData(jobsForJobCard)
-      } catch (err) {
-        // TODO: proper error handling (eg. auth errors/forbidden pages etc.)
-        navigate("/404")
-      }
-    };
-    if (id) fetchUserData();
-  }, [id]);
+    loadJobs();
+  }, []);
 
   // methods to get elements based on user type
   const getElementBasedOnRole = (element: string) => {
-    switch (userRole) {
+    switch (role) {
       case 'sponsor':
         return getSponsorElements(element);
       case 'member':
@@ -126,7 +117,6 @@ export function SponsorProfile() {
   const getSponsorElements = (element: string) => {
     switch (element) {
       case 'profileBtn':
-        if (!isLocalProfile) return null;
         return (
           <Button
             onClick={handleProfileChange}
@@ -176,7 +166,7 @@ export function SponsorProfile() {
       case 'profileBtn':
         return (
           <Button
-             onClick={() => setDeactivateModalOpen(true)}
+            onClick={handleDeactivateUserChange}
             classNames={{
               root: styles.button_admin_root,
             }}
@@ -355,7 +345,19 @@ export function SponsorProfile() {
                 {getElementBasedOnRole('addNewBtn')}
               </Flex>
               <Flex mt={15} justify={'center'} align={'center'}>
-                <JobCarousel jobs={jobData} />
+                {loading ? (
+                  <Loader size="lg" />
+                ) : jobs.length > 0 ? (
+                  <JobCarousel 
+                    jobs={jobs.map(convertJobToCardProps)} 
+                    onJobDeleted={loadJobs}
+                    onEditJob={handleEditJob}
+                  />
+                ) : (
+                  <Text c="dimmed" size="lg">
+                    No job opportunities available
+                  </Text>
+                )}
               </Flex>
             </Box>
           </Box>
@@ -368,10 +370,11 @@ export function SponsorProfile() {
         title={modalTitle}
       ></EditModal>
 
-      <DeactivateAccountModal
-        onClose={() => setDeactivateModalOpen(false)}
-        onConfirm={handleDeactivateAccount}
-        opened={deactivateModalOpen}
+      <EditModal
+        opened={openJobEditorModal}
+        close={() => setOpenJobEditorModal(false)}
+        content={<JobDetailEditor initialData={editingJob} onSave={handleJobSaved} onCancel={handleJobEditorCancel} />}
+        title={editingJob ? "Edit Job" : "Create New Job"}
       />
     </Box>
   );
