@@ -1,5 +1,5 @@
 import {model, property} from '@loopback/repository';
-import {FsaeUser} from './index';
+import {FsaeUser} from './fsae-user.model';
 import { SubGroup } from './subgroup.model';
 
 @model()
