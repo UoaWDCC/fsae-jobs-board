@@ -4,6 +4,7 @@ import styles from './StudentBoard.module.css';
 
 interface StudentProps {
   name: string;
+  role: string;
   education: string;
   lookingFor: string;
   subGroup: string;
