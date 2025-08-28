@@ -1,7 +1,10 @@
 import fs from 'fs';
 import {Resend} from 'resend';
 import {BindingScope, injectable} from '@loopback/core';
-import {EMAIL_VERIFICATION_TEMPLATE_PATH, SENDER_EMAIL} from '../constants/email-constants.ts';
+import {
+  EMAIL_VERIFICATION_TEMPLATE_PATH,
+  SENDER_EMAIL,
+} from '../constants/email-constants.ts';
 
 @injectable({scope: BindingScope.TRANSIENT})
 export class ResendService {
@@ -11,7 +14,10 @@ export class ResendService {
   constructor() {
     const apiKey = process.env.RESEND_API_KEY || '';
     this.client = new Resend(apiKey);
-    this.htmlTemplate = fs.readFileSync(EMAIL_VERIFICATION_TEMPLATE_PATH, 'utf8');
+    this.htmlTemplate = fs.readFileSync(
+      EMAIL_VERIFICATION_TEMPLATE_PATH,
+      'utf8',
+    );
   }
 
   async sendVerificationEmail(
@@ -19,22 +25,39 @@ export class ResendService {
     firstName: string,
     verificationCode: string,
   ) {
-    const html = this.htmlTemplate
-      .replace('{{first_name}}', firstName)
-      .replace('{{verification_code}}', verificationCode)
-      .replace('{{timestamp}}', Date.now().toString());
+    try {
+      if (!this.client) {
+        throw new Error('Resend client not initialized');
+      }
 
-    const verification = await this.client.emails
-      .send({
-        from: SENDER_EMAIL, 
+      if (!this.htmlTemplate) {
+        throw new Error('Email template not loaded');
+      }
+
+      const html = this.htmlTemplate
+        .replace('{{first_name}}', firstName)
+        .replace('{{verification_code}}', verificationCode)
+        .replace('{{timestamp}}', Date.now().toString());
+
+      const verification = await this.client.emails.send({
+        from: SENDER_EMAIL,
         to: [email],
         subject: 'Verify Your Email Address',
         html,
-      })
-      .catch(error => {
-        console.error('Resend API Error Details:', error.message, error);
-        throw new Error(`Verification email failed: ${error.message}`);
       });
-    return verification;
+
+      if (!verification.error) {
+        console.log('Verification email sent:', verification['data']);
+      } else {
+        console.error(
+          'Error sending verification email:',
+          verification['error'],
+        );
+      }
+      return verification;
+    } catch (error) {
+      console.error('Error sending verification email:', error);
+      throw error;
+    }
   }
 }
