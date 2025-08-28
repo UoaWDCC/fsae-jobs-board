@@ -1,4 +1,4 @@
-import {repository,} from '@loopback/repository';
+import {Filter, repository,} from '@loopback/repository';
 import {
   param,
   get,
@@ -8,7 +8,7 @@ import {
   requestBody,
   response,
 } from '@loopback/rest';
-import {FsaeRole} from '../models';
+import {Alumni, FsaeRole} from '../models';
 import {AlumniProfileDto, AlumniProfileDtoFields} from '../dtos/alumni-profile.dto';
 import {AlumniRepository} from '../repositories';
 import { authenticate } from '@loopback/authentication';
@@ -27,6 +27,28 @@ export class AlumniController {
 
   @authorize({
     allowedRoles: [FsaeRole.ALUMNI, FsaeRole.MEMBER, FsaeRole.SPONSOR, FsaeRole.ADMIN],
+  })
+  @get('/user/alumni')
+  @response(200, {
+    description: 'Array of Alumni model instances',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'array',
+          items: getModelSchemaRef(Alumni, {includeRelations: true}),
+        },
+      },
+    },
+  })
+  async find(
+    @param.filter(Alumni) filter?: Filter<Alumni>,
+  ): Promise<Alumni[]> {
+    return this.alumniRepository.find(filter);
+  }
+
+  @authorize({
+    allowedRoles: [FsaeRole.ALUMNI, FsaeRole.MEMBER, FsaeRole.SPONSOR],
+
   })
   @get('/user/alumni/{id}')
   @response(200, {
