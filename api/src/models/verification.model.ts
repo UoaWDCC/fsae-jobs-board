@@ -45,12 +45,6 @@ export class Verification extends Entity {
   })
   resentOnce: boolean;
 
-  @property({
-    type: 'string',
-    required: true,
-  })
-  twilioId: string;
-
   constructor(data?: Partial<Verification>) {
     super(data);
   }

@@ -2,15 +2,19 @@ import {inject} from '@loopback/core';
 import {repository} from '@loopback/repository';
 import {get, post, HttpErrors, requestBody, param} from '@loopback/rest';
 import {
-  VerificationRepository,
   MemberRepository,
   AlumniRepository,
   SponsorRepository,
   AdminRepository,
 } from '../repositories';
-import { BindingKeys } from '../constants/binding-keys';
-import {TwilioService, GeneratorService, PasswordHasherService} from '../services';
+import {BindingKeys} from '../constants/binding-keys';
+import {
+  GeneratorService,
+  PasswordHasherService,
+  ResendService,
+} from '../services';
 import {PasswordResetsRepository} from '../repositories/passwordresets.repository';
+import {PASSWORD_RESET_LINK} from '../constants/email-constants.ts';
 
 export class passwordResetsController {
   constructor(
@@ -21,9 +25,10 @@ export class passwordResetsController {
     @repository(PasswordResetsRepository)
     private passwordResetsRepository: PasswordResetsRepository,
     @inject('services.generator') private generator: GeneratorService,
-    @inject('services.twilioService') private twilioService: TwilioService,
-    @inject(BindingKeys.PASSWORD_HASHER) private passwordHasher: PasswordHasherService,
-) {}
+    @inject('services.resendService') private resendService: ResendService,
+    @inject(BindingKeys.PASSWORD_HASHER)
+    private passwordHasher: PasswordHasherService,
+  ) {}
 
   async findMemberByEmail(email: string) {
     for (const [role, repository] of Object.entries(this.repositoryMap)) {
@@ -37,20 +42,33 @@ export class passwordResetsController {
 
   @post('/forgot-password')
   async requestPasswordReset(@requestBody() body: {email: string}) {
-    const userRoleData = await this.findMemberByEmail(body.email);
+    try {
+      const userRoleData = await this.findMemberByEmail(body.email);
 
-    if (userRoleData) {
+      if (!userRoleData) {
+        throw new Error('User not found from email');
+      }
       const {user, role} = userRoleData;
-      const resetToken = await this.generator.generateToken();
-      
-
       let nameForResetEmail = "User"
       if ('firstName' in user) {
           nameForResetEmail = user.firstName
       } else if ('companyName' in user) {
           nameForResetEmail = user.companyName
       }
-      const passwordResetEmail = await this.twilioService.sendPasswordResetEmail(body.email, nameForResetEmail, resetToken);
+      const resetToken = await this.generator.generateToken();
+      const resetLink = `${PASSWORD_RESET_LINK}?token=${resetToken}`;
+      console.log(resetLink);
+
+      const passwordResetEmail =
+        await this.resendService.sendPasswordResetEmail(
+          body.email,
+          nameForResetEmail ?? '',
+          resetLink,
+        );
+
+      if (!passwordResetEmail) {
+        throw new Error('Password reset email not sent');
+      }
 
       const passwordReset = await this.passwordResetsRepository.create({
         email: body.email,
@@ -58,16 +76,23 @@ export class passwordResetsController {
         createdAt: Date.now(),
         expiresAt: Date.now() + 1000 * 60 * 60 * 2, // 2 hours from now
         role : role,
-        twilioId: passwordResetEmail.sid,
       });
 
+      if (!passwordReset) {
+        throw new Error('Password reset repository not created');
+      }
       return true;
+    } catch (error) {
+      console.error('Error in requestPasswordReset:', error);
+      throw new Error('Unable to process request' + error);
     }
   }
 
   @get('/reset-password/{token}')
   async validateResetToken(@param.path.string('token') token: string) {
-    const passwordReset = await this.passwordResetsRepository.findOne({where: {resetToken: token}});
+    const passwordReset = await this.passwordResetsRepository.findOne({
+      where: {resetToken: token},
+    });
     if (!passwordReset) {
       throw new HttpErrors.NotFound('Token not found');
     }
@@ -80,8 +105,10 @@ export class passwordResetsController {
 
   @post('/reset-password')
   async resetPassword(@requestBody() body: {token: string; password: string}) {
-    const passwordReset = await this.passwordResetsRepository.findOne({where: {resetToken: body.token}});
-    
+    const passwordReset = await this.passwordResetsRepository.findOne({
+      where: {resetToken: body.token},
+    });
+
     if (!passwordReset) {
       throw new HttpErrors.NotFound('Token not found');
     }
@@ -92,14 +119,16 @@ export class passwordResetsController {
     const userRoleData = await this.findMemberByEmail(passwordReset.email);
     if (userRoleData) {
       const {user, role} = userRoleData;
-      const hashedPassword = await this.passwordHasher.hashPassword(body.password);
-      await this.repositoryMap[role as keyof typeof this.repositoryMap].updateById(user.id, {password: hashedPassword});
-      await this.twilioService.verifyUser(passwordReset.twilioId); // Just informs Twilio that the reset password email has been used 
+      const hashedPassword = await this.passwordHasher.hashPassword(
+        body.password,
+      );
+      await this.repositoryMap[
+        role as keyof typeof this.repositoryMap
+      ].updateById(user.id, {password: hashedPassword});
       await this.passwordResetsRepository.delete(passwordReset);
       return true;
     }
   }
-
 
   private get repositoryMap() {
     return {
