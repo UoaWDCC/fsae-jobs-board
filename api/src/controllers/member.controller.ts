@@ -1,10 +1,5 @@
 import {
-  Count,
-  CountSchema,
-  Filter,
-  FilterExcludingWhere,
   repository,
-  Where,
 } from '@loopback/repository';
 import {
   post,
@@ -17,7 +12,7 @@ import {
   requestBody,
   response,
 } from '@loopback/rest';
-import {FsaeRole, Member} from '../models';
+import {FsaeRole} from '../models';
 import {MemberRepository} from '../repositories';
 import { authenticate } from '@loopback/authentication';
 import { authorize } from '@loopback/authorization';
@@ -25,6 +20,8 @@ import {inject} from '@loopback/core';
 import {Request, RestBindings, Response} from '@loopback/rest';
 import {SecurityBindings, UserProfile} from '@loopback/security';
 import multer from 'multer';
+import { MemberProfileDto, MemberProfileDtoFields } from '../dtos/member-profile.dto';
+import { ownerOnly } from '../decorators/owner-only.decorator';
 
 const storage = multer.memoryStorage();
 const upload = multer({
@@ -60,19 +57,24 @@ export class MemberController {
     description: 'Member model instance',
     content: {
       'application/json': {
-        schema: getModelSchemaRef(Member, {includeRelations: true}),
+        schema: getModelSchemaRef(MemberProfileDto, {includeRelations: true}),
       },
     },
   })
-  async findById(
+  async fetchUserProfile(
     @param.path.string('id') id: string,
-    @param.filter(Member, {exclude: 'where'}) filter?: FilterExcludingWhere<Member>
-  ): Promise<Member | null> {
-    return this.memberRepository.findById(id, filter);
+  ): Promise<MemberProfileDto | null> {
+    const result = await this.memberRepository.findById(id, {
+          fields: MemberProfileDtoFields,
+        });
+        return result as MemberProfileDto;
   }
 
   @authorize({
     allowedRoles: [FsaeRole.MEMBER],
+  })
+  @ownerOnly({
+    ownerField: 'id',
   })
   @patch('/user/member/{id}')
   @response(204, {
@@ -83,17 +85,20 @@ export class MemberController {
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(Member, {partial: true}),
+          schema: getModelSchemaRef(MemberProfileDto, {partial: true}),
         },
       },
     })
-    member: Member,
+    memberDto: Partial<MemberProfileDto>,
   ): Promise<void> {
-    await this.memberRepository.updateById(id, member);
+    await this.memberRepository.updateById(id, memberDto);
   }
 
   @authorize({
     allowedRoles: [FsaeRole.MEMBER],
+  })
+  @ownerOnly({
+    ownerField: 'id',
   })
   @post('/user/member/upload-cv')
   @response(200, {
@@ -185,7 +190,7 @@ export class MemberController {
   }
 
   @authorize({
-    allowedRoles: [FsaeRole.MEMBER, FsaeRole.ADMIN],
+    allowedRoles: [FsaeRole.MEMBER, FsaeRole.ADMIN], //should this method not allow everybody to download cvs?
   })
   @authenticate('fsae-jwt')
   @get('/user/member/{id}/cv')
@@ -243,7 +248,10 @@ export class MemberController {
   }
 
   @authorize({
-    allowedRoles: [FsaeRole.MEMBER],
+    allowedRoles: [FsaeRole.MEMBER], //can admins delete?
+  })
+  @ownerOnly({
+    ownerField: 'id',
   })
   @patch('/user/member/{id}/delete-cv')
   @response(204, {
@@ -268,7 +276,10 @@ export class MemberController {
 
 
   @authorize({
-    allowedRoles: [FsaeRole.ADMIN],
+    allowedRoles: [FsaeRole.MEMBER, FsaeRole.ADMIN],
+  })
+  @ownerOnly({
+    ownerField: 'id',
   })
   @del('/user/member/{id}')
   @response(204, {

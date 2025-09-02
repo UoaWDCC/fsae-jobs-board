@@ -20,7 +20,7 @@ export class JwtService implements TokenService{
 
     const tokenBody = {
       "id": userProfile.id,
-      "role": userProfile.fsaeRole,
+      "role": userProfile.role,
       "activated": userProfile.activated
     }
 
@@ -60,9 +60,8 @@ export class JwtService implements TokenService{
     const securityUserProfile: UserProfile = {
       [securityId]: id,
       id: id,
-      //name: 'Test',
       roles: [role],
-      fsaeRole: role,
+      role: role,
       activated: activated
     };
 

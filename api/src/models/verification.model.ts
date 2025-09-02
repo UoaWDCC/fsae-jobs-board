@@ -37,7 +37,7 @@ export class Verification extends Entity {
     type: 'string',
     required: true,
   })
-  fsaeRole: string;
+  role: string;
 
   @property({
     type: 'boolean',

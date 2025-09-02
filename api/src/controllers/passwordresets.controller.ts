@@ -49,6 +49,12 @@ export class passwordResetsController {
         throw new Error('User not found from email');
       }
       const {user, role} = userRoleData;
+      let nameForResetEmail = "User"
+      if ('firstName' in user) {
+          nameForResetEmail = user.firstName
+      } else if ('companyName' in user) {
+          nameForResetEmail = user.companyName
+      }
       const resetToken = await this.generator.generateToken();
       const resetLink = `${PASSWORD_RESET_LINK}?token=${resetToken}`;
       console.log(resetLink);
@@ -56,7 +62,7 @@ export class passwordResetsController {
       const passwordResetEmail =
         await this.resendService.sendPasswordResetEmail(
           body.email,
-          user.firstName ?? '',
+          nameForResetEmail ?? '',
           resetLink,
         );
 
@@ -69,7 +75,7 @@ export class passwordResetsController {
         resetToken,
         createdAt: Date.now(),
         expiresAt: Date.now() + 1000 * 60 * 60 * 2, // 2 hours from now
-        fsaeRole: role,
+        role : role,
       });
 
       if (!passwordReset) {

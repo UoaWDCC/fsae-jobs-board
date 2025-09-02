@@ -51,6 +51,7 @@
     "@types/jsonwebtoken": "^9.0.6",
     "bcryptjs": "^2.4.3",
     "dotenv": "^16.4.5",
+    "multer": "latest",
     "jsonwebtoken": "^9.0.2",
     "loopback-connector-mongodb": "^6.2.0",
     "mongodb": "^6.15.0",

@@ -1,12 +1,11 @@
 import {inject} from '@loopback/core';
 import {DefaultCrudRepository} from '@loopback/repository';
 import {MongoDbDataSource} from '../datasources';
-import {Alumni, AlumniRelations} from '../models';
+import {Alumni} from '../models';
 
 export class AlumniRepository extends DefaultCrudRepository<
   Alumni,
-  typeof Alumni.prototype.AlumniID,
-  AlumniRelations
+  typeof Alumni.prototype.id
 > {
   constructor(
     @inject('datasources.mongoDB') dataSource: MongoDbDataSource,
