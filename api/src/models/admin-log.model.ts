@@ -7,41 +7,48 @@ export class AdminLog extends Entity {
     id: true,
     generated: true,
   })
-  id?: string;
+  id: string;
 
   @property({
     type: 'string',
     required: true,
   })
-  adminId: string;
+  userId: string;
 
-  @property({
-    type: 'string',
-    required: true,
-  })
-  action: string;
-
-  @property({
-    type: 'string',
-    required: true,
-  })
-  targetType: string;
-
-  @property({
-    type: 'string',
-  })
-  targetId?: string;
-
+  // Details stores details about the log in a semi-structured manner
+  // The details object is required to have a string message field, but can 
+  // also have any arbitrary string fields as well to be displayed
+  // alongside the message
   @property({
     type: 'object',
+    required: true,
+    jsonSchema: {
+      type: 'object',
+      properties: {
+        message: {type: 'string'},
+      },
+      additionalProperties: {type: 'string'}, // any extra keys must also be string
+      required: ['message'],
+    },
   })
-  metadata?: object;
+  details: {
+    message: string;
+    [key: string]: string; // allows other arbitrary string keys
+  };
 
   @property({
-    type: 'date',
-    default: () => new Date(),
+    type: 'date', 
+    required: true,
+    defaultFn: 'now'
   })
-  timestamp?: string;
+  createdAt: Date;
+
+  @property({
+    type: 'date', 
+    required: true,
+    defaultFn: 'now'
+  })
+  updatedAt: Date;
 
   constructor(data?: Partial<AdminLog>) {
     super(data);
