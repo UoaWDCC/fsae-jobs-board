@@ -162,6 +162,7 @@ export class AdminController {
     try {
       await repo.updateById(id, {adminStatus: status});
       const user = await repo.findById(id);
+      /*
       await this.adminLogRepository.create({
         adminId: this.currentUser[securityId] as string,
         action: `application-${status.toLowerCase()}`,
@@ -173,7 +174,8 @@ export class AdminController {
           memberType: role,
         },
         timestamp: new Date().toISOString(),
-    });
+      });
+      */
     } catch (e: any) {
       if (e.code === 'ENTITY_NOT_FOUND') {
         throw new HttpErrors.NotFound(`User ${id} not found in ${role} collection`);
