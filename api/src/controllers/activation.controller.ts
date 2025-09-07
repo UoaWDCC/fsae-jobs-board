@@ -29,6 +29,9 @@ import { authenticate, AuthenticationBindings } from '@loopback/authentication';
 import { authorize } from '@loopback/authorization';
 import {inject} from '@loopback/core';
 import { UserProfile} from '@loopback/security';
+import {service} from '@loopback/core';
+import {AdminLogService} from '../services/admin-log.service';
+
 export class ActivationController {
   constructor(
   @repository(AlumniRepository)
@@ -45,6 +48,9 @@ export class ActivationController {
 
   @inject(AuthenticationBindings.CURRENT_USER)
   private currentUserProfile: UserProfile,
+
+  @service(AdminLogService)
+  private adminLogService: AdminLogService,
 ) {}
 
   // Method to check if an alumni is activated
@@ -117,7 +123,7 @@ export class ActivationController {
     if (!alumni) {
       throw new HttpErrors.NotFound(`Alumni with id ${id} not found.`);
     }
-    await this.logAdminAction('activated-alumni', 'alumni', id, alumni.firstName ?? '', alumni.lastName ?? '');
+    await this.logAdminAction('Activated alumni', 'alumni', id, alumni.firstName ?? '', alumni.lastName ?? '');
   }
 
   // Method to deactivate an alumni
@@ -135,7 +141,7 @@ export class ActivationController {
     if (!alumni) {
       throw new HttpErrors.NotFound(`Alumni with id ${id} not found.`);
     }
-    await this.logAdminAction('deactivated-alumni', 'alumni', id, alumni.firstName ?? '', alumni.lastName ?? '');
+    await this.logAdminAction('Deactivated alumni', 'alumni', id, alumni.firstName ?? '', alumni.lastName ?? '');
   }
 
   // Method to activate a sponsor
@@ -153,7 +159,7 @@ export class ActivationController {
     if (!sponsor) {
       throw new HttpErrors.NotFound(`Sponsor with id ${id} not found.`);
     }
-    await this.logAdminAction('activated-sponsor', 'sponsor', id, sponsor.companyName ?? '', "");
+    await this.logAdminAction('Activated sponsor', 'sponsor', id, sponsor.companyName ?? '', "");
   }
 
   // Method to deactivate a sponsor
@@ -171,7 +177,7 @@ export class ActivationController {
     if (!sponsor) {
       throw new HttpErrors.NotFound(`Sponsor with id ${id} not found.`);
     }
-    await this.logAdminAction('deactivated-sponsor', 'sponsor', id, sponsor.companyName, "");
+    await this.logAdminAction('Deactivated sponsor', 'sponsor', id, sponsor.companyName, "");
   }
 
   // Method to activate a member
@@ -189,7 +195,7 @@ export class ActivationController {
     if (!member) {
       throw new HttpErrors.NotFound(`Member with id ${id} not found.`);
     }
-    await this.logAdminAction('activated-member', 'member', id, member.firstName ?? '', member.lastName ?? '');
+    await this.logAdminAction('Activated member', 'member', id, member.firstName ?? '', member.lastName ?? '');
   }
 
   // Method to deactivate a member
@@ -207,7 +213,7 @@ export class ActivationController {
     if (!member) {
       throw new HttpErrors.NotFound(`Member with id ${id} not found.`);
     }
-    await this.logAdminAction('deactivated-member', 'member', id, member.firstName ?? '', member.lastName ?? '');
+    await this.logAdminAction('Deactivated member', 'member', id, member.firstName ?? '', member.lastName ?? '');
   }
 
   private async logAdminAction(
@@ -217,16 +223,16 @@ export class ActivationController {
   firstName: string,
   lastName: string
 ) {
-  await this.adminLogRepository.create({
-    adminId: this.currentUserProfile.id,
-    action,
-    targetType,
-    targetId,
-    metadata: {
+  await this.adminLogService.createAdminLog(
+    this.currentUserProfile.id,
+    {
+      message: action,
+      targetType,
+      targetId,
       firstName,
       lastName,
+      timestamp: new Date().toISOString(),
     },
-    timestamp: new Date().toISOString(),
-  });
+  );
 }
 }

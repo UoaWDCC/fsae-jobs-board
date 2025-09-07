@@ -1,6 +1,7 @@
 import {
-  repository,
+  repository
 } from '@loopback/repository';
+import {service} from '@loopback/core';
 import {
   get,
   HttpErrors,
@@ -23,7 +24,7 @@ import {AdminReview} from './controller-types/admin.controller.types';
 import { AdminStatus } from '../models/admin.status';
 import {inject} from '@loopback/core';
 import {SecurityBindings, UserProfile, securityId} from '@loopback/security';
-
+import { AdminLogService } from '../services/admin-log.service';
 
 @authenticate('fsae-jwt')
 export class AdminController {
@@ -31,7 +32,7 @@ export class AdminController {
     @repository(AlumniRepository) private alumniRepository: AlumniRepository,
     @repository(MemberRepository) private memberRepository: MemberRepository,
     @repository(SponsorRepository) private sponsorRepository: SponsorRepository,
-    @repository(AdminLogRepository) private adminLogRepository: AdminLogRepository,
+    @service(AdminLogService) private adminLogService: AdminLogService,
     @inject(SecurityBindings.USER) private currentUser: UserProfile,
 
   ) {}
@@ -162,20 +163,15 @@ export class AdminController {
     try {
       await repo.updateById(id, {adminStatus: status});
       const user = await repo.findById(id);
-      /*
-      await this.adminLogRepository.create({
-        adminId: this.currentUser[securityId] as string,
-        action: `application-${status.toLowerCase()}`,
-        targetType: role.toLowerCase(),
-        targetId: id,
-        metadata: {
-          //firstName: user.firstName,  // Issue: sponsors do not have a firstName/lastName.. only company name. Unify to a single name field?
-          //lastName: user.lastName,
-          memberType: role,
-        },
-        timestamp: new Date().toISOString(),
-      });
-      */
+      await this.adminLogService.createAdminLog(
+        this.currentUser[securityId] as string,
+        {
+          message: `Application ${status.toLowerCase()}`,
+          targetType: role.toLowerCase(),
+          targetId: id,
+          memberType: role
+        }
+      );
     } catch (e: any) {
       if (e.code === 'ENTITY_NOT_FOUND') {
         throw new HttpErrors.NotFound(`User ${id} not found in ${role} collection`);

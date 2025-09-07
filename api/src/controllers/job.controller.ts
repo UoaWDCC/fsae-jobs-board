@@ -9,6 +9,8 @@ import {authorize} from '@loopback/authorization';
 import {HttpErrors} from '@loopback/rest';
 import {FsaeRole} from '../models';
 import { AdminLogRepository } from '../repositories/admin.logs.repository';
+import { AdminLogService } from '../services/admin-log.service';
+import {service} from '@loopback/core';
 
 @authenticate('fsae-jwt')
 export class JobController {
@@ -16,6 +18,7 @@ export class JobController {
     @repository(JobAdRepository) public jobAdRepository : JobAdRepository,
     @repository(AdminLogRepository) private adminLogRepository: AdminLogRepository,
     @inject(AuthenticationBindings.CURRENT_USER) private currentUserProfile: UserProfile,
+    @service(AdminLogService) private adminLogService: AdminLogService
   ) {}
 
   // TEMPORARY: Remove protection for testing job ads
@@ -157,18 +160,17 @@ export class JobController {
     await this.jobAdRepository.deleteById(id);
 
     if (isAdmin) {
-      await this.adminLogRepository.create({
-        adminId: currentUserId,
-        action: 'job-deletion',
-        targetType: 'job',
-        targetId: id,
-        metadata: {
+      await this.adminLogService.createAdminLog(
+        currentUserId,
+        {
+          message: 'Job deleted',
+          targetType: 'job',
+          targetId: id,
           jobTitle: job.title,
           publisherId: job.publisherID,
-          reason: body?.reason,
+          ...(body?.reason ? {reason: body.reason} : {}),
         },
-        timestamp: new Date().toISOString(),
-      });
+    );
     }
   }
 }
