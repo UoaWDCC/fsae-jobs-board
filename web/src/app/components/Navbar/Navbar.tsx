@@ -44,17 +44,17 @@ function Navbar() {
       { path: '/alumni', label: 'Alumni' },
     ],
     [Role.Sponsor]: [
-      { path: '/students', label: 'Students' },
+      { path: '/members', label: 'Members' },
       { path: '/alumni', label: 'Alumni' },
     ],
     [Role.Alumni]: [
-      { path: '/students', label: 'Students' },
+      { path: '/members', label: 'Members' },
       { path: '/sponsors', label: 'Sponsors' },
       { path: '/alumni', label: 'Alumni' },
     ],
     [Role.Admin]: [
       { path: '/jobs', label: 'Job Board' },
-      { path: '/students', label: 'Students' },
+      { path: '/members', label: 'Members' },
       { path: '/sponsors', label: 'Sponsors' },
       { path: '/alumni', label: 'Alumni' },
       {path: '/admin-dashboard', label: 'Dashboard'},
