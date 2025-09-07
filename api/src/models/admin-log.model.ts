@@ -2,8 +2,14 @@ import {Entity, model, property} from '@loopback/repository';
 
 export interface AdminLogDetails {
   message: string;
-  [key: string]: string; // allows any other string fields
+  [key: string]: string;
 }
+
+export const LOG_TYPES = ['log', 'request'] as const;
+export type LogType = (typeof LOG_TYPES)[number];
+
+export const REQUEST_STATUSES = ['pending', 'accepted', 'rejected'] as const;
+export type RequestStatus = (typeof REQUEST_STATUSES)[number];
 
 @model({settings: {strict: true}})
 export class AdminLog extends Entity {
@@ -20,36 +26,35 @@ export class AdminLog extends Entity {
   })
   userId: string;
 
-  // Details stores details about the log in a semi-structured manner
-  // The details object is required to have a string message field, but can 
-  // also have any arbitrary string fields as well to be displayed
-  // alongside the message
   @property({
     type: 'object',
     required: true,
     jsonSchema: {
       type: 'object',
-      properties: {
-        message: {type: 'string'},
-      },
-      additionalProperties: {type: 'string'}, // any extra keys must also be string
+      properties: {message: {type: 'string'}},
+      additionalProperties: {type: 'string'},
       required: ['message'],
     },
   })
-  details: AdminLogDetails;
+  details: AdminLogDetails; // Log details object requires a message string, but can contain any other abitrary string fields too
 
   @property({
-    type: 'date', 
-    required: true,
-    defaultFn: 'now'
+    type: 'string',
+    jsonSchema: {enum: [...LOG_TYPES]},
+    default: 'log',
   })
+  logType: LogType;
+
+  @property({
+    type: 'string',
+    jsonSchema: {enum: [...REQUEST_STATUSES]},
+  })
+  status?: RequestStatus;
+
+  @property({type: 'date', required: true, defaultFn: 'now'})
   createdAt: Date;
 
-  @property({
-    type: 'date', 
-    required: true,
-    defaultFn: 'now'
-  })
+  @property({type: 'date', required: true, defaultFn: 'now'})
   updatedAt: Date;
 
   constructor(data?: Partial<AdminLog>) {
@@ -57,7 +62,5 @@ export class AdminLog extends Entity {
   }
 }
 
-export interface AdminLogRelations {
-}
-
+export interface AdminLogRelations {}
 export type AdminLogWithRelations = AdminLog & AdminLogRelations;
