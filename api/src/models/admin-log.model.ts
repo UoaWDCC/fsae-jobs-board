@@ -1,5 +1,10 @@
 import {Entity, model, property} from '@loopback/repository';
 
+export interface AdminLogDetails {
+  message: string;
+  [key: string]: string; // allows any other string fields
+}
+
 @model({settings: {strict: true}})
 export class AdminLog extends Entity {
   @property({
@@ -31,10 +36,7 @@ export class AdminLog extends Entity {
       required: ['message'],
     },
   })
-  details: {
-    message: string;
-    [key: string]: string; // allows other arbitrary string keys
-  };
+  details: AdminLogDetails;
 
   @property({
     type: 'date', 
