@@ -59,41 +59,12 @@ export class Member extends FsaeUser {
     may be subject to change in the future (it would be desireable to store CVs in some way other
     than embedding them in the Member model)
   */
-  @property({
-    type: 'string',
-    default: '',
-  })
-  cvUrl: string;
 
   @property({
     type: 'string',
     default: '',
   })
   cvS3Key: string;
-
-  @property({
-    type: 'string',
-    default: '',
-  })
-  cvFileName: string;
-
-  @property({
-    type: 'string',
-    default: '',
-  })
-  cvMimeType: string;
-
-  @property({
-    type: 'number',
-    default: 0,
-  })
-  cvSize: number;
-
-  @property({
-    type: 'date',
-    default: () => new Date(),
-  })
-  cvUploadedAt: Date;
 
   @property({
     type: 'boolean',

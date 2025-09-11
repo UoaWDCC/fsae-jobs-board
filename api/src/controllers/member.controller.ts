@@ -85,7 +85,7 @@ export class MemberController {
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(Member, {partial: true, exclude: ['cvUrl']}),
+          schema: getModelSchemaRef(Member, {partial: true}),
         },
       },
     })
@@ -116,7 +116,7 @@ export class MemberController {
   })
   async uploadCV(
     @inject(RestBindings.Http.RESPONSE) response: Response,
-  ): Promise<{success: boolean; message: string; fileName?: string; size?: number}> {
+  ): Promise<any> {
     console.log('Injected user:', this.currentUserProfile);
     return new Promise((resolve, reject) => {
       upload.single('cv')(this.req, response, async (err) => {
@@ -179,19 +179,15 @@ export class MemberController {
           // Store S3 Url in MongoDB
           await this.memberRepository.updateById(memberId, {
             cvS3Key: key,
-            cvUrl: url,
-            cvFileName: file.originalname,
-            cvMimeType: file.mimetype,
-            cvSize: file.size,
-            cvUploadedAt: new Date(),
             hasCV: true,
           });
           
           resolve({
             success: true,
             message: 'CV uploaded successfully',
-            fileName: file.originalname,
-            size: file.size,
+            key,
+            url,
+            metadata: { filename: file.originalname, mimetype: file.mimetype, size: file.size },
           });
         } catch (error) {
           console.error('S3 upload error:', error);
@@ -235,15 +231,13 @@ export class MemberController {
     try {
       const member = await this.memberRepository.findById(id);
       
-      if (!member.cvUrl || !member.cvS3Key || !member.cvFileName) {
-        response.status(404).json({ message: 'CV not found' });
+      if (!member.hasCV || !member.cvS3Key) {
+        response.status(404).json({ message: 'No CV uploaded' });
         return;
       }
       const s3Object = await s3ServiceInstance.getObject(member.cvS3Key);
-      const fileName =
-        (s3Object.Metadata && s3Object.Metadata.originalfilename) ||
-        member.cvFileName ||
-        'cvFile';
+      const contentType = s3Object.ContentType ?? 'application/octet-stream';
+      const fileName = (s3Object.Metadata && s3Object.Metadata.originalfilename) || 'cv.pdf';
       
       // convert S3 stream to Buffer
       const chunks: Uint8Array[] = [];
@@ -252,12 +246,8 @@ export class MemberController {
       }
       const buffer = Buffer.concat(chunks);
       
-      response.setHeader('Content-Type', member.cvMimeType);
-      response.set('Content-Disposition', `inline; filename="${fileName}"`);
-      response.setHeader(
-        'Content-Disposition',
-        `inline; filename="${member.cvFileName}"`,
-      );
+      response.setHeader('Content-Type', contentType);
+      response.setHeader('Content-Disposition', `inline; filename="${fileName}"`);
 
       response.send(buffer);
       
@@ -282,12 +272,7 @@ export class MemberController {
     if (member && member.cvS3Key) {
       await s3ServiceInstance.deleteFile(member.cvS3Key);
       await this.memberRepository.updateById(id, {
-        cvUrl: '',
         cvS3Key: '',
-        cvFileName: '',
-        cvMimeType: '',
-        cvSize: 0,
-        cvUploadedAt: new Date(),
         hasCV: false,
       });
     }
