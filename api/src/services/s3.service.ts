@@ -73,8 +73,7 @@ export class s3Service {
       case 'docx':
         // 1 week
         return 'public, max-age=604800, must-revalidate';
-        
-      // this can be used for avatar images in the future
+      
       case 'jpg':
       case 'jpeg':
       case 'png':

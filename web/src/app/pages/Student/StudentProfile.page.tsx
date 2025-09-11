@@ -40,8 +40,6 @@ export function StudentProfile() {
   const userRole = useSelector((state: RootState) => state.user.role); // the id of the local user
   const userId = useSelector((state: RootState) => state.user.id); // the id of the local user
 
-  // TODO: avatar and banner doesnt exist in the member model yet
-
   const handleAvatarChange = () => {
     setModalType('avatar');
     setModalContent(<EditAvatar avatar={"avatar"} />);
