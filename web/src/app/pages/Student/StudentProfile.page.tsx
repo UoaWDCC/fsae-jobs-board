@@ -16,8 +16,6 @@ import DeactivateAccountModal from '../../components/Modal/DeactivateAccountModa
 import { JobType } from '@/models/job-type';
 import { SubGroup } from '@/models/subgroup.model';
 import { jobTypeDisplayMap, subGroupDisplayMap } from '@/app/utils/field-display-maps';
-        
-
 
 
 export function StudentProfile() {
@@ -44,20 +42,19 @@ export function StudentProfile() {
 
   // TODO: avatar and banner doesnt exist in the member model yet
 
-  /*const handleAvatarChange = () => {
+  const handleAvatarChange = () => {
     setModalType('avatar');
-    setModalContent(<EditAvatar avatar={userData?.photo} />);
+    setModalContent(<EditAvatar avatar={"avatar"} />);
     setModalTitle('Profile Photo');
     setOpenProfileModal(true);
   };
 
   const handleBannerChange = () => {
     setModalType('banner');
-    setModalContent(<EditBannerModal banner={userData?.banner} />);
+    setModalContent(<EditBannerModal banner={"banner"} />);
     setModalTitle('Banner Photo');
     setOpenProfileModal(true);
   };
-  */
 
   const handleProfileChange = () => {
     setModalType('profile');
@@ -106,6 +103,30 @@ export function StudentProfile() {
     // trigger backend call to deactivate account.
   };
 
+  const fetchAvatar = async () => {
+    if (!id) return;
+
+    const token = localStorage.getItem('accessToken');
+    if (!token) return;
+
+    try {
+      const response = await fetch(`http://localhost:3000/user/member/${id}/avatar`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!response.ok) return;
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+
+      setUserData((prev) => prev ? { ...prev, avatarURL: url } : prev);
+
+      return () => URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Error fetching avatar:', err);
+    }
+  };
+
   useEffect(() => {
     // Logic to fetch data and setUserData
     const fetchUserData = async () => {
@@ -125,6 +146,8 @@ export function StudentProfile() {
       }
     };
     if (id) fetchUserData();
+
+    fetchAvatar();
   }, [id]);
 
   return (
@@ -133,7 +156,7 @@ export function StudentProfile() {
         <Card.Section
           h={250}
           className={styles.banner}
-          //onClick={handleBannerChange}
+          onClick={handleBannerChange}
           style={userData?.bannerURL ? { backgroundImage: `url(${userData?.bannerURL})` }: {}}
         />
 
@@ -201,7 +224,7 @@ export function StudentProfile() {
           mt={-100}
           ml={10}
           className={styles.avatar}
-          //onClick={handleAvatarChange}
+          onClick={handleAvatarChange}
         />
         <Text size="md" mt={-55} ml={170} pt={10}>
           {userData?.lookingFor ? `Looking for: ${jobTypeDisplayMap[userData.lookingFor]}` : ""}
@@ -394,7 +417,12 @@ export function StudentProfile() {
 
       <EditModal
         opened={openProfileModal}
-        close={() => setOpenProfileModal(false)}
+        close={() => {
+          setOpenProfileModal(false);
+          if (modalType === 'avatar') {
+            fetchAvatar();
+          }
+        }}
         content={modalContent}
         title={modalTitle}
       ></EditModal>

@@ -72,6 +72,18 @@ export class Member extends FsaeUser {
     default: false,
   })
   hasCV?: boolean;
+
+  @property({
+    type: 'string',
+    default: '',
+  })
+  avatarS3Key: string;
+
+  @property({
+    type: 'string',
+    default: '',
+  })
+  bannerS3Key: string;
   
   // firstName, lastName, and subGroup are already defined in parent FsaeUser class with @property decorators
   // Default values are set in the parent class or during registration
