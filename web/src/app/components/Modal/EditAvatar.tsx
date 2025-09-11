@@ -4,7 +4,7 @@ import { IconCameraPlus } from '@tabler/icons-react';
 import { IconTrash } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RootState } from '@/app/store';
 
 interface EditAvatarProps {
@@ -21,13 +21,11 @@ export const EditAvatar = ({ avatar }: EditAvatarProps) => {
   const [uploading, setUploading] = useState(false);
   const [clearing, setClearing] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
-  const [loading, setLoading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
   const fetchAvatar = async () => {
     if (!memberID) return;
 
-    setLoading(true);
     try {
       const token = localStorage.getItem('accessToken');
       const response = await fetch(`http://localhost:3000/user/member/${memberID}/avatar`, {
@@ -43,8 +41,6 @@ export const EditAvatar = ({ avatar }: EditAvatarProps) => {
       }
     } catch (error) {
       console.error('Error fetching avatar:', error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -57,6 +53,7 @@ export const EditAvatar = ({ avatar }: EditAvatarProps) => {
     if (!selectedFile) {
       return;
     }
+    setUploadStatus('idle');
 
     if (selectedFile.size > MAX_FILE_SIZE) {
       setUploadStatus('error');
@@ -66,7 +63,6 @@ export const EditAvatar = ({ avatar }: EditAvatarProps) => {
 
     setUploading(true);
     setErrorMsg('');
-    setUploadStatus('idle');
     const token = localStorage.getItem('accessToken');
 
     try {
@@ -81,7 +77,6 @@ export const EditAvatar = ({ avatar }: EditAvatarProps) => {
 
       if (!response.ok) {
         setUploadStatus('error');
-        throw new Error('Failed to upload avatar.');
       }
 
       const data = await response.json();
@@ -99,7 +94,6 @@ export const EditAvatar = ({ avatar }: EditAvatarProps) => {
     }
   };
 
-
   const handleAvatarDelete = async () => {
     setClearing(true);
     const token = localStorage.getItem('accessToken');
@@ -110,10 +104,11 @@ export const EditAvatar = ({ avatar }: EditAvatarProps) => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to delete avatar.');
+        setErrorMsg("Failed to delete avatar.");
       }
 
       setAvatarUrlState('');
+      setUploadStatus('success');
     } catch (error: any) {
       console.error(error);
       setErrorMsg(error.message || 'Failed to delete avatar.');

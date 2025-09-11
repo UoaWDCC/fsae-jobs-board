@@ -127,6 +127,30 @@ export function StudentProfile() {
     }
   };
 
+  const fetchBanner = async () => {
+    if (!id) return;
+
+    const token = localStorage.getItem('accessToken');
+    if (!token) return;
+
+    try {
+      const response = await fetch(`http://localhost:3000/user/member/${id}/banner`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!response.ok) return;
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+
+      setUserData((prev) => prev ? { ...prev, bannerURL: url } : prev);
+
+      return () => URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Error fetching banner:', err);
+    }
+  };
+
   useEffect(() => {
     // Logic to fetch data and setUserData
     const fetchUserData = async () => {
@@ -148,6 +172,7 @@ export function StudentProfile() {
     if (id) fetchUserData();
 
     fetchAvatar();
+    fetchBanner();
   }, [id]);
 
   return (
@@ -421,6 +446,9 @@ export function StudentProfile() {
           setOpenProfileModal(false);
           if (modalType === 'avatar') {
             fetchAvatar();
+          }
+          if (modalType === 'banner') {
+            fetchBanner();
           }
         }}
         content={modalContent}
