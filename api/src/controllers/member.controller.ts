@@ -300,7 +300,7 @@ export class MemberController {
 
   @authenticate('fsae-jwt')
   @authorize({
-    allowedRoles: [FsaeRole.MEMBER, FsaeRole.ADMIN, FsaeRole.ALUMNI, FsaeRole.SPONSOR],
+    allowedRoles: [FsaeRole.MEMBER, FsaeRole.ADMIN],
   })
   @patch('/user/member/{id}/delete-avatar')
   async deleteAvatar(@param.path.string('id') id: string) {
@@ -326,7 +326,7 @@ export class MemberController {
 
   @authenticate('fsae-jwt')
   @authorize({
-    allowedRoles: [FsaeRole.MEMBER, FsaeRole.ADMIN, FsaeRole.ALUMNI, FsaeRole.SPONSOR],
+    allowedRoles: [FsaeRole.MEMBER, FsaeRole.ADMIN],
   })
   @patch('/user/member/{id}/delete-banner')
   async deleteBanner(@param.path.string('id') id: string) {
