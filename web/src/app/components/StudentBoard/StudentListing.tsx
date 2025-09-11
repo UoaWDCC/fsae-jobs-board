@@ -32,9 +32,10 @@ const StudentListing: FC<StudentListingProp> = ({}) => {
   const baseStudent = {
     name: '',
     role: '',
-    degree: '',
-    year: '',
-    avatar:
+    education: '',
+    lookingFor: '',
+    subGroup: '',
+    avatarURL:
       'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png',
   };
 
@@ -42,8 +43,9 @@ const StudentListing: FC<StudentListingProp> = ({}) => {
     ...baseStudent,
     name: index < 10 ? `John Doe${index + 1}` : `Student ${index + 1}`,
     role: index < 10 ? `Race Engineer${index + 1}` : ` Research & development Leader`,
-    degree: index < 10 ? ` BEng. Software` : ` BSc. Computer Science`,
-    year: index < 10 ? `Year ${index + 1}` : ` Year 2`,
+    education: index < 10 ? ` BEng. Software` : ` BSc. Computer Science`,
+    lookingFor: index < 10 ? `Year ${index + 1}` : ` Year 2`,
+    subGroup: index < 10 ? `Subgroup ${index + 1}` : ` Subgroup A`,
   }));
 
   // Calculate the indices for slicing the student list
@@ -69,9 +71,10 @@ const StudentListing: FC<StudentListingProp> = ({}) => {
             <Student
               name={student.name}
               role={student.role}
-              degree={student.degree}
-              year={student.year}
-              avatar={student.avatar}
+              education={student.education}
+              lookingFor={student.lookingFor}
+              subGroup={student.subGroup}
+              avatarURL={student.avatarURL}
             />
           </Grid.Col>
         ))}
