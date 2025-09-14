@@ -1,6 +1,7 @@
 import { apiInstance } from "@/api/ApiInstance";
 import { Job } from "@/models/job.model";
-import { JobCardProps } from "@/app/components/JobCardCarousel/JobCard";
+// Update the import path to the correct relative location of JobCard.ts
+import { JobCardProps } from "../app/components/JobCardCarousel/JobCard";
 
 // TODO : 
 // [] Filter - Carl - Done
@@ -29,6 +30,16 @@ export async function fetchJobById(id: string): Promise<Job | null> {
     return res.data as Job;
   } catch (e) {
     throw Error(`An unknown error occurred trying to fetch job details by id: ${id}`);
+  }
+}
+
+// Fetch jobs by publisher ID
+export async function fetchJobsByPublisherId(publisherId: string): Promise<Job[]> {
+  try {
+    const res = await apiInstance.get(`job/publisher/${publisherId}`);
+    return res.data as Job[];
+  } catch (e) {
+    throw Error(`An unknown error occurred trying to fetch jobs by publisher ID: ${publisherId}`);
   }
 }
 

@@ -50,7 +50,7 @@ export class JobController {
 
   // TEMPORARY: Remove protection for testing job ads
   @authorize({
-    allowedRoles: [FsaeRole.MEMBER],
+    allowedRoles: [FsaeRole.MEMBER, FsaeRole.ALUMNI, FsaeRole.SPONSOR, FsaeRole.ADMIN],
   })
   @get('/job')
   @response(200, {
@@ -70,9 +70,8 @@ export class JobController {
     return this.jobAdRepository.find(filter);
   }
 
-  // TEMPORARY: Remove protection for testing job ads
   @authorize({
-    allowedRoles: [FsaeRole.MEMBER],
+    allowedRoles: [FsaeRole.MEMBER, FsaeRole.ALUMNI, FsaeRole.SPONSOR, FsaeRole.ADMIN],
   })
   @get('/job/{id}')
   @response(200, {
@@ -120,12 +119,12 @@ export class JobController {
     if ('publisherID' in jobAd) {
       jobAd.publisherID = existingjobAd.publisherID;
     }
+
     await this.jobAdRepository.updateById(id, jobAd);
   }
 
-  // Only alumni and sponsors can delete jobs
   @authorize({
-    allowedRoles: [FsaeRole.ALUMNI, FsaeRole.SPONSOR],
+    allowedRoles: [FsaeRole.ALUMNI, FsaeRole.SPONSOR, FsaeRole.ADMIN],
   })
   @ownerOnly({
     ownerField: 'publisherID',
@@ -136,11 +135,35 @@ export class JobController {
   @response(204, {
     description: 'Deleting job postings by ID',
   })
-  async deleteById(@param.path.string('id') id: string): Promise<void> {
-    const existingJobAd = await this.jobAdRepository.findById(id);
-    if (existingJobAd.publisherID.toString() !== this.currentUserProfile.id.toString()) {
+  async deleteById(
+    @param.path.string('id') id: string,
+    @requestBody({
+      required: false,
+      description: 'Optional reason for admin deletion',
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              reason: {type: 'string'},
+            },
+          },
+        },
+      },
+    })
+    body?: {reason?: string},
+  ): Promise<void> {
+    const job = await this.jobAdRepository.findById(id);
+
+    const currentUserId = this.currentUserProfile.id.toString();
+    const isAdmin = this.currentUserProfile.roles?.includes(FsaeRole.ADMIN);
+
+    const isOwner = job.publisherID.toString() === currentUserId;
+
+    if (!isOwner && !isAdmin) {
       throw new HttpErrors.Unauthorized('You are not authorized to delete this job posting');
     }
+
     await this.jobAdRepository.deleteById(id);
   }
 }

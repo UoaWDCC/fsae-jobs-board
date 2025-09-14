@@ -12,7 +12,6 @@ import { EditAvatar } from '../../components/Modal/EditAvatar';
 import { EditBannerModal } from '../../components/Modal/EditBannerModal';
 import { JobDetailEditor } from '@/app/components/JobDetail/JobDetailEditor';
 import { loadJobsWithErrorHandling, convertJobToCardProps } from '@/api/job';
-import { Job } from '@/models/job.model';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchAlumniById } from '@/api/alumni';
 import { fetchJobsByPublisherId } from '@/api/job';
@@ -38,10 +37,14 @@ export function AlumniProfile() {
   const [editingJob, setEditingJob] = useState<JobCardProps | undefined>(undefined);
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
-
-  console.log(
-    'Change this SponsorPage component to use real role from Redux store once user integration is implemented'
-  );
+  const [isLocalProfile, setIsLocalProfile] = useState(false) // Is this profile this user's profile (aka. should we show the edit button)
+  const [deactivateModalOpen, setDeactivateModalOpen] = useState(false);
+  
+  const userRole = useSelector((state: RootState) => state.user.role); // the id of the local user
+  const userId = useSelector((state: RootState) => state.user.id); // the id of the local user
+  
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
 
   /*
   const handleAvatarChange = () => {
@@ -61,30 +64,14 @@ export function AlumniProfile() {
   const handleProfileChange = () => {
     setOpenProfileModal(true);
     setModalContent(
-      <EditAlumniProfile userData={userData} close={() => setOpenProfileModal(false)} />
+      <EditAlumniProfile userData={userData} setUserData={setUserData} close={() => setOpenProfileModal(false)} />
     );
     setModalTitle('Edit Profile');
   };
 
   const handleJobOpportunitiesChange = () => {
-    setEditingJob(undefined); // Clear editing state for new job
-    setOpenJobEditorModal(true);
-  };
-
-  const handleEditJob = (jobData: JobCardProps) => {
-    setEditingJob(jobData);
-    setOpenJobEditorModal(true);
-  };
-
-  const handleJobSaved = () => {
-    setOpenJobEditorModal(false);
-    setEditingJob(undefined);
-    loadJobs(); // Refresh the job list
-  };
-
-  const handleJobEditorCancel = () => {
-    setOpenJobEditorModal(false);
-    setEditingJob(undefined);
+    setModalType('jobOpportunities');
+    setOpenModal(true);
   };
 
   const handleDeactivateUserChange = () => {
@@ -92,37 +79,88 @@ export function AlumniProfile() {
     setOpenModal(true);
   };
 
-  // Dummy data for alumni userData
-  const [userData, setUserData] = useState({
-    alumniName: 'Eliza Smith',
-    companyField: 'Company',
-    subgroup: 'Subgroup',
-    dateJoined: '2024',
-    email: 'elizasmith@example.com',
-    phone: '+1234567890',
-    description:
-      ' Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque ut tristique lacus, eget euismod enim. Fusce suscipit at tortor sed pretium. Integer et pretium orci. Integer velit purus, gravida quis tincidunt ac, pretium sed lorem. Sed sagittis neque tincidunt, auctor ante vitae, ultricies risus. Aenean quis sem sed dolor feugiat tincidunt. Etiam purus justo, ullamcorper in cursus volutpat, luctus in dolor. Donec sed purus tristique, rhoncus erat ut, ullamcorper dolor. Pellentesque tincidunt eros id neque egestas, sed luctus sapien elementum. Etiam bibendum ex est, ac consequat turpis facilisis id. Mauris scelerisque purus quis leo fermentum, at semper nisl mattis. Vivamus vel ornare lectus. Nullam dictum felis et commodo lacinia. Etiam tempor placerat sapien quis maximus. Ut pellentesque libero ac sollicitudin accumsan. Sed vel dolor bibendum, egestas metus nec, eleifend mauris. Integer imperdiet eros vitae nibh interdum volutpat. Etiam et ultrices massa. Cras gravida facilisis sapien. Ut eleifend varius risus, eget bibendum dui blandit ac. Vivamus tempor varius massa, sed suscipit mauris interdum eu. Proin sed commodo ex, ac cursus nisl. Integer ut tincidunt augue. Cras molestie libero erat. Nunc justo felis, sodales auctor dapibus sit amet, dapibus ut turpis. Sed nec sagittis nisl. Cras eget condimentum est. Cras nulla lorem, venenatis euismod gravida quis, fermentum vel mauris. Fusce et ipsum et lorem egestas volutpat. Duis nec imperdiet ante. Quisque et ligula accumsan, eleifend urna sit amet, cursus dolor. Nullam ut erat diam. Ut non lacinia erat, eu pretium nisl. Vestibulum mattis sapien in tristique commodo. Integer faucibus leo at turpis rhoncus, eu hendrerit ex dignissim. Nulla facilisi. Donec eget turpis ac odio pretium iaculis. Sed imperdiet sollicitudin viverra. In consequat justo velit, aliquet ultricies leo efficitur laoreet. Nullam quis elementum diam. Sed in sodales est. Integer malesuada semper tortor eu feugiat. Morbi tincidunt turpis bibendum consequat cursus. Aenean faucibus felis sit amet porta interdum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Mauris dui magna, lobortis quis quam non, dictum bibendum libero. ',
-    avatar:
-      'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/mantine/avatar-9.png',
-    banner:
-      'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80',
-  });
-
-  // Fetch jobs from the database
-  const loadJobs = async () => {
-    setLoading(true);
-    const fetchedJobs = await loadJobsWithErrorHandling();
-    setJobs(fetchedJobs);
-    setLoading(false);
+  const [userData, setUserData] = useState<Alumni | null>(null);
+  
+  const handleJobSaved = () => {
+    // Reload jobs to get updated data
+    const fetchUserData = async () => {
+      try {
+        const jobs: Job[] = await fetchJobsByPublisherId(id as string);
+        const jobsForJobCard = jobs.map((thisJob) => {
+          return {
+            id: thisJob.id,
+            title: thisJob.title,
+            specialisation: thisJob.specialisation,
+            description: thisJob.description,
+            roleType: thisJob.roleType || "Full-time",
+            salary: thisJob.salary,
+            applicationDeadline: thisJob.applicationDeadline,
+            datePosted: thisJob.datePosted,
+            publisherID: thisJob.publisherID
+          }
+        });
+        setJobData(jobsForJobCard);
+      } catch (err) {
+        console.error('Failed to reload jobs:', err);
+      }
+    };
+    if (id) fetchUserData();
+    setOpenJobEditorModal(false);
+    setEditingJob(undefined);
   };
 
+  const handleJobEditorCancel = () => {
+    setOpenJobEditorModal(false);
+    setEditingJob(undefined);
+  };
+
+  const handleDeactivateAccount = (reason: string) => {
+    console.log('Account deactivated:', reason);
+    setDeactivateModalOpen(false);
+    // trigger backend call to deactivate account.
+  };
+
+  
+
+  const [jobData, setJobData] = useState<JobCardProps[]>([]);
+
   useEffect(() => {
-    loadJobs();
-  }, []);
+    // Logic to fetch data and setUserData
+    const fetchUserData = async () => {
+      try {
+        const userData = await fetchAlumniById(id as string);
+        if (!userData) {
+          navigate("/404")
+          return;
+        }
+        setUserData(userData);
+        setIsLocalProfile(userData.id == userId);
+        const jobs: Job[] = await fetchJobsByPublisherId(id as string);
+        const jobsForJobCard = jobs.map((thisJob) => {
+          return {
+            id: thisJob.id,
+            title: thisJob.title,
+            specialisation: thisJob.specialisation,
+            description: thisJob.description,
+            roleType: thisJob.roleType || "Full-time",
+            salary: thisJob.salary,
+            applicationDeadline: thisJob.applicationDeadline,
+            datePosted: thisJob.datePosted,
+            publisherID: thisJob.publisherID
+          }
+        })
+        setJobData(jobsForJobCard)
+      } catch (err) {
+        // TODO: proper error handling (eg. auth errors/forbidden pages etc.)
+        navigate("/404")
+      }
+    };
+    if (id) fetchUserData();
+   }, [id]);
 
   // methods to get elements based on user type
   const getElementBasedOnRole = (element: string) => {
-    switch (role) {
+    switch (userRole) {
       case 'sponsor':
         return getSponsorElements(element);
       case 'member':
@@ -385,19 +423,7 @@ export function AlumniProfile() {
                 {getElementBasedOnRole('addNewBtn')}
               </Flex>
               <Flex mt={15} justify={'center'} align={'center'}>
-                {loading ? (
-                  <Loader size="lg" />
-                ) : jobs.length > 0 ? (
-                  <JobCarousel 
-                    jobs={jobs.map(convertJobToCardProps)} 
-                    onJobDeleted={loadJobs}
-                    onEditJob={handleEditJob}
-                  />
-                ) : (
-                  <Text c="dimmed" size="lg">
-                    No job opportunities available
-                  </Text>
-                )}
+                <JobCarousel jobs={jobData} />
               </Flex>
             </Box>
           </Box>
@@ -416,6 +442,11 @@ export function AlumniProfile() {
         close={() => setOpenJobEditorModal(false)}
         content={<JobDetailEditor initialData={editingJob} onSave={handleJobSaved} onCancel={handleJobEditorCancel} />}
         title={editingJob ? "Edit Job" : "Create New Job"}
+      />
+      <DeactivateAccountModal
+        onClose={() => setDeactivateModalOpen(false)}
+        onConfirm={handleDeactivateAccount}
+        opened={deactivateModalOpen}
       />
     </Box>
   );

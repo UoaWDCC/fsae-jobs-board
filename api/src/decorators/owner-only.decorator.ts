@@ -18,10 +18,11 @@ export function ownerOnly(options: OwnerOnlyOptions) {
       if (!resourceId) throw new HttpErrors.BadRequest('Missing resource ID');
 
       const user = (this as any).currentUserProfile as UserProfile;
+      console.log('OWNER_ONLY: User profile:', user);
       const userId = user?.id?.toString();
       if (!userId) throw new HttpErrors.Unauthorized("UserID not found in user profile");
 
-      if (user.fsaeRole === FsaeRole.ADMIN) {
+      if (user.role === FsaeRole.ADMIN) {
         return original.apply(this, args);
       }
 
@@ -47,4 +48,3 @@ export function ownerOnly(options: OwnerOnlyOptions) {
     return desc;
   };
 }
-
