@@ -22,10 +22,11 @@ const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields, search }) 
     const fetchData = async () => {
       setLoading(true);
       try {
-        const data = await fetchJobs(search); 
+        const data = await fetchJobs(search);
         setJobListings(data);
         setError(null);
       } catch (err) {
+        console.error('[JobListing] fetch error', err);
         setError('Failed to fetch jobs');
       } finally {
         setLoading(false);
@@ -34,21 +35,36 @@ const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields, search }) 
     fetchData();
   }, [search]);
 
-  // Filter job listings based on role type
-  const filteredJobListings = jobListings.filter(job =>
+  // Carl : Filter job listings based on role type
+  // Step 1: apply role/field filters
+  const byFilter = jobListings.filter(job =>
     job.roleType &&
     (filterRoles.length === 0 ||
       filterRoles.includes(job.roleType.toLowerCase()))
     || (!job.roleType && filterRoles.length === 0)
   );
 
-  const {
-    activePage,
-    setActivePage,
-    paginatedData,
-    chunkedData,
-    totalPages
-  } = usePagination(filteredJobListings, 6); // Default to 6 items per page
+  // Client-side text search across title/description/specialisation
+  const searchLower = (search || '').trim().toLowerCase();
+  const bySearch = searchLower
+    ? byFilter.filter(job => {
+        const title = (job.title || '').toLowerCase();
+        const desc = (job.description || '').toLowerCase();
+        const spec = (job.specialisation || '').toLowerCase();
+        const match = title.includes(searchLower) || desc.includes(searchLower) || spec.includes(searchLower);
+        return match;
+      })
+    : byFilter;
+
+  const filteredJobListings = bySearch;
+
+  // Use the pagination hook
+  const { activePage, setActivePage, paginatedData, totalPages } = usePagination(filteredJobListings, 6);
+
+  // Reset page to 1 whenever filters or search changes
+  useEffect(() => setActivePage(1), [search, filterRoles, filterFields, setActivePage]);
+
+  useEffect(() => { if (error) console.error('[JobListing] error=', error); }, [error]);
 
   return (
     <Flex justify="flex-start" align="flex-start" direction="column" gap="md">

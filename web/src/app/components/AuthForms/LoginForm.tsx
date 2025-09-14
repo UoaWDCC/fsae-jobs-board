@@ -8,6 +8,7 @@ import { login } from '@/api/login';
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { setRole, setId } from '@/app/features/user/userSlice';
+import { stringToRole } from '@/app/type/role';
 
 export function LoginForm() {
   const location = useLocation();
@@ -33,17 +34,10 @@ export function LoginForm() {
 
   async function onLogin() {
     try {
-      const { role, id, hasMissingInfo } = await login(email, password);
-      console.log(role);
-      dispatch(setRole(role));
+      const { role, id } = await login(email, password);
+      const roleEnum = stringToRole(role);
+      dispatch(setRole(roleEnum));
       dispatch(setId(id));
-
-      // Check if profile needs completion
-      if (hasMissingInfo && role !== 'admin') {
-        localStorage.setItem('profileIncomplete', 'true');
-        navigate('/complete-profile', { replace: true });
-        return;
-      }
 
       // Only show success toast if profile is complete
       toast.success('Login Successful');

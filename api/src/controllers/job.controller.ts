@@ -15,7 +15,6 @@ import { ownerOnly } from '../decorators/owner-only.decorator';
 export class JobController {
   constructor(
     @repository(JobAdRepository) public jobAdRepository : JobAdRepository,
-    @repository(AdminLogRepository) private adminLogRepository: AdminLogRepository,
     @inject(AuthenticationBindings.CURRENT_USER) private currentUserProfile: UserProfile,
   ) {
     if(!this.jobAdRepository) {
@@ -37,12 +36,12 @@ export class JobController {
         'application/json': {
           schema: getModelSchemaRef(JobAd, {
             title: 'NewJobAd',
-            exclude: ['id'],
+            exclude: ['id', 'publisherID'],
           }),
         },
       },
     })
-    jobAdData: Omit<JobAd, 'id'>,
+    jobAdData: Omit<JobAd, 'id' | 'publisherID'>,
   ): Promise<JobAd> {
     const jobAd = new JobAd(jobAdData);
     jobAd.publisherID = this.currentUserProfile.id.toString();
@@ -51,7 +50,7 @@ export class JobController {
 
   // TEMPORARY: Remove protection for testing job ads
   @authorize({
-    allowedRoles: [FsaeRole.MEMBER],
+    allowedRoles: [FsaeRole.MEMBER, FsaeRole.ALUMNI, FsaeRole.SPONSOR, FsaeRole.ADMIN],
   })
   @get('/job')
   @response(200, {
@@ -71,9 +70,8 @@ export class JobController {
     return this.jobAdRepository.find(filter);
   }
 
-  // TEMPORARY: Remove protection for testing job ads
   @authorize({
-    allowedRoles: [FsaeRole.MEMBER],
+    allowedRoles: [FsaeRole.MEMBER, FsaeRole.ALUMNI, FsaeRole.SPONSOR, FsaeRole.ADMIN],
   })
   @get('/job/{id}')
   @response(200, {
@@ -167,20 +165,5 @@ export class JobController {
     }
 
     await this.jobAdRepository.deleteById(id);
-
-    if (isAdmin) {
-      await this.adminLogRepository.create({
-        adminId: currentUserId,
-        action: 'job-deletion',
-        targetType: 'job',
-        targetId: id,
-        metadata: {
-          jobTitle: job.title,
-          publisherId: job.publisherID,
-          reason: body?.reason,
-        },
-        timestamp: new Date().toISOString(),
-      });
-    }
   }
 }
