@@ -17,6 +17,8 @@ export interface Job {
     duration?: string;
     location?: string;
     roleType?: string;
+    skills?: string[];
+    qualifications?: string[];
 }
 
 //! If this changes, make sure to update the JobDetail component in web/src/app/components/JobDetail/JobDetail.tsx

@@ -5,24 +5,14 @@ import styles from './JobDetail.module.css';
 import { adminApi } from '@/api/admin';
 import { useNavigate } from 'react-router-dom';
 import DeletePostModal from '../Modal/DeletePostModal';
+import { Job } from '@/models/job.model';
 
 interface JwtPayload {
   role?: string;
 }
 
 interface JobDetailProps {
-  job: {
-    id: string;
-    title: string;
-    description: string;
-    salary: string;
-    startDate: string;
-    applicationDeadline: string;
-    duration: string;
-    location: string;
-    skills?: string[];
-    qualifications?: string[];
-  };
+  job: Job;
 }
 
 export function JobDetail({ job }: JobDetailProps) {
@@ -59,15 +49,11 @@ export function JobDetail({ job }: JobDetailProps) {
             </Text>
             <Text size="xl" fw={700} className={styles.detailItem}>
               Start Date:{' '}
-              <span
-                style={{ fontWeight: 400 }}
-              >{`TODO: add start date to Job model or remove this`}</span>
+              <span style={{ fontWeight: 400 }}>{job.startDate || 'TBD'}</span>
             </Text>
             <Text size="xl" fw={700} className={styles.detailItem}>
               Duration:{' '}
-              <span
-                style={{ fontWeight: 400 }}
-              >{`TODO: add start date to Job model or remove this`}</span>
+              <span style={{ fontWeight: 400 }}>{job.duration || 'TBD'}</span>
             </Text>
             <Text size="xl" fw={700} className={styles.detailItem}>
               Application Deadline:{' '}
@@ -78,7 +64,7 @@ export function JobDetail({ job }: JobDetailProps) {
               Relevant Skills for this Job:
             </Text>
             <ul className={styles.skillList}>
-              {job.skills?.map((skill) => (
+              {job.skills?.map((skill: string) => (
                 <li key={skill}>{skill}</li>
               ))}
             </ul>
@@ -95,7 +81,7 @@ export function JobDetail({ job }: JobDetailProps) {
               </Badge>
             </div>
 
-            <Text>{job.location} 📍</Text>
+            <Text>{job.location || job.specialisation} 📍</Text>
 
             <div className={styles.buttonRow}>
               {role === 'admin' ? (
@@ -119,7 +105,7 @@ export function JobDetail({ job }: JobDetailProps) {
               Qualifications:
             </Text>
             <ul className={styles.qualifications}>
-              {job.qualifications?.map((q, i) => (
+              {job.qualifications?.map((q: string, i: number) => (
                 <li key={i}>{q}</li>
               ))}
             </ul>

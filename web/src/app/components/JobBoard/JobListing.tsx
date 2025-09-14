@@ -63,6 +63,7 @@ const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields, search }) 
 
   const chunkedJobListings = chunk(filteredJobListings, itemsPerPage);
   const currentPageItems = chunkedJobListings[activePage - 1] || [];
+  const totalPages = chunkedJobListings.length;
 
   return (
     <Flex justify="flex-start" align="flex-start" direction="column" gap="md">
@@ -72,7 +73,7 @@ const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields, search }) 
         {!loading && !error && currentPageItems.length === 0 && (
           <Text>No jobs available.</Text>
         )}
-        {!loading && !error && currentPageItems.map((job) => (
+        {!loading && !error && currentPageItems.map((job: Job) => (
           <JobListingItem
             key={job.id}
             id={job.id}
@@ -88,7 +89,7 @@ const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields, search }) 
       {!loading && filteredJobListings.length > 0 && (
         <Container className={styles.paginationContainer}>
           <Pagination
-            total={chunkedJobListings.length}
+            total={totalPages}
             value={activePage}
             onChange={setPage}
             size="lg"
