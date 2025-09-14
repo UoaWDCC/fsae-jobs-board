@@ -39,7 +39,7 @@ export async function login(email: string, password: string) {
     } else {
       localStorage.setItem('accessToken', token);
       console.log(`Successfully logged in as UserID ${userId}`);
-      console.log(role);
+      // console.log(role);
       return { role: role, id: userId}; // Return role and missing info flag
     }
   } catch (e) {

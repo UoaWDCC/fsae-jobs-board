@@ -1,11 +1,14 @@
 import { ActionIcon, Text, Button, Paper, Flex, Stack, Badge } from '@mantine/core';
 import styles from './JobCard.module.css';
-import { IconTrash } from '@tabler/icons-react';
+import { IconTrash, IconEdit } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/app/store';
-import { deleteJob } from '@/api/job';
+import { deleteJob, fetchJobById } from '@/api/job';
 import { toast } from 'react-toastify';
+import { useState } from 'react';
+import { JobEditorModal } from '../Modal/EditJob';
+import { Job } from '@/models/job.model';
 
 export interface JobCardProps {
   id: string;
@@ -26,6 +29,10 @@ export function JobCard({ data, onJobDeleted, onEditJob }: {
 }) {
   const navigate = useNavigate();
   const role = useSelector((state: RootState) => state.user.role);
+  const userId = useSelector((state: RootState) => state.user.id);
+  
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [jobData, setJobData] = useState<Job | null>(null);
 
   const handleDeleteJob = async () => {
     if (window.confirm(`Are you sure you want to delete the job "${data.title}"?`)) {
@@ -40,15 +47,38 @@ export function JobCard({ data, onJobDeleted, onEditJob }: {
     }
   };
 
-  const handleEditJob = () => {
-    if (onEditJob) {
-      // Call the edit callback with job data for autofilling
-      onEditJob(data);
-    } else {
-      // Fallback to navigation if no callback provided
-      console.log('Edit job with ID: ', data.id);
-      navigate(`/jobs/${data.id}?edit=true`);
+  const handleEditJob = async () => {
+    // Check if user can edit this job
+    const canEdit = role === 'sponsor' || role === 'alumni';
+    const isOwner = userId && data.publisherID === userId;
+    
+    if (!canEdit) {
+      toast.error('You do not have permission to edit jobs');
+      return;
     }
+    
+    if (!isOwner) {
+      toast.error('You can only edit your own job posts');
+      return;
+    }
+
+    try {
+      // Fetch full job data for editing
+      const fullJobData = await fetchJobById(data.id);
+      setJobData(fullJobData);
+      setEditModalOpen(true);
+    } catch (error) {
+      console.error('Failed to fetch job data:', error);
+      toast.error('Failed to load job data for editing');
+    }
+  };
+
+  const handleJobEditSuccess = () => {
+    if (onEditJob) {
+      onEditJob(data);
+    }
+    setEditModalOpen(false);
+    setJobData(null);
   };
 
   const handleViewJob = () => {
@@ -69,9 +99,11 @@ export function JobCard({ data, onJobDeleted, onEditJob }: {
   };
 
   const getSponsorElements = (element: string) => {
+    const isOwner = userId && data.publisherID === userId;
+    
     switch (element) {
       case 'deleteBtn':
-        return (
+        return isOwner ? (
           <ActionIcon
             variant="transparent"
             color="white"
@@ -79,9 +111,9 @@ export function JobCard({ data, onJobDeleted, onEditJob }: {
             <IconTrash 
             aria-label = "Delete Job"/>
           </ActionIcon>
-        );
+        ) : null;
       case 'jobBtn':
-        return (
+        return isOwner ? (
           <Button
             color="blue"
             mt="xs"
@@ -89,8 +121,20 @@ export function JobCard({ data, onJobDeleted, onEditJob }: {
             radius="lg"
             size="compact-md"
             onClick={handleEditJob}
+            leftSection={<IconEdit size={14} />}
           >
             Edit Job
+          </Button>
+        ) : (
+          <Button
+            color="blue"
+            mt="xs"
+            mr="md"
+            radius="lg"
+            size="compact-md"
+            onClick={handleViewJob}
+          >
+            View Job
           </Button>
         );
     }
@@ -117,11 +161,33 @@ export function JobCard({ data, onJobDeleted, onEditJob }: {
   };
 
   const getAlumniElements = (element: string) => {
+    const isOwner = userId && data.publisherID === userId;
+    
     switch (element) {
       case 'deleteBtn':
-        return null;
+        return isOwner ? (
+          <ActionIcon
+            variant="transparent"
+            color="white"
+            onClick={handleDeleteJob}>
+            <IconTrash 
+            aria-label = "Delete Job"/>
+          </ActionIcon>
+        ) : null;
       case 'jobBtn':
-        return (
+        return isOwner ? (
+          <Button
+            color="blue"
+            mt="xs"
+            mr="md"
+            radius="lg"
+            size="compact-md"
+            onClick={handleEditJob}
+            leftSection={<IconEdit size={14} />}
+          >
+            Edit Job
+          </Button>
+        ) : (
           <Button
             color="blue"
             mt="xs"
@@ -190,6 +256,17 @@ export function JobCard({ data, onJobDeleted, onEditJob }: {
           </Text>
         </Flex>
       </Flex>
+      
+      <JobEditorModal
+        opened={editModalOpen}
+        onClose={() => {
+          setEditModalOpen(false);
+          setJobData(null);
+        }}
+        onSuccess={handleJobEditSuccess}
+        initialData={jobData}
+        mode="edit"
+      />
     </Paper>
   );
 }

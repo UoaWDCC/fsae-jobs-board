@@ -2,11 +2,13 @@ import { useMemo, useState } from 'react';
 import { Text, Button, Badge } from '@mantine/core';
 import styles from './JobDetail.module.css';
 import { Job } from '@/models/job.model';
-import { JobDetailEditor } from './JobDetailEditor';
 import { adminApi } from '@/api/admin';
 import { useNavigate } from 'react-router-dom';
 import DeletePostModal from '../Modal/DeletePostModal';
+import { JobEditorModal } from '../Modal/EditJob';
 import { jwtDecode } from 'jwt-decode';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../app/store';
 
 interface JwtPayload {
   role?: string;
@@ -17,9 +19,12 @@ interface JobDetailProps {
 }
 
 export function JobDetail({ job }: JobDetailProps) {
-  const [isEditing, setIsEditing] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const navigate = useNavigate();
+
+  const userRole = useSelector((state: RootState) => state.user.role);
+  const userId = useSelector((state: RootState) => state.user.id);
 
   const role = useMemo(() => {
     try {
@@ -32,15 +37,36 @@ export function JobDetail({ job }: JobDetailProps) {
     }
   }, []);
 
+  // Check if user can edit this job
+  const canEdit = userRole === 'sponsor' || userRole === 'alumni';
+  const canApply = userRole === 'alumni' || userRole === 'member';
+  const isOwner = userId && job.publisherID === userId;
+
   const handleConfirmDelete = async (reason: string) => {
     await adminApi.deleteJob(job.id, reason); // optionally pass reason to backend
     console.log('Deleted with reason:', reason);
     navigate('/jobs');
   };
 
-  if (isEditing) {
-    return <JobDetailEditor />;
-  }
+  const handleEditJob = () => {
+    if (!canEdit) {
+      console.error('User does not have permission to edit jobs');
+      return;
+    }
+    
+    if (!isOwner) {
+      console.error('User can only edit their own job posts');
+      return;
+    }
+    
+    setEditModalOpen(true);
+  };
+
+  const handleJobEditSuccess = () => {
+    setEditModalOpen(false);
+    // Optionally refresh the page or update the job data
+    window.location.reload();
+  };
 
   return (
     <main className={styles.jobDetailPageWrapper}>
@@ -65,18 +91,6 @@ export function JobDetail({ job }: JobDetailProps) {
               <span style={{ fontWeight: 400 }}>{job.applicationDeadline}</span>
             </Text>
           </div>
-
-          {/* Skills section - commented out as skills property doesn't exist in Job model */}
-          {/* {job.skills && job.skills.length > 0 && (
-            <div>
-              <Text size="1.4rem" fw={700}>Relevant Skills for this Job: </Text>
-              <ul className={styles.skillList}>
-                {job.skills.map((skill: string) => (
-                  <li key={skill}>{skill}</li>
-                ))}
-              </ul>
-            </div>
-          )} */}
         </div>
 
         {/* Right Column */}
@@ -92,14 +106,18 @@ export function JobDetail({ job }: JobDetailProps) {
 
           <div className={styles.buttonRow}>
             {role === 'admin' ? (
-              <Button color="red" onClick={() => setModalOpen(true)} radius="xl">
+              <Button color="red" onClick={() => setDeleteModalOpen(true)} radius="xl">
                 Delete Post
               </Button>
             ) : (
               <>
-                <Button>Apply ↗</Button>
-                <Button variant="outline">Save</Button>
-                <Button variant="light" onClick={() => setIsEditing(true)}>Edit Job</Button>
+                {canApply && (<Button>Apply ↗</Button>)}
+                {canApply && (<Button variant="outline">Save</Button>)}
+                {canEdit && isOwner && (
+                  <Button variant="light" onClick={handleEditJob}>
+                    Edit Job
+                  </Button>
+                )}
               </>
             )}
           </div>
@@ -122,11 +140,20 @@ export function JobDetail({ job }: JobDetailProps) {
           )} */}
         </div>
       </div>
+      
+      <JobEditorModal
+        opened={editModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        onSuccess={handleJobEditSuccess}
+        initialData={job}
+        mode="edit"
+      />
+      
       <DeletePostModal
-        opened={modalOpen}
-        onClose={() => setModalOpen(false)}
+        opened={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
         onDelete={(reason: string) => {
-          setModalOpen(false);
+          setDeleteModalOpen(false);
           handleConfirmDelete(reason);
         }}
       />

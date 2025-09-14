@@ -83,6 +83,7 @@ export function JobDetailEditor({ initialData, onSave, onCancel }: JobDetailEdit
           applicationDeadline: formData.applicationDeadline,
           applicationLink: '', // Required field
           datePosted: new Date().toISOString(),
+          publisherID: '', // Should be set to current user ID
         });
         toast.success('Job created successfully!');
       }

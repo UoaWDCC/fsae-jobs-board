@@ -10,8 +10,8 @@ import { EditAvatar } from '@/app/components/Modal/EditAvatar';
 import { EditBannerModal } from '@/app/components/Modal/EditBannerModal';
 import { EditSponsorProfile } from '@/app/components/Modal/EditSponsorProfile';
 import EditModal from '@/app/components/Modal/EditModal';
-import { JobDetailEditor } from '@/app/components/JobDetail/JobDetailEditor';
-import { loadJobsWithErrorHandling, convertJobToCardProps } from '@/api/job';
+import { JobEditorModal } from '@/app/components/Modal/EditJob';
+import { loadJobsWithErrorHandling} from '@/api/job';
 import { fetchSponsorById } from '@/api/sponsor';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Sponsor } from '@/models/sponsor.model';
@@ -35,7 +35,7 @@ export function SponsorProfile() {
   const [jobData, setJobData] = useState<JobCardProps[]>([]);
   const [jobs, setJobs] = useState<Job[]>([]);
   const [openJobEditorModal, setOpenJobEditorModal] = useState(false);
-  const [editingJob, setEditingJob] = useState<JobCardProps | undefined>(undefined);
+  const [editingJob, setEditingJob] = useState<Job | null>(null);
   const [deactivateModalOpen, setDeactivateModalOpen] = useState(false);
   
   const { id } = useParams<{ id: string }>();
@@ -75,8 +75,8 @@ export function SponsorProfile() {
   };
 
   const handleJobOpportunitiesChange = () => {
-    setModalType('jobOpportunities');
-    setOpenModal(true);
+    setEditingJob(null); // Create new job
+    setOpenJobEditorModal(true);
   };
 
   const handleDeactivateUserChange = () => {
@@ -117,12 +117,7 @@ export function SponsorProfile() {
     };
     if (id) fetchUserData();
     setOpenJobEditorModal(false);
-    setEditingJob(undefined);
-  };
-
-  const handleJobEditorCancel = () => {
-    setOpenJobEditorModal(false);
-    setEditingJob(undefined);
+    setEditingJob(null);
   };
 
   const handleDeactivateAccount = (reason: string) => {
@@ -157,8 +152,7 @@ export function SponsorProfile() {
         });
         setJobData(jobsForJobCard);
       } catch (err) {
-        // TODO: proper error handling (eg. auth errors/forbidden pages etc.)
-        navigate("/404");
+        console.error('Failed to fetch JobCards data:', err);
       }
     };
     if (id) fetchUserData();
@@ -426,11 +420,12 @@ export function SponsorProfile() {
         title={modalTitle}
       ></EditModal>
 
-      <EditModal
+      <JobEditorModal
         opened={openJobEditorModal}
-        close={() => setOpenJobEditorModal(false)}
-        content={<JobDetailEditor initialData={editingJob} onSave={handleJobSaved} onCancel={handleJobEditorCancel} />}
-        title={editingJob ? "Edit Job" : "Create New Job"}
+        onClose={() => setOpenJobEditorModal(false)}
+        onSuccess={handleJobSaved}
+        initialData={editingJob}
+        mode={editingJob ? "edit" : "create"}
       />
       <DeactivateAccountModal
         onClose={() => setDeactivateModalOpen(false)}

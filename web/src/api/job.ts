@@ -36,7 +36,15 @@ export async function fetchJobById(id: string): Promise<Job | null> {
 // Fetch jobs by publisher ID
 export async function fetchJobsByPublisherId(publisherId: string): Promise<Job[]> {
   try {
-    const res = await apiInstance.get(`job/publisher/${publisherId}`);
+    const res = await apiInstance.get('job', {
+      params: {
+        filter: JSON.stringify({
+          where: {
+            publisherID: publisherId
+          }
+        })
+      }
+    });
     return res.data as Job[];
   } catch (e) {
     throw Error(`An unknown error occurred trying to fetch jobs by publisher ID: ${publisherId}`);
@@ -44,12 +52,13 @@ export async function fetchJobsByPublisherId(publisherId: string): Promise<Job[]
 }
 
 // Create a new job
-export async function createJob(jobData: Omit<Job, 'id' | 'publisherID'>): Promise<Job> {
+export async function createJob(jobData: Omit<Job, 'id'>): Promise<Job> {
   try {
+    console.log('Sending job data to backend:', jobData);
     const res = await apiInstance.post('job', jobData);
     return res.data as Job;
-  } catch (e) {
-    throw Error('An unknown error occurred trying to create job');
+  } catch (e: any) {
+    throw Error(`Backend error: ${e.response.data.error.message}`);
   }
 }
 

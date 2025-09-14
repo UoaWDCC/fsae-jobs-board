@@ -10,8 +10,7 @@ import EditModal from '../../components/Modal/EditModal';
 import EditAlumniProfile from '../../components/Modal/EditAlumniProfile';
 import { EditAvatar } from '../../components/Modal/EditAvatar';
 import { EditBannerModal } from '../../components/Modal/EditBannerModal';
-import { JobDetailEditor } from '@/app/components/JobDetail/JobDetailEditor';
-import { loadJobsWithErrorHandling, convertJobToCardProps } from '@/api/job';
+import { JobEditorModal } from '@/app/components/Modal/EditJob';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchAlumniById } from '@/api/alumni';
 import { fetchJobsByPublisherId } from '@/api/job';
@@ -19,7 +18,6 @@ import { Alumni } from '@/models/alumni.model';
 import { Job } from "@/models/job.model";
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../app/store';
-import { jwtDecode } from 'jwt-decode';
 import DeactivateAccountModal from '../../components/Modal/DeactivateAccountModal';
 import { subGroupDisplayMap } from '@/app/utils/field-display-maps';
 import { SubGroup } from '@/models/subgroup.model';
@@ -34,7 +32,7 @@ export function AlumniProfile() {
   const [role, setRole] = useState<Role>(Role.Alumni); // Dummy role, replace with actual role from Redux store
   const [modalTitle, setModalTitle] = useState('');
   const [openJobEditorModal, setOpenJobEditorModal] = useState(false);
-  const [editingJob, setEditingJob] = useState<JobCardProps | undefined>(undefined);
+  const [editingJob, setEditingJob] = useState<Job | null>(null);
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const [isLocalProfile, setIsLocalProfile] = useState(false) // Is this profile this user's profile (aka. should we show the edit button)
@@ -70,8 +68,8 @@ export function AlumniProfile() {
   };
 
   const handleJobOpportunitiesChange = () => {
-    setModalType('jobOpportunities');
-    setOpenModal(true);
+    setEditingJob(null); // Create new job
+    setOpenJobEditorModal(true);
   };
 
   const handleDeactivateUserChange = () => {
@@ -106,12 +104,7 @@ export function AlumniProfile() {
     };
     if (id) fetchUserData();
     setOpenJobEditorModal(false);
-    setEditingJob(undefined);
-  };
-
-  const handleJobEditorCancel = () => {
-    setOpenJobEditorModal(false);
-    setEditingJob(undefined);
+    setEditingJob(null);
   };
 
   const handleDeactivateAccount = (reason: string) => {
@@ -437,11 +430,12 @@ export function AlumniProfile() {
         title={modalTitle}
       ></EditModal>
 
-      <EditModal
+      <JobEditorModal
         opened={openJobEditorModal}
-        close={() => setOpenJobEditorModal(false)}
-        content={<JobDetailEditor initialData={editingJob} onSave={handleJobSaved} onCancel={handleJobEditorCancel} />}
-        title={editingJob ? "Edit Job" : "Create New Job"}
+        onClose={() => setOpenJobEditorModal(false)}
+        onSuccess={handleJobSaved}
+        initialData={editingJob}
+        mode={editingJob ? "edit" : "create"}
       />
       <DeactivateAccountModal
         onClose={() => setDeactivateModalOpen(false)}

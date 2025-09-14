@@ -36,12 +36,12 @@ export class JobController {
         'application/json': {
           schema: getModelSchemaRef(JobAd, {
             title: 'NewJobAd',
-            exclude: ['id'],
+            exclude: ['id', 'publisherID'],
           }),
         },
       },
     })
-    jobAdData: Omit<JobAd, 'id'>,
+    jobAdData: Omit<JobAd, 'id' | 'publisherID'>,
   ): Promise<JobAd> {
     const jobAd = new JobAd(jobAdData);
     jobAd.publisherID = this.currentUserProfile.id.toString();

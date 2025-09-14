@@ -58,13 +58,13 @@ const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields, search }) 
 
   const filteredJobListings = bySearch;
 
+  // Use the pagination hook
+  const { activePage, setActivePage, paginatedData, totalPages } = usePagination(filteredJobListings, 6);
+
   // Reset page to 1 whenever filters or search changes
-  useEffect(() => setPage(1), [search, filterRoles, filterFields]);
+  useEffect(() => setActivePage(1), [search, filterRoles, filterFields, setActivePage]);
 
   useEffect(() => { if (error) console.error('[JobListing] error=', error); }, [error]);
-
-  const chunkedJobListings = chunk(filteredJobListings, itemsPerPage);
-  const currentPageItems = chunkedJobListings[activePage - 1] || [];
 
   return (
     <Flex justify="flex-start" align="flex-start" direction="column" gap="md">
