@@ -279,45 +279,12 @@ export class LoginController {
       throw new HttpErrors.Unauthorized('Invalid login credentials');
     }
 
-    // Check for missing required fields based on role
-    let hasMissingInfo = false;
-    
-    // Define required fields for each role (check for both missing and empty strings)
-    switch (userSearchResults[0].constructor) {
-      case Member:
-        if (fsaeUser instanceof Member) {
-          hasMissingInfo = !fsaeUser.firstName ||
-                          !fsaeUser.lastName;
-        }
-        break;
-      case Alumni:
-        if (fsaeUser instanceof Alumni) {
-          hasMissingInfo = !fsaeUser.firstName ||
-                           !fsaeUser.lastName;
-        }
-        break;
-      case Sponsor:
-        if (fsaeUser instanceof Sponsor) {
-          hasMissingInfo = !fsaeUser.companyName;
-        }
-        break;
-      case Admin:
-        if (fsaeUser instanceof Admin) {
-          hasMissingInfo = !fsaeUser.firstName ||
-                           !fsaeUser.lastName;
-        }
-        break;
-      default:
-      throw new HttpErrors.InternalServerError('Unrecognized role');
-  }
-
     // Return Jwt Token
     let token = await this.jwtService.generateToken(fsaeUser);
     return {
       userId: fsaeUser.id as string,
       token: token,
       verified: fsaeUser.verified,
-      hasMissingInfo: hasMissingInfo,
     };
   }
 }

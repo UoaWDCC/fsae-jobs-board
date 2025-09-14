@@ -39,13 +39,6 @@ export function LoginForm() {
       dispatch(setRole(roleEnum));
       dispatch(setId(id));
 
-      // Check if profile needs completion
-      if (hasMissingInfo && role !== 'admin') {
-        localStorage.setItem('profileIncomplete', 'true');
-        navigate('/complete-profile', { replace: true });
-        return;
-      }
-
       // Only show success toast if profile is complete
       toast.success('Login Successful');
 
