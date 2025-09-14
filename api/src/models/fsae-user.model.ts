@@ -1,16 +1,15 @@
 import {Entity, model, property} from '@loopback/repository';
 import {FsaeRole} from './roles';
 import {AdminStatus} from './admin.status';
-import {securityId, UserProfile} from '@loopback/security';
 
-@model({settings: {strict: false}})
+@model()
 export class FsaeUser extends Entity {
   @property({
     type: 'string',
     id: true,
     generated: true,
   })
-  id: string;
+  id: string; // Unique generated ID
 
   @property({
     type: 'string',
@@ -18,84 +17,79 @@ export class FsaeUser extends Entity {
     jsonSchema: {
       enum: Object.values(FsaeRole),
     },
+    default: FsaeRole.UNKNOWN
   })
   role: FsaeRole;
 
-  // Common fields
-  @property({type: 'string', required: true})
-  email: string;
-  
   @property({
-    type: 'string',
-    required: true,
+    type: 'string', 
+    required: true
   })
-  username: string='FsaeUser'; 
+  email: string; 
 
-  @property({type: 'string', required: true, hidden: true})
-  password: string;
+  @property({
+    type: 'string', 
+    required: true, 
+    hidden: true
+  })
+  password: string; // Hashed
 
-  @property({type: 'boolean', required: true})
+  @property({
+    type: 'boolean', 
+    required: true,
+    default: true
+  })
   activated: boolean;
 
-  @property({type: 'boolean', required: true})
+  @property({
+    type: 'boolean', 
+    required: true,
+    default: true // TODO: Change this to false after verification is implemented
+  })
   verified: boolean;
 
-  @property({type: 'string', value: ''}) 
-  phoneNumber?: string;
+  @property({
+    type: 'string', 
+    required: true,
+    default: ""
+  }) 
+  phoneNumber: string;
 
   @property({
     type: 'string',
     required: false,
+    default: ""
   })
-  desc?: string;
+  description: string;
 
   @property({
     type: 'string',
     required: true,
-    default: "-",
+    default: "/default_avatar.png"
   })
-  avatar: string='/default-avatar.png'; // TODO: set it to default avatar URL
-
-  /* Role-specific optional fields
-  Member: firstName, lastName, cv, subGroup;
-  Alumni: firstName, lastName, subGroup, company;
-  Sponsor: company, websiteURL, tier, industry, name;
-  these fields are optional and redefined in the derived classes
-  */
-  @property({type: 'string'}) firstName?: string; //member/Alumni
-  @property({type: 'string'}) lastName?: string; //member/Alumni
-  @property({type: 'string'}) cv?: string; // Member
-  @property({type: 'string'}) subGroup?: string; // Member/Alumni
-  @property({type: 'string'}) company?: string; // Alumni/Sponsor
-  @property({type: 'string'}) websiteURL?: string; // Sponsor
-  @property({type: 'string'}) tier?: string; // Sponsor
-  @property({type: 'string'}) industry?: string; // Sponsor
-  @property({type: 'string'}) name?: string; // Sponsor
+  avatarURL: string;
 
   @property({
     type: 'string',
     required: true,
-    default: AdminStatus.PENDING,
+    default: "/default_banner.png"
+  })
+  bannerURL: string;
+
+  @property({
+    type: 'string',
+    required: true,
+    jsonSchema: {
+      enum: Object.values(AdminStatus),
+    },
+    default: AdminStatus.PENDING
   })
   adminStatus: AdminStatus;
 
   @property({
     type: 'date', 
+    required: true,
     defaultFn: 'now'
   })
   createdAt: Date;
-
-  public convertToSecurityUserProfile(): UserProfile {
-    return {
-      [securityId]: this.id as string,
-      name: this.username ?? '',
-      email: this.email,
-    };
-  }
 }
-
-export interface FsaeUserRelations {
-  // describe navigational properties here
-}
-
-export type FsaeUserWithRelations = FsaeUser & FsaeUserRelations;

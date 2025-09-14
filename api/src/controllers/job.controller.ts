@@ -37,12 +37,12 @@ export class JobController {
         'application/json': {
           schema: getModelSchemaRef(JobAd, {
             title: 'NewJobAd',
-            exclude: ['id', 'publisherID'],
+            exclude: ['id'],
           }),
         },
       },
     })
-    jobAdData: Omit<JobAd, 'id' | 'publisherID'>,
+    jobAdData: Omit<JobAd, 'id'>,
   ): Promise<JobAd> {
     const jobAd = new JobAd(jobAdData);
     jobAd.publisherID = this.currentUserProfile.id.toString();
@@ -87,11 +87,7 @@ export class JobController {
     @param.path.string('id') id: string,
     @param.filter(JobAd, {exclude: 'where'}) filter?: FilterExcludingWhere<JobAd>
   ): Promise<JobAd> {
-    const jobAd = await this.jobAdRepository.findById(id, filter);
-    if (!jobAd) {
-        throw new HttpErrors.NotFound(`Job ad with id ${id} not found`);
-    }
-    return jobAd;
+    return this.jobAdRepository.findById(id, filter);
   }
 
   // TEMPORARY: Remove protection for testing job ads

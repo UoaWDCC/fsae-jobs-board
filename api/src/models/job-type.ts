@@ -1,0 +1,6 @@
+export enum JobType {
+  NOT_FOR_HIRE = 'NOT_FOR_HIRE',
+  INTERNSHIP = 'INTERNSHIP',
+  PART_TIME = 'PART_TIME',
+  GRAD_ROLE = 'GRAD_ROLE'
+}

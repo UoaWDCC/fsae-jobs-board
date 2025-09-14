@@ -43,14 +43,21 @@ export class passwordResetsController {
       const {user, role} = userRoleData;
       const resetToken = await this.generator.generateToken();
       
-      const passwordResetEmail = await this.twilioService.sendPasswordResetEmail(body.email, user.firstName ?? '', resetToken);
+
+      let nameForResetEmail = "User"
+      if ('firstName' in user) {
+          nameForResetEmail = user.firstName
+      } else if ('companyName' in user) {
+          nameForResetEmail = user.companyName
+      }
+      const passwordResetEmail = await this.twilioService.sendPasswordResetEmail(body.email, nameForResetEmail, resetToken);
 
       const passwordReset = await this.passwordResetsRepository.create({
         email: body.email,
         resetToken,
         createdAt: Date.now(),
         expiresAt: Date.now() + 1000 * 60 * 60 * 2, // 2 hours from now
-        fsaeRole : role,
+        role : role,
         twilioId: passwordResetEmail.sid,
       });
 
