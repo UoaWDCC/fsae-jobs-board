@@ -75,8 +75,7 @@ export function SponsorProfile() {
   };
 
   const handleJobOpportunitiesChange = () => {
-    setEditingJob(null); // Create new job
-    setOpenJobEditorModal(true);
+    navigate('/job-editor');
   };
 
   const handleDeactivateUserChange = () => {

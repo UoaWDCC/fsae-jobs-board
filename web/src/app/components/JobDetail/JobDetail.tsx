@@ -5,7 +5,6 @@ import { Job } from '@/models/job.model';
 import { adminApi } from '@/api/admin';
 import { useNavigate } from 'react-router-dom';
 import DeletePostModal from '../Modal/DeletePostModal';
-import { JobEditorModal } from '../Modal/EditJob';
 import { jwtDecode } from 'jwt-decode';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../app/store';
@@ -19,7 +18,6 @@ interface JobDetailProps {
 }
 
 export function JobDetail({ job }: JobDetailProps) {
-  const [editModalOpen, setEditModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -59,13 +57,7 @@ export function JobDetail({ job }: JobDetailProps) {
       return;
     }
     
-    setEditModalOpen(true);
-  };
-
-  const handleJobEditSuccess = () => {
-    setEditModalOpen(false);
-    // Optionally refresh the page or update the job data
-    window.location.reload();
+    navigate(`/job-editor/${job.id}`);
   };
 
   return (
@@ -77,14 +69,6 @@ export function JobDetail({ job }: JobDetailProps) {
           <div>
             <Text size="xl" fw={700} className={styles.detailItem}>
               Salary: <span style={{ fontWeight: 400 }}>{job.salary}</span>
-            </Text>
-            <Text size="xl" fw={700} className={styles.detailItem}>
-              Start Date:{' '}
-              <span style={{ fontWeight: 400 }}>{job.startDate || 'TBD'}</span>
-            </Text>
-            <Text size="xl" fw={700} className={styles.detailItem}>
-              Duration:{' '}
-              <span style={{ fontWeight: 400 }}>{job.duration || 'TBD'}</span>
             </Text>
             <Text size="xl" fw={700} className={styles.detailItem}>
               Application Deadline:{' '}
@@ -99,10 +83,6 @@ export function JobDetail({ job }: JobDetailProps) {
             <Text size="2.25rem" fw={700}>{job.title}</Text>
             <Badge size="xl" color="blue" className={styles.jobBadge}>WDCC</Badge>
           </div>
-
-          <Text>
-            {job.location ? job.location : 'Location not specified'} 📍
-          </Text>
 
           <div className={styles.buttonRow}>
             {role === 'admin' ? (
@@ -126,28 +106,8 @@ export function JobDetail({ job }: JobDetailProps) {
             About
           </Text>
           <Text>{job.description}</Text>
-
-          {/* Qualifications section - commented out as qualifications property doesn't exist in Job model */}
-          {/* {job.qualifications && job.qualifications.length > 0 && (
-            <>
-              <Text size="2rem" fw={700}>Qualifications:</Text>
-              <ul className={styles.qualifications}>
-                {job.qualifications.map((q: string, index: number) => (
-                  <li key={index}>{q}</li>
-                ))}
-              </ul>
-            </>
-          )} */}
         </div>
       </div>
-      
-      <JobEditorModal
-        opened={editModalOpen}
-        onClose={() => setEditModalOpen(false)}
-        onSuccess={handleJobEditSuccess}
-        initialData={job}
-        mode="edit"
-      />
       
       <DeletePostModal
         opened={deleteModalOpen}

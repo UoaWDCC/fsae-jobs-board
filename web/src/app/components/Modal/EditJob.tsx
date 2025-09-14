@@ -1,3 +1,5 @@
+// Currently not used
+
 import { Modal, TextInput, Textarea, Button, Select, Stack, Group, Text } from '@mantine/core';
 import { useState, useEffect } from 'react';
 import { Job } from '@/models/job.model';
@@ -147,16 +149,23 @@ export function JobEditorModal({ opened, onClose, onSuccess, initialData, mode }
 
     try {
       if (mode === 'edit' && initialData) {
-        // Update existing job
-        await updateJob(initialData.id, {
-          title: formData.title,
-          specialisation: formData.specialisation,
-          description: formData.description,
-          roleType: formData.roleType,
-          salary: formData.salary,
-          applicationDeadline: formData.applicationDeadline,
-          applicationLink: formData.applicationLink,
-        });
+        // Update existing job - ensure date format is consistent with create
+        const updateData: any = {
+          title: formData.title.trim(),
+          specialisation: formData.specialisation.trim(),
+          description: formData.description.trim(),
+          roleType: formData.roleType.trim(),
+          applicationDeadline: new Date(formData.applicationDeadline).toISOString(),
+          applicationLink: formData.applicationLink.trim(),
+        };
+        
+        // Only include salary if it's not empty
+        if (formData.salary && formData.salary.trim()) {
+          updateData.salary = formData.salary.trim();
+        }
+        
+        console.log('Updating job with data:', updateData);
+        await updateJob(initialData.id, updateData);
         toast.success('Job updated successfully!');
       } else {
         // Create new job - ensure all required fields are properly set
@@ -183,9 +192,24 @@ export function JobEditorModal({ opened, onClose, onSuccess, initialData, mode }
       
       onSuccess();
       onClose();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving job:', error);
-      toast.error(mode === 'edit' ? 'Failed to update job' : 'Failed to create job');
+      if (error.response) {
+        console.error('Backend response:', error.response.data);
+        console.error('Backend status:', error.response.status);
+        console.error('Backend headers:', error.response.headers);
+        
+        // Provide more specific error messages
+        const errorMessage = error.response.data?.error?.message || 
+                           error.response.data?.message || 
+                           error.response.statusText || 
+                           'Unknown error';
+        toast.error(`${mode === 'edit' ? 'Failed to update job' : 'Failed to create job'}: ${errorMessage}`);
+      } else if (error.message) {
+        toast.error(`${mode === 'edit' ? 'Failed to update job' : 'Failed to create job'}: ${error.message}`);
+      } else {
+        toast.error(mode === 'edit' ? 'Failed to update job' : 'Failed to create job');
+      }
     } finally {
       setLoading(false);
     }

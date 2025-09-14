@@ -68,8 +68,7 @@ export function AlumniProfile() {
   };
 
   const handleJobOpportunitiesChange = () => {
-    setEditingJob(null); // Create new job
-    setOpenJobEditorModal(true);
+    navigate('/job-editor');
   };
 
   const handleDeactivateUserChange = () => {

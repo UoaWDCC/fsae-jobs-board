@@ -4,11 +4,8 @@ import { IconTrash, IconEdit } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/app/store';
-import { deleteJob, fetchJobById } from '@/api/job';
+import { deleteJob } from '@/api/job';
 import { toast } from 'react-toastify';
-import { useState } from 'react';
-import { JobEditorModal } from '../Modal/EditJob';
-import { Job } from '@/models/job.model';
 
 export interface JobCardProps {
   id: string;
@@ -31,8 +28,6 @@ export function JobCard({ data, onJobDeleted, onEditJob }: {
   const role = useSelector((state: RootState) => state.user.role);
   const userId = useSelector((state: RootState) => state.user.id);
   
-  const [editModalOpen, setEditModalOpen] = useState(false);
-  const [jobData, setJobData] = useState<Job | null>(null);
 
   const handleDeleteJob = async () => {
     if (window.confirm(`Are you sure you want to delete the job "${data.title}"?`)) {
@@ -47,7 +42,7 @@ export function JobCard({ data, onJobDeleted, onEditJob }: {
     }
   };
 
-  const handleEditJob = async () => {
+  const handleEditJob = () => {
     // Check if user can edit this job
     const canEdit = role === 'sponsor' || role === 'alumni';
     const isOwner = userId && data.publisherID === userId;
@@ -62,23 +57,7 @@ export function JobCard({ data, onJobDeleted, onEditJob }: {
       return;
     }
 
-    try {
-      // Fetch full job data for editing
-      const fullJobData = await fetchJobById(data.id);
-      setJobData(fullJobData);
-      setEditModalOpen(true);
-    } catch (error) {
-      console.error('Failed to fetch job data:', error);
-      toast.error('Failed to load job data for editing');
-    }
-  };
-
-  const handleJobEditSuccess = () => {
-    if (onEditJob) {
-      onEditJob(data);
-    }
-    setEditModalOpen(false);
-    setJobData(null);
+    navigate(`/job-editor/${data.id}`);
   };
 
   const handleViewJob = () => {
@@ -257,16 +236,6 @@ export function JobCard({ data, onJobDeleted, onEditJob }: {
         </Flex>
       </Flex>
       
-      <JobEditorModal
-        opened={editModalOpen}
-        onClose={() => {
-          setEditModalOpen(false);
-          setJobData(null);
-        }}
-        onSuccess={handleJobEditSuccess}
-        initialData={jobData}
-        mode="edit"
-      />
     </Paper>
   );
 }
