@@ -3,7 +3,7 @@ export interface Alumni {
   "email": string,
   "activated": boolean,
   "verified": boolean,
-  "fsaeRole": string,
+  "role": string,
   "firstName": string,
   "lastName": string,
   "phoneNumber": string,

@@ -19,7 +19,7 @@ export class FsaeUser extends Entity {
       enum: Object.values(FsaeRole),
     },
   })
-  role: FsaeRole=FsaeRole.UNkNOWN;
+  role: FsaeRole;
 
   // Common fields
   @property({type: 'string', required: true})

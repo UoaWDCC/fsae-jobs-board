@@ -76,7 +76,7 @@ export class RegisterController {
             lastName: createUserDto.lastName,
             phoneNumber: createUserDto.phoneNumber,
             activated: true,
-            fsaeRole: FsaeRole.ADMIN,
+            role: FsaeRole.ADMIN,
             desc: createUserDto.desc
         });
 
@@ -88,7 +88,7 @@ export class RegisterController {
             createdAt: Date.now(),
             expiresAt: Date.now() + 1000*60*10,
             twilioId: verification.sid,
-            fsaeRole: FsaeRole.ADMIN,
+            role: FsaeRole.ADMIN,
             resentOnce: false
         }); //TODO: Restore verification*/ 
 
@@ -146,7 +146,7 @@ export class RegisterController {
         phoneNumber: createUserDto.phoneNumber,
         activated: true, // Default activate as all this HTTP body requires validation on required fields.
         verified: true, // TODO: restore verification
-        fsaeRole: FsaeRole.MEMBER,
+        role: FsaeRole.MEMBER,
         desc: createUserDto.desc,
       });
 
@@ -158,7 +158,7 @@ export class RegisterController {
             createdAt: Date.now(),
             expiresAt: Date.now() + 1000*60*10,
             twilioId: verification.sid,
-            fsaeRole: FsaeRole.MEMBER,
+            role: FsaeRole.MEMBER,
             resentOnce: false
         }); //TODO: Restore verification*/
 
@@ -213,7 +213,7 @@ export class RegisterController {
         phoneNumber: createUserDto.phoneNumber,
         activated: false,
         verified: true, // TODO: restore verification
-        fsaeRole: FsaeRole.SPONSOR,
+        role: FsaeRole.SPONSOR,
         desc: createUserDto.desc,
       });
 
@@ -225,7 +225,7 @@ export class RegisterController {
             createdAt: Date.now(),
             expiresAt: Date.now() + 1000*60*10,
             twilioId: verification.sid,
-            fsaeRole: FsaeRole.SPONSOR,
+            role: FsaeRole.SPONSOR,
             resentOnce: false
         }); //TODO: Restore verification*/
 
@@ -286,7 +286,7 @@ export class RegisterController {
         phoneNumber: createUserDto.phoneNumber,
         activated: false,
         verified: true, // TODO: restore verification
-        fsaeRole: FsaeRole.ALUMNI,
+        role: FsaeRole.ALUMNI,
         desc: createUserDto.desc,
       });
 
@@ -298,7 +298,7 @@ export class RegisterController {
             createdAt: Date.now(),
             expiresAt: Date.now() + 1000*60*10,
             twilioId: verification.sid,
-            fsaeRole: FsaeRole.ALUMNI,
+            role: FsaeRole.ALUMNI,
             resentOnce: false
         });//TODO: Restore verification*/
 

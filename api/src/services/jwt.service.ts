@@ -20,9 +20,10 @@ export class JwtService implements TokenService{
 
     const tokenBody = {
       "id": userProfile.id,
-      "role": userProfile.fsaeRole,
+      "role": userProfile.role,
       "activated": userProfile.activated
     }
+    console.log('JWT: Generating token for user profile:', tokenBody);
 
     const token = sign(
       tokenBody,
@@ -61,8 +62,7 @@ export class JwtService implements TokenService{
       [securityId]: id,
       id: id,
       //name: 'Test',
-      roles: [role],
-      fsaeRole: role,
+      role: role,
       activated: activated
     };
 

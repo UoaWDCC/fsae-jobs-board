@@ -8,6 +8,7 @@ import { login } from '@/api/login';
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { setRole, setId } from '@/app/features/user/userSlice';
+import { stringToRole } from '@/app/type/role';
 
 export function LoginForm() {
   const location = useLocation();
@@ -34,8 +35,8 @@ export function LoginForm() {
   async function onLogin() {
     try {
       const { role, id } = await login(email, password);
-      console.log(role);
-      dispatch(setRole(role));
+      const roleEnum = stringToRole(role);
+      dispatch(setRole(roleEnum));
       dispatch(setId(id));
       toast.success('Login Successful');
 

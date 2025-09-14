@@ -53,7 +53,7 @@ export class MemberController {
   ) {}
 
   @authorize({
-    allowedRoles: [FsaeRole.MEMBER, FsaeRole.SPONSOR, FsaeRole.ALUMNI],
+    allowedRoles: [FsaeRole.MEMBER, FsaeRole.SPONSOR, FsaeRole.ALUMNI, FsaeRole.ADMIN],
   })
   @get('/user/member/{id}')
   @response(200, {
