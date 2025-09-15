@@ -39,12 +39,6 @@ export class PasswordResets extends Entity {
   })
   role: string;
 
-  @property({
-    type: 'string',
-    required: true,
-  })
-  twilioId: string;
-
   constructor(data?: Partial<PasswordResets>) {
     super(data);
   }
