@@ -21,13 +21,39 @@ import {FsaeRole, Sponsor} from '../models';
 import {SponsorRepository} from '../repositories';
 import { authenticate } from '@loopback/authentication';
 import { authorize } from '@loopback/authorization';
+import {inject} from '@loopback/core';
+import {SecurityBindings, UserProfile} from '@loopback/security';
+import { SponsorProfileDto, SponsorProfileDtoFields } from '../dtos/sponsor-profile.dto';
+import { ownerOnly } from '../decorators/owner-only.decorator';
 
 @authenticate('fsae-jwt')
 export class SponsorController {
   constructor(
+    @inject(SecurityBindings.USER) protected currentUserProfile: UserProfile,
     @repository(SponsorRepository)
-    public sponsorRepository : SponsorRepository,
+    public sponsorRepository : SponsorRepository, 
   ) {}
+
+  @authorize({
+    allowedRoles: [FsaeRole.ALUMNI, FsaeRole.MEMBER, FsaeRole.SPONSOR, FsaeRole.ADMIN],
+  })
+  @get('/user/sponsor')
+  @response(200, {
+    description: 'Array of Sponsor model instances',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'array',
+          items: getModelSchemaRef(Sponsor, {includeRelations: true}),
+        },
+      },
+    },
+  })
+  async find(
+    @param.filter(Sponsor) filter?: Filter<Sponsor>,
+  ): Promise<Sponsor[]> {
+    return this.sponsorRepository.find(filter);
+  }
 
   @authorize({
     allowedRoles: [FsaeRole.SPONSOR, FsaeRole.MEMBER, FsaeRole.ALUMNI],
@@ -37,19 +63,21 @@ export class SponsorController {
     description: 'Sponsor model instance',
     content: {
       'application/json': {
-        schema: getModelSchemaRef(Sponsor, {includeRelations: true}),
+        schema: getModelSchemaRef(SponsorProfileDto, {includeRelations: true}),
       },
     },
   })
   async findById(
     @param.path.string('id') id: string,
-    @param.filter(Sponsor, {exclude: 'where'}) filter?: FilterExcludingWhere<Sponsor>
-  ): Promise<Sponsor> {
-    return this.sponsorRepository.findById(id, filter);
+  ): Promise<SponsorProfileDto> {
+    return this.sponsorRepository.findById(id, SponsorProfileDtoFields);
   }
 
   @authorize({
     allowedRoles: [FsaeRole.SPONSOR],
+  })
+  @ownerOnly({
+    ownerField: 'id',
   })
   @patch('/user/sponsor/{id}')
   @response(204, {
@@ -60,17 +88,20 @@ export class SponsorController {
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(Sponsor, {partial: true}),
+          schema: getModelSchemaRef(SponsorProfileDto, {partial: true}),
         },
       },
     })
-    sponsor: Sponsor,
+    sponsorDto: Partial<SponsorProfileDto>,
   ): Promise<void> {
-    await this.sponsorRepository.updateById(id, sponsor);
+    await this.sponsorRepository.updateById(id, sponsorDto);
   }
 
   @authorize({
-    allowedRoles: [FsaeRole.ADMIN],
+    allowedRoles: [FsaeRole.ADMIN, FsaeRole.SPONSOR],
+  })
+  @ownerOnly({
+    ownerField: 'id',
   })
   @del('/user/sponsor/{id}')
   @response(204, {

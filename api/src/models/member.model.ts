@@ -59,35 +59,12 @@ export class Member extends FsaeUser {
     may be subject to change in the future (it would be desireable to store CVs in some way other
     than embedding them in the Member model)
   */
-  @property({
-    type: 'buffer',
-    mongodb: { dataType: 'binData' },
-  })
-  cvData: Buffer;
 
   @property({
     type: 'string',
     default: '',
   })
-  cvFileName: string;
-
-  @property({
-    type: 'string',
-    default: '',
-  })
-  cvMimeType: string;
-
-  @property({
-    type: 'number',
-    default: 0,
-  })
-  cvSize: number;
-
-  @property({
-    type: 'date',
-    default: () => new Date(),
-  })
-  cvUploadedAt: Date;
+  cvS3Key: string;
 
   @property({
     type: 'boolean',
@@ -95,6 +72,18 @@ export class Member extends FsaeUser {
     default: false,
   })
   hasCV?: boolean;
+
+  @property({
+    type: 'string',
+    default: '',
+  })
+  avatarS3Key: string;
+
+  @property({
+    type: 'string',
+    default: '',
+  })
+  bannerS3Key: string;
   
   // firstName, lastName, and subGroup are already defined in parent FsaeUser class with @property decorators
   // Default values are set in the parent class or during registration

@@ -6,4 +6,5 @@ export interface Alumni extends FsaeUser{
   lastName: string;
   subGroup: SubGroup;
   companyName: string;
+  avatarURL: string;
 }

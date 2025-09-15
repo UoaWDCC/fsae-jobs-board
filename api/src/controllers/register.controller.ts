@@ -59,7 +59,7 @@ export class RegisterController {
       
       //await this.initiateVerification(createAdminDTO.email, createAdminDTO.firstName) //TODO: Restore verification*/
 
-        return newAdmin;
+      return newAdmin;
     }
 
   @post('/register-member')
@@ -73,9 +73,9 @@ export class RegisterController {
       }
     })createMemberDTO: CreateMemberDTO): Promise<CreateMemberDTO> {
     // Prevent duplicate user by email
-    if (await this.fsaeUserService.doesUserExist(createMemberDTO.email)) {
-      throw new HttpErrors.Conflict('Email already exists')
-    }
+      if (await this.fsaeUserService.doesUserExist(createMemberDTO.email)) {
+        throw new HttpErrors.Conflict('Email already exists')
+      }
       let hashedPassword = await this.passwordHasher.hashPassword(createMemberDTO.password);
 
       let newMember = await this.memberRepository.create({
@@ -94,7 +94,6 @@ export class RegisterController {
       });
 
       //await this.initiateVerification(createMemberDTO.email, createMemberDTO.firstName) //TODO: Restore verification*/
-      
       return newMember;
     }
 
@@ -107,11 +106,12 @@ export class RegisterController {
           schema: getModelSchemaRef(CreateSponsorDTO)
         },
       }
+
     })createSponsorDTO: CreateSponsorDTO): Promise<CreateSponsorDTO> {
     // Prevent duplicate user by email
-    if (await this.fsaeUserService.doesUserExist(createSponsorDTO.email)) {
-      throw new HttpErrors.Conflict('Email already exists')
-    }
+      if (await this.fsaeUserService.doesUserExist(createSponsorDTO.email)) {
+        throw new HttpErrors.Conflict('Email already exists')
+      }
       let hashedPassword = await this.passwordHasher.hashPassword(createSponsorDTO.password);
 
       let newMember = await this.sponsorRepository.create({
@@ -128,7 +128,6 @@ export class RegisterController {
       });
 
       //await this.initiateVerification(createSponsorDTO.email, createSponsorDTO.companyName) //TODO: Restore verification*/
-
       return newMember;
     }
 
@@ -143,9 +142,9 @@ export class RegisterController {
       }
     })createAlumniDTO: CreateAlumniDTO): Promise<CreateAlumniDTO> {
     // Prevent duplicate user by email
-    if (await this.fsaeUserService.doesUserExist(createAlumniDTO.email)) {
-      throw new HttpErrors.Conflict('Email already exists')
-    }
+      if (await this.fsaeUserService.doesUserExist(createAlumniDTO.email)) {
+        throw new HttpErrors.Conflict('Email already exists')
+      }
       let hashedPassword = await this.passwordHasher.hashPassword(createAlumniDTO.password);
 
       let newAlumni = await this.alumniRepository.create({
@@ -160,9 +159,8 @@ export class RegisterController {
         lastName: createAlumniDTO.lastName,
         companyName: createAlumniDTO.companyName
       });
-      
-      //await this.initiateVerification(createAlumniDTO.email, createAlumniDTO.firstName) //TODO: Restore verification*/
 
+      //await this.initiateVerification(createAlumniDTO.email, createAlumniDTO.firstName) //TODO: Restore verification*/
       return newAlumni;
     }
 
@@ -186,4 +184,3 @@ export class RegisterController {
         return { verification, verificationCode };
     }
 }
-
