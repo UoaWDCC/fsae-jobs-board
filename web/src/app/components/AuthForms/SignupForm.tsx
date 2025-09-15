@@ -131,9 +131,8 @@ const SignupForm = ({ role }: { role: Role }) => {
     // sort of gave up on type safety :/ (good opportunity for refactor in the future!)
     if (role === Role.Member) {
       register_member(sanitisedData as unknown as createFSAEUserDto).then((response) => {
-        // toast.success('Student Registration Successful');
-        //navigate('/verify', { TODO: restore verification
-        navigate('/login', {
+        toast.success('Student Registration Successful');
+        navigate('/verify', { 
           state: {
             email: formData.get('email'),
             password: formData.get('password'),
@@ -145,9 +144,8 @@ const SignupForm = ({ role }: { role: Role }) => {
       })
     } else if (role === Role.Sponsor) {
       register_sponsor(sanitisedData as unknown as createFSAEUserDto).then((response) => {
-        // toast.success('Sponsor Registration Successful');
-        //navigate('/verify', { TODO: restore verification
-        navigate('/login', {
+        toast.success('Sponsor Registration Successful');
+        navigate('/verify', {
           state: {
             email: formData.get('email'),
             password: formData.get('password'),
@@ -159,9 +157,8 @@ const SignupForm = ({ role }: { role: Role }) => {
       })
     } else if (role === Role.Alumni) {
       register_alumni(sanitisedData as unknown as createFSAEUserDto).then((response) => {
-        // toast.success('Alumni Registration Successful');
-        //navigate('/verify', { TODO: restore verification
-        navigate('/login', {
+        toast.success('Alumni Registration Successful');
+        navigate('/verify', {
           state: {
             email: formData.get('email'),
             password: formData.get('password'),
