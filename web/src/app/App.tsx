@@ -9,7 +9,7 @@ import '@mantine/carousel/styles.css';
 import { useDispatch } from 'react-redux';
 import { setRole } from './features/user/userSlice';
 import { jwtDecode } from 'jwt-decode';
-import { Role } from './type/role';
+import { Role, stringToRole } from './type/role';
 import { useEffect } from 'react';
 
 export default function App() {
@@ -19,9 +19,10 @@ export default function App() {
     const token = localStorage.getItem('accessToken');
     if (token) {
       try {
-        const decoded = jwtDecode<{role?: Role}>(token);
+        const decoded = jwtDecode<{role?: string}>(token);
         if (decoded.role) {
-          dispatch(setRole(decoded.role));
+          const roleEnum = stringToRole(decoded.role);
+          dispatch(setRole(roleEnum));
         }
       } catch (error) {
         console.error('Error decoding token:', error);

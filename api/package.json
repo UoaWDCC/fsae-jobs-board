@@ -40,6 +40,8 @@
     "!*/__tests__"
   ],
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.872.0",
+    "@aws-sdk/s3-request-presigner": "^3.872.0",
     "@loopback/authentication": "^11.0.3",
     "@loopback/authorization": "^0.15.3",
     "@loopback/boot": "^7.0.0",
@@ -65,6 +67,7 @@
     "@types/bcryptjs": "^2.4.6",
     "@types/multer": "^2.0.0",
     "@types/node": "^16.18.86",
+    "@types/uuid": "^10.0.0",
     "eslint": "^8.57.0",
     "source-map-support": "^0.5.21",
     "typescript": "~5.2.2"

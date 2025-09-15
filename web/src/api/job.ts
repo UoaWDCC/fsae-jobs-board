@@ -1,11 +1,13 @@
 import { apiInstance } from "@/api/ApiInstance";
 import { Job } from "@/models/job.model";
+// Update the import path to the correct relative location of JobCard.ts
+import { JobCardProps } from "../app/components/JobCardCarousel/JobCard";
 
 // TODO : 
-// [] Filter
-// [] Pagination
-// [] Sorting
-// [] Search
+// [] Filter - Carl - Done
+// [] Pagination - Carl - Done
+// [] Sorting - Carl - Sorts with job upload date, not alphabetical. Double check with Ben what type of sorting is needed.
+// [] Search - Carl - Done
 
 // Using the API class to fetch jobs
 export async function fetchJobs(search?: string): Promise<Job[]> {
@@ -31,17 +33,76 @@ export async function fetchJobById(id: string): Promise<Job | null> {
   }
 }
 
+// Fetch jobs by publisher ID
 export async function fetchJobsByPublisherId(publisherId: string): Promise<Job[]> {
   try {
-    const filter = {
-      where: {
-        publisherID: publisherId,
+    const res = await apiInstance.get('job', {
+      params: {
+        filter: JSON.stringify({
+          where: {
+            publisherID: publisherId
+          }
+        })
       }
-    };
-    const res = await apiInstance.get(`job?filter[where][publisherID]=${publisherId}`);
-    // Return the data as an array of Job objects
+    });
     return res.data as Job[];
   } catch (e) {
-    throw Error("An unknown error occurred trying to fetch jobs");
+    throw Error(`An unknown error occurred trying to fetch jobs by publisher ID: ${publisherId}`);
+  }
+}
+
+// Create a new job
+export async function createJob(jobData: Omit<Job, 'id'>): Promise<Job> {
+  try {
+    console.log('Sending job data to backend:', jobData);
+    const res = await apiInstance.post('job', jobData);
+    return res.data as Job;
+  } catch (e: any) {
+    throw Error(`Backend error: ${e.response.data.error.message}`);
+  }
+}
+
+// Update an existing job
+export async function updateJob(id: string, jobData: Partial<Job>): Promise<Job> {
+  try {
+    const res = await apiInstance.patch(`job/${id}`, jobData);
+    return res.data as Job;
+  } catch (e) {
+    throw Error(`An unknown error occurred trying to update job: ${id}`);
+  }
+}
+
+// Delete a job
+export async function deleteJob(id: string): Promise<void> {
+  try {
+    await apiInstance.delete(`job/${id}`);
+  } catch (e) {
+    throw Error(`An unknown error occurred trying to delete job: ${id}`);
+  }
+}
+
+// Utility function to convert Job model to JobCardProps
+export function convertJobToCardProps(job: Job): JobCardProps {
+  return {
+    id: job.id,
+    title: job.title,
+    specialisation: job.specialisation,
+    description: job.description,
+    roleType: job.roleType ?? "Unknown",
+    salary: job.salary,
+    applicationDeadline: job.applicationDeadline,
+    datePosted: job.datePosted,
+    publisherID: job.publisherID,
+  };
+}
+
+// Utility function to load jobs with error handling
+export async function loadJobsWithErrorHandling(): Promise<Job[]> {
+  try {
+    const fetchedJobs = await fetchJobs();
+    return fetchedJobs;
+  } catch (error) {
+    console.error('Failed to fetch jobs:', error);
+    return [];
   }
 }

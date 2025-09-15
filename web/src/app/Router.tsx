@@ -15,6 +15,7 @@ import { StudentsBoard } from './pages/Student/StudentsBoard.page';
 import { SponsorsBoard } from './pages/Sponsor/SponsorsBoard.page';
 import { AlumniBoard } from './pages/Alumni/AlumniBoard.page';
 import { NotFound } from './pages/General/NotFound.page';
+import { JobEditorPage } from './pages/General/JobEditor.page';
 import ProfileSwitcher from './pages/General/ProfileSwitcher';
 import { AppLayout } from './Layouts/AppLayout';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -155,6 +156,26 @@ const router = createBrowserRouter([
     element: (
       <AppLayout>
         <JobDetailsPage />
+      </AppLayout>
+    ),
+  },
+  {
+    path: '/job-editor',
+    element: (
+      <AppLayout>
+        <ProtectedRoute allowedRoles={['sponsor', 'alumni']}>
+          <JobEditorPage />
+        </ProtectedRoute>
+      </AppLayout>
+    ),
+  },
+  {
+    path: '/job-editor/:id',
+    element: (
+      <AppLayout>
+        <ProtectedRoute allowedRoles={['sponsor', 'alumni']}>
+          <JobEditorPage />
+        </ProtectedRoute>
       </AppLayout>
     ),
   },
