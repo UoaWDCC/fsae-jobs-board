@@ -52,15 +52,15 @@ export class ResendService {
         html,
       });
 
-      if (!verification.error) {
-        console.log('Verification email sent:', verification['data']);
-      } else {
-        console.error(
-          'Error sending verification email:',
-          verification['error'],
+      if (verification.error) {
+        console.error('Error sending verification email:', verification.error);
+        throw new Error(
+          verification.error.message || 'Failed to send verification email',
         );
       }
-      return verification;
+
+      console.log('Verification email sent:', verification.data);
+      return verification.data; // return only data if success
     } catch (error) {
       console.error('Error sending verification email:', error);
       throw error;
