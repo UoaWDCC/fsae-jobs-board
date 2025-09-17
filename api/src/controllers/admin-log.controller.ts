@@ -5,10 +5,11 @@ import { AdminLogRepository, AdminRepository } from '../repositories';
 import { authenticate } from '@loopback/authentication';
 import { authorize } from '@loopback/authorization';
 import {FsaeRole} from '../models';
-import {get, param, response} from '@loopback/rest';
+import {get, param, response, patch, requestBody} from '@loopback/rest';
+import {RequestStatus, REQUEST_STATUSES} from '../models/admin-log.model';
 
 @authenticate('fsae-jwt')
-export class AlumniController {
+export class AdminLogController {
     constructor(
         @repository(AdminLogRepository)
         private adminLogRepository: AdminLogRepository,
@@ -50,5 +51,44 @@ export class AlumniController {
       );
 
       return result;
+    }
+
+    @authorize({
+        allowedRoles: [FsaeRole.ADMIN],
+    })
+    @patch('/admin-log/{id}/status')
+    @response(200, {
+      description: 'Admin log status updated',
+      content: {'application/json': {schema: {type: 'object'}}},
+    })
+    async updateAdminLogStatus(
+      @param.path.string('id') id: string,
+      @requestBody({
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+              properties: {
+                status: {type: 'string', enum: REQUEST_STATUSES.filter(s => s !== 'pending')},
+              },
+              required: ['status'],
+            },
+          },
+        },
+      })
+      body: {status: RequestStatus},
+    ): Promise<object> {
+      const log = await this.adminLogRepository.findById(id).catch(() => null);
+      if (!log) {
+        return {success: false, message: 'Admin log not found'};
+      }
+      if (log.logType !== 'request') {
+        return {success: false, message: 'Only request logs can be accepted or rejected'};
+      }
+      if (!REQUEST_STATUSES.includes(body.status) || body.status === 'pending') {
+        return {success: false, message: 'Invalid status'};
+      }
+      await this.adminLogRepository.updateById(id, {status: body.status});
+      return {success: true, id, status: body.status};
     }
 }
