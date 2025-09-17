@@ -1,8 +1,9 @@
 import {useState, useEffect, useCallback} from 'react';
-import {Divider, Grid, Modal, Table, Stack, Pagination, Group, Text, Button, Checkbox, Title} from '@mantine/core';
+import {Divider, Grid, Modal, Stack, Group, Text, Button, Table} from '@mantine/core';
 import {adminApi} from '@/api/admin';
-import AdminFilter from '@/app/components/Filter/AdminFilter';
 import SearchBar from '@/app/components/SearchBar/SearchBar';
+import AdminAuditLogTable from '@/app/components/AdminAuditLog/AdminAuditLogTable';
+import AdminAuditLogFilters from '@/app/components/AdminAuditLog/AdminAuditLogFilters';
 
 const LOG_TYPE_OPTIONS = [
   {value: 'log', label: 'Log'},
@@ -68,69 +69,15 @@ export function AdminAuditLog() {
     setModalOpen(true);
   };
 
-  // Table styled similar to AdminDashboardTable
+  // Use new table component
   const table = (
-    <Stack justify="center" align="center" gap="md" mt="md">
-      <div style={{width: '100%'}}>
-        <Table.ScrollContainer minWidth={500} h={500}>
-          <Table stickyHeader stickyHeaderOffset={0}>
-            <Table.Thead>
-              <Table.Tr>
-                <Table.Th>Message</Table.Th>
-                <Table.Th>Username</Table.Th>
-                <Table.Th>Log Type</Table.Th>
-                <Table.Th>Date</Table.Th>
-              </Table.Tr>
-            </Table.Thead>
-            <Table.Tbody>
-              {pageData.map(log => (
-                <Table.Tr
-                  key={log.id}
-                  style={{cursor: 'pointer'}}
-                  onClick={() => selectRow(log)}
-                >
-                  <Table.Td>
-                    {log.details?.message}
-                  </Table.Td>
-                  <Table.Td>
-                    {log.username}
-                  </Table.Td>
-                  <Table.Td>
-                    {log.logType.charAt(0).toUpperCase() + log.logType.slice(1)}
-                  </Table.Td>
-                  <Table.Td>
-                    {new Date(log.createdAt).toLocaleString()}
-                  </Table.Td>
-                </Table.Tr>
-              ))}
-              {pageData.length === 0 && (
-                <Table.Tr>
-                  <Table.Td colSpan={4}>
-                    <Text ta="center" c="dimmed">
-                      No logs match your filters
-                    </Text>
-                  </Table.Td>
-                </Table.Tr>
-              )}
-            </Table.Tbody>
-          </Table>
-        </Table.ScrollContainer>
-        <Pagination.Root
-          total={totalPages}
-          value={page}
-          onChange={setPage}
-          mt="xl"
-        >
-          <Group gap={20} justify="center">
-            <Pagination.First aria-label="First page" />
-            <Pagination.Previous aria-label="Previous page" />
-            <Pagination.Items />
-            <Pagination.Next aria-label="Next page" />
-            <Pagination.Last aria-label="Last page" />
-          </Group>
-        </Pagination.Root>
-      </div>
-    </Stack>
+    <AdminAuditLogTable
+      logs={filteredLogs}
+      page={page}
+      entriesPerPage={entriesPerPage}
+      onPageChange={setPage}
+      onRowClick={selectRow}
+    />
   );
 
   return (
@@ -139,47 +86,15 @@ export function AdminAuditLog() {
         {!isPortrait ? (
           <>
             <Grid.Col span={2} mt={120} pl={10}>
-              <Stack>
-                <Title fs="italic" c="white" fz="lg"> Filters</Title>
-                <Text fw={700} size="lg" mb={4} c="blue.6">Log Type</Text>
-                {LOG_TYPE_OPTIONS.map(opt => (
-                  <Checkbox
-                    key={opt.value}
-                    label={<Text size="md" fw={500} c="white">{opt.label}</Text>}
-                    checked={filterLogTypes.includes(opt.value)}
-                    onChange={e => {
-                      setFilterLogTypes(val =>
-                        e.target.checked
-                          ? [...val, opt.value]
-                          : val.filter(v => v !== opt.value)
-                      );
-                    }}
-                    size="md"
-                    color="blue"
-                    radius="md"
-                    mb={8}
-                  />
-                ))}
-                <Text fw={700} size="sm" mb={4} mt={16} c="blue.6">Request Status</Text>
-                {STATUS_OPTIONS.map(opt => (
-                  <Checkbox
-                    key={opt.value}
-                    label={<Text size="md" fw={500} c="white">{opt.label}</Text>}
-                    checked={filterStatuses.includes(opt.value)}
-                    onChange={e => {
-                      setFilterStatuses(val =>
-                        e.target.checked
-                          ? [...val, opt.value]
-                          : val.filter(v => v !== opt.value)
-                      );
-                    }}
-                    size="md"
-                    color="blue"
-                    radius="md"
-                    mb={8}
-                  />
-                ))}
-              </Stack>
+              <AdminAuditLogFilters
+                logTypeOptions={LOG_TYPE_OPTIONS}
+                statusOptions={STATUS_OPTIONS}
+                filterLogTypes={filterLogTypes}
+                setFilterLogTypes={setFilterLogTypes}
+                filterStatuses={filterStatuses}
+                setFilterStatuses={setFilterStatuses}
+                isPortrait={false}
+              />
             </Grid.Col>
             <Grid.Col span={0.5} pl={40}>
               <Divider orientation="vertical" size="sm" style={{height: '80%'}} mt={160} />
@@ -202,47 +117,15 @@ export function AdminAuditLog() {
               title="AUDIT LOG"
               placeholder="Search Logs"
             />
-            <Stack>
-              <Text fw={700} size="lg" mb={12} c="white" style={{letterSpacing: 1}}>Filter</Text>
-              <Text fw={700} size="sm" mb={4} c="blue.6">Log Type</Text>
-              {LOG_TYPE_OPTIONS.map(opt => (
-                <Checkbox
-                  key={opt.value}
-                  label={<Text size="sm" fw={500} c="gray.8">{opt.label}</Text>}
-                  checked={filterLogTypes.includes(opt.value)}
-                  onChange={e => {
-                    setFilterLogTypes(val =>
-                      e.target.checked
-                        ? [...val, opt.value]
-                        : val.filter(v => v !== opt.value)
-                    );
-                  }}
-                  size="md"
-                  color="blue"
-                  radius="md"
-                  mb={8}
-                />
-              ))}
-              <Text fw={700} size="sm" mb={4} mt={16} c="blue.6">Request Status</Text>
-              {STATUS_OPTIONS.map(opt => (
-                <Checkbox
-                  key={opt.value}
-                  label={<Text size="sm" fw={500} c="gray.8">{opt.label}</Text>}
-                  checked={filterStatuses.includes(opt.value)}
-                  onChange={e => {
-                    setFilterStatuses(val =>
-                      e.target.checked
-                        ? [...val, opt.value]
-                        : val.filter(v => v !== opt.value)
-                    );
-                  }}
-                  size="md"
-                  color="blue"
-                  radius="md"
-                  mb={8}
-                />
-              ))}
-            </Stack>
+            <AdminAuditLogFilters
+              logTypeOptions={LOG_TYPE_OPTIONS}
+              statusOptions={STATUS_OPTIONS}
+              filterLogTypes={filterLogTypes}
+              setFilterLogTypes={setFilterLogTypes}
+              filterStatuses={filterStatuses}
+              setFilterStatuses={setFilterStatuses}
+              isPortrait={true}
+            />
             {table}
           </Grid.Col>
         )}
