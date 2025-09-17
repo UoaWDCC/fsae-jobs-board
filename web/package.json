@@ -33,6 +33,7 @@
     "jwt-decode": "^4.0.0",
     "lodash": "^4.17.21",
     "mongodb": "^6.16.0",
+    "postcss-mixins": "^12.1.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^9.1.2",
@@ -42,12 +43,9 @@
     "redux-persist": "^6.0.0"
   },
   "devDependencies": {
-    "@storybook/addon-essentials": "^8.0.0",
-    "@storybook/addon-interactions": "^8.0.0",
-    "@storybook/addon-links": "^8.0.0",
-    "@storybook/blocks": "^8.0.0",
-    "@storybook/react": "^8.0.0",
-    "@storybook/react-vite": "^8.0.0",
+    "@storybook/addon-docs": "^9.1.6",
+    "@storybook/addon-links": "^9.1.6",
+    "@storybook/react-vite": "^9.1.6",
     "@storybook/testing-library": "^0.2.2",
     "@testing-library/cypress": "^10.0.3",
     "@testing-library/dom": "^9.3.4",
@@ -72,6 +70,7 @@
     "eslint-plugin-jsx-a11y": "^6.8.0",
     "eslint-plugin-react": "^7.34.0",
     "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-storybook": "9.1.6",
     "identity-obj-proxy": "^3.0.0",
     "jsdom": "^24.0.0",
     "postcss": "^8.4.35",
@@ -79,13 +78,12 @@
     "postcss-simple-vars": "^7.0.1",
     "prettier": "^3.2.5",
     "prop-types": "^15.8.1",
-    "storybook": "^8.0.0",
-    "storybook-dark-mode": "^3.0.3",
+    "storybook": "^9.1.6",
     "stylelint": "^16.2.1",
     "stylelint-config-standard-scss": "^13.0.0",
     "typescript": "^5.4.2",
-    "vite": "^5.2.10",
+    "vite": "^7.1.5",
     "vite-tsconfig-paths": "^4.3.1",
-    "vitest": "^1.5.2"
+    "vitest": "^3.2.4"
   }
 }
