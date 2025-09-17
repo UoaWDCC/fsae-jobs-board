@@ -25,5 +25,15 @@ export const adminApi = {
     } catch (error) {
       console.error('Error deleting job:', error);
     }
-  }
+  },
+
+  async getAdminLogs(skip = 0, limit = 20): Promise<any[]> {
+    const {data} = await apiInstance.get<any[]>(`admin-log/?skip=${skip}&limit=${limit}`);
+    return data;
+  },
+
+  async updateAdminLogStatus(id: string, status: 'accepted' | 'rejected'): Promise<{success: boolean; id?: string; status?: string; message?: string}> {
+    const {data} = await apiInstance.patch(`admin-log/${id}/status`, {status});
+    return data;
+  },
 };
