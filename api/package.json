@@ -54,11 +54,17 @@
     "bcryptjs": "^2.4.3",
     "dotenv": "^16.4.5",
     "jsonwebtoken": "^9.0.2",
-    "loopback-connector-mongodb": "^6.2.0",
+    "loopback-connector-mongodb": "^7.0.0-alpha.7",
     "mongodb": "^6.15.0",
     "multer": "^2.0.2",
     "resend": "^6.0.1",
-    "tslib": "^2.0.0"
+    "tslib": "^2.0.0",
+    "uuid": "^11.1.0"
+  },
+  "overrides": {
+    "loopback-connector-mongodb": {
+      "mongodb": "$mongodb"
+    }
   },
   "devDependencies": {
     "@loopback/build": "^11.0.0",
