@@ -1,4 +1,4 @@
-import {Model, model, property} from '@loopback/repository';
+import { Model, model, property } from '@loopback/repository';
 
 @model()
 export class Education extends Model {
@@ -10,20 +10,20 @@ export class Education extends Model {
     id: string; // Unique generated ID
 
     @property({
-        type: 'string', 
+        type: 'string',
         required: true
     })
     schoolName: string;
 
     @property({
-        type: 'string', 
+        type: 'string',
         required: true
     })
     degreeName: string;
 
     @property({
-        type: 'string', 
-        required: true
+        type: 'string',
+        required: false
     })
     major: string;
 
@@ -35,7 +35,7 @@ export class Education extends Model {
 
     @property({
         type: 'string',
-        required: true
+        required: false
     })
     startYear: string;
 
