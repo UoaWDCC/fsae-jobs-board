@@ -2,6 +2,8 @@
   background-color: var(--mantine-color-background-1);
   height: 100vh;
   color: var(--mantine-color-customWhite-1);
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 .card {
