@@ -51,7 +51,9 @@ export const EducationTab = ({ newUserData, setNewUserData }: Props) => {
   // Sync newUserData.education whenever entries change (only after initial hydration)
   useEffect(() => {
     if (!(hydrated || touched)) return;
-    setNewUserData((prev) => ({ ...(prev || {}), education: entries }));
+    // Filter out any entries that don't have both required fields filled
+    const validEntries = entries.filter(isEntryValid);
+    setNewUserData((prev) => ({ ...(prev || {}), education: validEntries.length > 0 ? validEntries : [] }));
   }, [entries, setNewUserData, hydrated, touched]);
 
   const updateField = (
@@ -100,6 +102,11 @@ export const EducationTab = ({ newUserData, setNewUserData }: Props) => {
     if (/^present$/i.test(e)) return false; // Present is always >= any start
     return Number(s) > Number(e);
   };
+  
+  // Check if an education entry has all required fields filled
+  const isEntryValid = (entry: Education): boolean => {
+    return entry.schoolName !== "" && entry.degreeName !== "";
+  };
 
   return (
     <Box>
@@ -113,6 +120,8 @@ export const EducationTab = ({ newUserData, setNewUserData }: Props) => {
                 value={entry.schoolName}
                 onChange={(e) => updateField(index, "schoolName", e.currentTarget.value)}
                 placeholder="e.g., The University of Auckland"
+                required
+                error={entry.schoolName === "" ? "School name is required" : undefined}
               />
               <TextInput
                 label="Degree name"
@@ -120,6 +129,8 @@ export const EducationTab = ({ newUserData, setNewUserData }: Props) => {
                 value={entry.degreeName}
                 onChange={(e) => updateField(index, "degreeName", e.currentTarget.value)}
                 placeholder="e.g., Bachelor of Engineering (Honours)"
+                required
+                error={entry.degreeName === "" ? "Degree name is required" : undefined}
               />
               <TextInput
                 label="Major"
