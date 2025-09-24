@@ -193,16 +193,6 @@ const router = createBrowserRouter([
     </ProtectedRoute>
   ),
   },
-  {
-    path: '/admin-audit-log',
-    element: (
-      <ProtectedRoute allowedRoles={[Role.Admin]}>
-        <AppLayout>
-          <AdminAuditLog />
-        </AppLayout>
-      </ProtectedRoute>
-    ),
-  },
 
   {
     path: '*',

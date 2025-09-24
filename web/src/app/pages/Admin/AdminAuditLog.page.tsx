@@ -103,7 +103,7 @@ export function AdminAuditLog() {
               <SearchBar
                 search={search}
                 setSearch={setSearch}
-                title="AUDIT LOG"
+                title="Audit Log"
                 placeholder="Search Logs"
               />
               {table}
@@ -114,7 +114,7 @@ export function AdminAuditLog() {
             <SearchBar
               search={search}
               setSearch={setSearch}
-              title="AUDIT LOG"
+              title="Audit Log"
               placeholder="Search Logs"
             />
             <AdminAuditLogFilters
