@@ -209,13 +209,15 @@ export function StudentProfile() {
           {userData?.lookingFor ? `Looking for: ${jobTypeDisplayMap[userData.lookingFor]}` : ""}
         </Text>
 
-        <Box style={{ position: 'absolute', top: 20, right: 20 }}>
-          <ActivateDeactivateAccountButton 
-            userId={id} 
-            role={FsaeRole.MEMBER}
-            activated={userData?.activated}
-          />
-        </Box>
+        {userRole === "admin" && (
+          <Box style={{ position: 'absolute', top: 20, right: 20 }}>
+            <ActivateDeactivateAccountButton 
+              userId={id} 
+              role={FsaeRole.MEMBER}
+              activated={userData?.activated}
+            />
+          </Box>
+        )}
       </Card>
 
       <Flex style={{ display: 'flex', justifyContent: 'flex-end', marginRight: '20px' }}>
