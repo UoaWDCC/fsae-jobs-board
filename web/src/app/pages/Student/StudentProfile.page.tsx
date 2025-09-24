@@ -16,6 +16,8 @@ import DeactivateAccountModal from '../../components/Modal/DeactivateAccountModa
 import { JobType } from '@/models/job-type';
 import { SubGroup } from '@/models/subgroup.model';
 import { jobTypeDisplayMap, subGroupDisplayMap } from '@/app/utils/field-display-maps';
+import { ActivateDeactivateAccountButton } from '@/app/components/AdminDashboard/ActivateDeactivateAccountButton';
+import { FsaeRole } from '@/models/roles';
         
 
 
@@ -206,6 +208,14 @@ export function StudentProfile() {
         <Text size="md" mt={-55} ml={170} pt={10}>
           {userData?.lookingFor ? `Looking for: ${jobTypeDisplayMap[userData.lookingFor]}` : ""}
         </Text>
+
+        <Box style={{ position: 'absolute', top: 20, right: 20 }}>
+          <ActivateDeactivateAccountButton 
+            userId={id} 
+            role={FsaeRole.MEMBER}
+            activated={userData?.activated}
+          />
+        </Box>
       </Card>
 
       <Flex style={{ display: 'flex', justifyContent: 'flex-end', marginRight: '20px' }}>

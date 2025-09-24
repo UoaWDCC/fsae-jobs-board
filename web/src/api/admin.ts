@@ -1,6 +1,6 @@
 import {apiInstance} from './ApiInstance';
 import {AdminReview}  from '@/models/adminReview.model';
-import {Role}         from '@/app/type/role';
+import {FsaeRole}     from '@/models/roles';
 import {Status}       from '@/app/type/status';
 
 export const adminApi = {
@@ -11,7 +11,7 @@ export const adminApi = {
 
   async updateStatus(
     id: string,
-    role: Role,
+    role: FsaeRole,
     status: Status.APPROVED | Status.REJECTED,
   ): Promise<void> {
     await apiInstance.patch(`user/admin/status/${id}`, {role, status});
@@ -35,5 +35,20 @@ export const adminApi = {
   async updateAdminLogStatus(id: string, status: 'accepted' | 'rejected'): Promise<{success: boolean; id?: string; status?: string; message?: string}> {
     const {data} = await apiInstance.patch(`admin-log/${id}/status`, {status});
     return data;
+  },
+
+  async deactivateAccount(
+    id: string,
+    role: FsaeRole,
+    reason: string,
+  ): Promise<void> {
+    await apiInstance.patch(`user/admin/deactivate/${id}`, {role, reason});
+  },
+
+  async activateAccount(
+    id: string,
+    role: FsaeRole,
+  ): Promise<void> {
+    await apiInstance.patch(`user/admin/activate/${id}`, {role});
   },
 };

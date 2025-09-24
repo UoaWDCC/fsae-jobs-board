@@ -179,4 +179,146 @@ export class AdminController {
       throw e; // propagate other errors
     }
   }
+
+  /**
+   * PATCH /user/admin/deactivate/{id}
+   * Deactivate a user account with a reason.
+   */
+  @authenticate('fsae-jwt')
+  @authorize({allowedRoles: [FsaeRole.ADMIN]})
+  @patch('/user/admin/deactivate/{id}')
+  @response(204, {description: 'User account deactivated'})
+  async deactivateUser(
+    @param.path.string('id') id: string,
+    @requestBody({
+      required: true,
+      description: 'User role and deactivation reason',
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            required: ['role', 'reason'],
+            properties: {
+              role: {
+                type: 'string',
+                enum: [FsaeRole.ALUMNI, FsaeRole.MEMBER, FsaeRole.SPONSOR],
+              },
+              reason: {
+                type: 'string',
+              },
+            },
+          },
+        },
+      },
+    })
+    body: {role: FsaeRole; reason: string},
+  ): Promise<void> {
+    const {role, reason} = body;
+
+    /* pick the correct repository based on role */
+    let repo;
+  
+    if (role === FsaeRole.ALUMNI) {
+      repo = this.alumniRepository;
+    } else if (role === FsaeRole.MEMBER) {
+      repo = this.memberRepository;
+    } else if (role === FsaeRole.SPONSOR) {
+      repo = this.sponsorRepository;
+    } else {
+      repo = undefined;
+    }
+
+    if (!repo) {
+      throw new HttpErrors.BadRequest(`Unsupported role "${role}"`);
+    }
+
+    /* deactivate the user; throw 404 if not found */
+    try {
+      await repo.updateById(id, {activated: false});
+      await this.adminLogService.createAdminLog(
+        this.currentUser[securityId] as string,
+        {
+          message: `Account deactivated`,
+          reason: reason,
+          targetType: role.toLowerCase(),
+          targetId: id,
+          memberType: role
+        }
+      );
+    } catch (e: any) {
+      if (e.code === 'ENTITY_NOT_FOUND') {
+        throw new HttpErrors.NotFound(`User ${id} not found in ${role} collection`);
+      }
+      throw e;
+    }
+  }
+
+  /**
+   * PATCH /user/admin/activate/{id}
+   * Activate a user account.
+   */
+  @authenticate('fsae-jwt')
+  @authorize({allowedRoles: [FsaeRole.ADMIN]})
+  @patch('/user/admin/activate/{id}')
+  @response(204, {description: 'User account activated'})
+  async activateUser(
+    @param.path.string('id') id: string,
+    @requestBody({
+      required: true,
+      description: 'User role',
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            required: ['role'],
+            properties: {
+              role: {
+                type: 'string',
+                enum: [FsaeRole.ALUMNI, FsaeRole.MEMBER, FsaeRole.SPONSOR],
+              },
+            },
+          },
+        },
+      },
+    })
+    body: {role: FsaeRole},
+  ): Promise<void> {
+    const {role} = body;
+
+    /* pick the correct repository based on role */
+    let repo;
+  
+    if (role === FsaeRole.ALUMNI) {
+      repo = this.alumniRepository;
+    } else if (role === FsaeRole.MEMBER) {
+      repo = this.memberRepository;
+    } else if (role === FsaeRole.SPONSOR) {
+      repo = this.sponsorRepository;
+    } else {
+      repo = undefined;
+    }
+
+    if (!repo) {
+      throw new HttpErrors.BadRequest(`Unsupported role "${role}"`);
+    }
+
+    /* activate the user; throw 404 if not found */
+    try {
+      await repo.updateById(id, {activated: true});
+      await this.adminLogService.createAdminLog(
+        this.currentUser[securityId] as string,
+        {
+          message: 'Account activated',
+          targetType: role.toLowerCase(),
+          targetId: id,
+          memberType: role
+        }
+      );
+    } catch (e: any) {
+      if (e.code === 'ENTITY_NOT_FOUND') {
+        throw new HttpErrors.NotFound(`User ${id} not found in ${role} collection`);
+      }
+      throw e;
+    }
+  }
 }
