@@ -30,7 +30,6 @@ export default function AdminAuditLogTable({ logs, page, entriesPerPage, onPageC
               <Table.Tr>
                 <Table.Th>Message</Table.Th>
                 <Table.Th>Username</Table.Th>
-                <Table.Th>Log Type</Table.Th>
                 <Table.Th>Date</Table.Th>
               </Table.Tr>
             </Table.Thead>
@@ -43,13 +42,12 @@ export default function AdminAuditLogTable({ logs, page, entriesPerPage, onPageC
                 >
                   <Table.Td>{log.details?.message}</Table.Td>
                   <Table.Td>{log.username}</Table.Td>
-                  <Table.Td>{log.logType.charAt(0).toUpperCase() + log.logType.slice(1)}</Table.Td>
                   <Table.Td>{new Date(log.createdAt).toLocaleString()}</Table.Td>
                 </Table.Tr>
               ))}
               {pageData.length === 0 && (
                 <Table.Tr>
-                  <Table.Td colSpan={4}>
+                  <Table.Td colSpan={3}>
                     <Text ta="center" c="dimmed">
                       No logs match your filters
                     </Text>
