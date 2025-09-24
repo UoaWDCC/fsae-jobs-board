@@ -19,6 +19,8 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../app/store';
 import { jwtDecode } from 'jwt-decode';
 import DeactivateAccountModal from '../../components/Modal/DeactivateAccountModal';
+import { ActivateDeactivateAccountButton } from '@/app/components/AdminDashboard/ActivateDeactivateAccountButton';
+import { FsaeRole } from '@/models/roles';
 
 export function SponsorProfile() {
   const { id } = useParams();
@@ -246,6 +248,15 @@ export function SponsorProfile() {
             size="lg"
           />
         </Box>
+        {userRole === "admin" && (
+          <Box style={{ position: 'absolute', top: 20, right: 20 }}>
+            <ActivateDeactivateAccountButton 
+              userId={id} 
+              role={FsaeRole.SPONSOR}
+              activated={userData?.activated}
+            />
+          </Box>
+        )}
       </Card>
 
       <Flex className={styles.profileBtn}>

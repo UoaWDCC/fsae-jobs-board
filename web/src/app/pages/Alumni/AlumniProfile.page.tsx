@@ -21,6 +21,8 @@ import { jwtDecode } from 'jwt-decode';
 import DeactivateAccountModal from '../../components/Modal/DeactivateAccountModal';
 import { subGroupDisplayMap } from '@/app/utils/field-display-maps';
 import { SubGroup } from '@/models/subgroup.model';
+import { ActivateDeactivateAccountButton } from '@/app/components/AdminDashboard/ActivateDeactivateAccountButton';
+import { FsaeRole } from '@/models/roles';
 
 
 export function AlumniProfile() {
@@ -279,6 +281,15 @@ export function AlumniProfile() {
         <Text size="lg" mt={-50} ml={170} className={styles.text}>
           {`${userData?.subGroup ? subGroupDisplayMap[userData?.subGroup] : ""}`}
         </Text>
+        {userRole === "admin" && (
+          <Box style={{ position: 'absolute', top: 20, right: 20 }}>
+            <ActivateDeactivateAccountButton 
+              userId={id} 
+              role={FsaeRole.MEMBER}
+              activated={userData?.activated}
+            />
+          </Box>
+        )}
       </Card>
 
       <Flex className={styles.profileBtn}>
