@@ -285,7 +285,7 @@ export function AlumniProfile() {
           <Box style={{ position: 'absolute', top: 20, right: 20 }}>
             <ActivateDeactivateAccountButton 
               userId={id} 
-              role={FsaeRole.MEMBER}
+              role={FsaeRole.ALUMNI}
               activated={userData?.activated}
             />
           </Box>
