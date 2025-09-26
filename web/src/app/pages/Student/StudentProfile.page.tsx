@@ -42,14 +42,14 @@ export function StudentProfile() {
 
   const handleAvatarChange = () => {
     setModalType('avatar');
-    setModalContent(<EditAvatar avatar={"avatar"} />);
+    setModalContent(<EditAvatar avatar={""} />);
     setModalTitle('Profile Photo');
     setOpenProfileModal(true);
   };
 
   const handleBannerChange = () => {
     setModalType('banner');
-    setModalContent(<EditBannerModal banner={"banner"} />);
+    setModalContent(<EditBannerModal banner={""} />);
     setModalTitle('Banner Photo');
     setOpenProfileModal(true);
   };
@@ -166,15 +166,15 @@ export function StudentProfile() {
           setIsLocalProfile(userData.id == userId);
         }
 
-        avatarPromise.then(avatarUrl => {
-          if (isMounted && avatarUrl) setUserData(prev => prev ? { ...prev, avatarURL: avatarUrl } : prev);
-        });
-        bannerPromise.then(bannerUrl => {
-          if (isMounted && bannerUrl) setUserData(prev => prev ? { ...prev, bannerURL: bannerUrl } : prev);
-        });
+        const [avatarURL, bannerURL] = await Promise.all([avatarPromise, bannerPromise]);
+        if (isMounted) {
+          setUserData(prev => prev ? { ...prev, avatarURL: avatarURL || "", bannerURL: bannerURL || "" } : prev);
+        }
 
       } catch (err) {
-        if (isMounted) navigate("/404");
+        if (isMounted) {
+          navigate("/404");
+        }
       }
     };
 

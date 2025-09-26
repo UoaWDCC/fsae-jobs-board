@@ -44,20 +44,20 @@ export function AlumniProfile() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  /*
+  
   const handleAvatarChange = () => {
     setModalType('avatar');
     setOpenProfileModal(true);
-    setModalContent(<EditAvatar avatar={userData?.avatar} />);
+    setModalContent(<EditAvatar avatar={""} />);
     setModalTitle('Profile Photo');
   };
 
   const handleBannerChange = () => {
     setModalType('banner');
     setOpenProfileModal(true);
-    setModalContent(<EditBannerModal banner={userData?.banner} />)
+    setModalContent(<EditBannerModal banner={""} />)
     setModalTitle('Banner Photo');
-  };*/
+  };
   
   const handleProfileChange = () => {
     setOpenProfileModal(true);
@@ -74,6 +74,38 @@ export function AlumniProfile() {
   const handleDeactivateUserChange = () => {
     setModalType('deactivateUser');
     setOpenModal(true);
+  };
+
+  const fetchAvatar = async () => {
+    if (!id) return;
+    const token = localStorage.getItem('accessToken');
+    if (!token) return;
+    const res = await fetch(`http://localhost:3000/user/alumni/${id}/avatar`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (res.ok) {
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      setUserData(prev => prev ? { ...prev, avatarURL: url } : prev);
+    } else {
+      setUserData(prev => prev ? { ...prev, avatarURL: '' } : prev);
+    }
+  };
+
+  const fetchBanner = async () => {
+    if (!id) return;
+    const token = localStorage.getItem('accessToken');
+    if (!token) return;
+    const res = await fetch(`http://localhost:3000/user/alumni/${id}/banner`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (res.ok) {
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      setUserData(prev => prev ? { ...prev, bannerURL: url } : prev);
+    } else {
+      setUserData(prev => prev ? { ...prev, bannerURL: '' } : prev);
+    }
   };
 
   const [userData, setUserData] = useState<Alumni | null>(null);
@@ -118,15 +150,39 @@ export function AlumniProfile() {
 
   useEffect(() => {
     // Logic to fetch data and setUserData
+    let isMounted = true;
+
     const fetchUserData = async () => {
       try {
-        const userData = await fetchAlumniById(id as string);
+        // Fetch user data, avatar, and banner
+        const token = localStorage.getItem('accessToken');
+        const userPromise = fetchAlumniById(id as string);
+        let avatarPromise = Promise.resolve<string | undefined>(undefined);
+        let bannerPromise = Promise.resolve<string | undefined>(undefined);
+
+        if (token) {
+          avatarPromise = fetch(`http://localhost:3000/user/alumni/${id}/avatar`, { headers: { Authorization: `Bearer ${token}` } })
+            .then(res => res.ok ? res.blob() : null)
+            .then(blob => blob ? URL.createObjectURL(blob) : undefined);
+
+          bannerPromise = fetch(`http://localhost:3000/user/alumni/${id}/banner`, { headers: { Authorization: `Bearer ${token}` } })
+            .then(res => res.ok ? res.blob() : null)
+          .then(blob => blob ? URL.createObjectURL(blob) : undefined);
+        }
+
+        const userData = await userPromise;
         if (!userData) {
           navigate("/404")
           return;
         }
-        setUserData(userData);
-        setIsLocalProfile(userData.id == userId);
+        if (isMounted) {
+          setUserData(userData);
+          setIsLocalProfile(userData.id == userId);
+        }
+        const [avatarURL, bannerURL] = await Promise.all([avatarPromise, bannerPromise]);
+        if (isMounted) {
+          setUserData(prev => prev ? { ...prev, avatarURL: avatarURL || "", bannerURL: bannerURL || "" } : prev);
+        }
         const jobs: Job[] = await fetchJobsByPublisherId(id as string);
         const jobsForJobCard = jobs.map((thisJob) => {
           return {
@@ -143,12 +199,15 @@ export function AlumniProfile() {
         })
         setJobData(jobsForJobCard)
       } catch (err) {
+        if (isMounted) {
+          navigate("/404");
+        }
         // TODO: proper error handling (eg. auth errors/forbidden pages etc.)
         //navigate("/404")
       }
     };
     if (id) fetchUserData();
-   }, [id]);
+   }, [id, navigate, userId]);
 
   // methods to get elements based on user type
   const getElementBasedOnRole = (element: string) => {
@@ -236,7 +295,7 @@ export function AlumniProfile() {
         <Card.Section
           h={250}
           className={styles.banner}
-          //onClick={handleBannerChange}
+          onClick={handleBannerChange}
           style={{ backgroundImage: `url(${userData?.bannerURL})`}}
         />
         <Box className={styles.name} pl={170} pt={140}>
@@ -304,7 +363,7 @@ export function AlumniProfile() {
           mt={-100}
           ml={10}
           className={styles.avatar}
-          //onClick={handleAvatarChange}
+          onClick={handleAvatarChange}
         />
         <Text size="lg" mt={-50} ml={170} className={styles.text}>
           {`${userData?.subGroup ? subGroupDisplayMap[userData?.subGroup] : ""}`}
@@ -424,7 +483,15 @@ export function AlumniProfile() {
 
       <EditModal
         opened={openProfileModal}
-        close={() => setOpenProfileModal(false)}
+        close={() => {
+          setOpenProfileModal(false);
+          if (modalType === 'avatar') {
+            fetchAvatar();
+          }
+          if (modalType === 'banner') {
+            fetchBanner();
+          }
+        }}
         content={modalContent}
         title={modalTitle}
       ></EditModal>

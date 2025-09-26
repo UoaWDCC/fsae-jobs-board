@@ -33,6 +33,18 @@ export class Alumni extends FsaeUser {
   })
   companyName: string;
 
+  @property({
+    type: 'string',
+    default: '',
+  })
+  avatarS3Key: string;
+
+  @property({
+    type: 'string',
+    default: '',
+  })
+  bannerS3Key: string;
+
   constructor(data?: Partial<Alumni>) {
     super(data);
   }
