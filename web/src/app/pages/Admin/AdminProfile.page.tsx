@@ -44,19 +44,19 @@ export function AdminProfile() {
     return () => window.removeEventListener('resize', onResize);
   }, []);
 
-  const handleAvatarChange = () => {
-    setModalType('avatar');
-    setModalContent(<EditAvatar avatar={""} role={"admin"} />);
-    setModalTitle('Profile Photo');
-    setOpenProfileModal(true);
-  };
+  // const handleAvatarChange = () => {
+  //   setModalType('avatar');
+  //   setModalContent(<EditAvatar avatar={""} role={"admin"} />);
+  //   setModalTitle('Profile Photo');
+  //   setOpenProfileModal(true);
+  // };
 
-  const handleBannerChange = () => {
-    setModalType('banner');
-    setModalContent(<EditBannerModal banner={""} role={"admin"} />);
-    setModalTitle('Banner Photo');
-    setOpenProfileModal(true);
-  };
+  // const handleBannerChange = () => {
+  //   setModalType('banner');
+  //   setModalContent(<EditBannerModal banner={""} role={"admin"} />);
+  //   setModalTitle('Banner Photo');
+  //   setOpenProfileModal(true);
+  // };
 
   return (
     <Box className={styles.container}>
@@ -64,7 +64,7 @@ export function AdminProfile() {
         <Card.Section
           h={250}
           className={styles.banner}
-          onClick={handleBannerChange}
+          // onClick={handleBannerChange}
           style={{backgroundImage: `url(${adminData.banner})`}}
         />
         <Text className={styles.name}>{adminData.fullName}</Text>
@@ -75,7 +75,7 @@ export function AdminProfile() {
           mt={-100}
           ml={10}
           className={styles.avatar}
-          onClick={handleAvatarChange}
+          // onClick={handleAvatarChange}
         />
         <Text size="md" className={styles.text}>
           Administrator
