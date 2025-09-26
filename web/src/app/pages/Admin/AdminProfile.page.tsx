@@ -46,14 +46,14 @@ export function AdminProfile() {
 
   const handleAvatarChange = () => {
     setModalType('avatar');
-    setModalContent(<EditAvatar avatar={adminData.avatar} />);
+    setModalContent(<EditAvatar avatar={""} role={"admin"} />);
     setModalTitle('Profile Photo');
     setOpenProfileModal(true);
   };
 
   const handleBannerChange = () => {
     setModalType('banner');
-    setModalContent(<EditBannerModal banner={adminData.banner} />);
+    setModalContent(<EditBannerModal banner={""} role={"admin"} />);
     setModalTitle('Banner Photo');
     setOpenProfileModal(true);
   };
