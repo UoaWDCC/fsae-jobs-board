@@ -51,14 +51,14 @@ export function SponsorProfile() {
 
   const handleAvatarChange = () => {
     setModalType('avatar');
-    setModalContent(<EditAvatar avatar={""} />);
+    setModalContent(<EditAvatar avatar={""} role={"sponsor"} />);
     setModalTitle('Profile Photo');
     setOpenProfileModal(true);
   };
 
   const handleBannerChange = () => {
     setModalType('banner');
-    setModalContent(<EditBannerModal banner={""} />);
+    setModalContent(<EditBannerModal banner={""} role={"sponsor"} />);
     setModalTitle('Banner Photo');
     setOpenProfileModal(true);
   };

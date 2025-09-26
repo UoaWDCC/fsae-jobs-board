@@ -48,14 +48,14 @@ export function AlumniProfile() {
   const handleAvatarChange = () => {
     setModalType('avatar');
     setOpenProfileModal(true);
-    setModalContent(<EditAvatar avatar={""} />);
+    setModalContent(<EditAvatar avatar={""} role={"alumni"} />);
     setModalTitle('Profile Photo');
   };
 
   const handleBannerChange = () => {
     setModalType('banner');
     setOpenProfileModal(true);
-    setModalContent(<EditBannerModal banner={""} />)
+    setModalContent(<EditBannerModal banner={""} role={"alumni"} />)
     setModalTitle('Banner Photo');
   };
   
