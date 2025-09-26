@@ -64,17 +64,30 @@ export class FsaeUser extends Entity {
 
   @property({
     type: 'string',
-    required: true,
+    required: false,
     default: ""
   })
   avatarURL: string;
 
   @property({
     type: 'string',
-    required: true,
+    required: false,
     default: ""
   })
   bannerURL: string;
+
+  
+  @property({
+    type: 'string',
+    default: '',
+  })
+  avatarS3Key: string;
+
+  @property({
+    type: 'string',
+    default: '',
+  })
+  bannerS3Key: string;
 
   @property({
     type: 'string',
