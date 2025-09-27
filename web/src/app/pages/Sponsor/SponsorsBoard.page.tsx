@@ -3,10 +3,7 @@ import { useEffect, useState } from 'react';
 import Filter from '../../components/Filter/Filter';
 import SearchBar from '../../components/SearchBar/SearchBar';
 import SponsorListing from '../../components/SponsorBoard/SponsorListing';
-import { useProfileCompletionGuard } from '../../../hooks/useProfileCompletionGuard';
-
 export function SponsorsBoard() {
-  useProfileCompletionGuard();
   
   const [filterRoles, setFilterRoles] = useState<string[]>([]);
   const [filterFields, setFilterFields] = useState<string[]>([]);

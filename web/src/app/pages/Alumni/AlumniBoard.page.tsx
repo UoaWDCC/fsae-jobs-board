@@ -5,10 +5,7 @@ import styles from '../../components/StudentBoard/StudentBoard.module.css';
 import { ToTopButton } from '../../components/BackToTopButton/BackToTopButton';
 import AlumniListing from '../../components/AlumniBoard/AlumniListing';
 import AlumniFilter from '../../components/AlumniBoard/AlumniFilter';
-import { useProfileCompletionGuard } from '../../../hooks/useProfileCompletionGuard';
-
 export function AlumniBoard() {
-  useProfileCompletionGuard();
   
   const [filterRoles, setFilterRoles] = useState<string[]>([]);
   const [filterFields, setFilterFields] = useState<string[]>([]);
