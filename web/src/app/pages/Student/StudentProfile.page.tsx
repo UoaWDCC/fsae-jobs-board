@@ -16,15 +16,15 @@ import DeactivateAccountModal from '../../components/Modal/DeactivateAccountModa
 import { JobType } from '@/models/job-type';
 import { SubGroup } from '@/models/subgroup.model';
 import { jobTypeDisplayMap, subGroupDisplayMap } from '@/app/utils/field-display-maps';
-
+import { useMediaQuery } from '@mantine/hooks'; //hook to see if user is on a phone for mobile frontend view -carl
 
 export function StudentProfile() {
-  // UseState for future modal implementation
   const { id } = useParams();
   const navigate = useNavigate();
+  const isMobile = useMediaQuery('(max-width: 500px)');
 
   const [modalType, setModalType] = useState('');
-  const [deactivateModalOpen, setDeactivateModalOpen] = useState(false); // look better into this stuff. im not really sure how we are using the modals :3
+  const [deactivateModalOpen, setDeactivateModalOpen] = useState(false);
   const [openProfileModal, setOpenProfileModal] = useState(false);
   const [modalContent, setModalContent] = useState<React.ReactNode>(null);
   const [modalTitle, setModalTitle] = useState('');
@@ -33,23 +33,22 @@ export function StudentProfile() {
   const [showMoreSkills, setShowMoreSkills] = useState(false);
   const [showMoreEducation, setShowMoreEducation] = useState(false);
 
-
   const [userData, setUserData] = useState<Member | null>(null);
-  const [isLocalProfile, setIsLocalProfile] = useState(false) // Is this profile this user's profile (aka. should we show the edit button)
-  
-  const userRole = useSelector((state: RootState) => state.user.role); // the id of the local user
-  const userId = useSelector((state: RootState) => state.user.id); // the id of the local user
+  const [isLocalProfile, setIsLocalProfile] = useState(false);
+
+  const userRole = useSelector((state: RootState) => state.user.role);
+  const userId = useSelector((state: RootState) => state.user.id);
 
   const handleAvatarChange = () => {
     setModalType('avatar');
-    setModalContent(<EditAvatar avatar={"avatar"} />);
+    setModalContent(<EditAvatar avatar={'avatar'} />);
     setModalTitle('Profile Photo');
     setOpenProfileModal(true);
   };
 
   const handleBannerChange = () => {
     setModalType('banner');
-    setModalContent(<EditBannerModal banner={"banner"} />);
+    setModalContent(<EditBannerModal banner={'banner'} />);
     setModalTitle('Banner Photo');
     setOpenProfileModal(true);
   };
@@ -66,59 +65,43 @@ export function StudentProfile() {
       alert('Member ID invalid');
       return;
     }
-
     const token = localStorage.getItem('accessToken');
     if (!token) {
       alert('No access token found');
       return;
     }
-
     try {
       const response = await fetch(`http://localhost:3000/user/member/${id}/cv`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch CV');
-      }
-
+      if (!response.ok) throw new Error('Failed to fetch CV');
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
-
       window.open(url, '_blank');
-
       setTimeout(() => window.URL.revokeObjectURL(url), 10000);
     } catch (error) {
       console.error('Error fetching CV:', error);
       alert('Failed to load CV');
     }
   };
+
   const handleDeactivateAccount = (reason: string) => {
     console.log('Account deactivated:', reason);
     setDeactivateModalOpen(false);
-    // trigger backend call to deactivate account.
   };
 
   const fetchAvatar = async () => {
     if (!id) return;
-
     const token = localStorage.getItem('accessToken');
     if (!token) return;
-
     try {
       const response = await fetch(`http://localhost:3000/user/member/${id}/avatar`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
       if (!response.ok) return;
-
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
-
-      setUserData((prev) => prev ? { ...prev, avatarURL: url } : prev);
-
+      setUserData((prev) => (prev ? { ...prev, avatarURL: url } : prev));
       return () => URL.revokeObjectURL(url);
     } catch (err) {
       console.error('Error fetching avatar:', err);
@@ -127,22 +110,16 @@ export function StudentProfile() {
 
   const fetchBanner = async () => {
     if (!id) return;
-
     const token = localStorage.getItem('accessToken');
     if (!token) return;
-
     try {
       const response = await fetch(`http://localhost:3000/user/member/${id}/banner`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
       if (!response.ok) return;
-
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
-
-      setUserData((prev) => prev ? { ...prev, bannerURL: url } : prev);
-
+      setUserData((prev) => (prev ? { ...prev, bannerURL: url } : prev));
       return () => URL.revokeObjectURL(url);
     } catch (err) {
       console.error('Error fetching banner:', err);
@@ -150,25 +127,21 @@ export function StudentProfile() {
   };
 
   useEffect(() => {
-    // Logic to fetch data and setUserData
     const fetchUserData = async () => {
       try {
         const userData = await fetchMemberById(id as string);
         if (!userData) {
-          console.error('User data not found');
-          navigate("/404")
+          navigate('/404');
           return;
         }
         setUserData(userData);
         setIsLocalProfile(userData.id == userId);
       } catch (err) {
-        // TODO: proper error handling (eg. auth errors/forbidden pages etc.)
         console.error('Error fetching user data:', err);
-        navigate("/404")
+        navigate('/404');
       }
     };
     if (id) fetchUserData();
-
     fetchAvatar();
     fetchBanner();
   }, [id]);
@@ -180,10 +153,10 @@ export function StudentProfile() {
           h={250}
           className={styles.banner}
           onClick={handleBannerChange}
-          style={userData?.bannerURL ? { backgroundImage: `url(${userData?.bannerURL})` }: {}}
+          style={userData?.bannerURL ? { backgroundImage: `url(${userData?.bannerURL})` } : {}}
         />
 
-        <Box className={styles.name} pl={160} pt={110}>
+        <Box className={styles.name}>
           <EditableField
             value={userData?.firstName || ''}
             placeholder="First name"
@@ -191,18 +164,12 @@ export function StudentProfile() {
             userId={id as string}
             userRole="member"
             onUpdate={(_, value) => {
-              if (userData) {
-                setUserData({ ...userData, firstName: value });
-              }
+              if (userData) setUserData({ ...userData, firstName: value });
             }}
             editable={isLocalProfile}
             required
-            validation={(value) => {
-              if (!value.trim()) return 'First name is required';
-              return null;
-            }}
+            validation={(value) => (!value.trim() ? 'First name is required' : null)}
             className={styles.firstName}
-            size={undefined}
           />
           <EditableField
             value={userData?.lastName || ''}
@@ -211,20 +178,15 @@ export function StudentProfile() {
             userId={id as string}
             userRole="member"
             onUpdate={(_, value) => {
-              if (userData) {
-                setUserData({ ...userData, lastName: value });
-              }
+              if (userData) setUserData({ ...userData, lastName: value });
             }}
             editable={isLocalProfile}
             required
-            validation={(value) => {
-              if (!value.trim()) return 'Last name is required';
-              return null;
-            }}
+            validation={(value) => (!value.trim() ? 'Last name is required' : null)}
             className={styles.lastName}
-            size={undefined}
           />
         </Box>
+
         <EditableField
           value={userData?.subGroup || ''}
           placeholder="FSAE sub-team"
@@ -232,9 +194,7 @@ export function StudentProfile() {
           userId={id as string}
           userRole="member"
           onUpdate={(_, value) => {
-            if (userData) {
-              setUserData({ ...userData, subGroup: value as SubGroup });
-            }
+            if (userData) setUserData({ ...userData, subGroup: value as SubGroup });
           }}
           editable={isLocalProfile}
           className={styles.subgroupField}
@@ -243,25 +203,25 @@ export function StudentProfile() {
 
         <Avatar
           src={userData?.avatarURL}
-          size={150}
-          mt={-100}
-          ml={10}
+          size={isMobile ? 110 : 150}
+          mt={isMobile ? -55 : -100}
+          ml={isMobile ? 0 : 10}
           className={styles.avatar}
           onClick={handleAvatarChange}
         />
-        <Text size="md" mt={-55} ml={170} pt={10}>
-          {userData?.lookingFor ? `Looking for: ${jobTypeDisplayMap[userData.lookingFor]}` : ""}
+
+        <Text size="md" className={styles.text}>
+          {userData?.lookingFor ? `Looking for: ${jobTypeDisplayMap[userData.lookingFor]}` : ''}
         </Text>
       </Card>
 
-      <Flex style={{ display: 'flex', justifyContent: 'flex-end', marginRight: '20px' }}>
-        {/* Conditionally render the edit button based on whether this is the logged in user's profile */}
-        {isLocalProfile ? 
-        <Button size="md" onClick={handleProfileChange}>
-          Edit Profile
-        </Button>
-        : null}
-      </Flex>
+      {isLocalProfile ? (
+        <Flex className={styles.profileBtn}>
+          <Button size="md" onClick={handleProfileChange}>
+            Edit Profile
+          </Button>
+        </Flex>
+      ) : null}
 
       <Grid>
         <Grid.Col span={{ md: 3, xs: 12 }}>
@@ -279,15 +239,12 @@ export function StudentProfile() {
                     userId={id as string}
                     userRole="member"
                     type="email"
-                    onUpdate={(_, value) => {
-                      setUserData({ ...userData, email: value });
-                    }}
+                    onUpdate={(_, value) => setUserData({ ...userData, email: value })}
                     editable={isLocalProfile}
                     required
                     validation={(value) => {
                       const emailPattern = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i;
-                      if (!emailPattern.test(value)) return 'Please enter a valid email';
-                      return null;
+                      return !emailPattern.test(value) ? 'Please enter a valid email' : null;
                     }}
                   />
                   <EditableField
@@ -299,9 +256,7 @@ export function StudentProfile() {
                     userId={id as string}
                     userRole="member"
                     type="tel"
-                    onUpdate={(_, value) => {
-                      setUserData({ ...userData, phoneNumber: value });
-                    }}
+                    onUpdate={(_, value) => setUserData({ ...userData, phoneNumber: value })}
                     editable={isLocalProfile}
                     required
                   />
@@ -317,17 +272,11 @@ export function StudentProfile() {
             <Box pl={15} mt={10} className={styles.box}>
               {userData?.skills && (
                 <>
-                  {showMoreSkills
-                    ? userData.skills.map((skill) => (
-                        <Text size="md" key={skill}>
-                          {skill}
-                        </Text>
-                      ))
-                    : userData.skills.slice(0, 4).map((skill) => (
-                        <Text size="md" key={skill}>
-                          {skill}
-                        </Text>
-                      ))}
+                  {(showMoreSkills ? userData.skills : userData.skills.slice(0, 4)).map((skill) => (
+                    <Text size="md" key={skill}>
+                      {skill}
+                    </Text>
+                  ))}
                   {userData.skills?.length > 5 && (
                     <Button
                       variant="subtle"
@@ -362,9 +311,7 @@ export function StudentProfile() {
                   userId={id as string}
                   userRole="member"
                   type="textarea"
-                  onUpdate={(_, value) => {
-                    setUserData({ ...userData, description: value });
-                  }}
+                  onUpdate={(_, value) => setUserData({ ...userData, description: value })}
                   editable={isLocalProfile}
                   maxLength={1500}
                   minRows={4}
@@ -374,35 +321,27 @@ export function StudentProfile() {
               )}
             </Box>
           </Box>
-          <Box
-            ml={20}
-            mt={30}
-            display="flex"
-            style={{ justifyContent: 'space-between', alignItems: 'flex-start' }}
-          >
+
+          <Box ml={20} mt={30} display="flex" style={{ justifyContent: 'space-between', alignItems: 'flex-start' }}>
             {userData?.education && userData.education.length > 0 && (
               <Box>
                 <Title order={5}>Education</Title>
-
                 <Box pl={15} mt={10} className={styles.box}>
                   <>
-                    {showMoreEducation
-                      ? userData.education.map((education) => (
-                        <Box key={education.id}>
-                          <Text size="md" fw="bold" >{education.schoolName}</Text>
-                          <Text size="md">{education.degreeName}, {education.major}</Text>
-                          <Text size="sm">{education.startYear} – {education.endYear ? education.endYear : "Present"}</Text>
-                          {education.grade ? <Text size="sm">{`Grade: ${education.grade}`}</Text> : null}
-                        </Box>
-                        ))
-                      : userData.education.slice(0, 4).map((education) => (
-                          <Box key={education.id}>
-                          <Text size="md" fw="bold" >{education.schoolName}</Text>
-                          <Text size="md">{education.degreeName}, {education.major}</Text>
-                          <Text size="sm">{education.startYear} – {education.endYear ? education.endYear : "Present"}</Text>
-                          {education.grade ? <Text size="sm">{`Grade: ${education.grade}`}</Text> : null}
-                        </Box>
-                        ))}
+                    {(showMoreEducation ? userData.education : userData.education.slice(0, 4)).map((education) => (
+                      <Box key={education.id}>
+                        <Text size="md" fw="bold">
+                          {education.schoolName}
+                        </Text>
+                        <Text size="md">
+                          {education.degreeName}, {education.major}
+                        </Text>
+                        <Text size="sm">
+                          {education.startYear} – {education.endYear ? education.endYear : 'Present'}
+                        </Text>
+                        {education.grade ? <Text size="sm">{`Grade: ${education.grade}`}</Text> : null}
+                      </Box>
+                    ))}
                     {userData.education?.length > 4 && (
                       <Button
                         variant="subtle"
@@ -422,15 +361,15 @@ export function StudentProfile() {
             )}
 
             {userData?.hasCV && (
-              <ActionIcon variant="transparent" color="#ffffff" size={200} mt={-40}
-              onClick={handleOpenCV}
-              style={{ cursor: 'pointer' }}>
-                <img 
-                  src="/cv_white.png" 
-                  alt="CV Icon" 
-                  width={90} 
-                  height={90}
-                />
+              <ActionIcon
+                variant="transparent"
+                color="#ffffff"
+                size={200}
+                mt={-40}
+                onClick={handleOpenCV}
+                style={{ cursor: 'pointer' }}
+              >
+                <img src="/cv_white.png" alt="CV Icon" width={90} height={90} />
               </ActionIcon>
             )}
           </Box>
@@ -441,22 +380,13 @@ export function StudentProfile() {
         opened={openProfileModal}
         close={() => {
           setOpenProfileModal(false);
-          if (modalType === 'avatar') {
-            fetchAvatar();
-          }
-          if (modalType === 'banner') {
-            fetchBanner();
-          }
+          if (modalType === 'avatar') fetchAvatar();
+          if (modalType === 'banner') fetchBanner();
         }}
         content={modalContent}
         title={modalTitle}
-      ></EditModal>
-
-      <DeactivateAccountModal
-        onClose={() => setDeactivateModalOpen(false)}
-        onConfirm={handleDeactivateAccount}
-        opened={deactivateModalOpen}
       />
+      <DeactivateAccountModal onClose={() => setDeactivateModalOpen(false)} onConfirm={handleDeactivateAccount} opened={deactivateModalOpen} />
     </Box>
   );
 }
