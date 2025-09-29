@@ -5,16 +5,19 @@ import { SkillsTab } from '../Tabs/SkillsTab';
 import { CVTab } from '../Tabs/CVTab';
 import styles from './Modal.module.css';
 import { useMediaQuery } from '@mantine/hooks';
+import { useValidateEmail } from '@/hooks/useValidateEmail';
 import { useEffect, useState } from 'react';
 import { Member } from '@/models/member.model';
 import { editMemberById } from '@/api/member';
 import { useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 import type { RootState } from '@/app/store';
 
 export const EditStudentProfile = ({ close, userData, setUserData }: { close: () => void , userData: Member | null, setUserData: React.Dispatch<React.SetStateAction<Member | null>>}) => {
   const [activeTab, setActiveTab] = useState('about');
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [newUserData, setNewUserData] = useState<Partial<Member> | null>(null); // partial because the database schema is currently messed up
+  const { validate } = useValidateEmail();
 
   const userId = useSelector((state: RootState) => state.user.id); // the id of the local user
 
@@ -46,6 +49,13 @@ export const EditStudentProfile = ({ close, userData, setUserData }: { close: ()
     if (!newUserData) return;
     if (!userData) return;
 
+    const { valid, message } = validate(newUserData);
+    if (!valid) {
+      toast.error(message);
+      console.error(message);
+      return;
+    }
+
     setUserData(newUserData as Member);
 
     const partialMember: Partial<Member> = {};
@@ -61,6 +71,7 @@ export const EditStudentProfile = ({ close, userData, setUserData }: { close: ()
   }
 
   useEffect(() => {
+    console.log(userData);
     setNewUserData(userData);
   }, [userData])
 

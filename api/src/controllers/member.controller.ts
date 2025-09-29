@@ -24,6 +24,7 @@ import multer from 'multer';
 import { s3Service, s3ServiceInstance } from '../services/s3.service';
 import { MemberProfileDto, MemberProfileDtoFields } from '../dtos/member-profile.dto';
 import { ownerOnly } from '../decorators/owner-only.decorator';
+import { validateEmail } from '../utils/validateEmail';
 
 const storage = multer.memoryStorage();
 const upload = multer({
@@ -96,6 +97,15 @@ export class MemberController {
     })
     memberDto: Partial<MemberProfileDto>,
   ): Promise<void> {
+    if ('email' in memberDto) {
+      console.log('Validating email:', memberDto.email);
+      const { valid, message } = validateEmail(memberDto);
+      if (!valid) {
+        console.log('Email validation failed:', message);
+        throw new HttpErrors.BadRequest(message);
+      }
+      console.log('Email validation passed');
+    }
     await this.memberRepository.updateById(id, memberDto);
   }
 
