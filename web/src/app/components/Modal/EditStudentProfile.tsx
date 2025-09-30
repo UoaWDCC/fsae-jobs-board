@@ -9,15 +9,31 @@ import { useValidateEmail } from '@/hooks/useValidateEmail';
 import { useEffect, useState } from 'react';
 import { Member } from '@/models/member.model';
 import { editMemberById } from '@/api/member';
+import { sendReverificationEmail } from '@/api/verification';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import type { RootState } from '@/app/store';
+import { send } from 'vite';
+import { useNavigate } from 'react-router-dom';
+import { PasswordFormModal } from './PasswordFormModal';
+import EditModal from './EditModal';
+import { verifyPassword } from '@/api/verification';
 
-export const EditStudentProfile = ({ close, userData, setUserData }: { close: () => void , userData: Member | null, setUserData: React.Dispatch<React.SetStateAction<Member | null>>}) => {
+export const EditStudentProfile = ({
+  close,
+  userData,
+  setUserData,
+}: {
+  close: () => void;
+  userData: Member | null;
+  setUserData: React.Dispatch<React.SetStateAction<Member | null>>;
+}) => {
   const [activeTab, setActiveTab] = useState('about');
   const [isModalOpen, setIsModalOpen] = useState(true);
+  const [passwordModalOpen, setPasswordModalOpen] = useState(false);
   const [newUserData, setNewUserData] = useState<Partial<Member> | null>(null); // partial because the database schema is currently messed up
   const { validate } = useValidateEmail();
+  const navigate = useNavigate();
 
   const userId = useSelector((state: RootState) => state.user.id); // the id of the local user
 
@@ -35,13 +51,47 @@ export const EditStudentProfile = ({ close, userData, setUserData }: { close: ()
       case 'about':
         return <AboutTab newUserData={newUserData} setNewUserData={setNewUserData} />;
       case 'education':
-        return <EducationTab newUserData={newUserData} setNewUserData={setNewUserData} />
+        return <EducationTab newUserData={newUserData} setNewUserData={setNewUserData} />;
       case 'skills':
-        return <SkillsTab newUserData={newUserData} setNewUserData={setNewUserData}/>;
+        return <SkillsTab newUserData={newUserData} setNewUserData={setNewUserData} />;
       case 'cv':
         return <CVTab />;
       default:
         return null;
+    }
+  };
+
+  const handlePasswordVerify = async (password: string) => {
+    if (!newUserData || !userData) return;
+    try {
+      // call backend to verify password
+      const isValid = await verifyPassword(userData.email, password);
+      if (!isValid.data) {
+        toast.error('Incorrect password');
+        return;
+      }
+      toast.success('Correct password!');
+
+      // send verification email if password correct
+      await sendReverificationEmail(newUserData.email!, 'member', newUserData.firstName!);
+      toast.success('Verification email sent!');
+      // navigate to verification page with email, password, and new email
+      navigate('/verify', { state: { oldEmail: userData.email, password, email: newUserData.email }, replace: true });
+
+      // save changes to other fields except for email
+      const partialMember: Partial<Member> = {};
+      (Object.keys(newUserData) as (keyof Member)[]).forEach((key) => {
+        if (key === 'email') return;
+        if (newUserData[key] !== userData[key]) {
+          partialMember[key] = newUserData[key] as any;
+        }
+      });
+      await editMemberById(userId, partialMember);
+      setUserData(newUserData as Member);
+      close();
+    } catch (err) {
+      toast.error('Failed to verify password or send email');
+      console.error(err);
     }
   };
 
@@ -65,15 +115,20 @@ export const EditStudentProfile = ({ close, userData, setUserData }: { close: ()
         partialMember[key] = newUserData[key] as any;
       }
     });
-
-    close();
+    if (newUserData.email !== userData.email) {
+      // if email has changed, we need to reverify
+      setPasswordModalOpen(true);
+      return;
+    }
+    console.log('save button ran');
     await editMemberById(userId, partialMember);
-  }
+    close();
+  };
 
   useEffect(() => {
     console.log(userData);
     setNewUserData(userData);
-  }, [userData])
+  }, [userData]);
 
   return (
     <Box>
@@ -112,13 +167,13 @@ export const EditStudentProfile = ({ close, userData, setUserData }: { close: ()
           </Tabs.List>
 
           <Tabs.Panel value="about" mt={30}>
-            <AboutTab newUserData={newUserData} setNewUserData={setNewUserData}/>
+            <AboutTab newUserData={newUserData} setNewUserData={setNewUserData} />
           </Tabs.Panel>
           <Tabs.Panel value="education" mt={30}>
             <EducationTab newUserData={newUserData} setNewUserData={setNewUserData} />
           </Tabs.Panel>
           <Tabs.Panel value="skills" mt={30}>
-            <SkillsTab newUserData={newUserData} setNewUserData={setNewUserData}/>
+            <SkillsTab newUserData={newUserData} setNewUserData={setNewUserData} />
           </Tabs.Panel>
           <Tabs.Panel value="cv" mt={30}>
             <CVTab />
@@ -131,6 +186,11 @@ export const EditStudentProfile = ({ close, userData, setUserData }: { close: ()
         </Button>
         <Button onClick={saveFields}>Save</Button>
       </Box>
+      <PasswordFormModal
+        opened={passwordModalOpen}
+        onClose={() => setPasswordModalOpen(false)}
+        onVerify={handlePasswordVerify}
+      />
     </Box>
   );
 };
