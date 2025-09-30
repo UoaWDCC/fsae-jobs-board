@@ -120,7 +120,6 @@ export const EditStudentProfile = ({
       setPasswordModalOpen(true);
       return;
     }
-    console.log('save button ran');
     await editMemberById(userId, partialMember);
     close();
   };
