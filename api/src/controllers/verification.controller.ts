@@ -300,12 +300,15 @@ export class VerificationController {
     if (!member) {
       throw new HttpErrors.NotFound('Member not found');
     }
-
-    const isPasswordValid = await this.passwordHasher.comparePassword(
-      password,
-      member.password,
-    );
-    return isPasswordValid;
+    try {
+      const isPasswordValid = await this.passwordHasher.comparePassword(
+        password,
+        member.password,
+      );
+      return isPasswordValid;
+    } catch (err) {
+      throw new HttpErrors.InternalServerError('Password verification failed');
+    }
   }
 
   async sendVerificationEmail(email: string, firstName: string) {
