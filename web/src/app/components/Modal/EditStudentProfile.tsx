@@ -65,7 +65,7 @@ export const EditStudentProfile = ({
     if (!newUserData || !userData) return;
     try {
       // call backend to verify password
-      const isValid = await verifyPassword(userData.email, password);
+      const isValid = await verifyPassword(userData.email, password, 'member');
       if (!isValid.data) {
         toast.error('Incorrect password');
         return;
