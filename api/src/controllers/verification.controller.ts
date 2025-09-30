@@ -85,30 +85,22 @@ export class VerificationController {
       throw new HttpErrors.InternalServerError('User role invalid');
     }
 
-    let user;
+    const userEmail = oldEmail ? oldEmail : email;
 
-    if (oldEmail) {
-      // if oldEmail is provided, this is a re-verification for email change
-      user = await roleRepository.findOne({
-        where: {email: oldEmail},
-      });
-      if (!user) {
-        throw new HttpErrors.NotFound(
-          'User with old email for reverification not found',
-        );
-      }
-      // update user's email to the new email
-      await roleRepository.updateById(user.id, {email: verification.email});
-    } else {
-      // normal verification during registration
-      user = await roleRepository.findOne({
-        where: {email: verification.email},
-      });
-      if (!user) {
-        throw new HttpErrors.NotFound('User not found');
-      }
-      // mark new user as verified
+    const user = await roleRepository.findOne({
+      where: {email: userEmail},
+    });
+    if (!user) {
+      throw new HttpErrors.NotFound('User not found');
+    }
+
+    if (userEmail == email) {
+      // if email is same, mark new user as verified
       await roleRepository.updateById(user.id, {verified: true});
+    } else {
+      // if oldEmail is provided, this is a re-verification for email change
+      // update email and keep verified as true
+      await roleRepository.updateById(user.id, {email: email});
     }
 
     // delete the verification record
@@ -126,7 +118,7 @@ export class VerificationController {
             type: 'object',
             properties: {
               email: {type: 'string'},
-              oldEmail: {type: 'string'}
+              oldEmail: {type: 'string'},
             },
             required: ['email'],
           },
