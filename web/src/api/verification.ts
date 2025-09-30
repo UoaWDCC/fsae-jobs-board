@@ -4,7 +4,7 @@ export async function sendReverificationEmail(email: string, role: 'member' | 'a
   try {
       return await apiInstance.post('/send-reverification', { email, role, firstName });
   } catch (e) {
-    throw Error('An unknown error occurred while sending verification email.');
+    throw Error(`Error: ${e}`);
   }
 }
 
