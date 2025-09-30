@@ -281,8 +281,9 @@ export class VerificationController {
             properties: {
               email: {type: 'string'},
               password: {type: 'string'},
+              role: {type: 'string'},
             },
-            required: ['email', 'password'],
+            required: ['email', 'password', 'role'],
           },
         },
       },
@@ -290,20 +291,30 @@ export class VerificationController {
     body: {
       email: string;
       password: string;
+      role: 'member' | 'alumni' | 'sponsor' | 'admin';
     },
   ): Promise<boolean> {
-    const {email, password} = body;
-    const member = await this.memberRepository.findOne({
+    const {email, password, role} = body;
+
+    const roleRepository =
+      this.repositoryMap[
+        role as 'member' | 'alumni' | 'sponsor' | 'admin'
+      ];
+    if (!roleRepository) {
+      throw new HttpErrors.InternalServerError('Role repository not found');
+    }
+
+    const user = await roleRepository.findOne({
       where: {email},
     });
 
-    if (!member) {
+    if (!user) {
       throw new HttpErrors.NotFound('Member not found');
     }
     try {
       const isPasswordValid = await this.passwordHasher.comparePassword(
         password,
-        member.password,
+        user.password,
       );
       return isPasswordValid;
     } catch (err) {
