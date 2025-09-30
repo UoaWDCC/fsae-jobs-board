@@ -16,26 +16,36 @@ import {
   del,
   requestBody,
   response,
+  HttpErrors,
 } from '@loopback/rest';
 import {FsaeRole, Sponsor} from '../models';
 import {SponsorRepository} from '../repositories';
-import { authenticate } from '@loopback/authentication';
-import { authorize } from '@loopback/authorization';
+import {authenticate} from '@loopback/authentication';
+import {authorize} from '@loopback/authorization';
 import {inject} from '@loopback/core';
 import {SecurityBindings, UserProfile} from '@loopback/security';
-import { SponsorProfileDto, SponsorProfileDtoFields } from '../dtos/sponsor-profile.dto';
-import { ownerOnly } from '../decorators/owner-only.decorator';
+import {
+  SponsorProfileDto,
+  SponsorProfileDtoFields,
+} from '../dtos/sponsor-profile.dto';
+import {ownerOnly} from '../decorators/owner-only.decorator';
+import {validateEmail} from '../utils/validateEmail';
 
 @authenticate('fsae-jwt')
 export class SponsorController {
   constructor(
     @inject(SecurityBindings.USER) protected currentUserProfile: UserProfile,
     @repository(SponsorRepository)
-    public sponsorRepository : SponsorRepository, 
+    public sponsorRepository: SponsorRepository,
   ) {}
 
   @authorize({
-    allowedRoles: [FsaeRole.ALUMNI, FsaeRole.MEMBER, FsaeRole.SPONSOR, FsaeRole.ADMIN],
+    allowedRoles: [
+      FsaeRole.ALUMNI,
+      FsaeRole.MEMBER,
+      FsaeRole.SPONSOR,
+      FsaeRole.ADMIN,
+    ],
   })
   @get('/user/sponsor')
   @response(200, {
@@ -94,6 +104,15 @@ export class SponsorController {
     })
     sponsorDto: Partial<SponsorProfileDto>,
   ): Promise<void> {
+    if ('email' in sponsorDto) {
+      console.log('Validating email:', sponsorDto.email);
+      const {valid, message} = validateEmail(sponsorDto);
+      if (!valid) {
+        console.log('Email validation failed:', message);
+        throw new HttpErrors.BadRequest(message);
+      }
+      console.log('Email validation passed');
+    }
     await this.sponsorRepository.updateById(id, sponsorDto);
   }
 
