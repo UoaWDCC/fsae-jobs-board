@@ -203,7 +203,7 @@ export class RegisterController {
     await this.initiateVerification(
       createAlumniDTO.email,
       createAlumniDTO.firstName,
-      FsaeRole.ADMIN,
+      FsaeRole.ALUMNI,
     );
 
     return newAlumni;
