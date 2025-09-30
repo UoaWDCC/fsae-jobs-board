@@ -126,6 +126,7 @@ export class VerificationController {
             type: 'object',
             properties: {
               email: {type: 'string'},
+              oldEmail: {type: 'string'}
             },
             required: ['email'],
           },
@@ -134,14 +135,17 @@ export class VerificationController {
     })
     verificationDto: {
       email: string;
+      oldEmail?: string;
     },
   ): Promise<boolean> {
-    const {email} = verificationDto;
+    const {email, oldEmail} = verificationDto;
 
     // Find the existing verification entry
     const verification = await this.verificationRepository.findOne({
       where: {email},
     });
+
+    console.log(verification);
 
     if (!verification) {
       throw new HttpErrors.NotFound('Verification record not found');
@@ -155,7 +159,12 @@ export class VerificationController {
       throw new HttpErrors.InternalServerError('Role repository not found');
     }
 
-    const user = await roleRepository.findOne({where: {email}});
+    // determine which email to use to find user
+    // if oldEmail is provided, use that to find user for re-verification
+    // otherwise use the new email for new user verification
+    const userEmail = oldEmail ? oldEmail : email;
+
+    const user = await roleRepository.findOne({where: {email: userEmail}});
 
     if (!user) {
       throw new HttpErrors.NotFound('User not found');
