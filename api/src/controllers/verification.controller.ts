@@ -239,19 +239,35 @@ export class VerificationController {
       firstName,
     );
 
+    if (!verificationCode) {
+      throw new HttpErrors.InternalServerError(
+        'Failed to generate verification code',
+      );
+    }
+
     // delete any existing verification records for this email
-    await this.verificationRepository.deleteAll({email});
-
+    try {
+      await this.verificationRepository.deleteAll({email});
+    } catch (err) {
+      throw new HttpErrors.InternalServerError(
+        'Failed to clear old verification records',
+      );
+    }
     // create a new verification record
-    await this.verificationRepository.create({
-      email: email,
-      role: role,
-      createdAt: Date.now(),
-      expiresAt: Date.now() + 1000 * 60 * 10,
-      verificationCode: verificationCode,
-      resentOnce: true,
-    });
-
+    try {
+      await this.verificationRepository.create({
+        email: email,
+        role: role,
+        createdAt: Date.now(),
+        expiresAt: Date.now() + 1000 * 60 * 10,
+        verificationCode: verificationCode,
+        resentOnce: true,
+      });
+    } catch (err) {
+      throw new HttpErrors.InternalServerError(
+        'Failed to create new verification record',
+      );
+    }
     return true;
   }
 
