@@ -8,9 +8,9 @@ export async function sendReverificationEmail(email: string, role: 'member' | 'a
   }
 }
 
-export async function verifyPassword(email: string, password: string) {
+export async function verifyPassword(email: string, password: string, role: 'member' | 'alumni' | 'sponsor' | 'admin') {
   try {
-      return await apiInstance.post('/verify-password', { email, password });
+      return await apiInstance.post('/verify-password', { email, password, role });
   } catch (e) {
     throw Error(`Error: ${e}`);
   }
