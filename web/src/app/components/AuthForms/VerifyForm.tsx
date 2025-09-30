@@ -88,7 +88,7 @@ export function VerifyForm() {
     const verificationCode = code.join("");
 
     try {
-      const response = await fetch('http://localhost:3000/verify', {
+      const response = await fetch('http://127.0.0.1:3000/verify', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -96,6 +96,7 @@ export function VerifyForm() {
         body: JSON.stringify({
           email: location.state.email,
           verification_code: verificationCode,
+          oldEmail: location.state.oldEmail,
         }),
       });
 
