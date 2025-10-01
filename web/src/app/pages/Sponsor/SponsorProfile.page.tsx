@@ -22,9 +22,11 @@ import { RootState } from '../../../app/store';
 import { jwtDecode } from 'jwt-decode';
 import DeactivateAccountModal from '../../components/Modal/DeactivateAccountModal';
 import { editSponsorById } from '@/api/sponsor';
-
-export function SponsorProfile() {
-  // UseState for future modal implementation
+import { useMediaQuery } from '@mantine/hooks';
+ 
+ export function SponsorProfile() {
+  const isMobile = useMediaQuery('(max-width: 500px)');
+   // UseState for future modal implementation
   const [openModal, setOpenModal] = useState(false);
   const [modalType, setModalType] = useState('');
   const [modalContent, setModalContent] = useState<React.ReactNode>(null);
@@ -250,7 +252,7 @@ export function SponsorProfile() {
           //onClick={handleBannerChange}
           style={{ backgroundImage: `url(${userData?.bannerURL})` }}
         />
-        <Box className={styles.name} pl={170} pt={140}>
+        <Box className={styles.name}>
           <EditableField
             value={userData?.companyName || ''}
             placeholder="Company name"
@@ -275,13 +277,13 @@ export function SponsorProfile() {
 
         <Avatar
           src={userData?.avatarURL}
-          size={150}
-          mt={-100}
-          ml={10}
+          size={isMobile ? 110 : 150}
+          mt={isMobile ? -55 : -100}
+          ml={isMobile ? 0 : 10}
           className={styles.avatar}
           //onClick={handleAvatarChange}
         />
-        <Box mt={-30} ml={170} className={styles.text}>
+        <Box className={styles.text}>
           <EditableField
             value={userData?.industry || ''}
             placeholder="Click to add industry"
