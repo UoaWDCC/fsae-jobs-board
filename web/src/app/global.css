@@ -1,4 +1,10 @@
 body {
   color: white;
   background-color: black;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.mantine-Grid-inner {
+  max-width: 100% !important;
 }

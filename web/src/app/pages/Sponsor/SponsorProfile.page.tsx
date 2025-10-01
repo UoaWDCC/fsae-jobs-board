@@ -304,7 +304,7 @@ export function SponsorProfile() {
       </Flex>
 
       <Grid>
-        <Grid.Col span={{ md: 2.5, xs: 12 }}>
+        <Grid.Col span={{ md: 3, xs: 12 }}>
           {/* CONTACT */}
           <Box ml={20} mt={15}>
             <Title order={5}>Contact</Title>
