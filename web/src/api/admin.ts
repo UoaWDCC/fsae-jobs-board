@@ -51,4 +51,15 @@ export const adminApi = {
   ): Promise<void> {
     await apiInstance.patch(`user/admin/activate/${id}`, {role});
   },
+
+  async createAdmin(adminData: {
+    email: string;
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+    role: FsaeRole.ALUMNI | FsaeRole.MEMBER;
+  }): Promise<{id: string; email: string; message: string}> {
+    const {data} = await apiInstance.post<{id: string; email: string; message: string}>('user/admin', adminData);
+    return data;
+  },
 };

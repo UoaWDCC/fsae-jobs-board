@@ -3,6 +3,7 @@ import {
 } from '@loopback/repository';
 import {service} from '@loopback/core';
 import {
+  del,
   get,
   HttpErrors,
   param,
@@ -14,12 +15,13 @@ import {
 import {authenticate} from '@loopback/authentication';
 import {authorize} from '@loopback/authorization';
 
-import {Alumni, FsaeRole, FsaeUser, Member, Sponsor} from '../models';
+import {Alumni, FsaeRole, FsaeUser, Member, Sponsor, Admin} from '../models';
 import {
   AlumniRepository,
   MemberRepository,
   SponsorRepository,
-  AdminLogRepository
+  AdminLogRepository,
+  AdminRepository
 } from '../repositories';
 import {AdminReview} from './controller-types/admin.controller.types';
 import { AdminStatus } from '../models/admin.status';
@@ -33,6 +35,7 @@ export class AdminController {
     @repository(AlumniRepository) private alumniRepository: AlumniRepository,
     @repository(MemberRepository) private memberRepository: MemberRepository,
     @repository(SponsorRepository) private sponsorRepository: SponsorRepository,
+    @repository(AdminRepository) private adminRepository: AdminRepository,
     @service(AdminLogService) private adminLogService: AdminLogService,
     @inject(SecurityBindings.USER) private currentUser: UserProfile,
 
@@ -352,16 +355,12 @@ export class AdminController {
         'application/json': {
           schema: {
             type: 'object',
-            required: ['email', 'firstName', 'lastName', 'phoneNumber', 'role'],
+            required: ['email', 'firstName', 'lastName', 'phoneNumber'],
             properties: {
               email: {type: 'string', format: 'email'},
               firstName: {type: 'string'},
               lastName: {type: 'string'},
               phoneNumber: {type: 'string'},
-              role: {
-                type: 'string',
-                enum: [FsaeRole.ALUMNI, FsaeRole.MEMBER]
-              }
             }
           }
         }
@@ -372,30 +371,19 @@ export class AdminController {
       firstName: string;
       lastName: string;
       phoneNumber: string;
-      role: FsaeRole.ALUMNI | FsaeRole.MEMBER;
     }
   ): Promise<{id: string; email: string; message: string}> {
-    const {email, firstName, lastName, phoneNumber, role} = adminData;
-
-    // Pick the correct repository based on role
-    let repo;
-    if (role === FsaeRole.ALUMNI) {
-      repo = this.alumniRepository;
-    } else if (role === FsaeRole.MEMBER) {
-      repo = this.memberRepository;
-    } else {
-      throw new HttpErrors.BadRequest(`Unsupported role "${role}" for admin creation`);
-    }
+    const {email, firstName, lastName, phoneNumber} = adminData;
 
     // Check if user with this email already exists
-    const existingUser = await repo.findOne({where: {email}});
+    const existingUser = await this.adminRepository.findOne({where: {email}});
     if (existingUser) {
-      throw new HttpErrors.Conflict(`User with email ${email} already exists`);
+      throw new HttpErrors.Conflict(`Admin with email ${email} already exists`);
     }
 
     try {
       // Create the new admin user with pre-approved status
-      const newAdmin = await repo.create({
+      const newAdmin = await this.adminRepository.create({
         email,
         firstName,
         lastName,
@@ -410,9 +398,9 @@ export class AdminController {
         this.currentUser[securityId] as string,
         {
           message: `Admin account created`,
-          targetType: role.toLowerCase(),
+          targetType: 'admin',
           targetId: newAdmin.id.toString(),
-          memberType: role
+          memberType: FsaeRole.ADMIN
         }
       );
 
@@ -423,6 +411,79 @@ export class AdminController {
       };
     } catch (error: any) {
       throw new HttpErrors.InternalServerError(`Failed to create admin account: ${error.message}`);
+    }
+  }
+
+  /**
+   * DELETE /user/admin/{id}
+   * Delete an admin account.
+   */
+  @authenticate('fsae-jwt')
+  @authorize({allowedRoles: [FsaeRole.ADMIN]})
+  @del('/user/admin/{id}')
+  @response(204, {description: 'Admin account deleted successfully'})
+  async deleteAdmin(
+    @param.path.string('id') id: string,
+    @requestBody({
+      required: true,
+      description: 'Deletion reason',
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            required: ['reason'],
+            properties: {
+              reason: {
+                type: 'string',
+              },
+            },
+          },
+        },
+      },
+    })
+    body: {reason: string},
+  ): Promise<void> {
+    const {reason} = body;
+
+    // Prevent self-deletion
+    if (id === this.currentUser[securityId]) {
+      throw new HttpErrors.BadRequest('Cannot delete your own admin account');
+    }
+
+    // Count total admin accounts
+    const totalAdmins = await this.adminRepository.count({
+      adminStatus: AdminStatus.APPROVED,
+      activated: true
+    });
+    
+    // Prevent deletion of the last admin
+    if (totalAdmins.count <= 1) {
+      throw new HttpErrors.BadRequest('Cannot delete the last remaining admin account');
+    }
+
+    try {
+      // Verify the user exists before deletion
+      const user = await this.adminRepository.findById(id);
+      
+      // Delete the admin user
+      await this.adminRepository.deleteById(id);
+
+      // Log the admin deletion
+      await this.adminLogService.createAdminLog(
+        this.currentUser[securityId] as string,
+        {
+          message: `Admin account deleted`,
+          reason: reason,
+          targetType: 'admin',
+          targetId: id,
+          memberType: FsaeRole.ADMIN
+        }
+      );
+    } catch (e: any) {
+      if (e.code === 'ENTITY_NOT_FOUND') {
+        throw new HttpErrors.NotFound(`Admin ${id} not found`);
+      }
+      throw e;
     }
   }
 }
