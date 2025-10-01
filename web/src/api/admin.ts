@@ -71,4 +71,18 @@ export const adminApi = {
       data: {reason},
     });
   },
+
+  async getAdmins(): Promise<{
+    id: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+    activated: boolean;
+    adminStatus: string;
+    createdAt: string;
+  }[]> {
+    const {data} = await apiInstance.get('user/admin/list');
+    return data;
+  },
 };

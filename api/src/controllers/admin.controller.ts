@@ -486,4 +486,60 @@ export class AdminController {
       throw e;
     }
   }
+
+  /**
+   * GET /user/admin/list
+   * Get a list of all admin accounts.
+   */
+  @authenticate('fsae-jwt')
+  @authorize({allowedRoles: [FsaeRole.ADMIN]})
+  @get('/user/admin/list')
+  @response(200, {
+    description: 'Array of all admin accounts',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              id: {type: 'string'},
+              email: {type: 'string', format: 'email'},
+              firstName: {type: 'string'},
+              lastName: {type: 'string'},
+              phoneNumber: {type: 'string'},
+              activated: {type: 'boolean'},
+              adminStatus: {type: 'string'},
+              createdAt: {type: 'string', format: 'date-time'},
+            },
+          },
+        },
+      },
+    },
+  })
+  async getAllAdmins(): Promise<Partial<Admin>[]> {
+    const admins = await this.adminRepository.find({
+      fields: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        phoneNumber: true,
+        activated: true,
+        adminStatus: true,
+        createdAt: true,
+      },
+    });
+
+    return admins.map(admin => ({
+      id: admin.id?.toString(),
+      email: admin.email,
+      firstName: admin.firstName,
+      lastName: admin.lastName,
+      phoneNumber: admin.phoneNumber,
+      activated: admin.activated,
+      adminStatus: admin.adminStatus,
+      createdAt: admin.createdAt,
+    }));
+  }
 }
