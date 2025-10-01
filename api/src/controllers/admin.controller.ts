@@ -7,6 +7,7 @@ import {
   HttpErrors,
   param,
   patch,
+  post,
   requestBody,
   response,
 } from '@loopback/rest';
@@ -319,6 +320,109 @@ export class AdminController {
         throw new HttpErrors.NotFound(`User ${id} not found in ${role} collection`);
       }
       throw e;
+    }
+  }
+
+  /**
+   * POST /user/admin
+   * Create a new admin account.
+   */
+  @authenticate('fsae-jwt')
+  @authorize({allowedRoles: [FsaeRole.ADMIN]})
+  @post('/user/admin')
+  @response(201, {
+    description: 'Admin account created successfully',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'object',
+          properties: {
+            id: {type: 'string'},
+            email: {type: 'string'},
+            message: {type: 'string'}
+          }
+        }
+      }
+    }})
+  async createAdmin(
+    @requestBody({
+      required: true,
+      description: 'Admin account details',
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            required: ['email', 'firstName', 'lastName', 'phoneNumber', 'role'],
+            properties: {
+              email: {type: 'string', format: 'email'},
+              firstName: {type: 'string'},
+              lastName: {type: 'string'},
+              phoneNumber: {type: 'string'},
+              role: {
+                type: 'string',
+                enum: [FsaeRole.ALUMNI, FsaeRole.MEMBER]
+              }
+            }
+          }
+        }
+      }
+    })
+    adminData: {
+      email: string;
+      firstName: string;
+      lastName: string;
+      phoneNumber: string;
+      role: FsaeRole.ALUMNI | FsaeRole.MEMBER;
+    }
+  ): Promise<{id: string; email: string; message: string}> {
+    const {email, firstName, lastName, phoneNumber, role} = adminData;
+
+    // Pick the correct repository based on role
+    let repo;
+    if (role === FsaeRole.ALUMNI) {
+      repo = this.alumniRepository;
+    } else if (role === FsaeRole.MEMBER) {
+      repo = this.memberRepository;
+    } else {
+      throw new HttpErrors.BadRequest(`Unsupported role "${role}" for admin creation`);
+    }
+
+    // Check if user with this email already exists
+    const existingUser = await repo.findOne({where: {email}});
+    if (existingUser) {
+      throw new HttpErrors.Conflict(`User with email ${email} already exists`);
+    }
+
+    try {
+      // Create the new admin user with pre-approved status
+      const newAdmin = await repo.create({
+        email,
+        firstName,
+        lastName,
+        phoneNumber,
+        adminStatus: AdminStatus.APPROVED,
+        activated: true,
+        createdAt: new Date()
+      });
+
+      // Log the admin creation
+      await this.adminLogService.createAdminLog(
+        this.currentUser[securityId] as string,
+        {
+          message: `Admin account created`,
+          targetType: role.toLowerCase(),
+          targetId: newAdmin.id.toString(),
+          memberType: role
+        }
+      );
+
+      return {
+        id: newAdmin.id.toString(),
+        email: newAdmin.email,
+        message: 'Admin account created successfully'
+      };
+    } catch (error: any) {
+      throw new HttpErrors.InternalServerError(`Failed to create admin account: ${error.message}`);
     }
   }
 }
