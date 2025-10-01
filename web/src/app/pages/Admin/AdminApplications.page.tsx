@@ -1,6 +1,5 @@
 import {useState, useEffect, useCallback} from 'react';
 import {Divider, Grid} from '@mantine/core';
-import {Role} from '@/app/type/role';
 import {Status} from '@/app/type/status';
 import {AdminReview} from '@/models/adminReview.model';
 import {adminApi} from '@/api/admin';
@@ -9,11 +8,12 @@ import SearchBar from '@/app/components/SearchBar/SearchBar';
 import AdminDashboardTable from '@/app/components/AdminDashboard/AdminDashboardTable';
 import AdminReviewModal from '@/app/components/Modal/AdminReviewModal';
 import Filter from '@/app/components/Filter/Filter';
+import { FsaeRole } from '@/models/roles';
 
 export function AdminApplications() {
   const [allReviews, setAllReviews] = useState<AdminReview[]>([]);
   const [filteredReview, setFilteredReview] = useState<AdminReview[]>([]);
-  const [filterRoles, setfilterRoles] = useState<Role[]>([]);
+  const [filterRoles, setfilterRoles] = useState<FsaeRole[]>([]);
   const [filterStatus, setFilterStatus] = useState<Status[]>([]);
   const [search, setSearch] = useState('');
   const [isPortrait, setIsPortrait] = useState(window.innerHeight > window.innerWidth);
@@ -50,7 +50,7 @@ export function AdminApplications() {
     setModalOpen(true);
   };
 
-  const approve = async (id: string, role: Role) => {
+  const approve = async (id: string, role: FsaeRole) => {
     const d = detail;
     if (!d) return;
     await adminApi.updateStatus(id, role, Status.APPROVED);
@@ -58,7 +58,7 @@ export function AdminApplications() {
     refresh();
   };
 
-  const reject = async (id: string, role: Role) => {
+  const reject = async (id: string, role: FsaeRole) => {
     const d = detail;
     if (!d) return;
     await adminApi.updateStatus(id, role, Status.REJECTED);
