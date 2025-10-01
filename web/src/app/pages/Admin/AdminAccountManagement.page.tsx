@@ -3,7 +3,6 @@ import { adminApi } from '@/api/admin';
 import {
   Grid,
   Card,
-  Badge,
   Modal,
   Button,
   Textarea,
@@ -13,11 +12,12 @@ import {
   Center,
   SimpleGrid,
   Divider,
-  Text
+  Text,
+  TextInput
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { toast } from 'react-toastify';
-import { IconUser, IconMail, IconPhone, IconCalendar, IconShield, IconTrash } from '@tabler/icons-react';
+import { IconUser, IconMail, IconPhone, IconCalendar, IconShield, IconTrash, IconPlus } from '@tabler/icons-react';
 import SearchBar from '@/app/components/SearchBar/SearchBar';
 
 interface AdminAccount {
@@ -36,10 +36,21 @@ export function AdminAccountManagement() {
   const [filteredAdmins, setFilteredAdmins] = useState<AdminAccount[]>([]);
   const [selectedAdmin, setSelectedAdmin] = useState<AdminAccount | null>(null);
   const [opened, { open, close }] = useDisclosure(false);
+  const [createOpened, { open: openCreate, close: closeCreate }] = useDisclosure(false);
   const [deleteReason, setDeleteReason] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+
+  // Create admin form state
+  const [createForm, setCreateForm] = useState({
+    email: '',
+    firstName: '',
+    lastName: '',
+    phoneNumber: '',
+    password: ''
+  });
 
   useEffect(() => {
     fetchAdmins();
@@ -92,6 +103,30 @@ export function AdminAccountManagement() {
     }
   };
 
+  const handleCreateAdmin = async () => {
+    if (!createForm.email || !createForm.firstName || !createForm.lastName || !createForm.phoneNumber || !createForm.password) {
+      toast.error('Please fill in all fields');
+      return;
+    }
+
+    try {
+      setIsCreating(true);
+      await adminApi.createAdmin(createForm);
+      
+      toast.success('Admin account created successfully');
+      
+      // Reset form and refresh list
+      setCreateForm({ email: '', firstName: '', lastName: '', phoneNumber: '', password: '' });
+      await fetchAdmins();
+      closeCreate();
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || 'Failed to create admin account';
+      toast.error(errorMessage);
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
   const handleCloseModal = () => {
     close();
     setSelectedAdmin(null);
@@ -104,6 +139,10 @@ export function AdminAccountManagement() {
     setDeleteReason('');
   };
 
+  const handleCreateFormChange = (field: string, value: string) => {
+    setCreateForm(prev => ({ ...prev, [field]: value }));
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -112,36 +151,6 @@ export function AdminAccountManagement() {
       hour: '2-digit',
       minute: '2-digit',
     });
-  };
-
-  const getStatusColor = (status: string, activated: boolean) => {
-    if (!activated) return 'red';
-    
-    switch (status?.toLowerCase()) {
-      case 'approved':
-        return 'green';
-      case 'pending':
-        return 'yellow';
-      case 'rejected':
-        return 'red';
-      default:
-        return 'gray';
-    }
-  };
-
-  const getStatusLabel = (status: string, activated: boolean) => {
-    if (!activated) return 'Deactivated';
-    
-    switch (status?.toLowerCase()) {
-      case 'approved':
-        return 'Active';
-      case 'pending':
-        return 'Pending';
-      case 'rejected':
-        return 'Rejected';
-      default:
-        return 'Unknown';
-    }
   };
 
   if (loading) {
@@ -163,12 +172,23 @@ export function AdminAccountManagement() {
     <>
       <Grid justify="center" align="flex-start">
         <Grid.Col span={12} px={40}>
-          <SearchBar
-            search={search}
-            setSearch={setSearch}
-            title="Admin Account Management"
-            placeholder="Search Admin Accounts"
-          />
+          <Group justify="space-between" mb="md">
+            <div style={{ flex: 1 }}>
+              <SearchBar
+                search={search}
+                setSearch={setSearch}
+                title="Admin Account Management"
+                placeholder="Search Admin Accounts"
+              />
+            </div>
+            <Button
+              leftSection={<IconPlus size={16} />}
+              onClick={openCreate}
+              mt="xl"
+            >
+              Create Admin
+            </Button>
+          </Group>
 
           {filteredAdmins.length === 0 ? (
             <Center py={80}>
@@ -197,12 +217,6 @@ export function AdminAccountManagement() {
                         {admin.firstName} {admin.lastName}
                       </Text>
                     </Group>
-                    <Badge
-                      color={getStatusColor(admin.adminStatus, admin.activated)}
-                      variant="light"
-                    >
-                      {getStatusLabel(admin.adminStatus, admin.activated)}
-                    </Badge>
                   </Group>
 
                   <Stack gap="xs">
@@ -231,6 +245,79 @@ export function AdminAccountManagement() {
           )}
         </Grid.Col>
       </Grid>
+
+      {/* Create Admin Modal */}
+      <Modal
+        opened={createOpened}
+        onClose={closeCreate}
+        title={
+          <Group gap="xs">
+            <IconPlus size={20} />
+            <Text fw={600}>Create Admin Account</Text>
+          </Group>
+        }
+        size="md"
+        centered
+      >
+        <Stack gap="md">
+          <SimpleGrid cols={2} spacing="md">
+            <TextInput
+              label="First Name"
+              placeholder="Enter first name"
+              value={createForm.firstName}
+              onChange={(e) => handleCreateFormChange('firstName', e.currentTarget.value)}
+              required
+            />
+            <TextInput
+              label="Last Name"
+              placeholder="Enter last name"
+              value={createForm.lastName}
+              onChange={(e) => handleCreateFormChange('lastName', e.currentTarget.value)}
+              required
+            />
+          </SimpleGrid>
+
+          <TextInput
+            label="Email"
+            placeholder="Enter email address"
+            type="email"
+            value={createForm.email}
+            onChange={(e) => handleCreateFormChange('email', e.currentTarget.value)}
+            required
+          />
+
+          <TextInput
+            label="Phone Number"
+            placeholder="Enter phone number"
+            value={createForm.phoneNumber}
+            onChange={(e) => handleCreateFormChange('phoneNumber', e.currentTarget.value)}
+            required
+          />
+
+          <TextInput
+            label="Password"
+            placeholder="Enter password"
+            type="password"
+            value={createForm.password}
+            onChange={(e) => handleCreateFormChange('password', e.currentTarget.value)}
+            required
+          />
+
+          <Group justify="flex-end" mt="md">
+            <Button variant="default" onClick={closeCreate}>
+              Cancel
+            </Button>
+            <Button
+              leftSection={<IconPlus size={16} />}
+              onClick={handleCreateAdmin}
+              disabled={isCreating}
+              loading={isCreating}
+            >
+              Create Admin
+            </Button>
+          </Group>
+        </Stack>
+      </Modal>
 
       {/* Admin Details Modal */}
       <Modal
@@ -282,18 +369,6 @@ export function AdminAccountManagement() {
               <Text size="sm" c="dimmed">
                 {selectedAdmin.phoneNumber}
               </Text>
-            </div>
-
-            <div>
-              <Text size="sm" fw={500} mb={4}>
-                Status
-              </Text>
-              <Badge
-                color={getStatusColor(selectedAdmin.adminStatus, selectedAdmin.activated)}
-                variant="light"
-              >
-                {getStatusLabel(selectedAdmin.adminStatus, selectedAdmin.activated)}
-              </Badge>
             </div>
 
             <div>

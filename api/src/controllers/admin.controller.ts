@@ -28,6 +28,8 @@ import { AdminStatus } from '../models/admin.status';
 import {inject} from '@loopback/core';
 import {SecurityBindings, UserProfile, securityId} from '@loopback/security';
 import { AdminLogService } from '../services/admin-log.service';
+import { PasswordHasherService } from '../services/password-hasher.service';
+import {CoreBindings, Application} from '@loopback/core';
 
 @authenticate('fsae-jwt')
 export class AdminController {
@@ -38,7 +40,7 @@ export class AdminController {
     @repository(AdminRepository) private adminRepository: AdminRepository,
     @service(AdminLogService) private adminLogService: AdminLogService,
     @inject(SecurityBindings.USER) private currentUser: UserProfile,
-
+    @inject(CoreBindings.APPLICATION_INSTANCE) private app: Application,
   ) {}
 
    /**
@@ -355,12 +357,13 @@ export class AdminController {
         'application/json': {
           schema: {
             type: 'object',
-            required: ['email', 'firstName', 'lastName', 'phoneNumber'],
+            required: ['email', 'firstName', 'lastName', 'phoneNumber', 'password'],
             properties: {
               email: {type: 'string', format: 'email'},
               firstName: {type: 'string'},
               lastName: {type: 'string'},
               phoneNumber: {type: 'string'},
+              password: {type: 'string'},
             }
           }
         }
@@ -371,9 +374,10 @@ export class AdminController {
       firstName: string;
       lastName: string;
       phoneNumber: string;
-    }
+      password: string;
+    },
   ): Promise<{id: string; email: string; message: string}> {
-    const {email, firstName, lastName, phoneNumber} = adminData;
+    const {email, firstName, lastName, phoneNumber, password} = adminData;
 
     // Check if user with this email already exists
     const existingUser = await this.adminRepository.findOne({where: {email}});
@@ -382,14 +386,23 @@ export class AdminController {
     }
 
     try {
+      // Manually resolve the PasswordHasherService to avoid binding conflicts
+      const passwordHasherService = await this.app.get<PasswordHasherService>('services.PasswordHasherService');
+      
+      // Hash the password before storing
+      const hashedPassword = await passwordHasherService.hashPassword(password);
+
       // Create the new admin user with pre-approved status
       const newAdmin = await this.adminRepository.create({
         email,
         firstName,
         lastName,
         phoneNumber,
+        password: hashedPassword,
+        role: FsaeRole.ADMIN,
         adminStatus: AdminStatus.APPROVED,
         activated: true,
+        verified: true,
         createdAt: new Date()
       });
 
