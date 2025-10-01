@@ -1,4 +1,4 @@
 
 export function AdminAccountManagement() {
-    return
+    return <p>test</p>;
 }
