@@ -62,4 +62,13 @@ export const adminApi = {
     const {data} = await apiInstance.post<{id: string; email: string; message: string}>('user/admin', adminData);
     return data;
   },
+
+  async deleteAdmin(
+    id: string,
+    reason: string,
+  ): Promise<void> {
+    await apiInstance.delete(`user/admin/${id}`, {
+      data: {reason},
+    });
+  },
 };
