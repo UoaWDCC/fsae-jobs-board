@@ -1,0 +1,98 @@
+:root {
+  --customPapayaOrange: #F78F1F;
+}
+
+/* Editor-specific mobile styles */
+@media (max-width: 768px) {
+  .editorWrapper {
+    padding: 1rem 0.75rem;
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden; /* prevent horizontal scroll */
+  }
+
+  .contentWrapper {
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 0 0.5rem;
+  }
+
+  .companyLogo {
+    width: 120px;
+    height: 120px;
+    margin: 0.25rem auto 0.5rem;
+  }
+
+  .leftColumn,
+  .rightColumn {
+    width: 100%;
+    flex: unset;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .titleRow {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .badgeField {
+    width: 100%;
+    display: block;
+  }
+
+  .badgeLabel {
+    margin-bottom: 0.25rem;
+    font-size: 0.95rem;
+  }
+
+  .leftFields {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .titleInput,
+  .detailItem,
+  .fullWidth {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  :global(.mantine-Select-root) {
+    min-width: 0 !important;
+  }
+
+  .buttonRow {
+    flex-direction: column;
+    align-items: stretch;
+    margin-top: 0.75rem;
+    margin-bottom: 1rem;
+    order: 99; /* buttons like save and cancel should always be at the bottom */
+    width: 100%;
+  }
+
+  .buttonRow :global(.mantine-Button-root) {
+    width: 100%;
+  }
+
+  :global(.mantine-InputWrapper-root),
+  :global(.mantine-TextInput-root),
+  :global(.mantine-Select-root),
+  :global(.mantine-Textarea-root) {
+    width: 100% !important;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  :global(.mantine-Group-root) {
+    width: 100% !important;
+    box-sizing: border-box;
+  }
+}

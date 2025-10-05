@@ -1,6 +1,8 @@
 import { TextInput, Textarea, Button, Select, Group } from '@mantine/core';
 import { useState, useEffect } from 'react';
 import styles from './JobDetail.module.css';
+import editorStyles from './JobDetailEditor.module.css';
+import { useMediaQuery } from '@mantine/hooks';
 import { Job } from '@/models/job.model';
 import { createJob, updateJob } from '@/api/job';
 import { toast } from 'react-toastify';
@@ -27,6 +29,7 @@ interface FormData {
 }
 
 export function JobDetailEditor({onSave, onCancel, initialData, mode}: JobEditorModalProps) {
+  const isMobile = useMediaQuery('(max-width: 768px)');
   const [formData, setFormData] = useState<FormData>({
     title: '',
     specialisation: '',
@@ -188,8 +191,8 @@ export function JobDetailEditor({onSave, onCancel, initialData, mode}: JobEditor
 
   if (!canEdit) {
     return (
-      <main className={styles.jobDetailPageWrapper}>
-        <div className={styles.contentWrapper}>
+      <main className={isMobile ? `${styles.jobDetailPageWrapper} ${editorStyles.editorWrapper}` : styles.jobDetailPageWrapper}>
+        <div className={isMobile ? `${styles.contentWrapper} ${editorStyles.contentWrapper}` : styles.contentWrapper}>
           <div style={{ textAlign: 'center', padding: '2rem' }}>
             <h2>Access Denied</h2>
             <p>You do not have permission to edit job posts.</p>
@@ -201,11 +204,11 @@ export function JobDetailEditor({onSave, onCancel, initialData, mode}: JobEditor
   }
 
   return (
-    <main className={styles.jobDetailPageWrapper}>
-      <form className={styles.contentWrapper} onSubmit={(e) => handleSubmit(e)}>
-        <div className={styles.leftColumn}>
-          <img src="/WDCCLogo.png" alt="Company Logo" className={styles.companyLogo} />
-          <div className={styles.leftFields}>
+    <main className={isMobile ? `${styles.jobDetailPageWrapper} ${editorStyles.editorWrapper}` : styles.jobDetailPageWrapper}>
+      <form className={isMobile ? `${styles.contentWrapper} ${editorStyles.contentWrapper}` : styles.contentWrapper} onSubmit={(e) => handleSubmit(e)}>
+        <div className={isMobile ? `${styles.leftColumn} ${editorStyles.leftColumn}` : styles.leftColumn}>
+          <img src="/WDCCLogo.png" alt="Company Logo" className={isMobile ? `${styles.companyLogo} ${editorStyles.companyLogo}` : styles.companyLogo} />
+          <div className={isMobile ? `${styles.leftFields} ${editorStyles.leftFields}` : styles.leftFields}>
             <TextInput
               label="Salary"
               placeholder="Enter salary"
@@ -235,19 +238,19 @@ export function JobDetailEditor({onSave, onCancel, initialData, mode}: JobEditor
           </div>
         </div>
 
-        <div className={styles.rightColumn}>
-          <div className={styles.titleRow}>
+        <div className={isMobile ? `${styles.rightColumn} ${editorStyles.rightColumn}` : styles.rightColumn}>
+          <div className={isMobile ? `${styles.titleRow} ${editorStyles.titleRow}` : styles.titleRow}>
             <TextInput
               label="Job Title"
               placeholder="Job Title"
-              className={styles.titleInput}
+              className={isMobile ? `${styles.titleInput} ${editorStyles.titleInput}` : styles.titleInput}
               value={formData.title}
               onChange={(e) => handleInputChange('title', e.currentTarget.value)}
               error={errors.title}
               required
             />
-            <div className={styles.badgeField}>
-              <label className={styles.badgeLabel}>Role Type</label>
+            <div className={isMobile ? `${styles.badgeField} ${editorStyles.badgeField}` : styles.badgeField}>
+              <label className={isMobile ? `${styles.badgeLabel} ${editorStyles.badgeLabel}` : styles.badgeLabel}>Role Type</label>
               <Select
                 data={roleTypeOptions}
                 value={formData.roleType}
@@ -262,7 +265,7 @@ export function JobDetailEditor({onSave, onCancel, initialData, mode}: JobEditor
           <TextInput
             label="Specialisation"
             placeholder="Enter specialisation"
-            className={styles.fullWidth}
+            className={isMobile ? `${styles.fullWidth} ${editorStyles.fullWidth}` : styles.fullWidth}
             value={formData.specialisation}
             onChange={(e) => handleInputChange('specialisation', e.currentTarget.value)}
             error={errors.specialisation}
@@ -273,14 +276,14 @@ export function JobDetailEditor({onSave, onCancel, initialData, mode}: JobEditor
             label="About"
             placeholder="Type job description here"
             minRows={4}
-            className={styles.fullWidth}
+            className={isMobile ? `${styles.fullWidth} ${editorStyles.fullWidth}` : styles.fullWidth}
             value={formData.description}
             onChange={(e) => handleInputChange('description', e.currentTarget.value)}
             error={errors.description}
             required
           />
 
-          <div className={styles.buttonRow}>
+          <div className={isMobile ? `${styles.buttonRow} ${editorStyles.buttonRow}` : styles.buttonRow}>
             <Group gap="sm" wrap="wrap">
               <Button type="submit" loading={loading}>
                 {mode === 'edit' ? 'Update Job' : 'Save & Continue'}

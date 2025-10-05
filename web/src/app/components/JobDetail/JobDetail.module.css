@@ -28,21 +28,8 @@
   box-sizing: border-box;
 }
 
-.leftColumn {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  min-width: 0;
-}
-
-.rightColumn {
-  flex: 2;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  min-width: 0;
-}
+.leftColumn { flex: 1; display: flex; flex-direction: column; gap: 1rem; }
+.rightColumn { flex: 2; display: flex; flex-direction: column; gap: 0.5rem; }
 
 .titleRow {
   display: grid;
@@ -51,26 +38,15 @@
   align-items: end;
   margin-bottom: 0.25rem;
 }
-
-.titleInput,
-.badgeField,
-.fullWidth,
-.detailItem {
-  width: 100%;
-}
-
-.badgeLabel {
-  font-size: 0.9rem;
-  display: block;
-  margin-bottom: 0.35rem;
-}
+.jobTitle { line-height: 1.2; }
+.jobBadge { align-self: end; }
 
 .buttonRow {
   display: flex;
-  justify-content: flex-start;
+  justify-content: flex-start; 
   gap: 12px;
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
+  margin-top: 0.25rem;  
+  margin-bottom: 1.5rem;
 }
 
 .buttonRow :global(.mantine-Button-root) {
@@ -87,66 +63,73 @@
   align-self: center;
 }
 
-/* this prevents horizontal scroll esp for mobile */
-.contentWrapper * {
-  max-width: 100%;
-  box-sizing: border-box;
-}
+.detailRow { margin: 0.35rem 0; }
+.detailLabel { font-weight: 700; display: block; }
+.detailValue { font-weight: 400; display: block; margin-top: 0.15rem; }
 
 @media (min-width: 769px) {
-  .leftColumn .detailRow {
-    font-size: 1.125rem;
-  }
+  .leftColumn .detailRow { font-size: 1.125rem; }
+}
+
+.applyButton {
+  font-size: 1.2rem !important;
+  padding: 1rem !important;
+  height: 3.5rem !important;
 }
 
 
 
-/* carl - mobile frontend enchancements */
-@media (max-width: 768px) {
-  .jobDetailPageWrapper {
-    padding: 1rem 0.75rem;
-  }
 
-  .contentWrapper {
-    flex-direction: column;
-    gap: 1rem;
-  }
+/* carl enchanced mobile layout (different to default desktop) */
+.mobileWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  text-align: center;
+  align-items: center;
+  width: 100%;
+  max-width: 640px;
+  font-size: 1.075rem;
+  line-height: 1.55;
+  padding: 0 0.5rem;
+}
 
-  .companyLogo {
-    width: 140px;
-    height: 140px;
-    margin: 0.25rem auto 0.5rem;
-  }
+.mobileLogo {
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+  border-radius: 12px;
+  background: #151922;
+  margin-bottom: 0.25rem;
+}
 
-  .leftColumn,
-  .rightColumn {
-    width: 100%;
-  }
+.mobileTitle { font-size: 1.85rem; line-height: 1.25; }
 
-  .titleRow {
-    grid-template-columns: 1fr;
-    row-gap: 0.5rem;
-  }
+.mobileDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  width: 100%;
+  max-width: 520px;
+}
 
-  .badgeField {
-    width: 100%;
-  }
+/* bigger fonts for readability as requested by ben*/
+.mobileWrapper .detailRow { font-size: 1.15rem; }
+.mobileWrapper .detailLabel { font-size: 1.15rem; }
 
-  .buttonRow {
-    flex-direction: column;
-    align-items: stretch;
-    margin-top: 1rem;
-    margin-bottom: 1.5rem;
-  }
+.mobileSectionTitle {
+  font-size: 1.3rem;
+  margin-top: 1.25rem; 
+}
 
-  :global(.mantine-InputWrapper-root),
-  :global(.mantine-TextInput-root),
-  :global(.mantine-Select-root),
-  :global(.mantine-Textarea-root) {
-    width: 100%;
-  }
+.mobileBody { font-size: 1.075rem; }
 
-  :global(.mantine-Group-root) {
-    width: 100%;
-  }
+.mobileButtonRow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  width: 100%;
+  max-width: 520px;
+  margin-top: 0.25rem; 
+  margin-bottom: 1.25rem; 
 }

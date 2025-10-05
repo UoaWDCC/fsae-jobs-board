@@ -190,9 +190,9 @@ function Navbar() {
                   <IconLogout size={35} />
                 </ActionIcon>
               </Group>
-            ) : ( // Render Sign Up/Log In if not logged in
             ) : (
               <>
+                {/* Render Sign Up/Log In if not logged in */}
                 <Menu>
                   <Menu.Target>
                     <Button variant="filled" color="customPapayaOrange">
