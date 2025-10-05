@@ -83,53 +83,31 @@ export function JobDetailEditor({onSave, onCancel, initialData, mode}: JobEditor
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.title.trim()) {
-      newErrors.title = 'Title is required';
-    }
+    if (!formData.title.trim()) newErrors.title = 'Title is required';
 
-    if (!formData.specialisation.trim()) {
-      newErrors.specialisation = 'Specialisation is required';
-    }
+    if (!formData.specialisation.trim()) newErrors.specialisation = 'Specialisation is required';
 
-    if (!formData.description.trim()) {
-      newErrors.description = 'Description is required';
-    }
+    if (!formData.description.trim()) newErrors.description = 'Description is required';
 
-    if (!formData.roleType || formData.roleType.trim() === '') {
-      newErrors.roleType = 'Role type is required';
-    }
-    
-    // Validate roleType is one of the allowed values
+    if (!formData.roleType || formData.roleType.trim() === '') newErrors.roleType = 'Role type is required';
+
     const validRoleTypes = ['Internship', 'Graduate', 'Junior'];
+
     if (formData.roleType && !validRoleTypes.includes(formData.roleType.trim())) {
       newErrors.roleType = 'Role type must be one of: Internship, Graduate, Junior';
     }
 
-    if (!formData.applicationDeadline) {
-      newErrors.applicationDeadline = 'Application deadline is required';
-    }
+    if (!formData.applicationDeadline) newErrors.applicationDeadline = 'Application deadline is required';
 
-    if (!formData.applicationLink.trim()) {
-      newErrors.applicationLink = 'Application link is required';
-    }
-
+    if (!formData.applicationLink.trim()) newErrors.applicationLink = 'Application link is required';
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleInputChange = (field: keyof FormData, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-    
-    // Clear error when user starts typing
-    if (errors[field]) {
-      setErrors(prev => ({
-        ...prev,
-        [field]: ''
-      }));
-    }
+    setFormData(prev => ({ ...prev, [field]: value }));
+    if (errors[field]) setErrors(prev => ({ ...prev, [field]: '' }));
   };
 
   const handleSubmit = async (event?: React.FormEvent) => {
@@ -168,13 +146,7 @@ export function JobDetailEditor({onSave, onCancel, initialData, mode}: JobEditor
           applicationDeadline: new Date(formData.applicationDeadline).toISOString(),
           applicationLink: formData.applicationLink.trim(),
         };
-        
-        // Only include salary if it's not empty
-        if (formData.salary && formData.salary.trim()) {
-          updateData.salary = formData.salary.trim();
-        }
-        
-        console.log('Updating job with data:', updateData);
+        if (formData.salary && formData.salary.trim()) updateData.salary = formData.salary.trim();
         await updateJob(initialData.id, updateData);
         toast.success('Job updated successfully!');
       } else {
@@ -189,31 +161,16 @@ export function JobDetailEditor({onSave, onCancel, initialData, mode}: JobEditor
           datePosted: new Date().toISOString(),
           // Note: publisherID is automatically set by the backend from the current user
         };
-        
-        // Only include salary if it's not empty
-        if (formData.salary && formData.salary.trim()) {
-          jobData.salary = formData.salary.trim();
-        }
-        
-        console.log('Creating job with data:', jobData);
+        if (formData.salary && formData.salary.trim()) jobData.salary = formData.salary.trim();
         await createJob(jobData);
         toast.success('Job created successfully!');
       }
-      
+      onSave && onSave();
     } catch (error: any) {
-      console.error('Error saving job:', error);
-      if (error.response) {
-        console.error('Backend response:', error.response.data);
-        console.error('Backend status:', error.response.status);
-        console.error('Backend headers:', error.response.headers);
-        
-        // Provide more specific error messages
-        const errorMessage = error.response.data?.error?.message || 
-                           error.response.data?.message || 
-                           error.response.statusText || 
-                           'Unknown error';
+      if (error?.response) {
+        const errorMessage = error.response.data?.error?.message || error.response.data?.message || error.response.statusText || 'Unknown error';
         toast.error(`${mode === 'edit' ? 'Failed to update job' : 'Failed to create job'}: ${errorMessage}`);
-      } else if (error.message) {
+      } else if (error?.message) {
         toast.error(`${mode === 'edit' ? 'Failed to update job' : 'Failed to create job'}: ${error.message}`);
       } else {
         toast.error(mode === 'edit' ? 'Failed to update job' : 'Failed to create job');
@@ -236,9 +193,7 @@ export function JobDetailEditor({onSave, onCancel, initialData, mode}: JobEditor
           <div style={{ textAlign: 'center', padding: '2rem' }}>
             <h2>Access Denied</h2>
             <p>You do not have permission to edit job posts.</p>
-            <Button variant="outline" onClick={onCancel}>
-              Go Back
-            </Button>
+            <Button variant="outline" onClick={onCancel}>Go Back</Button>
           </div>
         </div>
       </main>
@@ -248,30 +203,29 @@ export function JobDetailEditor({onSave, onCancel, initialData, mode}: JobEditor
   return (
     <main className={styles.jobDetailPageWrapper}>
       <form className={styles.contentWrapper} onSubmit={(e) => handleSubmit(e)}>
-        {/* Left Column */}
         <div className={styles.leftColumn}>
           <img src="/WDCCLogo.png" alt="Company Logo" className={styles.companyLogo} />
           <div className={styles.leftFields}>
-            <TextInput 
-              label="Salary" 
-              placeholder="Enter salary" 
+            <TextInput
+              label="Salary"
+              placeholder="Enter salary"
               className={styles.detailItem}
               value={formData.salary}
               onChange={(e) => handleInputChange('salary', e.currentTarget.value)}
             />
-            <TextInput 
-              label="Application Deadline" 
+            <TextInput
+              label="Application Deadline"
               type="date"
-              placeholder="Enter application deadline" 
+              placeholder="Enter application deadline"
               className={styles.detailItem}
               value={formData.applicationDeadline}
               onChange={(e) => handleInputChange('applicationDeadline', e.currentTarget.value)}
               error={errors.applicationDeadline}
               required
             />
-            <TextInput 
-              label="Application Link" 
-              placeholder="https://company.com/apply" 
+            <TextInput
+              label="Application Link"
+              placeholder="https://company.com/apply"
               className={styles.detailItem}
               value={formData.applicationLink}
               onChange={(e) => handleInputChange('applicationLink', e.currentTarget.value)}
@@ -281,12 +235,11 @@ export function JobDetailEditor({onSave, onCancel, initialData, mode}: JobEditor
           </div>
         </div>
 
-        {/* Right Column */}
         <div className={styles.rightColumn}>
           <div className={styles.titleRow}>
-            <TextInput 
-              label="Job Title" 
-              placeholder="Job Title" 
+            <TextInput
+              label="Job Title"
+              placeholder="Job Title"
               className={styles.titleInput}
               value={formData.title}
               onChange={(e) => handleInputChange('title', e.currentTarget.value)}
@@ -306,9 +259,29 @@ export function JobDetailEditor({onSave, onCancel, initialData, mode}: JobEditor
             </div>
           </div>
 
+          <TextInput
+            label="Specialisation"
+            placeholder="Enter specialisation"
+            className={styles.fullWidth}
+            value={formData.specialisation}
+            onChange={(e) => handleInputChange('specialisation', e.currentTarget.value)}
+            error={errors.specialisation}
+            required
+          />
+
+          <Textarea
+            label="About"
+            placeholder="Type job description here"
+            minRows={4}
+            className={styles.fullWidth}
+            value={formData.description}
+            onChange={(e) => handleInputChange('description', e.currentTarget.value)}
+            error={errors.description}
+            required
+          />
 
           <div className={styles.buttonRow}>
-            <Group gap="sm">
+            <Group gap="sm" wrap="wrap">
               <Button type="submit" loading={loading}>
                 {mode === 'edit' ? 'Update Job' : 'Save & Continue'}
               </Button>
@@ -317,28 +290,6 @@ export function JobDetailEditor({onSave, onCancel, initialData, mode}: JobEditor
               </Button>
             </Group>
           </div>
-
-          <TextInput 
-            label="Specialisation" 
-            placeholder="Enter specialisation" 
-            className={styles.fullWidth}
-            value={formData.specialisation}
-            onChange={(e) => handleInputChange('specialisation', e.currentTarget.value)}
-            error={errors.specialisation}
-            required
-          />
-
-          <Textarea 
-            label="About" 
-            placeholder="Type job description here" 
-            minRows={4} 
-            className={styles.fullWidth}
-            value={formData.description}
-            onChange={(e) => handleInputChange('description', e.currentTarget.value)}
-            error={errors.description}
-            required
-          />
-
         </div>
       </form>
     </main>

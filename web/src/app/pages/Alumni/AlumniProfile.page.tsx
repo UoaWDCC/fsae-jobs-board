@@ -1,5 +1,4 @@
 import { Card, Avatar, Box, Title, Button, Grid, Flex, Loader, Image, Text } from '@mantine/core';
-import { Card, Avatar, Box, Title, Button, Grid, Flex, Loader, Text } from '@mantine/core';
 import { EditableField } from '../../components/EditableField';
 import styles from '../../styles/SponsorProfile.module.css';
 import { useEffect, useState } from 'react';

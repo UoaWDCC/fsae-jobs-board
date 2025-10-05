@@ -55,10 +55,11 @@ function Navbar() {
       { path: '/members', label: 'Students' },
       { path: '/sponsors', label: 'Sponsors' },
       { path: '/alumni', label: 'Alumni' },
-      {path: '/admin-dashboard', label: 'Dashboard'},
+      { path: '/admin-dashboard', label: 'Dashboard' },
     ],
     [Role.Unknown]: [],
   };
+
   const handleLogout = () => {
     dispatch(resetUser());
     localStorage.removeItem('accessToken');
@@ -98,10 +99,7 @@ function Navbar() {
   };
 
   const [opened, { toggle, open, close }] = useDisclosure();
-  // Initialize based on current width
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768); 
-
-  // Setting modals
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [openModal, setOpenModal] = useState(false);
 
   const handleSetting = () => {
@@ -165,25 +163,23 @@ function Navbar() {
         </Flex>
 
         {/* Desktop Icons/Auth Buttons */}
+        {/* Desktop Icons - Supposed to be seperate layout compared to mobile view */}
         {!isMobile && (
           <Flex gap="md" align="center">
-            {role ? ( // Render icons if logged in
+            {role ? (
               <Group gap={20}>
                 <ActionIcon size={35} variant="subtle" color="white" onClick={handleJobClick}
                  aria-label="See jobs">
-                  <IconBriefcase2 size={35} values='Jobs'/>
+                  <IconBriefcase2 size={35} />
                 </ActionIcon>
-                
                 <ActionIcon size={35} variant="subtle" color="white" onClick={handleProfileClick}
                  aria-label="See profile">
                   <IconUserCircle size={35} />
                 </ActionIcon>
-
                 <ActionIcon size={35} variant="subtle" color="white" onClick={handleSetting}
                  aria-label="Go to settings">
                   <IconSettings size={35} />
                 </ActionIcon>
-
                 {role !== Role.Member && (
                   <ActionIcon size={35} variant="subtle" color="white">
                     <IconBell size={35} />
@@ -195,6 +191,7 @@ function Navbar() {
                 </ActionIcon>
               </Group>
             ) : ( // Render Sign Up/Log In if not logged in
+            ) : (
               <>
                 <Menu>
                   <Menu.Target>
@@ -203,27 +200,17 @@ function Navbar() {
                     </Button>
                   </Menu.Target>
                   <Menu.Dropdown>
-                    <NavLink
-                      to="/signup/member"
-                      style={{ textDecoration: 'none' }}
-                    >
-                      <Menu.Item> Student</Menu.Item>
+                    <NavLink to="/signup/member" style={{ textDecoration: 'none' }}>
+                      <Menu.Item>Student</Menu.Item>
                     </NavLink>
-                    <NavLink
-                      to="/signup/sponsor"
-                      style={{ textDecoration: 'none' }}
-                    >
-                      <Menu.Item> Sponsor</Menu.Item>
+                    <NavLink to="/signup/sponsor" style={{ textDecoration: 'none' }}>
+                      <Menu.Item>Sponsor</Menu.Item>
                     </NavLink>
-                    <NavLink
-                      to="/signup/alumni"
-                      style={{ textDecoration: 'none' }}
-                    >
-                      <Menu.Item> Alumni</Menu.Item>
+                    <NavLink to="/signup/alumni" style={{ textDecoration: 'none' }}>
+                      <Menu.Item>Alumni</Menu.Item>
                     </NavLink>
                   </Menu.Dropdown>
                 </Menu>
-
                 <NavLink to="/login">
                   <Button color="var(--mantine-color-customAzureBlue-1)">Log In</Button>
                 </NavLink>
@@ -251,8 +238,7 @@ function Navbar() {
         padding="md"
         hidden={!isMobile}
       >
-        <AppShell.Navbar p="md" style={{ backgroundColor: 'rgba(0, 0, 0, 0.9)' }}> {/* Adjust background as needed */}
-          {/* Close button inside drawer */}
+        <AppShell.Navbar p="md" style={{ backgroundColor: 'rgba(0, 0, 0, 0.9)' }}>
           <Group justify="flex-end">
             <Burger
               opened={opened}
@@ -267,50 +253,63 @@ function Navbar() {
           {role && isRole(role) ? (
             <>
               {/* Mobile Actions for Logged-in Users */}
-              <Flex
-                justify="center"
-                align="center" // Center items horizontally
-                gap="sm"
-                direction="column"
-              >
+              <Flex justify="center" align="center" gap="sm" direction="column">
                 <Divider my="sm" />
                 <Button
-                  variant="subtle" color="white" fullWidth
+                  size="xl"
+                  radius="md"
+                  variant="light"
+                  color="customPapayaOrange"
+                  fullWidth
                   onClick={() => { handleProfileClick(); close(); }}
-                  leftSection={<IconUserCircle size={20} />}
+                  leftSection={<IconUserCircle size={36} />}
+                  style={{ border: '1px solid white' }}
                 >
-                  Profile
+                  <Text size="xl">Profile</Text>
                 </Button>
                 <Button
-                  variant="subtle" color="white" fullWidth
-                  onClick={() => { handleSetting(); close(); }} // Also close drawer when opening settings
-                  leftSection={<IconSettings size={20} />}
+                  size="xl"
+                  radius="md"
+                  variant="light"
+                  color="customPapayaOrange"
+                  fullWidth
+                  onClick={() => { handleSetting(); close(); }}
+                  leftSection={<IconSettings size={36} />}
+                  style={{ border: '1px solid white' }}
                 >
-                  Settings
+                  <Text size="xl">Settings</Text>
                 </Button>
                 {role !== Role.Member && (
-                  <Button variant="subtle" color="white" fullWidth onClick={close} leftSection={<IconBell size={20} />}>
-                    Notifications
+                  <Button
+                    size="xl"
+                    radius="md"
+                    variant="light"
+                    color="customPapayaOrange"
+                    fullWidth
+                    onClick={close}
+                    leftSection={<IconBell size={36} />}
+                    style={{ border: '1px solid white' }}
+                  >
+                    <Text size="xl">Notifications</Text>
                   </Button>
                 )}
                 <Button
-                  variant="subtle" color="white" fullWidth
+                  size="xl"
+                  radius="md"
+                  variant="light"
+                  color="customPapayaOrange"
+                  fullWidth
                   onClick={() => { handleLogout(); close(); }}
-                  leftSection={<IconLogout size={20} />}
+                  leftSection={<IconLogout size={36} />}
+                  style={{ border: '1px solid white' }}
                 >
-                  Logout
+                  <Text size="xl">Logout</Text>
                 </Button>
               </Flex>
             </>
           ) : (
             <>
-              {/* Mobile Auth for Logged-out Users */}
-              <Flex
-                justify="center"
-                align="center" // Center items horizontally
-                gap="sm"
-                direction="column"
-              >
+              <Flex justify="center" align="center" gap="sm" direction="column">
                 <Divider my="sm" />
                 <Menu width={200}>
                   <Menu.Target>
@@ -330,7 +329,6 @@ function Navbar() {
                     </NavLink>
                   </Menu.Dropdown>
                 </Menu>
-
                 <NavLink to="/login" onClick={close} style={{ textDecoration: 'none', width: '100%' }}>
                   <Button variant="subtle" color="white" fullWidth>
                     Log In
