@@ -11,9 +11,10 @@ interface JobListingProps {
   filterRoles: string[];
   filterFields: string[];
   search: string;
+  postedByFilter: 'all' | 'alumni' | 'sponsors';
 }
 
-const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields, search }) => {
+const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields, search, postedByFilter }) => {
   const [jobListings, setJobListings] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -43,18 +44,30 @@ const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields, search }) 
       filterRoles.includes(job.roleType.toLowerCase()))
     || (!job.roleType && filterRoles.length === 0)
   );
+  
+  // Step 2: field filter (not implemented)
+
+  // Step 3: apply Posted By filter
+  const byPostedByFilter = (() => {
+    if (postedByFilter === 'alumni') {
+      return byFilter.filter(job => job.isPostedByAlumni === true);
+    } else if (postedByFilter === 'sponsors') {
+      return byFilter.filter(job => job.isPostedByAlumni === undefined || job.isPostedByAlumni === false);
+    }
+    return byFilter;
+  })();
 
   // Client-side text search across title/description/specialisation
   const searchLower = (search || '').trim().toLowerCase();
   const bySearch = searchLower
-    ? byFilter.filter(job => {
+    ? byPostedByFilter.filter(job => {
         const title = (job.title || '').toLowerCase();
         const desc = (job.description || '').toLowerCase();
         const spec = (job.specialisation || '').toLowerCase();
         const match = title.includes(searchLower) || desc.includes(searchLower) || spec.includes(searchLower);
         return match;
       })
-    : byFilter;
+    : byPostedByFilter;
 
   const filteredJobListings = bySearch;
 
@@ -62,7 +75,7 @@ const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields, search }) 
   const { activePage, setActivePage, paginatedData, totalPages } = usePagination(filteredJobListings, 6);
 
   // Reset page to 1 whenever filters or search changes
-  useEffect(() => setActivePage(1), [search, filterRoles, filterFields, setActivePage]);
+  useEffect(() => setActivePage(1), [search, filterRoles, filterFields, postedByFilter, setActivePage]);
 
   useEffect(() => { if (error) console.error('[JobListing] error=', error); }, [error]);
 

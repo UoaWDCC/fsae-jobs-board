@@ -2,12 +2,15 @@ import { Checkbox, Title, Button, Stack, Modal, Flex } from '@mantine/core';
 import styles from './Filter.module.css';
 import { FC, useState } from 'react';
 import { IconArrowDown } from '@tabler/icons-react';
+import PostedByFilter from './PostedByFilter';
 
 interface FilterProps {
   filterRoles: string[];
   setFilterRoles: (filterRoles: string[]) => void;
   filterFields: string[];
   setFilterFields: (filterFields: string[]) => void;
+  postedByFilter: 'all' | 'alumni' | 'sponsors';
+  setPostedByFilter: (filter: 'all' | 'alumni' | 'sponsors') => void;
   color?: string;
   useRoles?: boolean;
 }
@@ -17,6 +20,8 @@ const Filter: FC<FilterProps> = ({
   setFilterRoles,
   filterFields,
   setFilterFields,
+  postedByFilter,
+  setPostedByFilter,
   color = '#0091ff',
   useRoles = true,
 }) => {
@@ -93,6 +98,15 @@ const Filter: FC<FilterProps> = ({
               ))}
             </Checkbox.Group>
           </Stack>
+          { useRoles ? (
+            <Stack>
+              <PostedByFilter 
+                value={postedByFilter} 
+                onChange={setPostedByFilter}
+                color={color}
+              />
+            </Stack>
+          ) : null }
         </Stack>
       )}
       {isPortrait && (
@@ -118,6 +132,7 @@ const Filter: FC<FilterProps> = ({
                   value={filterRoles}
                   onChange={handleRolesChange}
                   label="Role Type"
+                  labelProps={{ style: { color: color } }}
                   classNames={{ label: styles.filterSubheading }}
                 >
                 {roles.map((role) => (
@@ -137,6 +152,7 @@ const Filter: FC<FilterProps> = ({
                 value={filterFields}
                 onChange={handleFieldsChange}
                 label="Fields"
+                labelProps={{ style: { color: color } }}
                 classNames={{ label: styles.filterSubheading }}
               >
                 {fields.map((role) => (
@@ -151,6 +167,15 @@ const Filter: FC<FilterProps> = ({
                 ))}
               </Checkbox.Group>
             </Stack>
+            { useRoles ? (
+              <Stack>
+                <PostedByFilter 
+                  value={postedByFilter} 
+                  onChange={setPostedByFilter}
+                  color={color}
+                />
+              </Stack>
+            ) : null }
           </Modal>
         </>
       )}
