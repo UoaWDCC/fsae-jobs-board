@@ -32,7 +32,7 @@ export const EditStudentProfile = ({ close, userData, setUserData }: { close: ()
       case 'about':
         return <AboutTab newUserData={newUserData} setNewUserData={setNewUserData} />;
       case 'education':
-        return <EducationTab />;
+        return <EducationTab newUserData={newUserData} setNewUserData={setNewUserData} />
       case 'skills':
         return <SkillsTab newUserData={newUserData} setNewUserData={setNewUserData}/>;
       case 'cv':
@@ -104,7 +104,7 @@ export const EditStudentProfile = ({ close, userData, setUserData }: { close: ()
             <AboutTab newUserData={newUserData} setNewUserData={setNewUserData}/>
           </Tabs.Panel>
           <Tabs.Panel value="education" mt={30}>
-            <EducationTab />
+            <EducationTab newUserData={newUserData} setNewUserData={setNewUserData} />
           </Tabs.Panel>
           <Tabs.Panel value="skills" mt={30}>
             <SkillsTab newUserData={newUserData} setNewUserData={setNewUserData}/>

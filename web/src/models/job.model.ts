@@ -11,12 +11,12 @@ export interface Job {
     datePosted: string;
     specialisation: string;
     description: string;
-    salary: string;
+    salary?: string;
     publisherID: string;
     startDate?: string;
     duration?: string;
     location?: string;
-    roleType?: string;
+    roleType: string; // Required in backend, must be 'Internship' | 'Graduate' | 'Junior'
 }
 
 //! If this changes, make sure to update the JobDetail component in web/src/app/components/JobDetail/JobDetail.tsx

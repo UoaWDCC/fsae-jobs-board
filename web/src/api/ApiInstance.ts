@@ -20,6 +20,9 @@ apiInstance.interceptors.request.use(
     if (accessToken) {
       config.headers['Authorization'] = `Bearer ${accessToken}`;
     }
+    else {
+      console.log("No access token found");
+    }
     return config;
   },
   error => {

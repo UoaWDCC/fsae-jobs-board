@@ -1,33 +1,50 @@
+import {Filter, repository,} from '@loopback/repository';
 import {
-  Count,
-  CountSchema,
-  Filter,
-  FilterExcludingWhere,
-  repository,
-  Where,
-} from '@loopback/repository';
-import {
-  post,
   param,
   get,
   getModelSchemaRef,
   patch,
-  put,
   del,
   requestBody,
   response,
 } from '@loopback/rest';
 import {Alumni, FsaeRole} from '../models';
+import {AlumniProfileDto, AlumniProfileDtoFields} from '../dtos/alumni-profile.dto';
 import {AlumniRepository} from '../repositories';
 import { authenticate } from '@loopback/authentication';
 import { authorize } from '@loopback/authorization';
+import { ownerOnly } from '../decorators/owner-only.decorator';
+import {inject} from '@loopback/core';
+import {SecurityBindings, UserProfile} from '@loopback/security';
 
 @authenticate('fsae-jwt')
 export class AlumniController {
   constructor(
     @repository(AlumniRepository)
     public alumniRepository : AlumniRepository,
+    @inject(SecurityBindings.USER) protected currentUserProfile: UserProfile,
   ) {}
+
+  @authorize({
+    allowedRoles: [FsaeRole.ALUMNI, FsaeRole.MEMBER, FsaeRole.SPONSOR, FsaeRole.ADMIN],
+  })
+  @get('/user/alumni')
+  @response(200, {
+    description: 'Array of Alumni model instances',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'array',
+          items: getModelSchemaRef(Alumni, {includeRelations: true}),
+        },
+      },
+    },
+  })
+  async find(
+    @param.filter(Alumni) filter?: Filter<Alumni>,
+  ): Promise<Alumni[]> {
+    return this.alumniRepository.find(filter);
+  }
 
   @authorize({
     allowedRoles: [FsaeRole.ALUMNI, FsaeRole.MEMBER, FsaeRole.SPONSOR, FsaeRole.ADMIN],
@@ -37,40 +54,50 @@ export class AlumniController {
     description: 'Alumni model instance',
     content: {
       'application/json': {
-        schema: getModelSchemaRef(Alumni, {includeRelations: true}),
+        schema: getModelSchemaRef(AlumniProfileDto, {
+          title: 'Alumni Profile',
+        }),
       },
     },
   })
-  async findById(
+  async getAlumniProfile(
     @param.path.string('id') id: string,
-    @param.filter(Alumni, {exclude: 'where'}) filter?: FilterExcludingWhere<Alumni>
-  ): Promise<Alumni> {
-    return this.alumniRepository.findById(id, filter);
+  ): Promise<AlumniProfileDto> {
+    const result = await this.alumniRepository.findById(id, {
+      fields: AlumniProfileDtoFields,
+    });
+    return result as AlumniProfileDto;
   }
 
-  @authorize({
-    allowedRoles: [FsaeRole.ALUMNI],
-  })
   @patch('/user/alumni/{id}')
   @response(204, {
     description: 'Alumni PATCH success',
   })
-  async updateById(
+  @authorize({
+    allowedRoles: [FsaeRole.ALUMNI],
+  })
+  @ownerOnly({
+    ownerField: 'id',
+  })
+  async updateAlumniProfile(
     @param.path.string('id') id: string,
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(Alumni, {partial: true}),
+          schema: getModelSchemaRef(AlumniProfileDto, {partial: true}),
         },
       },
     })
-    alumni: Alumni,
+    alumniDto: Partial<AlumniProfileDto>,
   ): Promise<void> {
-    await this.alumniRepository.updateById(id, alumni);
+    await this.alumniRepository.updateById(id, alumniDto);
   }
 
   @authorize({
-    allowedRoles: [FsaeRole.ADMIN],
+    allowedRoles: [FsaeRole.ADMIN, FsaeRole.ALUMNI],
+  })
+  @ownerOnly({
+    ownerField: 'id',
   })
   @del('/user/alumni/{id}')
   @response(204, {

@@ -214,6 +214,7 @@ export class LoginController {
   async whoAmI(
     @inject(SecurityBindings.USER) currentUser: UserProfile,
   ): Promise<whoAmIResponse> {
+    console.log('WHOAMI: User profile:', currentUser);
     const userId = currentUser.id;
     const role = currentUser.role;
 
@@ -256,7 +257,19 @@ export class LoginController {
     }
 
     let fsaeUser = userSearchResults[0];
-    
+    console.log('LOGIN: User found for login:', {
+      id: fsaeUser.id,
+      email: fsaeUser.email,
+      role: fsaeUser.role,
+      activated: fsaeUser.activated,
+      verified: fsaeUser.verified
+    });
+
+    // Check if user is activated
+    if (!fsaeUser.activated) {
+      throw new HttpErrors.Forbidden('Account is not activated. Please contact an administrator.');
+    }
+      
     // Verify Credentials
     let passwordsMatched = await this.passwordHasher.comparePassword(
       credentials.password,
@@ -300,7 +313,6 @@ export class LoginController {
       userId: fsaeUser.id as string,
       token: token,
       verified: fsaeUser.verified,
-      hasMissingInfo: hasMissingInfo,
     };
   }
 }

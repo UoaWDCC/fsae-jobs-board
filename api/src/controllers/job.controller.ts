@@ -11,20 +11,23 @@ import {FsaeRole} from '../models';
 import { AdminLogRepository } from '../repositories/admin.logs.repository';
 import { AdminLogService } from '../services/admin-log.service';
 import {service} from '@loopback/core';
+import { ownerOnly } from '../decorators/owner-only.decorator';
 
 @authenticate('fsae-jwt')
 export class JobController {
   constructor(
     @repository(JobAdRepository) public jobAdRepository : JobAdRepository,
-    @repository(AdminLogRepository) private adminLogRepository: AdminLogRepository,
     @inject(AuthenticationBindings.CURRENT_USER) private currentUserProfile: UserProfile,
     @service(AdminLogService) private adminLogService: AdminLogService
-  ) {}
+  ) {
+    if(!this.jobAdRepository) {
+      throw new HttpErrors.InternalServerError('JobAdRepository is not available');
+    }
+  }
 
-  // TEMPORARY: Remove protection for testing job ads
-  // @authorize({
-  //   allowedRoles: [FsaeRole.ALUMNI, FsaeRole.SPONSOR],
-  // })
+  @authorize({
+    allowedRoles: [FsaeRole.ALUMNI, FsaeRole.SPONSOR],
+  })
   @post('/job')
   @response(200, {
     description: 'Creating a new job ad',
@@ -49,9 +52,9 @@ export class JobController {
   }
 
   // TEMPORARY: Remove protection for testing job ads
-  // @authorize({
-  //   allowedRoles: [FsaeRole.MEMBER],
-  // })
+  @authorize({
+    allowedRoles: [FsaeRole.MEMBER, FsaeRole.ALUMNI, FsaeRole.SPONSOR, FsaeRole.ADMIN],
+  })
   @get('/job')
   @response(200, {
     description: 'Fetching a list of all job postings',
@@ -70,10 +73,9 @@ export class JobController {
     return this.jobAdRepository.find(filter);
   }
 
-  // TEMPORARY: Remove protection for testing job ads
-  // @authorize({
-  //   allowedRoles: [FsaeRole.MEMBER],
-  // })
+  @authorize({
+    allowedRoles: [FsaeRole.MEMBER, FsaeRole.ALUMNI, FsaeRole.SPONSOR, FsaeRole.ADMIN],
+  })
   @get('/job/{id}')
   @response(200, {
     description: 'Retrieving job details by ID',
@@ -87,17 +89,18 @@ export class JobController {
     @param.path.string('id') id: string,
     @param.filter(JobAd, {exclude: 'where'}) filter?: FilterExcludingWhere<JobAd>
   ): Promise<JobAd> {
-    const jobAd = await this.jobAdRepository.findById(id, filter);
-    if (!jobAd) {
-        throw new HttpErrors.NotFound(`Job ad with id ${id} not found`);
-    }
-    return jobAd;
+    return this.jobAdRepository.findById(id, filter);
   }
 
   // TEMPORARY: Remove protection for testing job ads
-  // @authorize({
-  //   allowedRoles: [FsaeRole.ALUMNI, FsaeRole.SPONSOR],
-  // })
+  @authorize({
+    allowedRoles: [FsaeRole.ALUMNI, FsaeRole.SPONSOR],
+  })
+  @ownerOnly({
+    ownerField: 'publisherID',
+    idIndex: 0,
+    repoKey: 'jobAdRepository',
+  })
   @patch('/job/{id}')
   @response(204, {
     description: 'Updating job details by ID',
@@ -114,15 +117,22 @@ export class JobController {
     jobAd: JobAd,
   ): Promise<void> {
     const existingjobAd = await this.jobAdRepository.findById(id);
-    // TEMPORARY: Remove protection for testing job ads
-    // if (existingjobAd.publisherID !== this.currentUserProfile.id.toString()) {
-    //   throw new HttpErrors.Unauthorized('You are not authorized to update this job posting');
-    // }
+
+    // required since we risk overwriting the publisherID
+    if ('publisherID' in jobAd) {
+      jobAd.publisherID = existingjobAd.publisherID;
+    }
+
     await this.jobAdRepository.updateById(id, jobAd);
   }
 
   @authorize({
     allowedRoles: [FsaeRole.ALUMNI, FsaeRole.SPONSOR, FsaeRole.ADMIN],
+  })
+  @ownerOnly({
+    ownerField: 'publisherID',
+    idIndex: 0,
+    repoKey: 'jobAdRepository',
   })
   @del('/job/{id}')
   @response(204, {
@@ -169,7 +179,7 @@ export class JobController {
           publisherId: job.publisherID,
           ...(body?.reason ? {reason: body.reason} : {}),
         },
-    );
+      );
     }
   }
 }

@@ -3,10 +3,7 @@ import Filter from '../../components/Filter/Filter';
 import JobListing from '../../components/JobBoard/JobListing';
 import { useEffect, useState } from 'react';
 import SearchBar from '../../components/SearchBar/SearchBar';
-import { useProfileCompletionGuard } from '../../../hooks/useProfileCompletionGuard';
-
 export function JobBoard() {
-  useProfileCompletionGuard();
   
   const [filterRoles, setFilterRoles] = useState<string[]>([]);
   const [filterFields, setFilterFields] = useState<string[]>([]);
@@ -27,9 +24,11 @@ export function JobBoard() {
     };
   }, []);
 
-  const handleSearch = () => {
-    setSearch(searchInput);
+  const handleSearch = (value?: string) => {
+  setSearch(value ?? searchInput);
   };
+
+// carl : pagination reset is handled inside JobListing (to fix previous issue with pagination not resetting on search)
 
   return (
     <Grid justify="center" align="center">

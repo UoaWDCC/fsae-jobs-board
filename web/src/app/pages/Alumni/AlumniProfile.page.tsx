@@ -10,6 +10,7 @@ import EditModal from '../../components/Modal/EditModal';
 import EditAlumniProfile from '../../components/Modal/EditAlumniProfile';
 import { EditAvatar } from '../../components/Modal/EditAvatar';
 import { EditBannerModal } from '../../components/Modal/EditBannerModal';
+import { JobEditorModal } from '@/app/components/Modal/EditJob';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchAlumniById } from '@/api/alumni';
 import { fetchJobsByPublisherId } from '@/api/job';
@@ -17,51 +18,50 @@ import { Alumni } from '@/models/alumni.model';
 import { Job } from "@/models/job.model";
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../app/store';
-import { jwtDecode } from 'jwt-decode';
 import DeactivateAccountModal from '../../components/Modal/DeactivateAccountModal';
 import { subGroupDisplayMap } from '@/app/utils/field-display-maps';
 import { SubGroup } from '@/models/subgroup.model';
 import { ActivateDeactivateAccountButton } from '@/app/components/AdminDashboard/ActivateDeactivateAccountButton';
 import { FsaeRole } from '@/models/roles';
 
-
 export function AlumniProfile() {
-  const { id } = useParams();
-  const navigate = useNavigate();
-
+  // UseState for future modal implementation
   const [openModal, setOpenModal] = useState(false);
-  const [deactivateModalOpen, setDeactivateModalOpen] = useState(false); // look better into this stuff. im not really sure how we are using the modals :3
   const [modalType, setModalType] = useState('');
   const [openProfileModal, setOpenProfileModal] = useState(false);
   const [modalContent, setModalContent] = useState<React.ReactNode>(null);
   const [showMoreDescription, setShowMoreDescription] = useState(false);
+  const [role, setRole] = useState<Role>(Role.Alumni); // Dummy role, replace with actual role from Redux store
   const [modalTitle, setModalTitle] = useState('');
+  const [openJobEditorModal, setOpenJobEditorModal] = useState(false);
+  const [editingJob, setEditingJob] = useState<Job | null>(null);
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [loading, setLoading] = useState(true);
   const [isLocalProfile, setIsLocalProfile] = useState(false) // Is this profile this user's profile (aka. should we show the edit button)
+  const [deactivateModalOpen, setDeactivateModalOpen] = useState(false);
   
   const userRole = useSelector((state: RootState) => state.user.role); // the id of the local user
   const userId = useSelector((state: RootState) => state.user.id); // the id of the local user
+  
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
 
   /*
   const handleAvatarChange = () => {
     setModalType('avatar');
     setOpenProfileModal(true);
-    // Alumni avatar doesnt exist in the model yet
-    //setModalContent(<EditAvatar avatar={userData?.avatar} />);
-    setModalContent(<EditAvatar avatar={""} />);
+    setModalContent(<EditAvatar avatar={userData?.avatar} />);
     setModalTitle('Profile Photo');
   };
 
   const handleBannerChange = () => {
     setModalType('banner');
     setOpenProfileModal(true);
-    // Banner doesnt exist in alumni model yet
-    //setModalContent(<EditBannerModal banner={userData?.banner} />)
-    setModalContent(<EditBannerModal banner={""} />)
+    setModalContent(<EditBannerModal banner={userData?.banner} />)
     setModalTitle('Banner Photo');
   };*/
   
   const handleProfileChange = () => {
-    if (!userData) return;
     setOpenProfileModal(true);
     setModalContent(
       <EditAlumniProfile userData={userData} setUserData={setUserData} close={() => setOpenProfileModal(false)} />
@@ -70,8 +70,7 @@ export function AlumniProfile() {
   };
 
   const handleJobOpportunitiesChange = () => {
-    setModalType('jobOpportunities');
-    setOpenModal(true);
+    navigate('/job-editor');
   };
 
   const handleDeactivateUserChange = () => {
@@ -80,6 +79,35 @@ export function AlumniProfile() {
   };
 
   const [userData, setUserData] = useState<Alumni | null>(null);
+  
+  const handleJobSaved = () => {
+    // Reload jobs to get updated data
+    const fetchUserData = async () => {
+      try {
+        const jobs: Job[] = await fetchJobsByPublisherId(id as string);
+        const jobsForJobCard = jobs.map((thisJob) => {
+          return {
+            id: thisJob.id,
+            title: thisJob.title,
+            specialisation: thisJob.specialisation,
+            description: thisJob.description,
+            roleType: thisJob.roleType || "Full-time",
+            salary: thisJob.salary,
+            applicationDeadline: thisJob.applicationDeadline,
+            datePosted: thisJob.datePosted,
+            publisherID: thisJob.publisherID
+          }
+        });
+        setJobData(jobsForJobCard);
+      } catch (err) {
+        console.error('Failed to reload jobs:', err);
+      }
+    };
+    if (id) fetchUserData();
+    setOpenJobEditorModal(false);
+    setEditingJob(null);
+  };
+
   const handleDeactivateAccount = (reason: string) => {
     console.log('Account deactivated:', reason);
     setDeactivateModalOpen(false);
@@ -104,17 +132,21 @@ export function AlumniProfile() {
         const jobs: Job[] = await fetchJobsByPublisherId(id as string);
         const jobsForJobCard = jobs.map((thisJob) => {
           return {
+            id: thisJob.id,
             title: thisJob.title,
-            subtitle: "Placeholder subtitle",
+            specialisation: thisJob.specialisation,
             description: thisJob.description,
-            jobLink: "#", // TODO: correctly link to job details page
-            jobID: thisJob.id
+            roleType: thisJob.roleType || "Full-time",
+            salary: thisJob.salary,
+            applicationDeadline: thisJob.applicationDeadline,
+            datePosted: thisJob.datePosted,
+            publisherID: thisJob.publisherID
           }
         })
         setJobData(jobsForJobCard)
       } catch (err) {
         // TODO: proper error handling (eg. auth errors/forbidden pages etc.)
-        navigate("/404")
+        //navigate("/404")
       }
     };
     if (id) fetchUserData();
@@ -155,7 +187,6 @@ export function AlumniProfile() {
   const getAlumniElements = (element: string) => {
     switch (element) {
       case 'profileBtn':
-        if (!isLocalProfile) return null;
         return (
           <Button
             onClick={handleProfileChange}
@@ -167,7 +198,6 @@ export function AlumniProfile() {
           </Button>
         );
       case 'addNewBtn':
-        if (!isLocalProfile) return null;
         return (
           <Button
             onClick={handleJobOpportunitiesChange}
@@ -188,7 +218,7 @@ export function AlumniProfile() {
       case 'profileBtn':
         return (
           <Button
-            onClick={() => setDeactivateModalOpen(true)}
+            onClick={handleDeactivateUserChange}
             classNames={{
               root: styles.button_admin_root,
             }}
@@ -410,6 +440,13 @@ export function AlumniProfile() {
         title={modalTitle}
       ></EditModal>
 
+      <JobEditorModal
+        opened={openJobEditorModal}
+        onClose={() => setOpenJobEditorModal(false)}
+        onSuccess={handleJobSaved}
+        initialData={editingJob}
+        mode={editingJob ? "edit" : "create"}
+      />
       <DeactivateAccountModal
         onClose={() => setDeactivateModalOpen(false)}
         onConfirm={handleDeactivateAccount}

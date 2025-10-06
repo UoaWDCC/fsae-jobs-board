@@ -44,22 +44,19 @@ export function StudentProfile() {
   const userRole = useSelector((state: RootState) => state.user.role); // the id of the local user
   const userId = useSelector((state: RootState) => state.user.id); // the id of the local user
 
-  // TODO: avatar and banner doesnt exist in the member model yet
-
-  /*const handleAvatarChange = () => {
+  const handleAvatarChange = () => {
     setModalType('avatar');
-    setModalContent(<EditAvatar avatar={userData?.photo} />);
+    setModalContent(<EditAvatar avatar={"avatar"} />);
     setModalTitle('Profile Photo');
     setOpenProfileModal(true);
   };
 
   const handleBannerChange = () => {
     setModalType('banner');
-    setModalContent(<EditBannerModal banner={userData?.banner} />);
+    setModalContent(<EditBannerModal banner={"banner"} />);
     setModalTitle('Banner Photo');
     setOpenProfileModal(true);
   };
-  */
 
   const handleProfileChange = () => {
     setModalType('profile');
@@ -91,9 +88,7 @@ export function StudentProfile() {
         throw new Error('Failed to fetch CV');
       }
 
-      // fetch CV as blob for opening in a new tab
       const blob = await response.blob();
-
       const url = window.URL.createObjectURL(blob);
 
       window.open(url, '_blank');
@@ -110,12 +105,61 @@ export function StudentProfile() {
     // trigger backend call to deactivate account.
   };
 
+  const fetchAvatar = async () => {
+    if (!id) return;
+
+    const token = localStorage.getItem('accessToken');
+    if (!token) return;
+
+    try {
+      const response = await fetch(`http://localhost:3000/user/member/${id}/avatar`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!response.ok) return;
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+
+      setUserData((prev) => prev ? { ...prev, avatarURL: url } : prev);
+
+      return () => URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Error fetching avatar:', err);
+    }
+  };
+
+  const fetchBanner = async () => {
+    if (!id) return;
+
+    const token = localStorage.getItem('accessToken');
+    if (!token) return;
+
+    try {
+      const response = await fetch(`http://localhost:3000/user/member/${id}/banner`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!response.ok) return;
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+
+      setUserData((prev) => prev ? { ...prev, bannerURL: url } : prev);
+
+      return () => URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Error fetching banner:', err);
+    }
+  };
+
   useEffect(() => {
     // Logic to fetch data and setUserData
     const fetchUserData = async () => {
       try {
         const userData = await fetchMemberById(id as string);
         if (!userData) {
+          console.error('User data not found');
           navigate("/404")
           return;
         }
@@ -123,10 +167,14 @@ export function StudentProfile() {
         setIsLocalProfile(userData.id == userId);
       } catch (err) {
         // TODO: proper error handling (eg. auth errors/forbidden pages etc.)
+        console.error('Error fetching user data:', err);
         navigate("/404")
       }
     };
     if (id) fetchUserData();
+
+    fetchAvatar();
+    fetchBanner();
   }, [id]);
 
   return (
@@ -135,7 +183,7 @@ export function StudentProfile() {
         <Card.Section
           h={250}
           className={styles.banner}
-          //onClick={handleBannerChange}
+          onClick={handleBannerChange}
           style={userData?.bannerURL ? { backgroundImage: `url(${userData?.bannerURL})` }: {}}
         />
 
@@ -203,7 +251,7 @@ export function StudentProfile() {
           mt={-100}
           ml={10}
           className={styles.avatar}
-          //onClick={handleAvatarChange}
+          onClick={handleAvatarChange}
         />
         <Text size="md" mt={-55} ml={170} pt={10}>
           {userData?.lookingFor ? `Looking for: ${jobTypeDisplayMap[userData.lookingFor]}` : ""}
@@ -346,11 +394,11 @@ export function StudentProfile() {
             display="flex"
             style={{ justifyContent: 'space-between', alignItems: 'flex-start' }}
           >
-            <Box>
-              <Title order={5}>Education</Title>
+            {userData?.education && userData.education.length > 0 && (
+              <Box>
+                <Title order={5}>Education</Title>
 
-              <Box pl={15} mt={10} className={styles.box}>
-                {userData?.education && (
+                <Box pl={15} mt={10} className={styles.box}>
                   <>
                     {showMoreEducation
                       ? userData.education.map((education) => (
@@ -383,10 +431,9 @@ export function StudentProfile() {
                       </Button>
                     )}
                   </>
-                )}
-                {!userData?.education && <Loader color="blue" />}
+                </Box>
               </Box>
-            </Box>
+            )}
 
             {userData?.hasCV && (
               <ActionIcon variant="transparent" color="#ffffff" size={200} mt={-40}
@@ -406,7 +453,15 @@ export function StudentProfile() {
 
       <EditModal
         opened={openProfileModal}
-        close={() => setOpenProfileModal(false)}
+        close={() => {
+          setOpenProfileModal(false);
+          if (modalType === 'avatar') {
+            fetchAvatar();
+          }
+          if (modalType === 'banner') {
+            fetchBanner();
+          }
+        }}
         content={modalContent}
         title={modalTitle}
       ></EditModal>

@@ -44,7 +44,7 @@ export class FsaeUser extends Entity {
   @property({
     type: 'boolean', 
     required: true,
-    default: false
+    default: false // TODO: Change this to false after verification is implemented
   })
   verified: boolean;
 
