@@ -40,6 +40,7 @@
 }
 
 .name {
+  pointer-events: none;
   position: absolute;
   font-size: 40px;
   color: var(--mantine-color-customWhite-1);
@@ -72,6 +73,7 @@
   border: none;
   padding: 4px 8px 4px 0px;
   min-height: auto;
+  pointer-events: auto !important;
   transition: background-color 0.2s ease, border-radius 0.2s ease;
   line-height: 1.2;
   margin: 0;
