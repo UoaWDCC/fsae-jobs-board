@@ -36,15 +36,22 @@ export class JobController {
         'application/json': {
           schema: getModelSchemaRef(JobAd, {
             title: 'NewJobAd',
-            exclude: ['id', 'publisherID'],
+            exclude: ['id', 'publisherID', 'isPostedByAlumni'],
           }),
         },
       },
     })
-    jobAdData: Omit<JobAd, 'id' | 'publisherID'>,
+    jobAdData: Omit<JobAd, 'id' | 'publisherID' | 'isPostedByAlumni'>,
   ): Promise<JobAd> {
     const jobAd = new JobAd(jobAdData);
     jobAd.publisherID = this.currentUserProfile.id.toString();
+
+    // Check if current poster is an alumni
+    const userRole = this.currentUserProfile.role || "";
+    console.log('Current user role:', userRole);
+    jobAd.isPostedByAlumni = userRole.includes(FsaeRole.ALUMNI);
+    console.log(`isPostedByAlumni set to: ${jobAd.isPostedByAlumni}`);
+    
     return this.jobAdRepository.create(jobAd);
   }
 
