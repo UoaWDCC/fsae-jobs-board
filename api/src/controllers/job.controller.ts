@@ -163,9 +163,8 @@ export class JobController {
       await this.adminLogService.createAdminLog(
         currentUserId,
         {
-          message: 'Job deleted',
-          targetType: 'job',
-          targetId: id,
+          message: 'Job post deleted by admin',
+          jobId: id,
           jobTitle: job.title,
           publisherId: job.publisherID,
           ...(body?.reason ? {reason: body.reason} : {}),

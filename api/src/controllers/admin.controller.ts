@@ -172,10 +172,11 @@ export class AdminController {
       await this.adminLogService.createAdminLog(
         this.currentUser[securityId] as string,
         {
-          message: `Application ${status.toLowerCase()}`,
-          targetType: role.toLowerCase(),
-          targetId: id,
-          memberType: role
+          message: `Application by ${user.email} was ${status.toLowerCase()}`,
+          applicationStatus: status.toLowerCase(),
+          userEmail: user.email,
+          userRole: role.toLowerCase(),
+          userId: id,
         }
       );
     } catch (e: any) {
@@ -241,14 +242,15 @@ export class AdminController {
     /* deactivate the user; throw 404 if not found */
     try {
       await repo.updateById(id, {activated: false});
+      const thisUser = await repo.findById(id);
       await this.adminLogService.createAdminLog(
         this.currentUser[securityId] as string,
         {
-          message: `Account deactivated`,
+          message: `Account ${(thisUser).email} deactivated`,
           reason: reason,
-          targetType: role.toLowerCase(),
-          targetId: id,
-          memberType: role
+          accountEmail: (thisUser).email,
+          accountRole: role.toLowerCase(),
+          accountUserId: id,
         }
       );
     } catch (e: any) {
@@ -311,13 +313,14 @@ export class AdminController {
     /* activate the user; throw 404 if not found */
     try {
       await repo.updateById(id, {activated: true});
+      const thisUser = await repo.findById(id);
       await this.adminLogService.createAdminLog(
         this.currentUser[securityId] as string,
         {
-          message: 'Account activated',
-          targetType: role.toLowerCase(),
-          targetId: id,
-          memberType: role
+          message: `Account ${thisUser.email} activated`,
+          accountEmail: thisUser.email,
+          accountRole: role.toLowerCase(),
+          accountUserId: id,
         }
       );
     } catch (e: any) {
@@ -410,10 +413,10 @@ export class AdminController {
       await this.adminLogService.createAdminLog(
         this.currentUser[securityId] as string,
         {
-          message: `Admin account created`,
-          targetType: 'admin',
-          targetId: newAdmin.id.toString(),
-          memberType: FsaeRole.ADMIN
+          message: `Admin account ${newAdmin.email.toString()} created`,
+          newAdminName: newAdmin.firstName + " " + newAdmin.lastName,
+          newAdminEmail: newAdmin.email.toString(),
+          newAdminUserId: newAdmin.id.toString(),
         }
       );
 
@@ -485,11 +488,11 @@ export class AdminController {
       await this.adminLogService.createAdminLog(
         this.currentUser[securityId] as string,
         {
-          message: `Admin account deleted`,
+          message: `Admin account ${user.email.toString()} deleted`,
           reason: reason,
-          targetType: 'admin',
-          targetId: id,
-          memberType: FsaeRole.ADMIN
+          deletedAdminName: user.firstName + " " + user.lastName,
+          deletedAdminEmail: user.email.toString(),
+          deletedAdminUserId: id,
         }
       );
     } catch (e: any) {
