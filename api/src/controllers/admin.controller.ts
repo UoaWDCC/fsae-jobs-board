@@ -1,11 +1,10 @@
-import {
-  repository,
-} from '@loopback/repository';
+import {repository} from '@loopback/repository';
 import {
   get,
   HttpErrors,
   param,
   patch,
+  post,
   requestBody,
   response,
 } from '@loopback/rest';
@@ -17,13 +16,15 @@ import {
   AlumniRepository,
   MemberRepository,
   SponsorRepository,
-  AdminLogRepository
+  AdminLogRepository,
+  AdminRepository,
 } from '../repositories';
 import {AdminReview} from './controller-types/admin.controller.types';
-import { AdminStatus } from '../models/admin.status';
+import {AdminStatus} from '../models/admin.status';
 import {inject} from '@loopback/core';
 import {SecurityBindings, UserProfile, securityId} from '@loopback/security';
-
+import {Notification} from '../models/notification.model';
+import {randomUUID} from 'crypto';
 
 @authenticate('fsae-jwt')
 export class AdminController {
@@ -31,12 +32,13 @@ export class AdminController {
     @repository(AlumniRepository) private alumniRepository: AlumniRepository,
     @repository(MemberRepository) private memberRepository: MemberRepository,
     @repository(SponsorRepository) private sponsorRepository: SponsorRepository,
-    @repository(AdminLogRepository) private adminLogRepository: AdminLogRepository,
+    @repository(AdminRepository) private adminRepository: AdminRepository,
+    @repository(AdminLogRepository)
+    private adminLogRepository: AdminLogRepository,
     @inject(SecurityBindings.USER) private currentUser: UserProfile,
-
   ) {}
 
-   /**
+  /**
    * GET /user/admin/dashboard
    * Returns every Alumni / Member / Sponsor in a flat array,
    * with name, role, created-at date, and current admin-approval status.
@@ -53,12 +55,12 @@ export class AdminController {
           items: {
             type: 'object',
             properties: {
-              id:     {type: 'string'},
+              id: {type: 'string'},
               contact: {type: 'string'},
-              email:  {type: 'string', format: 'email'},
-              name:   {type: 'string'},
-              role:   {type: 'string'},
-              date:   {type: 'string', format: 'date-time'},
+              email: {type: 'string', format: 'email'},
+              name: {type: 'string'},
+              role: {type: 'string'},
+              date: {type: 'string', format: 'date-time'},
               status: {type: 'string'},
             },
           },
@@ -73,14 +75,17 @@ export class AdminController {
       this.sponsorRepository.find(),
     ]);
 
-    const toReview = (u: Alumni | Member | Sponsor, role: FsaeRole): AdminReview => {
+    const toReview = (
+      u: Alumni | Member | Sponsor,
+      role: FsaeRole,
+    ): AdminReview => {
       const id = u.id.toString();
 
-      let name = ""
+      let name = '';
       if ('firstName' in u) {
-        name = `${u.firstName} ${u.lastName}`
+        name = `${u.firstName} ${u.lastName}`;
       } else if ('companyName' in u) {
-        name = u.companyName
+        name = u.companyName;
       }
 
       // `createdAt` may not exist → fall back to ObjectId timestamp
@@ -99,16 +104,16 @@ export class AdminController {
     };
 
     return [
-      ...alumni.map(a   => toReview(a, FsaeRole.ALUMNI)),
-      ...members.map(m  => toReview(m, FsaeRole.MEMBER)),
+      ...alumni.map(a => toReview(a, FsaeRole.ALUMNI)),
+      ...members.map(m => toReview(m, FsaeRole.MEMBER)),
       ...sponsors.map(s => toReview(s, FsaeRole.SPONSOR)),
     ];
   }
 
   /**
- * PATCH /user/admin/status/{id}
- * Approve or reject a pending user request.
- */
+   * PATCH /user/admin/status/{id}
+   * Approve or reject a pending user request.
+   */
   @authenticate('fsae-jwt')
   @authorize({allowedRoles: [FsaeRole.ADMIN]})
   @patch('/user/admin/status/{id}')
@@ -143,10 +148,10 @@ export class AdminController {
 
     /* pick the correct repository based on role */
     let repo;
-  
+
     if (role === FsaeRole.ALUMNI) {
       repo = this.alumniRepository;
-    }else if (role === FsaeRole.MEMBER) {
+    } else if (role === FsaeRole.MEMBER) {
       repo = this.memberRepository;
     } else if (role === FsaeRole.SPONSOR) {
       repo = this.sponsorRepository;
@@ -173,12 +178,80 @@ export class AdminController {
           memberType: role,
         },
         timestamp: new Date().toISOString(),
-    });
+      });
     } catch (e: any) {
       if (e.code === 'ENTITY_NOT_FOUND') {
-        throw new HttpErrors.NotFound(`User ${id} not found in ${role} collection`);
+        throw new HttpErrors.NotFound(
+          `User ${id} not found in ${role} collection`,
+        );
       }
       throw e; // propagate other errors
     }
+  }
+
+  @authenticate('fsae-jwt')
+  @authorize({allowedRoles: [FsaeRole.ADMIN]})
+  @post('/user/admin/notify/{id}')
+  @response(204, {description: 'Notification sent'})
+  async notifyUser(
+    @param.path.string('id') id: string,
+    @requestBody({
+      required: true,
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            required: ['message', 'userType'],
+            properties: {
+              message: {type: 'string', minLength: 1},
+              userType: {
+                type: 'string',
+                enum: [
+                  FsaeRole.ADMIN,
+                  FsaeRole.ALUMNI,
+                  FsaeRole.MEMBER,
+                  FsaeRole.SPONSOR,
+                ],
+              },
+            },
+          },
+        },
+      },
+    })
+    body: {message: string; userType: FsaeRole},
+  ): Promise<void> {
+    const {message, userType} = body;
+    const CAP = 50;
+
+    const userRepository =
+      userType === FsaeRole.ALUMNI
+        ? this.alumniRepository
+        : userType === FsaeRole.MEMBER
+          ? this.memberRepository
+          : userType === FsaeRole.SPONSOR
+            ? this.sponsorRepository
+            : this.adminRepository;
+
+    const user = await userRepository.findById(id);
+    user.notifications = user.notifications ?? [];
+
+    const notification: Notification = new Notification({
+      id: randomUUID(),
+      issuer: this.currentUser[securityId] as string,
+      message,
+      read: false,
+      createdAt: new Date(),
+    });
+
+    //use slice so that we auto maintain the embeds to a max cap of CAP items. older notifs get dropped
+    await userRepository.updateById(id, {
+      $push: {
+        notifications: {
+          $each: [notification],
+          $sort: {createdAt: -1},
+          $slice: CAP,
+        },
+      },
+    });
   }
 }

@@ -6,7 +6,8 @@ const config = {
   connector: 'mongodb',
   url: process.env.MONGODB_URI, // Using environment variable
   database: 'fsae_job_board',
-  useNewUrlParser: true
+  useNewUrlParser: true,
+  allowExtendedOperators: true,
 };
 
 // Observe application's life cycle to disconnect the datasource when
@@ -15,8 +16,10 @@ const config = {
 // Learn more at https://loopback.io/doc/en/lb4/Life-cycle.html
 
 @lifeCycleObserver('datasource')
-export class MongoDbDataSource extends juggler.DataSource
-  implements LifeCycleObserver {
+export class MongoDbDataSource
+  extends juggler.DataSource
+  implements LifeCycleObserver
+{
   static dataSourceName = 'mongoDB';
   static readonly defaultConfig = config;
 

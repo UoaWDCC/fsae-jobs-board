@@ -1,6 +1,7 @@
 import {Entity, model, property} from '@loopback/repository';
 import {FsaeRole} from './roles';
 import {AdminStatus} from './admin.status';
+import {Notification} from './notification.model';
 
 @model()
 export class FsaeUser extends Entity {
@@ -17,62 +18,62 @@ export class FsaeUser extends Entity {
     jsonSchema: {
       enum: Object.values(FsaeRole),
     },
-    default: FsaeRole.UNKNOWN
+    default: FsaeRole.UNKNOWN,
   })
   role: FsaeRole;
 
   @property({
-    type: 'string', 
-    required: true
+    type: 'string',
+    required: true,
   })
-  email: string; 
+  email: string;
 
   @property({
-    type: 'string', 
-    required: true, 
-    hidden: true
+    type: 'string',
+    required: true,
+    hidden: true,
   })
   password: string; // Hashed
 
   @property({
-    type: 'boolean', 
+    type: 'boolean',
     required: true,
-    default: true
+    default: true,
   })
   activated: boolean;
 
   @property({
-    type: 'boolean', 
+    type: 'boolean',
     required: true,
-    default: false // TODO: Change this to false after verification is implemented
+    default: false, // TODO: Change this to false after verification is implemented
   })
   verified: boolean;
 
   @property({
-    type: 'string', 
+    type: 'string',
     required: true,
-    default: ""
-  }) 
+    default: '',
+  })
   phoneNumber: string;
 
   @property({
     type: 'string',
     required: false,
-    default: ""
+    default: '',
   })
   description: string;
 
   @property({
     type: 'string',
     required: true,
-    default: "/default_avatar.png"
+    default: '/default_avatar.png',
   })
   avatarURL: string;
 
   @property({
     type: 'string',
     required: true,
-    default: "/default_banner.png"
+    default: '/default_banner.png',
   })
   bannerURL: string;
 
@@ -82,14 +83,17 @@ export class FsaeUser extends Entity {
     jsonSchema: {
       enum: Object.values(AdminStatus),
     },
-    default: AdminStatus.PENDING
+    default: AdminStatus.PENDING,
   })
   adminStatus: AdminStatus;
 
   @property({
-    type: 'date', 
+    type: 'date',
     required: true,
-    defaultFn: 'now'
+    defaultFn: 'now',
   })
   createdAt: Date;
+
+  @property.array(Notification)
+  notifications?: Notification[];
 }
