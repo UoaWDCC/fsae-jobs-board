@@ -9,8 +9,8 @@ interface FilterProps {
   setFilterRoles: (filterRoles: string[]) => void;
   filterFields: string[];
   setFilterFields: (filterFields: string[]) => void;
-  postedByFilter: 'all' | 'alumni' | 'sponsors';
-  setPostedByFilter: (filter: 'all' | 'alumni' | 'sponsors') => void;
+  postedByFilter?: 'all' | 'alumni' | 'sponsors';
+  setPostedByFilter?: (filter: 'all' | 'alumni' | 'sponsors') => void;
   color?: string;
   useRoles?: boolean;
 }
@@ -98,7 +98,7 @@ const Filter: FC<FilterProps> = ({
               ))}
             </Checkbox.Group>
           </Stack>
-          { useRoles ? (
+          { useRoles && postedByFilter && setPostedByFilter ? (
             <Stack>
               <PostedByFilter 
                 value={postedByFilter} 
@@ -167,7 +167,7 @@ const Filter: FC<FilterProps> = ({
                 ))}
               </Checkbox.Group>
             </Stack>
-            { useRoles ? (
+            { useRoles && postedByFilter && setPostedByFilter ? (
               <Stack>
                 <PostedByFilter 
                   value={postedByFilter} 
