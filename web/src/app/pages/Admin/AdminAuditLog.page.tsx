@@ -3,6 +3,7 @@ import {Grid, Modal, Stack, Text, Button, Table} from '@mantine/core';
 import {adminApi} from '@/api/admin';
 import SearchBar from '@/app/components/SearchBar/SearchBar';
 import AdminAuditLogTable from '@/app/components/AdminAuditLog/AdminAuditLogTable';
+import { IconRefresh } from '@tabler/icons-react'; // added import
 
 export function AdminAuditLog() {
   const [logs, setLogs] = useState<any[]>([]);
@@ -48,12 +49,30 @@ export function AdminAuditLog() {
     <>
       <Grid justify="center" align="flex-start">
         <Grid.Col span={12} px={40}>
-          <SearchBar
-            search={search}
-            setSearch={setSearch}
-            title="Audit Log"
-            placeholder="Search Logs"
-          />
+          {/* Compact flex row: search expands/shrinks, refresh button stays fixed to the right */}
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <SearchBar
+                search={search}
+                setSearch={setSearch}
+                title="Audit Log"
+                placeholder="Search Logs"
+              />
+            </div>
+
+            <div style={{ flex: '0 0 auto' }}>
+              <Button
+                onClick={refresh}
+                size="sm"
+                
+                title="Refresh logs"
+                aria-label="Refresh logs"
+              >
+                <IconRefresh size={16} />
+              </Button>
+            </div>
+          </div>
+
           {table}
         </Grid.Col>
       </Grid>
