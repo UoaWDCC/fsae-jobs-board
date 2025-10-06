@@ -9,11 +9,12 @@ import AdminDashboardTable from '@/app/components/AdminDashboard/AdminDashboardT
 import AdminReviewModal from '@/app/components/Modal/AdminReviewModal';
 import Filter from '@/app/components/Filter/Filter';
 import { FsaeRole } from '@/models/roles';
+import { Role } from '@/app/type/role';
 
 export function AdminApplications() {
   const [allReviews, setAllReviews] = useState<AdminReview[]>([]);
   const [filteredReview, setFilteredReview] = useState<AdminReview[]>([]);
-  const [filterRoles, setfilterRoles] = useState<FsaeRole[]>([]);
+  const [filterRoles, setfilterRoles] = useState<Role[]>([]);
   const [filterStatus, setFilterStatus] = useState<Status[]>([]);
   const [search, setSearch] = useState('');
   const [isPortrait, setIsPortrait] = useState(window.innerHeight > window.innerWidth);
@@ -36,7 +37,7 @@ export function AdminApplications() {
 
   useEffect(() => {
     const f = allReviews.filter(r => {
-      const okRole = filterRoles.length === 0 || filterRoles.includes(r.role);
+      const okRole = filterRoles.length === 0 || filterRoles.includes(r.role as unknown as Role);
       const okStatus = filterStatus.length === 0 || filterStatus.includes(r.status);
       const okSearch = search.trim() === '' || r.name.toLowerCase().includes(search.toLowerCase());
       return okRole && okStatus && okSearch;
