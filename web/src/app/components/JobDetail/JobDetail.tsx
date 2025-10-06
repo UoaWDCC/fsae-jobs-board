@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
-import { Text, Button, Badge } from '@mantine/core';
+import { useEffect, useMemo, useState } from 'react';
+import { Text, Button, Badge, Avatar } from '@mantine/core';
 import styles from './JobDetail.module.css';
 import { Job } from '@/models/job.model';
 import { adminApi } from '@/api/admin';
@@ -8,6 +8,7 @@ import DeletePostModal from '../Modal/DeletePostModal';
 import { jwtDecode } from 'jwt-decode';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../app/store';
+import { useUserAvatar } from '@/hooks/useUserAvatar';
 
 interface JwtPayload {
   role?: string;
@@ -20,6 +21,8 @@ interface JobDetailProps {
 export function JobDetail({ job }: JobDetailProps) {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const navigate = useNavigate();
+
+  const { avatarUrl: posterAvatar } = useUserAvatar(job?.publisherID);
 
   const userRole = useSelector((state: RootState) => state.user.role);
   const userId = useSelector((state: RootState) => state.user.id);
@@ -65,7 +68,7 @@ export function JobDetail({ job }: JobDetailProps) {
       <div className={styles.contentWrapper}>
         {/* Left Column */}
         <div className={styles.leftColumn}>
-          <img src="/WDCCLogo.png" alt="Company Logo" className={styles.companyLogo} />
+          <Avatar src={posterAvatar} alt={"Company Logo"} className={styles.companyLogo} />
           <div>
             <Text size="xl" fw={700} className={styles.detailItem}>
               Salary: <span style={{ fontWeight: 400 }}>{job.salary}</span>
