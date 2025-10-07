@@ -14,3 +14,7 @@ export * from './verification.model';
 export * from './passwordresets.model';
 export * from './application.model';
 export * from './subgroup.model';
+export * from './tally-form.model';
+export * from './tally-submission.model';
+export * from './tally-webhook.model';
+export * from './application-nonce.model';

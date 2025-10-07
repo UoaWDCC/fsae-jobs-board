@@ -65,6 +65,12 @@ export class JobAd extends Entity {
   })
   roleType: string;
 
+  @property({
+    type: 'string',
+    required: false,
+  })
+  tallyFormId?: string;
+
 
   constructor(data?: Partial<JobAd>) {
     super(data);
