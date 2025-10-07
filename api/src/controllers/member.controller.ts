@@ -14,7 +14,12 @@ import {
   HttpErrors,
 } from '@loopback/rest';
 import {FsaeRole} from '../models';
-import {MemberRepository} from '../repositories';
+import {
+  MemberRepository,
+  TallySubmissionRepository,
+  TallyFormRepository,
+  JobAdRepository,
+} from '../repositories';
 import { authenticate } from '@loopback/authentication';
 import { authorize } from '@loopback/authorization';
 import {inject} from '@loopback/core';
@@ -51,6 +56,12 @@ export class MemberController {
     @inject(RestBindings.Http.REQUEST) private req: Request,
     @inject(SecurityBindings.USER) protected currentUserProfile: UserProfile,
     @repository(MemberRepository) public memberRepository: MemberRepository,
+    @repository(TallySubmissionRepository)
+    public tallySubmissionRepository: TallySubmissionRepository,
+    @repository(TallyFormRepository)
+    public tallyFormRepository: TallyFormRepository,
+    @repository(JobAdRepository)
+    public jobAdRepository: JobAdRepository,
   ) {}
 
   @authorize({
@@ -339,6 +350,90 @@ export class MemberController {
   @response(204, { description: 'Member DELETE success' })
   async deleteById(@param.path.string('id') id: string): Promise<void> {
     await this.memberRepository.deleteById(id);
+  }
+
+  @authorize({
+    allowedRoles: [FsaeRole.MEMBER],
+  })
+  @ownerOnly({
+    ownerField: 'memberId',
+  })
+  @get('/api/members/{memberId}/submissions')
+  @response(200, {
+    description: 'Get member application submission history',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'object',
+          properties: {
+            submissions: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  id: {type: 'string'},
+                  job_id: {type: 'string'},
+                  job_title: {type: 'string'},
+                  company_name: {type: 'string'},
+                  submission_date: {type: 'string'},
+                  status: {type: 'string'},
+                },
+              },
+            },
+            total_count: {type: 'number'},
+          },
+        },
+      },
+    },
+  })
+  async getMemberSubmissions(
+    @param.path.string('memberId') memberId: string,
+  ): Promise<{
+    submissions: Array<{
+      id: string;
+      job_id: string;
+      job_title: string;
+      company_name: string;
+      submission_date: string;
+      status: string;
+    }>;
+    total_count: number;
+  }> {
+    try {
+      // Get all submissions for this member
+      const submissions = await this.tallySubmissionRepository.find({
+        where: {memberId: memberId},
+        order: ['submittedAt DESC'],
+      });
+
+      // Build response with job details
+      const submissionDetails = await Promise.all(
+        submissions.map(async (submission) => {
+          // Get form to find job ID
+          const form = await this.tallyFormRepository.findById(submission.formId);
+
+          // Get job details
+          const job = await this.jobAdRepository.findById(form.jobId);
+
+          return {
+            id: submission.id!,
+            job_id: form.jobId,
+            job_title: job.title,
+            company_name: job.specialisation || 'Unknown',
+            submission_date: submission.submittedAt.toISOString(),
+            status: submission.status,
+          };
+        }),
+      );
+
+      return {
+        submissions: submissionDetails,
+        total_count: submissionDetails.length,
+      };
+    } catch (error) {
+      console.error('Error fetching member submissions:', error);
+      throw new HttpErrors.InternalServerError('Failed to fetch submissions');
+    }
   }
 
 }
