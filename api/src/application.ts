@@ -9,7 +9,7 @@ import {RestApplication} from '@loopback/rest';
 import {ServiceMixin} from '@loopback/service-proxy';
 import path from 'node:path';
 import {MySequence} from './sequence';
-import {JwtService, PasswordHasherService, GeneratorService, ResendService} from './services';
+import {JwtService, PasswordHasherService, GeneratorService, ResendService, TallyService} from './services';
 import {AuthenticationComponent, registerAuthenticationStrategy} from '@loopback/authentication';
 import {FSAEJwtStrategy} from './auth/auth-strategies/jwt-strategy';
 import {
@@ -73,6 +73,7 @@ export class FsaeApiApplication extends BootMixin(
     this.bind(`services.passwordhasher`).toClass(PasswordHasherService);
     this.bind('services.generator').toClass(GeneratorService);
     this.bind('services.resendService').toClass(ResendService);
+    this.bind('services.TallyService').toClass(TallyService);
 
     this.bind('services.Multer').toProvider(MulterProvider);
     registerAuthenticationStrategy(this, FSAEJwtStrategy);

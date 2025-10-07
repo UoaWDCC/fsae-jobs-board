@@ -8,3 +8,5 @@ export * from './job.controller';
 export * from './activation.controller';
 export * from './verification.controller';
 export * from './application.controller';
+export * from './tally-form.controller';
+export * from './application-webhook.controller';
