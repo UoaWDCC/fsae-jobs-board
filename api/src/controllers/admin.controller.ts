@@ -25,6 +25,7 @@ import {inject} from '@loopback/core';
 import {SecurityBindings, UserProfile, securityId} from '@loopback/security';
 import {Notification} from '../models/notification.model';
 import {randomUUID} from 'crypto';
+import {NotificationType} from '../models/notification.type';
 
 @authenticate('fsae-jwt')
 export class AdminController {
@@ -201,9 +202,10 @@ export class AdminController {
         'application/json': {
           schema: {
             type: 'object',
-            required: ['message', 'userType'],
+            required: ['title', 'msgBody', 'userType', 'type'],
             properties: {
-              message: {type: 'string', minLength: 1},
+              title: {type: 'string', minLength: 1},
+              msgBody: {type: 'string', minLength: 1},
               userType: {
                 type: 'string',
                 enum: [
@@ -213,14 +215,26 @@ export class AdminController {
                   FsaeRole.SPONSOR,
                 ],
               },
+              type: {
+                type: 'string',
+                enum: [
+                  NotificationType.ANNOUNCEMENT,
+                  NotificationType.NOTIFICATION,
+                ],
+              },
             },
           },
         },
       },
     })
-    body: {message: string; userType: FsaeRole},
+    body: {
+      title: string;
+      msgBody: string;
+      userType: FsaeRole;
+      type: NotificationType;
+    },
   ): Promise<void> {
-    const {message, userType} = body;
+    const {title, msgBody, userType, type} = body;
     const CAP = 50;
 
     const userRepository =
@@ -238,7 +252,9 @@ export class AdminController {
     const notification: Notification = new Notification({
       id: randomUUID(),
       issuer: this.currentUser[securityId] as string,
-      message,
+      title,
+      msgBody,
+      type,
       read: false,
       createdAt: new Date(),
     });

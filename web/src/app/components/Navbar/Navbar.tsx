@@ -17,6 +17,7 @@ import {
   ScrollArea,
   UnstyledButton,
   Badge,
+  ThemeIcon,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { Role } from '@/app/type/role';
@@ -26,13 +27,14 @@ import {
   IconLogout,
   IconSettings,
   IconBriefcase2,
+  IconSpeakerphone,
 } from '@tabler/icons-react';
 import styles from './Navbar.module.css';
 import SettingModal from '../Modal/EditModal';
 import { EditSetting } from '../Modal/EditSetting';
 import { resetUser } from '../../features/user/userSlice';
 import { notificationApi } from '@/api/notification';
-import type { Notification } from '@/models/notification';
+import type { Notification, NotificationType } from '@/models/notification';
 
 function timeAgo(d: string | Date) {
   const s = Math.floor((Date.now() - new Date(d).getTime()) / 1000);
@@ -63,6 +65,7 @@ function Navbar() {
   const [unread, setUnread] = useState(0);
   const [notifs, setNotifs] = useState<Notification[]>([]);
   const [notifsOpen, setNotifsOpen] = useState(false);
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     let cancelled = false;
@@ -168,6 +171,9 @@ function Navbar() {
     };
   }, []);
 
+  const iconFor = (t: NotificationType) =>
+    t === 'announcement' ? <IconSpeakerphone size={18} /> : <IconBell size={18} />;
+
   return (
     <>
       <Flex
@@ -259,7 +265,7 @@ function Navbar() {
                       size={35}
                       variant="subtle"
                       color="white"
-                      onClick={handleNotificationClick} // fetch + open + mark-all
+                      onClick={handleNotificationClick}
                       aria-label={`Notifications${unread ? `, ${unread} unread` : ''}`}
                       className={styles.iconBtn}
                     >
@@ -285,27 +291,48 @@ function Navbar() {
                         </Text>
                       ) : (
                         <ul className={styles.list} role="listbox" aria-label="Notifications">
-                          {notifs.map((n) => (
-                            <li key={n.id}>
-                              <UnstyledButton
-                                className={`${styles.item} ${!n.read ? styles.unread : ''}`}
-                                onClick={() => setNotifsOpen(false)} // or navigate to deepLink
-                                title={new Date(n.createdAt).toLocaleString()}
-                              >
-                                {!n.read && <span className={styles.dot} aria-hidden />}
-                                <div className={styles.msg}>
-                                  <span className={styles.time}>{timeAgo(n.createdAt)}</span>
-                                  <Text
-                                    size="sm"
-                                    fw={n.read ? 400 : 600}
-                                    className={styles.message}
-                                  >
-                                    {n.message}
-                                  </Text>
-                                </div>
-                              </UnstyledButton>
-                            </li>
-                          ))}
+                          {notifs.map((n) => {
+                            const isExpanded = !!expanded[n.id];
+                            return (
+                              <li key={n.id}>
+                                <UnstyledButton
+                                  className={`${styles.item} ${!n.read ? styles.unread : ''} ${
+                                    isExpanded ? styles.expanded : ''
+                                  }`}
+                                  onClick={() => setExpanded((e) => ({ ...e, [n.id]: !e[n.id] }))}
+                                  title={new Date(n.createdAt).toLocaleString()}
+                                  aria-expanded={isExpanded}
+                                >
+                                  {!n.read && <span className={styles.dot} aria-hidden />}
+                                  <div className={styles.row}>
+                                    <ThemeIcon
+                                      variant="light"
+                                      radius="xl"
+                                      size={28}
+                                      className={styles.avatar}
+                                    >
+                                      {iconFor(n.type)}
+                                    </ThemeIcon>
+                                    <div className={styles.msg}>
+                                      <span className={styles.time}>{timeAgo(n.createdAt)}</span>
+                                      <Text
+                                        size="sm"
+                                        fw={n.read ? 500 : 700}
+                                        className={styles.title}
+                                      >
+                                        {n.title}
+                                      </Text>
+                                      {isExpanded && (
+                                        <Text size="sm" className={styles.body}>
+                                          {n.msgBody}
+                                        </Text>
+                                      )}
+                                    </div>
+                                  </div>
+                                </UnstyledButton>
+                              </li>
+                            );
+                          })}
                         </ul>
                       )}
                     </ScrollArea>
