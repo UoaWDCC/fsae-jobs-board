@@ -13,6 +13,37 @@
   overflow: visible;
 }
 
+/* anchor container is already relative via .iconBtn */
+.badge {
+  position: absolute;
+  top: -4px; /* nudge as you like */
+  right: -4px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 9999px;
+
+  background: #ff4d4f; /* red pill */
+  color: #fff;
+  font-size: 10px;
+  line-height: 16px;
+  font-weight: 700;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.85); /* ring to separate from bg */
+  z-index: 1;
+  pointer-events: none; /* don’t block clicks on the bell */
+}
+
+/* optional: fixed square for single-digit look */
+.badge:only-child {
+  min-width: 16px;
+  padding: 0;
+}
+
 /* --- dropdown container --- */
 .dropdown {
   padding: 8px;

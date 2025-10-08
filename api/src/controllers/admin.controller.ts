@@ -270,4 +270,89 @@ export class AdminController {
       },
     });
   }
+
+  @authenticate('fsae-jwt')
+  @authorize({allowedRoles: [FsaeRole.ADMIN]})
+  @post('/user/admin/announce')
+  @response(200, {description: 'Announcement broadcasted successfully'})
+  async announce(
+    @requestBody({
+      required: true,
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            required: ['title', 'msgBody', 'userTypes'],
+            properties: {
+              title: {type: 'string', minLength: 1},
+              msgBody: {type: 'string', minLength: 1},
+              userTypes: {
+                type: 'array',
+                items: {
+                  type: 'string',
+                  enum: [
+                    FsaeRole.ADMIN,
+                    FsaeRole.ALUMNI,
+                    FsaeRole.MEMBER,
+                    FsaeRole.SPONSOR,
+                  ],
+                },
+                description:
+                  'One or more user groups to send the announcement to',
+              },
+            },
+          },
+        },
+      },
+    })
+    body: {
+      title: string;
+      msgBody: string;
+      userTypes: FsaeRole[];
+    },
+  ): Promise<{sent: number}> {
+    const {title, msgBody, userTypes} = body;
+    const CAP = 50;
+
+    const roleToRepo: Record<FsaeRole, any> = {
+      [FsaeRole.ALUMNI]: this.alumniRepository,
+      [FsaeRole.MEMBER]: this.memberRepository,
+      [FsaeRole.SPONSOR]: this.sponsorRepository,
+      [FsaeRole.ADMIN]: this.adminRepository,
+      [FsaeRole.UNKNOWN]: undefined,
+    };
+
+    const announcement: Notification = new Notification({
+      id: randomUUID(),
+      issuer: this.currentUser[securityId] as string,
+      title,
+      msgBody,
+      type: NotificationType.ANNOUNCEMENT, // ← always announcement
+      read: false,
+      createdAt: new Date(),
+    });
+
+    let totalSent = 0;
+
+    for (const role of userTypes) {
+      const repo = roleToRepo[role];
+      if (!repo) continue;
+
+      const users = await repo.find({fields: {id: true}});
+      for (const user of users) {
+        await repo.updateById(user.id, {
+          $push: {
+            notifications: {
+              $each: [announcement],
+              $sort: {createdAt: -1},
+              $slice: CAP,
+            },
+          },
+        });
+        totalSent++;
+      }
+    }
+
+    return {sent: totalSent};
+  }
 }

@@ -272,7 +272,7 @@ function Navbar() {
                       <IconBell size={35} />
                       {unread > 0 && (
                         <span className={styles.badge} aria-hidden>
-                          {unread}
+                          {unread > 99 ? '99+' : unread}
                         </span>
                       )}
                     </ActionIcon>
