@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/app/store';
 
 interface EditAvatarProps {
-  avatar: string;
+  avatar: string | null | undefined;
 }
 
 export const EditAvatar = ({ avatar }: EditAvatarProps) => {

@@ -6,8 +6,10 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/app/store';
 
+//theres more than one class of user that have banners. atm hardcoded only to serve members. please fix and generalise later! at the time of this comment
+//alumni backend has been done to support banners and avatars, sponsor needs to be done iirc.
 interface EditBannerModalProps {
-  banner: string;
+  banner: string | null | undefined;
 }
 
 export const EditBannerModal = ({ banner }: EditBannerModalProps) => {
@@ -53,7 +55,7 @@ export const EditBannerModal = ({ banner }: EditBannerModalProps) => {
       });
 
       if (!response.ok) {
-        setErrorMsg("Failed to delete banner.");
+        setErrorMsg('Failed to delete banner.');
       }
 
       setBannerUrlState('');
@@ -79,7 +81,7 @@ export const EditBannerModal = ({ banner }: EditBannerModalProps) => {
 
     if (selectedFile.size > MAX_FILE_SIZE) {
       setUploadStatus('error');
-      setErrorMsg("File too large. Maximum size is 5MB.");
+      setErrorMsg('File too large. Maximum size is 5MB.');
       return;
     }
 
@@ -121,22 +123,27 @@ export const EditBannerModal = ({ banner }: EditBannerModalProps) => {
       <Flex align="center" justify="center" className={styles.bannerWrapper}>
         <Image src={bannerUrl || banner} className={styles.banner} />
       </Flex>
-      <Group justify="center" mb="md">    
+      <Group justify="center" mb="md">
         {uploadStatus === 'success' && !uploading && (
-          <Text c="blue" mt="lg">Update successful!</Text>
+          <Text c="blue" mt="lg">
+            Update successful!
+          </Text>
         )}
         {uploadStatus === 'error' && !uploading && (
-          <Text c="red" mt="lg">{errorMsg} Please try again.</Text>
+          <Text c="red" mt="lg">
+            {errorMsg} Please try again.
+          </Text>
         )}
       </Group>
       <Divider size="md" />
       <Flex justify="space-between">
-        <FileButton onChange={
-          (file) => {
+        <FileButton
+          onChange={(file) => {
             setFile(file);
             handleBannerUpload(file);
-        }}
-        accept="image/png,image/jpeg">
+          }}
+          accept="image/png,image/jpeg"
+        >
           {(props) => (
             <button {...props} className={styles.modalButton}>
               <Flex direction="column" align="center">
@@ -148,11 +155,7 @@ export const EditBannerModal = ({ banner }: EditBannerModalProps) => {
             </button>
           )}
         </FileButton>
-        <button
-          className={styles.modalButton}
-          onClick={handleBannerDelete}
-          disabled={clearing}
-        >
+        <button className={styles.modalButton} onClick={handleBannerDelete} disabled={clearing}>
           <Flex direction="column" align="center">
             <ActionIcon variant="transparent">
               <IconTrash stroke={2} className={styles.icon} />

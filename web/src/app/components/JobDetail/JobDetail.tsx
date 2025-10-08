@@ -37,8 +37,8 @@ export function JobDetail({ job }: JobDetailProps) {
 
   // Check if user can edit this job
   const canEdit = userRole === 'sponsor' || userRole === 'alumni';
-  const canApply = userRole === 'alumni' || userRole === 'member';
   const isOwner = userId && job.publisherID === userId;
+  const canApply = (userRole === 'alumni' && !isOwner) || userRole === 'member'; //alumni may apply to jobs but not their own
 
   const handleConfirmDelete = async (reason: string) => {
     await adminApi.deleteJob(job.id, reason); // optionally pass reason to backend
@@ -51,12 +51,12 @@ export function JobDetail({ job }: JobDetailProps) {
       console.error('User does not have permission to edit jobs');
       return;
     }
-    
+
     if (!isOwner) {
       console.error('User can only edit their own job posts');
       return;
     }
-    
+
     navigate(`/job-editor/${job.id}`);
   };
 
@@ -80,8 +80,12 @@ export function JobDetail({ job }: JobDetailProps) {
         {/* Right Column */}
         <div className={styles.rightColumn}>
           <div className={styles.titleRow}>
-            <Text size="2.25rem" fw={700}>{job.title}</Text>
-            <Badge size="xl" color="blue" className={styles.jobBadge}>WDCC</Badge>
+            <Text size="2.25rem" fw={700}>
+              {job.title}
+            </Text>
+            <Badge size="xl" color="blue" className={styles.jobBadge}>
+              WDCC
+            </Badge>
           </div>
 
           <div className={styles.buttonRow}>
@@ -91,8 +95,8 @@ export function JobDetail({ job }: JobDetailProps) {
               </Button>
             ) : (
               <>
-                {canApply && (<Button>Apply ↗</Button>)}
-                {canApply && (<Button variant="outline">Save</Button>)}
+                {canApply && <Button>Apply ↗</Button>}
+                {canApply && <Button variant="outline">Save</Button>}
                 {canEdit && isOwner && (
                   <Button variant="light" onClick={handleEditJob}>
                     Edit Job
@@ -108,7 +112,7 @@ export function JobDetail({ job }: JobDetailProps) {
           <Text>{job.description}</Text>
         </div>
       </div>
-      
+
       <DeletePostModal
         opened={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}

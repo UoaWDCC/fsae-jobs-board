@@ -1,11 +1,10 @@
-import { Card, Avatar, Box, Title, Button, Grid, Flex, Loader, Image, Text } from '@mantine/core';
+import { Card, Avatar, Text, Box, Title, Button, Grid, Flex, Loader } from '@mantine/core';
 import { EditableField } from '../../components/EditableField';
 import styles from '../../styles/SponsorProfile.module.css';
 import { useEffect, useState } from 'react';
 import { IconPlus } from '@tabler/icons-react';
 import { JobCarousel } from '../../components/JobCardCarousel/JobCarousel';
 import { JobCardProps } from '../../components/JobCardCarousel/JobCard';
-import { Role } from '@/app/type/role';
 import EditModal from '../../components/Modal/EditModal';
 import EditAlumniProfile from '../../components/Modal/EditAlumniProfile';
 import { EditAvatar } from '../../components/Modal/EditAvatar';
@@ -15,7 +14,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { fetchAlumniById } from '@/api/alumni';
 import { fetchJobsByPublisherId } from '@/api/job';
 import { Alumni } from '@/models/alumni.model';
-import { Job } from "@/models/job.model";
+import { Job } from '@/models/job.model';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../app/store';
 import DeactivateAccountModal from '../../components/Modal/DeactivateAccountModal';
@@ -23,52 +22,54 @@ import { subGroupDisplayMap } from '@/app/utils/field-display-maps';
 import { SubGroup } from '@/models/subgroup.model';
 
 export function AlumniProfile() {
-  // UseState for future modal implementation
   const [openModal, setOpenModal] = useState(false);
   const [modalType, setModalType] = useState('');
   const [openProfileModal, setOpenProfileModal] = useState(false);
   const [modalContent, setModalContent] = useState<React.ReactNode>(null);
-  const [showMoreDescription, setShowMoreDescription] = useState(false);
-  const [role, setRole] = useState<Role>(Role.Alumni); // Dummy role, replace with actual role from Redux store
   const [modalTitle, setModalTitle] = useState('');
   const [openJobEditorModal, setOpenJobEditorModal] = useState(false);
   const [editingJob, setEditingJob] = useState<Job | null>(null);
   const [jobs, setJobs] = useState<Job[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [isLocalProfile, setIsLocalProfile] = useState(false) // Is this profile this user's profile (aka. should we show the edit button)
+  const [jobData, setJobData] = useState<JobCardProps[]>([]);
+  const [isLocalProfile, setIsLocalProfile] = useState(false);
   const [deactivateModalOpen, setDeactivateModalOpen] = useState(false);
-  
-  const userRole = useSelector((state: RootState) => state.user.role); // the id of the local user
-  const userId = useSelector((state: RootState) => state.user.id); // the id of the local user
-  
+  const [userData, setUserData] = useState<Alumni | null>(null);
+
+  const userRole = useSelector((state: RootState) => state.user.role);
+  const userId = useSelector((state: RootState) => state.user.id);
+
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  /*
   const handleAvatarChange = () => {
     setModalType('avatar');
-    setOpenProfileModal(true);
-    setModalContent(<EditAvatar avatar={userData?.avatar} />);
+    setModalContent(<EditAvatar avatar={userData?.avatarURL} />);
     setModalTitle('Profile Photo');
+    setOpenProfileModal(true);
   };
 
   const handleBannerChange = () => {
     setModalType('banner');
-    setOpenProfileModal(true);
-    setModalContent(<EditBannerModal banner={userData?.banner} />)
+    setModalContent(<EditBannerModal banner={userData?.bannerURL} />);
     setModalTitle('Banner Photo');
-  };*/
-  
-  const handleProfileChange = () => {
     setOpenProfileModal(true);
+  };
+
+  const handleProfileChange = () => {
+    setModalType('profile');
     setModalContent(
-      <EditAlumniProfile userData={userData} setUserData={setUserData} close={() => setOpenProfileModal(false)} />
+      <EditAlumniProfile
+        userData={userData}
+        setUserData={setUserData}
+        close={() => setOpenProfileModal(false)}
+      />
     );
     setModalTitle('Edit Profile');
+    setOpenProfileModal(true);
   };
 
   const handleJobOpportunitiesChange = () => {
-    navigate('/job-editor');
+    setOpenJobEditorModal(true);
   };
 
   const handleDeactivateUserChange = () => {
@@ -76,108 +77,102 @@ export function AlumniProfile() {
     setOpenModal(true);
   };
 
-  const [userData, setUserData] = useState<Alumni | null>(null);
-  
   const handleJobSaved = () => {
-    // Reload jobs to get updated data
-    const fetchUserData = async () => {
+    const reload = async () => {
       try {
-        const jobs: Job[] = await fetchJobsByPublisherId(id as string);
-        const jobsForJobCard = jobs.map((thisJob) => {
-          return {
-            id: thisJob.id,
-            title: thisJob.title,
-            specialisation: thisJob.specialisation,
-            description: thisJob.description,
-            roleType: thisJob.roleType || "Full-time",
-            salary: thisJob.salary,
-            applicationDeadline: thisJob.applicationDeadline,
-            datePosted: thisJob.datePosted,
-            publisherID: thisJob.publisherID
-          }
-        });
-        setJobData(jobsForJobCard);
-      } catch (err) {
-        console.error('Failed to reload jobs:', err);
-      }
+        const js: Job[] = await fetchJobsByPublisherId(id as string);
+        const mapped = js.map((j) => ({
+          id: j.id,
+          title: j.title,
+          specialisation: j.specialisation,
+          description: j.description,
+          roleType: j.roleType || 'Full-time',
+          salary: j.salary,
+          applicationDeadline: j.applicationDeadline,
+          datePosted: j.datePosted,
+          publisherID: j.publisherID,
+        }));
+        setJobData(mapped);
+      } catch {}
     };
-    if (id) fetchUserData();
+    if (id) reload();
     setOpenJobEditorModal(false);
     setEditingJob(null);
   };
 
   const handleDeactivateAccount = (reason: string) => {
-    console.log('Account deactivated:', reason);
     setDeactivateModalOpen(false);
-    // trigger backend call to deactivate account.
   };
 
-  
+  const fetchAvatar = async () => {
+    if (!id) return;
+    const token = localStorage.getItem('accessToken');
+    if (!token) return;
+    try {
+      const resp = await fetch(`http://localhost:3000/user/alumni/${id}/avatar`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!resp.ok) return;
+      const blob = await resp.blob();
+      const url = URL.createObjectURL(blob);
+      setUserData((prev) => (prev ? { ...prev, avatarURL: url } : prev));
+      return () => URL.revokeObjectURL(url);
+    } catch {}
+  };
 
-  const [jobData, setJobData] = useState<JobCardProps[]>([]);
+  const fetchBanner = async () => {
+    if (!id) return;
+    const token = localStorage.getItem('accessToken');
+    if (!token) return;
+    try {
+      const resp = await fetch(`http://localhost:3000/user/alumni/${id}/banner`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!resp.ok) return;
+      const blob = await resp.blob();
+      const url = URL.createObjectURL(blob);
+      setUserData((prev) => (prev ? { ...prev, bannerURL: url } : prev));
+      return () => URL.revokeObjectURL(url);
+    } catch {}
+  };
 
   useEffect(() => {
-    // Logic to fetch data and setUserData
-    const fetchUserData = async () => {
+    const load = async () => {
       try {
-        const userData = await fetchAlumniById(id as string);
-        if (!userData) {
-          navigate("/404")
+        const u = await fetchAlumniById(id as string);
+        if (!u) {
+          navigate('/404');
           return;
         }
-        setUserData(userData);
-        setIsLocalProfile(userData.id == userId);
-        const jobs: Job[] = await fetchJobsByPublisherId(id as string);
-        const jobsForJobCard = jobs.map((thisJob) => {
-          return {
-            id: thisJob.id,
-            title: thisJob.title,
-            specialisation: thisJob.specialisation,
-            description: thisJob.description,
-            roleType: thisJob.roleType || "Full-time",
-            salary: thisJob.salary,
-            applicationDeadline: thisJob.applicationDeadline,
-            datePosted: thisJob.datePosted,
-            publisherID: thisJob.publisherID
-          }
-        })
-        setJobData(jobsForJobCard)
-      } catch (err) {
-        // TODO: proper error handling (eg. auth errors/forbidden pages etc.)
-        //navigate("/404")
-      }
+        setUserData(u);
+        setIsLocalProfile(u.id == userId);
+        const js: Job[] = await fetchJobsByPublisherId(id as string);
+        const mapped = js.map((j) => ({
+          id: j.id,
+          title: j.title,
+          specialisation: j.specialisation,
+          description: j.description,
+          roleType: j.roleType || 'Full-time',
+          salary: j.salary,
+          applicationDeadline: j.applicationDeadline,
+          datePosted: j.datePosted,
+          publisherID: j.publisherID,
+        }));
+        setJobData(mapped);
+      } catch {}
     };
-    if (id) fetchUserData();
-   }, [id]);
+    if (id) load();
+    fetchAvatar();
+    fetchBanner();
+  }, [id]);
 
-  // methods to get elements based on user type
   const getElementBasedOnRole = (element: string) => {
     switch (userRole) {
-      case 'sponsor':
-        return getSponsorElements(element);
-      case 'member':
-        return getStudentElements(element);
       case 'alumni':
         return getAlumniElements(element);
       case 'admin':
         return getAdminElements(element);
-    }
-  };
-
-  const getSponsorElements = (element: string) => {
-    switch (element) {
-      case 'profileBtn':
-        return null;
-      case 'addNewBtn':
-        return null;
-    }
-  };
-
-  const getStudentElements = (element: string) => {
-    switch (element) {
-      case 'profileBtn':
-        return null;
-      case 'addNewBtn':
+      default:
         return null;
     }
   };
@@ -185,29 +180,24 @@ export function AlumniProfile() {
   const getAlumniElements = (element: string) => {
     switch (element) {
       case 'profileBtn':
-        return (
-          <Button
-            onClick={handleProfileChange}
-            classNames={{
-              root: styles.button_root,
-            }}
-          >
+        return isLocalProfile ? (
+          <Button onClick={handleProfileChange} classNames={{ root: styles.button_root }}>
             Edit Profile
           </Button>
-        );
+        ) : null;
       case 'addNewBtn':
-        return (
+        return isLocalProfile ? (
           <Button
             onClick={handleJobOpportunitiesChange}
             leftSection={<IconPlus stroke={3} size={'1rem'} />}
-            classNames={{
-              root: styles.button_root,
-            }}
+            classNames={{ root: styles.button_root }}
             style={{ marginLeft: '10px' }}
           >
             Add New
           </Button>
-        );
+        ) : null;
+      default:
+        return null;
     }
   };
 
@@ -217,28 +207,27 @@ export function AlumniProfile() {
         return (
           <Button
             onClick={handleDeactivateUserChange}
-            classNames={{
-              root: styles.button_admin_root,
-            }}
+            classNames={{ root: styles.button_admin_root }}
           >
             Deactivate User
           </Button>
         );
-      case 'addNewBtn':
+      default:
         return null;
     }
   };
 
   return (
     <Box className={styles.container}>
-      {/* PICTURE AND COMPANY DETAILS */}
       <Card className={styles.card}>
         <Card.Section
           h={250}
           className={styles.banner}
-          //onClick={handleBannerChange}
-          style={{ backgroundImage: `url(${userData?.bannerURL})`}}
+          onClick={isLocalProfile ? handleBannerChange : undefined}
+          style={{ backgroundImage: `url(${userData?.bannerURL || ''})` }}
         />
+
+        {/* NAME — same offsets as Sponsor */}
         <Box className={styles.name} pl={170} pt={140}>
           <EditableField
             value={userData?.firstName || ''}
@@ -246,19 +235,11 @@ export function AlumniProfile() {
             fieldName="firstName"
             userId={id as string}
             userRole="alumni"
-            onUpdate={(_, value) => {
-              if (userData) {
-                setUserData({ ...userData, firstName: value });
-              }
-            }}
+            onUpdate={(_, v) => userData && setUserData({ ...userData, firstName: v })}
             editable={isLocalProfile}
             required
-            validation={(value) => {
-              if (!value.trim()) return 'First name is required';
-              return null;
-            }}
-            className={styles.firstName}
-            size={undefined}
+            validation={(v) => (!v.trim() ? 'First name is required' : null)}
+            className={styles.companyName} // ← use Sponsor’s heading style
           />
           <EditableField
             value={userData?.lastName || ''}
@@ -266,58 +247,44 @@ export function AlumniProfile() {
             fieldName="lastName"
             userId={id as string}
             userRole="alumni"
-            onUpdate={(_, value) => {
-              if (userData) {
-                setUserData({ ...userData, lastName: value });
-              }
-            }}
+            onUpdate={(_, v) => userData && setUserData({ ...userData, lastName: v })}
             editable={isLocalProfile}
             required
-            validation={(value) => {
-              if (!value.trim()) return 'Last name is required';
-              return null;
-            }}
-            className={styles.lastName}
-            size={undefined}
+            validation={(v) => (!v.trim() ? 'Last name is required' : null)}
+            className={styles.companyName} // ← same heading style
           />
         </Box>
-        <Box pl={170} pt={160}>
-          <EditableField
-            value={userData?.subGroup || ''}
-            placeholder="FSAE sub-team"
-            fieldName="subGroup"
-            userId={id as string}
-            userRole="alumni"
-            onUpdate={(_, value) => {
-              if (userData) {
-                setUserData({ ...userData, subGroup: value as SubGroup });
-              }
-            }}
-            editable={isLocalProfile}
-            className={styles.subGroup}
-            size="xl"
-          />
-        </Box>
+
+        {/* AVATAR — same position as Sponsor */}
         <Avatar
           src={userData?.avatarURL}
           size={150}
           mt={-100}
           ml={10}
           className={styles.avatar}
-          //onClick={handleAvatarChange}
+          onClick={isLocalProfile ? handleAvatarChange : undefined}
         />
-        <Text size="lg" mt={-50} ml={170} className={styles.text}>
-          {`${userData?.subGroup ? subGroupDisplayMap[userData?.subGroup] : ""}`}
-        </Text>
+
+        {/* SUBTITLE ROW — same as Sponsor’s industry row */}
+        <Box mt={-30} ml={170} className={styles.text}>
+          <EditableField
+            value={userData?.subGroup || ''}
+            placeholder="FSAE sub-team"
+            fieldName="subGroup"
+            userId={id as string}
+            userRole="alumni"
+            onUpdate={(_, v) => userData && setUserData({ ...userData, subGroup: v as SubGroup })}
+            editable={isLocalProfile}
+            size="lg"
+          />
+        </Box>
       </Card>
 
-      <Flex className={styles.profileBtn}>
-        {getElementBasedOnRole('profileBtn')}
-      </Flex>
+      {/* same actions row class as Sponsor */}
+      <Flex className={styles.profileBtn}>{getElementBasedOnRole('profileBtn')}</Flex>
 
       <Grid>
         <Grid.Col span={{ md: 2.5, xs: 12 }}>
-          {/* CONTACT */}
           <Box ml={20} mt={15}>
             <Title order={5}>Contact</Title>
             <Box pl={15} mt={10} className={styles.box}>
@@ -326,33 +293,31 @@ export function AlumniProfile() {
                   <EditableField
                     size="md"
                     value={userData.email}
-                    placeholder="Email"
+                    label="Email"
+                    placeholder="Click to add email"
                     fieldName="email"
                     userId={id as string}
                     userRole="alumni"
                     type="email"
-                    onUpdate={(_, value) => {
-                      setUserData({ ...userData, email: value });
-                    }}
+                    onUpdate={(_, value) => setUserData({ ...userData, email: value })}
                     editable={isLocalProfile}
                     required
-                    validation={(value) => {
-                      const emailPattern = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i;
-                      if (!emailPattern.test(value)) return 'Please enter a valid email';
-                      return null;
-                    }}
+                    validation={(v) =>
+                      /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i.test(v)
+                        ? null
+                        : 'Please enter a valid email'
+                    }
                   />
                   <EditableField
                     size="lg"
                     value={userData.phoneNumber}
-                    placeholder="Phone number"
+                    label="Phone Number"
+                    placeholder="Click to add phone number"
                     fieldName="phoneNumber"
                     userId={id as string}
                     userRole="alumni"
                     type="tel"
-                    onUpdate={(_, value) => {
-                      setUserData({ ...userData, phoneNumber: value });
-                    }}
+                    onUpdate={(_, value) => setUserData({ ...userData, phoneNumber: value })}
                     editable={isLocalProfile}
                     required
                   />
@@ -366,21 +331,20 @@ export function AlumniProfile() {
 
         <Grid.Col span={{ md: 9, xs: 12 }}>
           <Box mx={20} mt={10}>
-            {/* ABOUT ME SECTION */}
-            <Title order={5}>About Me</Title>
+            {/* match Sponsor label */}
+            <Title order={5}>About</Title>
             <Box pl={15} mt={10} className={styles.box}>
               {userData ? (
                 <EditableField
                   size="md"
                   value={userData.description || ''}
-                  placeholder="Tell us about yourself..."
+                  label="About Me"
+                  placeholder="Click to add a description about yourself..."
                   fieldName="description"
                   userId={id as string}
                   userRole="alumni"
                   type="textarea"
-                  onUpdate={(_, value) => {
-                    setUserData({ ...userData, description: value });
-                  }}
+                  onUpdate={(_, value) => setUserData({ ...userData, description: value })}
                   editable={isLocalProfile}
                   maxLength={1500}
                   minRows={4}
@@ -390,6 +354,7 @@ export function AlumniProfile() {
               )}
             </Box>
           </Box>
+
           <Box
             ml={20}
             mt={30}
@@ -400,7 +365,6 @@ export function AlumniProfile() {
               alignItems: 'flex-start',
             }}
           >
-            {/* JOB OPPORTUNITIES CAROUSEL */}
             <Box miw="100%">
               <Flex
                 style={{
@@ -408,13 +372,13 @@ export function AlumniProfile() {
                   justifyContent: 'space-between',
                   marginRight: '20px',
                   flexWrap: 'wrap',
-                  gap: '0.5rem'
+                  gap: '0.5rem',
                 }}
               >
                 <Title order={5}>Job Opportunities</Title>
                 {getElementBasedOnRole('addNewBtn')}
               </Flex>
-              <Flex mt={15} justify={'center'} align={'center'}>
+              <Flex mt={15} justify="center" align="center">
                 <JobCarousel jobs={jobData} />
               </Flex>
             </Box>
@@ -424,18 +388,23 @@ export function AlumniProfile() {
 
       <EditModal
         opened={openProfileModal}
-        close={() => setOpenProfileModal(false)}
+        close={() => {
+          setOpenProfileModal(false);
+          if (modalType === 'avatar') fetchAvatar();
+          if (modalType === 'banner') fetchBanner();
+        }}
         content={modalContent}
         title={modalTitle}
-      ></EditModal>
+      />
 
       <JobEditorModal
         opened={openJobEditorModal}
         onClose={() => setOpenJobEditorModal(false)}
         onSuccess={handleJobSaved}
         initialData={editingJob}
-        mode={editingJob ? "edit" : "create"}
+        mode={editingJob ? 'edit' : 'create'}
       />
+
       <DeactivateAccountModal
         onClose={() => setDeactivateModalOpen(false)}
         onConfirm={handleDeactivateAccount}
