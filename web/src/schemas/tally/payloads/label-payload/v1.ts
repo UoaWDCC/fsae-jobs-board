@@ -12,6 +12,6 @@ export const LabelPayload = z.object({
   columnListUuid: Uuid.optional(),
   columnUuid: Uuid.optional(),
   columnRatio: z.number().optional(),
-}).strict();
+}).passthrough();  // Allow undocumented fields for future-proofing
 
 export type LabelPayload = z.infer<typeof LabelPayload>;

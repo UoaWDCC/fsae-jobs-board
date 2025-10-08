@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Uuid, BaseRequest, TallyBlockType } from "./base";
+import { Uuid, BaseRequest, TallyBlockType, GroupType } from "./base";
 
 import { FormTitlePayload } from "../payloads/form-title-payload/v1";
 import { TitlePayload } from "../payloads/title-payload/v1";
@@ -31,54 +31,55 @@ const Block = z.discriminatedUnion("type", [
     uuid: Uuid,
     type: z.literal("FORM_TITLE"),
     groupUuid: Uuid,
-    groupType: TallyBlockType,  // Flexible - any valid Tally groupType
+    groupType: GroupType,  // Strict validation of known groupType values
     payload: FormTitlePayload,
   }).strict(),
   z.object({
     uuid: Uuid,
     type: z.literal("TEXT"),
     groupUuid: Uuid,
-    groupType: TallyBlockType,  // Flexible - any valid Tally groupType
+    groupType: GroupType,  // Strict validation of known groupType values
     payload: TextPayload,
   }).strict(),
   z.object({
     uuid: Uuid,
     type: z.literal("LABEL"),
     groupUuid: Uuid,
-    groupType: TallyBlockType,  // Flexible - any valid Tally groupType
+    groupType: GroupType,  // Strict validation of known groupType values
     payload: LabelPayload,
   }).strict(),
   z.object({
     uuid: Uuid,
     type: z.literal("TITLE"),
     groupUuid: Uuid,
-    groupType: TallyBlockType,  // Flexible - any valid Tally groupType
+    groupType: GroupType,  // Strict validation of known groupType values
     payload: TitlePayload,
   }).passthrough(),  // Allow undocumented fields
   z.object({
     uuid: Uuid,
     type: z.literal("INPUT_TEXT"),
     groupUuid: Uuid,
-    groupType: TallyBlockType,  // Flexible - any valid Tally groupType
+    groupType: GroupType,  // Strict validation of known groupType values
     payload: InputTextPayload,  // Using v2 schema (reverse engineered from real API)
   }).passthrough(),  // Allow undocumented fields from Tally API
   z.object({
     uuid: Uuid,
     type: z.literal("MULTIPLE_CHOICE_OPTION"),
     groupUuid: Uuid,
-    groupType: TallyBlockType,  // Flexible - any valid Tally groupType
+    groupType: GroupType,  // Strict validation of known groupType values
     payload: MultipleChoiceOptionPayload,  // Using v2 schema (reverse engineered from real API)
   }).passthrough(),  // Allow undocumented fields from Tally API
   z.object({
     uuid: Uuid,
     type: z.literal("CHECKBOX"),
     groupUuid: Uuid,
-    groupType: TallyBlockType,  // Flexible - any valid Tally groupType
+    groupType: GroupType,  // Strict validation of known groupType values
     payload: CheckboxPayload,  // Using v2 schema (reverse engineered from real API)
   }).passthrough(),  // Allow undocumented fields from Tally API
 ]);
 
 export const CreateFormRequest = BaseRequest.extend({
+  name: z.string().optional(),  // Optional form name/title
   // status from BaseRequest
   blocks: z.array(Block).min(1),
 }).strict();

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-/** Reusable primitives + enums (same as your other files) */
+/** Reusable primitives + enums */
 const Uuid = z.string().uuid();
 
 const FieldType = z.enum(["InputField", "CalculatedField", "HiddenField"]);
@@ -42,7 +42,7 @@ export const InputTextPayload = z
     hasMaxCharacters: z.boolean().optional(),
     maxCharacters: z.number().optional(),
 
-    // Keep as string to stay 1:1 with the spec.
+    // Keep as string to stay 1:1 with docs
     columnListUuid: z.string().optional(),
     columnUuid: z.string().optional(),
     columnRatio: z.number().optional(),
