@@ -3,6 +3,7 @@ import {BindingScope, injectable} from '@loopback/core';
 import {HttpErrors} from '@loopback/rest';
 
 interface TallyFormCreateRequest {
+  name?: string; // Form name/title
   status: string; // "PUBLISHED" or "DRAFT"
   blocks: Record<string, any>[];
   settings?: {

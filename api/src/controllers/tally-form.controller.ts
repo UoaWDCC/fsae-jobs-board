@@ -163,14 +163,17 @@ export class TallyFormController {
         },
       };
 
-      // Prepend hidden field to blocks (always first)
+      // Insert hidden field at position 1 (right after FORM_TITLE at position 0)
+      // This ensures: blocks[0] = FORM_TITLE, blocks[1] = hidden member ID, blocks[2+] = user fields
       const blocksWithMemberId = [
-        memberIdHiddenField,
-        ...validatedFormData.blocks,
+        validatedFormData.blocks[0], // FORM_TITLE (must be first)
+        memberIdHiddenField,          // Hidden member ID (always position 1)
+        ...validatedFormData.blocks.slice(1), // User-configured fields (position 2+)
       ];
 
       // Create form via Tally API with auto-injected hidden field
       const tallyFormResponse = await this.tallyService.createForm({
+        name: formTitle,
         status: validatedFormData.status,
         blocks: blocksWithMemberId,
       });
