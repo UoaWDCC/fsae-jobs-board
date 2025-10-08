@@ -151,8 +151,9 @@ export class ApplicationWebhookController {
       }
 
       // Extract and validate JWT token from hidden member ID field
+      // Note: Tally sends the hidden field's name in the 'label' property, not 'key'
       const memberIdField = payload.data.fields.find(
-        f => f.key === form.memberIdBlockUuid || f.key === 'platform-member-id-hidden-field'
+        f => f.label === 'platform-member-id-hidden-field' && f.type === 'HIDDEN_FIELDS'
       );
 
       if (!memberIdField || !memberIdField.value) {

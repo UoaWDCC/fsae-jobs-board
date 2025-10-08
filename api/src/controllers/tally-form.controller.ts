@@ -149,17 +149,23 @@ export class TallyFormController {
         : 'Application Form';
 
       // Auto-inject hidden member ID field (for secure member linking)
-      const MEMBER_ID_FIELD_UUID = 'platform-member-id-hidden-field';
+      const MEMBER_ID_FIELD_KEY = 'platform-member-id-hidden-field';  // Key in webhook submissions
+      const MEMBER_ID_FIELD_UUID = crypto.randomUUID();  // Hidden field UUID
+      const MEMBER_ID_BLOCK_UUID = crypto.randomUUID();  // Block UUID
+      const MEMBER_ID_GROUP_UUID = crypto.randomUUID();  // Group UUID
 
       const memberIdHiddenField = {
-        uuid: MEMBER_ID_FIELD_UUID,
-        type: 'INPUT_TEXT',
-        groupUuid: 'platform-hidden-group',
-        groupType: 'QUESTION',
+        uuid: MEMBER_ID_BLOCK_UUID,
+        type: 'HIDDEN_FIELDS',  // Correct type (plural)
+        groupUuid: MEMBER_ID_GROUP_UUID,
+        groupType: 'HIDDEN_FIELDS',  // Correct groupType (plural)
         payload: {
-          html: 'Member ID (Platform Internal)',
-          isRequired: true,
-          isHidden: true,
+          hiddenFields: [  // Correct payload structure
+            {
+              uuid: MEMBER_ID_FIELD_UUID,
+              name: MEMBER_ID_FIELD_KEY  // Key that appears in webhook submissions
+            }
+          ]
         },
       };
 
