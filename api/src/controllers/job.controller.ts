@@ -9,6 +9,8 @@ import {authorize} from '@loopback/authorization';
 import {HttpErrors} from '@loopback/rest';
 import {FsaeRole} from '../models';
 import { AdminLogRepository } from '../repositories/admin.logs.repository';
+import { AdminLogService } from '../services/admin-log.service';
+import {service} from '@loopback/core';
 import { ownerOnly } from '../decorators/owner-only.decorator';
 
 @authenticate('fsae-jwt')
@@ -16,6 +18,7 @@ export class JobController {
   constructor(
     @repository(JobAdRepository) public jobAdRepository : JobAdRepository,
     @inject(AuthenticationBindings.CURRENT_USER) private currentUserProfile: UserProfile,
+    @service(AdminLogService) private adminLogService: AdminLogService
   ) {
     if(!this.jobAdRepository) {
       throw new HttpErrors.InternalServerError('JobAdRepository is not available');
@@ -165,5 +168,18 @@ export class JobController {
     }
 
     await this.jobAdRepository.deleteById(id);
+
+    if (isAdmin) {
+      await this.adminLogService.createAdminLog(
+        currentUserId,
+        {
+          message: 'Job post deleted by admin',
+          jobId: id,
+          jobTitle: job.title,
+          publisherId: job.publisherID,
+          ...(body?.reason ? {reason: body.reason} : {}),
+        },
+      );
+    }
   }
 }

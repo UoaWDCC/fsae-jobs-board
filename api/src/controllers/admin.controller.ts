@@ -1,29 +1,35 @@
 import {
-  repository,
+  repository
 } from '@loopback/repository';
+import {service} from '@loopback/core';
 import {
+  del,
   get,
   HttpErrors,
   param,
   patch,
+  post,
   requestBody,
   response,
 } from '@loopback/rest';
 import {authenticate} from '@loopback/authentication';
 import {authorize} from '@loopback/authorization';
 
-import {Alumni, FsaeRole, FsaeUser, Member, Sponsor} from '../models';
+import {Alumni, FsaeRole, FsaeUser, Member, Sponsor, Admin} from '../models';
 import {
   AlumniRepository,
   MemberRepository,
   SponsorRepository,
-  AdminLogRepository
+  AdminLogRepository,
+  AdminRepository
 } from '../repositories';
 import {AdminReview} from './controller-types/admin.controller.types';
 import { AdminStatus } from '../models/admin.status';
 import {inject} from '@loopback/core';
 import {SecurityBindings, UserProfile, securityId} from '@loopback/security';
-
+import { AdminLogService } from '../services/admin-log.service';
+import { PasswordHasherService } from '../services/password-hasher.service';
+import {CoreBindings, Application} from '@loopback/core';
 
 @authenticate('fsae-jwt')
 export class AdminController {
@@ -31,9 +37,10 @@ export class AdminController {
     @repository(AlumniRepository) private alumniRepository: AlumniRepository,
     @repository(MemberRepository) private memberRepository: MemberRepository,
     @repository(SponsorRepository) private sponsorRepository: SponsorRepository,
-    @repository(AdminLogRepository) private adminLogRepository: AdminLogRepository,
+    @repository(AdminRepository) private adminRepository: AdminRepository,
+    @service(AdminLogService) private adminLogService: AdminLogService,
     @inject(SecurityBindings.USER) private currentUser: UserProfile,
-
+    @inject(CoreBindings.APPLICATION_INSTANCE) private app: Application,
   ) {}
 
    /**
@@ -162,23 +169,393 @@ export class AdminController {
     try {
       await repo.updateById(id, {adminStatus: status});
       const user = await repo.findById(id);
-      await this.adminLogRepository.create({
-        adminId: this.currentUser[securityId] as string,
-        action: `application-${status.toLowerCase()}`,
-        targetType: role.toLowerCase(),
-        targetId: id,
-        metadata: {
-          //firstName: user.firstName,  // Issue: sponsors do not have a firstName/lastName.. only company name. Unify to a single name field?
-          //lastName: user.lastName,
-          memberType: role,
-        },
-        timestamp: new Date().toISOString(),
-    });
+      await this.adminLogService.createAdminLog(
+        this.currentUser[securityId] as string,
+        {
+          message: `Application by ${user.email} was ${status.toLowerCase()}`,
+          applicationStatus: status.toLowerCase(),
+          userEmail: user.email,
+          userRole: role.toLowerCase(),
+          userId: id,
+        }
+      );
     } catch (e: any) {
       if (e.code === 'ENTITY_NOT_FOUND') {
         throw new HttpErrors.NotFound(`User ${id} not found in ${role} collection`);
       }
       throw e; // propagate other errors
     }
+  }
+
+  /**
+   * PATCH /user/admin/deactivate/{id}
+   * Deactivate a user account with a reason.
+   */
+  @authenticate('fsae-jwt')
+  @authorize({allowedRoles: [FsaeRole.ADMIN]})
+  @patch('/user/admin/deactivate/{id}')
+  @response(204, {description: 'User account deactivated'})
+  async deactivateUser(
+    @param.path.string('id') id: string,
+    @requestBody({
+      required: true,
+      description: 'User role and deactivation reason',
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            required: ['role', 'reason'],
+            properties: {
+              role: {
+                type: 'string',
+                enum: [FsaeRole.ALUMNI, FsaeRole.MEMBER, FsaeRole.SPONSOR],
+              },
+              reason: {
+                type: 'string',
+              },
+            },
+          },
+        },
+      },
+    })
+    body: {role: FsaeRole; reason: string},
+  ): Promise<void> {
+    const {role, reason} = body;
+
+    /* pick the correct repository based on role */
+    let repo;
+  
+    if (role === FsaeRole.ALUMNI) {
+      repo = this.alumniRepository;
+    } else if (role === FsaeRole.MEMBER) {
+      repo = this.memberRepository;
+    } else if (role === FsaeRole.SPONSOR) {
+      repo = this.sponsorRepository;
+    } else {
+      repo = undefined;
+    }
+
+    if (!repo) {
+      throw new HttpErrors.BadRequest(`Unsupported role "${role}"`);
+    }
+
+    /* deactivate the user; throw 404 if not found */
+    try {
+      await repo.updateById(id, {activated: false});
+      const thisUser = await repo.findById(id);
+      await this.adminLogService.createAdminLog(
+        this.currentUser[securityId] as string,
+        {
+          message: `Account ${(thisUser).email} deactivated`,
+          reason: reason,
+          accountEmail: (thisUser).email,
+          accountRole: role.toLowerCase(),
+          accountUserId: id,
+        }
+      );
+    } catch (e: any) {
+      if (e.code === 'ENTITY_NOT_FOUND') {
+        throw new HttpErrors.NotFound(`User ${id} not found in ${role} collection`);
+      }
+      throw e;
+    }
+  }
+
+  /**
+   * PATCH /user/admin/activate/{id}
+   * Activate a user account.
+   */
+  @authenticate('fsae-jwt')
+  @authorize({allowedRoles: [FsaeRole.ADMIN]})
+  @patch('/user/admin/activate/{id}')
+  @response(204, {description: 'User account activated'})
+  async activateUser(
+    @param.path.string('id') id: string,
+    @requestBody({
+      required: true,
+      description: 'User role',
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            required: ['role'],
+            properties: {
+              role: {
+                type: 'string',
+                enum: [FsaeRole.ALUMNI, FsaeRole.MEMBER, FsaeRole.SPONSOR],
+              },
+            },
+          },
+        },
+      },
+    })
+    body: {role: FsaeRole},
+  ): Promise<void> {
+    const {role} = body;
+
+    /* pick the correct repository based on role */
+    let repo;
+  
+    if (role === FsaeRole.ALUMNI) {
+      repo = this.alumniRepository;
+    } else if (role === FsaeRole.MEMBER) {
+      repo = this.memberRepository;
+    } else if (role === FsaeRole.SPONSOR) {
+      repo = this.sponsorRepository;
+    } else {
+      repo = undefined;
+    }
+
+    if (!repo) {
+      throw new HttpErrors.BadRequest(`Unsupported role "${role}"`);
+    }
+
+    /* activate the user; throw 404 if not found */
+    try {
+      await repo.updateById(id, {activated: true});
+      const thisUser = await repo.findById(id);
+      await this.adminLogService.createAdminLog(
+        this.currentUser[securityId] as string,
+        {
+          message: `Account ${thisUser.email} activated`,
+          accountEmail: thisUser.email,
+          accountRole: role.toLowerCase(),
+          accountUserId: id,
+        }
+      );
+    } catch (e: any) {
+      if (e.code === 'ENTITY_NOT_FOUND') {
+        throw new HttpErrors.NotFound(`User ${id} not found in ${role} collection`);
+      }
+      throw e;
+    }
+  }
+
+  /**
+   * POST /user/admin
+   * Create a new admin account.
+   */
+  @authenticate('fsae-jwt')
+  @authorize({allowedRoles: [FsaeRole.ADMIN]})
+  @post('/user/admin')
+  @response(201, {
+    description: 'Admin account created successfully',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'object',
+          properties: {
+            id: {type: 'string'},
+            email: {type: 'string'},
+            message: {type: 'string'}
+          }
+        }
+      }
+    }})
+  async createAdmin(
+    @requestBody({
+      required: true,
+      description: 'Admin account details',
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            required: ['email', 'firstName', 'lastName', 'phoneNumber', 'password'],
+            properties: {
+              email: {type: 'string', format: 'email'},
+              firstName: {type: 'string'},
+              lastName: {type: 'string'},
+              phoneNumber: {type: 'string'},
+              password: {type: 'string'},
+            }
+          }
+        }
+      }
+    })
+    adminData: {
+      email: string;
+      firstName: string;
+      lastName: string;
+      phoneNumber: string;
+      password: string;
+    },
+  ): Promise<{id: string; email: string; message: string}> {
+    const {email, firstName, lastName, phoneNumber, password} = adminData;
+
+    // Check if user with this email already exists
+    const existingUser = await this.adminRepository.findOne({where: {email}});
+    if (existingUser) {
+      throw new HttpErrors.Conflict(`Admin with email ${email} already exists`);
+    }
+
+    try {
+      // Manually resolve the PasswordHasherService to avoid binding conflicts
+      const passwordHasherService = await this.app.get<PasswordHasherService>('services.PasswordHasherService');
+      
+      // Hash the password before storing
+      const hashedPassword = await passwordHasherService.hashPassword(password);
+
+      // Create the new admin user with pre-approved status
+      const newAdmin = await this.adminRepository.create({
+        email,
+        firstName,
+        lastName,
+        phoneNumber,
+        password: hashedPassword,
+        role: FsaeRole.ADMIN,
+        adminStatus: AdminStatus.APPROVED,
+        activated: true,
+        verified: true,
+        createdAt: new Date()
+      });
+
+      // Log the admin creation
+      await this.adminLogService.createAdminLog(
+        this.currentUser[securityId] as string,
+        {
+          message: `Admin account ${newAdmin.email.toString()} created`,
+          newAdminName: newAdmin.firstName + " " + newAdmin.lastName,
+          newAdminEmail: newAdmin.email.toString(),
+          newAdminUserId: newAdmin.id.toString(),
+        }
+      );
+
+      return {
+        id: newAdmin.id.toString(),
+        email: newAdmin.email,
+        message: 'Admin account created successfully'
+      };
+    } catch (error: any) {
+      throw new HttpErrors.InternalServerError(`Failed to create admin account: ${error.message}`);
+    }
+  }
+
+  /**
+   * DELETE /user/admin/{id}
+   * Delete an admin account.
+   */
+  @authenticate('fsae-jwt')
+  @authorize({allowedRoles: [FsaeRole.ADMIN]})
+  @del('/user/admin/{id}')
+  @response(204, {description: 'Admin account deleted successfully'})
+  async deleteAdmin(
+    @param.path.string('id') id: string,
+    @requestBody({
+      required: true,
+      description: 'Deletion reason',
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            required: ['reason'],
+            properties: {
+              reason: {
+                type: 'string',
+              },
+            },
+          },
+        },
+      },
+    })
+    body: {reason: string},
+  ): Promise<void> {
+    const {reason} = body;
+
+    // Prevent self-deletion
+    if (id === this.currentUser[securityId]) {
+      throw new HttpErrors.BadRequest('Cannot delete your own admin account');
+    }
+
+    // Count total admin accounts
+    const totalAdmins = await this.adminRepository.count({
+      adminStatus: AdminStatus.APPROVED,
+      activated: true
+    });
+    
+    // Prevent deletion of the last admin
+    if (totalAdmins.count <= 1) {
+      throw new HttpErrors.BadRequest('Cannot delete the last remaining admin account');
+    }
+
+    try {
+      // Verify the user exists before deletion
+      const user = await this.adminRepository.findById(id);
+      
+      // Delete the admin user
+      await this.adminRepository.deleteById(id);
+
+      // Log the admin deletion
+      await this.adminLogService.createAdminLog(
+        this.currentUser[securityId] as string,
+        {
+          message: `Admin account ${user.email.toString()} deleted`,
+          reason: reason,
+          deletedAdminName: user.firstName + " " + user.lastName,
+          deletedAdminEmail: user.email.toString(),
+          deletedAdminUserId: id,
+        }
+      );
+    } catch (e: any) {
+      if (e.code === 'ENTITY_NOT_FOUND') {
+        throw new HttpErrors.NotFound(`Admin ${id} not found`);
+      }
+      throw e;
+    }
+  }
+
+  /**
+   * GET /user/admin/list
+   * Get a list of all admin accounts.
+   */
+  @authenticate('fsae-jwt')
+  @authorize({allowedRoles: [FsaeRole.ADMIN]})
+  @get('/user/admin/list')
+  @response(200, {
+    description: 'Array of all admin accounts',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              id: {type: 'string'},
+              email: {type: 'string', format: 'email'},
+              firstName: {type: 'string'},
+              lastName: {type: 'string'},
+              phoneNumber: {type: 'string'},
+              activated: {type: 'boolean'},
+              adminStatus: {type: 'string'},
+              createdAt: {type: 'string', format: 'date-time'},
+            },
+          },
+        },
+      },
+    },
+  })
+  async getAllAdmins(): Promise<Partial<Admin>[]> {
+    const admins = await this.adminRepository.find({
+      fields: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        phoneNumber: true,
+        activated: true,
+        adminStatus: true,
+        createdAt: true,
+      },
+    });
+
+    return admins.map(admin => ({
+      id: admin.id?.toString(),
+      email: admin.email,
+      firstName: admin.firstName,
+      lastName: admin.lastName,
+      phoneNumber: admin.phoneNumber,
+      activated: admin.activated,
+      adminStatus: admin.adminStatus,
+      createdAt: admin.createdAt,
+    }));
   }
 }
