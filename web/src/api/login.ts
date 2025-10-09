@@ -31,8 +31,7 @@ export async function login(email: string, password: string) {
       email,
       password,
     });
-    // console.log(res.data);
-    const { userId, token, verified} = res.data;
+    const { userId, token, verified, hasMissingInfo } = res.data;
 
     if (!verified) {
       return { role: 'unverified', id: userId};

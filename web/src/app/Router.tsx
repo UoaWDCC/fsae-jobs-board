@@ -26,6 +26,7 @@ import SignupSwitcher from './pages/General/SignupSwitcher.page';
 import { AdminLogin } from './pages/Admin/AdminLogin.page';
 import { JobDetailsPage } from './pages/General/JobDetails.page';
 import { Role } from './type/role'; 
+import { AdminAuditLog } from './pages/Admin/AdminAuditLog.page';
 
 const router = createBrowserRouter([
   {
@@ -209,7 +210,7 @@ const router = createBrowserRouter([
       </AppLayout>
     </ProtectedRoute>
   ),
-},
+  },
 
   {
     path: '*',

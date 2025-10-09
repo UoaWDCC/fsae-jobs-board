@@ -1,4 +1,4 @@
-import { TextInput, Textarea, Button, Select, Group, Checkbox, Stack, Modal } from '@mantine/core';
+import { TextInput, Textarea, Button, Select, Group, Checkbox, Stack, Modal, Avatar } from '@mantine/core';
 import { useState, useEffect } from 'react';
 import styles from './JobDetail.module.css';
 import { Job } from '@/models/job.model';
@@ -11,6 +11,7 @@ import { TallyFormBuilder, FormField } from '../TallyFormBuilder';
 import { CreateFormRequest } from '@/schemas/tally/requests/create-form-request';
 import { ZodError } from 'zod';
 import { convertToTallyBlocks } from '@/utils/tallyFormUtils';
+import { useUserAvatar } from '@/hooks/useUserAvatar';
 
 
 interface JobEditorModalProps {
@@ -51,6 +52,8 @@ export function JobDetailEditor({onSave, onCancel, initialData, mode}: JobEditor
   const [formTitle, setFormTitle] = useState('Job Application Form');
   const [formFields, setFormFields] = useState<FormField[]>([]);
 
+  const { avatarUrl: posterAvatar } = useUserAvatar(initialData?.publisherID);
+
   const userRole = useSelector((state: RootState) => state.user.role);
   const userId = useSelector((state: RootState) => state.user.id);
 
@@ -59,7 +62,6 @@ export function JobDetailEditor({onSave, onCancel, initialData, mode}: JobEditor
   const isOwner = initialData && userId && initialData.publisherID === userId;
   const isEditMode = mode === 'edit';
 
-  // Initialize form with existing data if editing
   useEffect(() => {
     if (initialData && mode === 'edit') {
       // Convert ISO date to YYYY-MM-DD for input[type="date"]
@@ -363,7 +365,7 @@ export function JobDetailEditor({onSave, onCancel, initialData, mode}: JobEditor
       <form className={styles.contentWrapper} onSubmit={(e) => handleSubmit(e)}>
         {/* Left Column */}
         <div className={styles.leftColumn}>
-          <img src="/WDCCLogo.png" alt="Company Logo" className={styles.companyLogo} />
+          <Avatar src={posterAvatar} alt={"Company Logo"} className={styles.companyLogo} />
           <div className={styles.leftFields}>
             <TextInput 
               label="Salary" 

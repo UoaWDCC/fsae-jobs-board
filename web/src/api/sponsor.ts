@@ -25,6 +25,6 @@ export async function editSponsorById(id: string, newSponsor: Partial<Sponsor>) 
   try {
     await apiInstance.patch(`user/sponsor/${id}`, newSponsor);
   } catch (e) {
-    throw Error(`An unknown error occurred trying to edit sponsor profile by id: ${id}`);
+    throw Error(`An unknown error occurred trying to edit sponsor profile by id: ${e}`);
   }
 }

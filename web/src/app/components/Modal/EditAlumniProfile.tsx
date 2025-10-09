@@ -9,10 +9,26 @@ import { useSelector } from 'react-redux';
 import type { RootState } from '@/app/store';
 import { useEffect } from 'react';
 import { editAlumniById } from '@/api/alumni';
+import EditModal from './EditModal';
+import { verifyPassword } from '@/api/verification';
+import { PasswordFormModal } from './PasswordFormModal';
+import { sendReverificationEmail } from '@/api/verification';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { useValidateEmail } from '@/hooks/useValidateEmail';
 
-const EditAlumniProfile = ({ close, userData, setUserData }: { close: () => void , userData: Alumni | null, setUserData: React.Dispatch<React.SetStateAction<Alumni | null>>}) => {
+const EditAlumniProfile = ({
+  close,
+  userData,
+  setUserData,
+}: {
+  close: () => void;
+  userData: Alumni | null;
+  setUserData: React.Dispatch<React.SetStateAction<Alumni | null>>;
+}) => {
   const [activeTab, setActiveTab] = useState('about');
   const [isModalOpen, setIsModalOpen] = useState(true);
+  const [passwordModalOpen, setPasswordModalOpen] = useState(false);
   const [newUserData, setNewUserData] = useState<Partial<Alumni> | null>(null); // partial because the database schema is currently messed up
   const tabOptions = [
     { value: 'profile', label: 'Profile' },
@@ -20,6 +36,8 @@ const EditAlumniProfile = ({ close, userData, setUserData }: { close: () => void
   ];
   const isMobile = useMediaQuery('(max-width: 430px)'); // mobile screen
   const userId = useSelector((state: RootState) => state.user.id); // the id of the local user
+  const navigate = useNavigate();
+  const { validate } = useValidateEmail();
 
   const renderContent = () => {
     switch (activeTab) {
@@ -32,9 +50,56 @@ const EditAlumniProfile = ({ close, userData, setUserData }: { close: () => void
     }
   };
 
+  const handlePasswordVerify = async (password: string) => {
+    if (!newUserData || !userData) return;
+    try {
+      // call backend to verify password
+      const isValid = await verifyPassword(userData.email, password, 'alumni');
+      if (!isValid.data) {
+        toast.error('Incorrect password');
+        return;
+      }
+      toast.success('Correct password!');
+
+      // send verification email if password correct
+      await sendReverificationEmail(newUserData.email!, 'alumni', newUserData.companyName!);
+      toast.success('Verification email sent!');
+      // navigate to verification page with email, password, and new email
+      navigate('/verify', {
+        state: { oldEmail: userData.email, password, email: newUserData.email },
+        replace: true,
+      });
+
+      // save changes to other fields except for email
+      const partialAlumni: Partial<Alumni> = {};
+      (Object.keys(newUserData) as (keyof Alumni)[]).forEach((key) => {
+        if (key === 'email') return;
+        if (newUserData[key] !== userData[key]) {
+          partialAlumni[key] = newUserData[key] as any;
+        }
+      });
+      console.log(partialAlumni);
+      if (Object.keys(partialAlumni).length !== 0) {
+        await editAlumniById(userId, partialAlumni);
+        setUserData(newUserData as Alumni);
+      }
+      close();
+    } catch (err) {
+      toast.error('Failed to verify password or send email');
+      console.error(err);
+    }
+  };
+
   const saveFields = async () => {
     if (!newUserData) return;
     if (!userData) return;
+
+    const { valid, message } = validate(newUserData);
+    if (!valid) {
+      toast.error(message);
+      console.error(message);
+      return;
+    }
 
     setUserData(newUserData as Alumni);
 
@@ -46,13 +111,18 @@ const EditAlumniProfile = ({ close, userData, setUserData }: { close: () => void
       }
     });
 
-    close();
+    if (newUserData.email !== userData.email) {
+      // if email has changed, we need to reverify the password
+      setPasswordModalOpen(true);
+      return;
+    }
     await editAlumniById(userId, partialAlumni);
-  }
+    close();
+  };
 
   useEffect(() => {
     setNewUserData(userData);
-  }, [userData])
+  }, [userData]);
 
   return (
     <Box>
@@ -104,6 +174,11 @@ const EditAlumniProfile = ({ close, userData, setUserData }: { close: () => void
         </Button>
         <Button onClick={saveFields}>Save</Button>
       </Box>
+      <PasswordFormModal
+        opened={passwordModalOpen}
+        onClose={() => setPasswordModalOpen(false)}
+        onVerify={handlePasswordVerify}
+      />
     </Box>
   );
 };

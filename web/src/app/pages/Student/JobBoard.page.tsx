@@ -10,6 +10,7 @@ export function JobBoard() {
   const [isPortrait, setIsPortrait] = useState(window.innerHeight > window.innerWidth);
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
+  const [postedByFilter, setPostedByFilter] = useState<'all' | 'alumni' | 'sponsors'>('all');
   const theme = useMantineTheme();
 
   useEffect(() => {
@@ -40,6 +41,8 @@ export function JobBoard() {
               setFilterRoles={setFilterRoles}
               filterFields={filterFields}
               setFilterFields={setFilterFields}
+              postedByFilter={postedByFilter}
+              setPostedByFilter={setPostedByFilter}
             />
           </Grid.Col>
           <Grid.Col span={0.5} pl={40} style={{ alignSelf: 'stretch' }}>
@@ -63,6 +66,7 @@ export function JobBoard() {
               filterRoles={filterRoles}
               filterFields={filterFields}
               search={search}
+              postedByFilter={postedByFilter}
             />
           </Grid.Col>
         </>
@@ -80,11 +84,14 @@ export function JobBoard() {
             setFilterRoles={setFilterRoles}
             filterFields={filterFields}
             setFilterFields={setFilterFields}
+            postedByFilter={postedByFilter}
+            setPostedByFilter={setPostedByFilter}
           />
           <JobListing
             filterRoles={filterRoles}
             filterFields={filterFields}
             search={search}
+            postedByFilter={postedByFilter}
           />
         </Grid.Col>
       )}

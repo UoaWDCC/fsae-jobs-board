@@ -50,7 +50,7 @@ export function LoginForm() {
           navigate('/', { replace: true });
           break;
         case 'admin':
-          navigate(`/profile/admin/${id}`, { replace: true });
+          navigate(`/admin-dashboard`, { replace: true });
           break;
         case 'alumni':
           navigate(`/profile/alumni/${id}`, { replace: true });

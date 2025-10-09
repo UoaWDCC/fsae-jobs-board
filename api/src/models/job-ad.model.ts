@@ -71,6 +71,13 @@ export class JobAd extends Entity {
   })
   tallyFormId?: string;
 
+  @property({
+    type: 'boolean',
+    required: true,
+    default: false,
+  })
+  isPostedByAlumni: boolean;
+
 
   constructor(data?: Partial<JobAd>) {
     super(data);

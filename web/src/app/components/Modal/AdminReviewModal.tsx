@@ -12,13 +12,14 @@ import {IconXboxX} from '@tabler/icons-react';
 import {Role} from '@/app/type/role';
 import {AdminReview} from '@/models/adminReview.model';
 import styles from '../../styles/AdminReview.module.css';
+import { FsaeRole } from '@/models/roles';
 
 interface Props {
   opened: boolean;
   onClose: () => void;
   detail: AdminReview;
-  onApprove: (id: string, role: Role) => void;
-  onReject: (id: string, role: Role) => void;
+  onApprove: (id: string, role: FsaeRole) => void;
+  onReject: (id: string, role: FsaeRole) => void;
 }
 
 export default function AdminReviewModal({

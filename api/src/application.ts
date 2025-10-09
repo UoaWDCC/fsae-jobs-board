@@ -20,6 +20,7 @@ import {
 } from '@loopback/authorization';
 import {FsaeAuthorizationProvider} from './auth/authorization/FsaeAuthorizationProvider';
 import {MulterProvider} from './provider/multer.provider';
+import { StartupObserver } from './observers/startup.observer';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
@@ -101,5 +102,7 @@ export class FsaeApiApplication extends BootMixin(
         nested: true,
       },
     };
+
+    this.lifeCycleObserver(StartupObserver);
   }
 }
