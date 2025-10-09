@@ -27,11 +27,6 @@ import {authenticate} from '@loopback/authentication';
 import {authorize} from '@loopback/authorization';
 import {inject} from '@loopback/core';
 import {SecurityBindings, UserProfile} from '@loopback/security';
-import {
-  SponsorProfileDto,
-  SponsorProfileDtoFields,
-} from '../dtos/sponsor-profile.dto';
-import {ownerOnly} from '../decorators/owner-only.decorator';
 import {validateEmail} from '../utils/validateEmail';
 import { SponsorProfileDto, SponsorProfileDtoFields } from '../dtos/sponsor-profile.dto';
 import { ownerOnly } from '../decorators/owner-only.decorator';
