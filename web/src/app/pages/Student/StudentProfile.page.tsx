@@ -42,14 +42,14 @@ export function StudentProfile() {
 
   const handleAvatarChange = () => {
     setModalType('avatar');
-    setModalContent(<EditAvatar avatar={"avatar"} />);
+    setModalContent(<EditAvatar avatar={""} role={"member"} />);
     setModalTitle('Profile Photo');
     setOpenProfileModal(true);
   };
 
   const handleBannerChange = () => {
     setModalType('banner');
-    setModalContent(<EditBannerModal banner={"banner"} />);
+    setModalContent(<EditBannerModal banner={""} role={"member"} />);
     setModalTitle('Banner Photo');
     setOpenProfileModal(true);
   };
@@ -95,6 +95,7 @@ export function StudentProfile() {
       alert('Failed to load CV');
     }
   };
+  
   const handleDeactivateAccount = (reason: string) => {
     console.log('Account deactivated:', reason);
     setDeactivateModalOpen(false);
@@ -103,75 +104,85 @@ export function StudentProfile() {
 
   const fetchAvatar = async () => {
     if (!id) return;
-
     const token = localStorage.getItem('accessToken');
     if (!token) return;
-
-    try {
-      const response = await fetch(`http://localhost:3000/user/member/${id}/avatar`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (!response.ok) return;
-
-      const blob = await response.blob();
+    const res = await fetch(`http://localhost:3000/user/member/${id}/avatar`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (res.ok) {
+      const blob = await res.blob();
       const url = URL.createObjectURL(blob);
-
-      setUserData((prev) => prev ? { ...prev, avatarURL: url } : prev);
-
-      return () => URL.revokeObjectURL(url);
-    } catch (err) {
-      console.error('Error fetching avatar:', err);
+      setUserData(prev => prev ? { ...prev, avatarURL: url } : prev);
+    } else {
+      setUserData(prev => prev ? { ...prev, avatarURL: '' } : prev);
     }
   };
 
   const fetchBanner = async () => {
     if (!id) return;
-
     const token = localStorage.getItem('accessToken');
     if (!token) return;
-
-    try {
-      const response = await fetch(`http://localhost:3000/user/member/${id}/banner`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (!response.ok) return;
-
-      const blob = await response.blob();
+    const res = await fetch(`http://localhost:3000/user/member/${id}/banner`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (res.ok) {
+      const blob = await res.blob();
       const url = URL.createObjectURL(blob);
-
-      setUserData((prev) => prev ? { ...prev, bannerURL: url } : prev);
-
-      return () => URL.revokeObjectURL(url);
-    } catch (err) {
-      console.error('Error fetching banner:', err);
+      setUserData(prev => prev ? { ...prev, bannerURL: url } : prev);
+    } else {
+      setUserData(prev => prev ? { ...prev, bannerURL: '' } : prev);
     }
   };
 
   useEffect(() => {
     // Logic to fetch data and setUserData
+    let isMounted = true;
+
     const fetchUserData = async () => {
       try {
-        const userData = await fetchMemberById(id as string);
+        // Fetch user data, avatar, and banner
+        const token = localStorage.getItem('accessToken');
+        const userPromise = fetchMemberById(id as string);
+        let avatarPromise = Promise.resolve<string | undefined>(undefined);
+        let bannerPromise = Promise.resolve<string | undefined>(undefined);
+
+        if (token) {
+          avatarPromise = fetch(`http://localhost:3000/user/member/${id}/avatar`, { headers: { Authorization: `Bearer ${token}` } })
+            .then(res => res.ok ? res.blob() : null)
+            .then(blob => blob ? URL.createObjectURL(blob) : undefined);
+
+          bannerPromise = fetch(`http://localhost:3000/user/member/${id}/banner`, { headers: { Authorization: `Bearer ${token}` } })
+            .then(res => res.ok ? res.blob() : null)
+          .then(blob => blob ? URL.createObjectURL(blob) : undefined);
+        }
+
+        const userData = await userPromise;
         if (!userData) {
-          console.error('User data not found');
-          navigate("/404")
+          if (isMounted) navigate("/404");
           return;
         }
-        setUserData(userData);
-        setIsLocalProfile(userData.id == userId);
+        if (isMounted) {
+          setUserData(userData);
+          setIsLocalProfile(userData.id == userId);
+        }
+
+        const [avatarURL, bannerURL] = await Promise.all([avatarPromise, bannerPromise]);
+        if (isMounted) {
+          setUserData(prev => prev ? { ...prev, avatarURL: avatarURL || "", bannerURL: bannerURL || "" } : prev);
+        }
+
       } catch (err) {
-        // TODO: proper error handling (eg. auth errors/forbidden pages etc.)
-        console.error('Error fetching user data:', err);
-        navigate("/404")
+        if (isMounted) {
+          navigate("/404");
+        }
       }
     };
-    if (id) fetchUserData();
 
-    fetchAvatar();
-    fetchBanner();
-  }, [id]);
+    if (id) fetchUserData();
+    return () => {
+      isMounted = false;
+    };
+  }, [id, userId, navigate]);
 
   return (
     <Box className={styles.container}>

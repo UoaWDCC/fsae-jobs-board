@@ -33,8 +33,6 @@ function Navbar() {
   const role = useSelector((state: RootState) => state.user.role);
   const id = useSelector((state: RootState) => state.user.id);
   
-  // Check if profile completion is needed
-  const hasIncompleteProfile = localStorage.getItem('profileIncomplete') === 'true';
 
   // Define navigation links based on user type
   const navLinks: { [key in Role]: { path: string; label: string }[] } = {
@@ -142,7 +140,7 @@ function Navbar() {
 
         {/* Desktop Navigation Links */}
         <Flex justify="center" align="center" style={{ flex: 1 }}>
-          {!isMobile && role && isRole(role) && !hasIncompleteProfile && (
+          {!isMobile && role && isRole(role) && (
             <Group gap={100}>
               {navLinks[role].map((link) => (
                 <NavLink
@@ -163,16 +161,6 @@ function Navbar() {
                 </NavLink>
               ))}
             </Group>
-          )}
-          {/* Show profile completion indicator when needed */}
-          {!isMobile && hasIncompleteProfile && role && isRole(role) && (
-            <Button 
-              variant="filled" 
-              color="orange"
-              onClick={() => navigate('/complete-profile')}
-            >
-              Complete Profile to Access Platform
-            </Button>
           )}
         </Flex>
 
@@ -278,39 +266,6 @@ function Navbar() {
 
           {role && isRole(role) ? (
             <>
-              {/* Mobile Nav Links for Logged-in Users */}
-              <Flex justify="center" align="center" gap="xl" direction="column" style={{ flexGrow: 1 }}>
-                {!hasIncompleteProfile ? (
-                  navLinks[role].map((link) => (
-                    <NavLink
-                      key={link.path}
-                      to={link.path}
-                      onClick={close}
-                      style={({ isActive }) => ({
-                        textDecoration: 'none',
-                        borderBottom: isActive
-                          ? `2px solid var(--mantine-color-customPapayaOrange-5)`
-                          : 'none',
-                        color: isActive
-                          ? 'var(--mantine-color-customMercurySilver-5)'
-                          : 'var(--mantine-color-white)',
-                        paddingBottom: '2px',
-                      })}
-                    >
-                      <Text size="md">{link.label}</Text>
-                    </NavLink>
-                  ))
-                ) : (
-                  <Button 
-                    variant="filled" 
-                    color="orange"
-                    onClick={() => { navigate('/complete-profile'); close(); }}
-                  >
-                    Complete Profile to Access Platform
-                  </Button>
-                )}
-              </Flex>
-
               {/* Mobile Actions for Logged-in Users */}
               <Flex
                 justify="center"

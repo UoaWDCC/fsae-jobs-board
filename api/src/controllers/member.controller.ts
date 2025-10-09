@@ -25,6 +25,7 @@ import { s3Service, s3ServiceInstance } from '../services/s3.service';
 import { MemberProfileDto, MemberProfileDtoFields } from '../dtos/member-profile.dto';
 import { ownerOnly } from '../decorators/owner-only.decorator';
 import { validateEmail } from '../utils/validateEmail';
+import { FileHandlerService } from '../services/file-handling.service';
 
 const storage = multer.memoryStorage();
 const upload = multer({
@@ -48,11 +49,16 @@ const upload = multer({
 
 @authenticate('fsae-jwt')
 export class MemberController {
+
+  private fileHandler: FileHandlerService;
+
   constructor(
     @inject(RestBindings.Http.REQUEST) private req: Request,
     @inject(SecurityBindings.USER) protected currentUserProfile: UserProfile,
     @repository(MemberRepository) public memberRepository: MemberRepository,
-  ) {}
+  ) {
+    this.fileHandler = new FileHandlerService(this.memberRepository);
+  }
 
   @authorize({
     allowedRoles: [FsaeRole.MEMBER, FsaeRole.SPONSOR, FsaeRole.ALUMNI, FsaeRole.ADMIN],
@@ -109,131 +115,6 @@ export class MemberController {
     await this.memberRepository.updateById(id, memberDto);
   }
 
-  private async handleUpload(
-    fileField: string, // "avatar" or "cv" or "banner"
-    memberField: 'avatarS3Key' | 'cvS3Key' | 'bannerS3Key',
-    response: Response,
-    deleteExisting: boolean = true,
-  ): Promise<any> {
-    return new Promise((resolve, reject) => {
-      upload.single(fileField)(this.req, response, async (err) => {
-        if (err) {
-          resolve({ success: false, message: err.message || 'Upload failed' });
-          return;
-        }
-        const file = (this.req as any).file;
-        if (!file) {
-          resolve({ success: false, message: 'No file uploaded' });
-          return;
-        }
-
-        const memberId = this.currentUserProfile?.id;
-        if (!memberId) {
-          resolve({ success: false, message: 'User not authenticated' });
-          return;
-        }
-
-        try {
-          const existingMember = await this.memberRepository.findById(memberId);
-          // If user has existing file, delete the existing file from S3
-          if (deleteExisting && existingMember[memberField]) {
-            console.log(`Deleting existing file: ${existingMember[memberField]}`);
-            try {
-              await s3ServiceInstance.deleteFile(existingMember[memberField]);
-              console.log('Successfully deleted existing file');
-            } catch (err) {
-              console.error('Error deleting existing file:', err);
-            }
-          }
-          const { key, url } = await s3ServiceInstance.uploadFile(
-            file.buffer,
-            file.originalname,
-            file.mimetype
-          );
-
-          // Store S3 Url in MongoDB
-          await this.memberRepository.updateById(memberId, {
-            [memberField]: key,
-            ...(fileField === 'cv' ? { hasCV: true } : {}),
-          });
-
-          resolve({
-            success: true,
-            message: `${fileField.toUpperCase()} uploaded successfully`,
-            key,
-            url,
-            metadata: {
-              filename: file.originalname,
-              mimetype: file.mimetype,
-              size: file.size,
-            },
-          });
-        } catch (error) {
-          console.error('S3 upload error:', error);
-          resolve({
-            success: false,
-            message: `Failed to upload ${fileField.toUpperCase()} to S3`,
-          });
-        }
-      });
-    });
-  }
-
-  private async handleViewFile(
-    memberId: string,
-    memberField: 'cvS3Key' | 'avatarS3Key' | 'bannerS3Key',
-    response: Response,
-    inline: boolean = true,
-  ) {
-    const member = await this.memberRepository.findById(memberId);
-    const s3Key = (member as any)[memberField];
-
-    if (!s3Key) {
-      response.status(404).json({ message: 'File not found' });
-      return;
-    }
-
-    try {
-      const s3Object = await s3ServiceInstance.getObject(s3Key);
-      const contentType = s3Object.ContentType ?? 'application/octet-stream';
-      const fileName = (s3Object.Metadata && s3Object.Metadata.originalfilename) || 'file';
-
-      // convert S3 stream to Buffer
-      const chunks: Uint8Array[] = [];
-      for await (const chunk of s3Object.Body as any) {
-        chunks.push(chunk);
-      }
-      const buffer = Buffer.concat(chunks);
-
-      response.setHeader('Content-Type', contentType);
-      response.setHeader('Content-Disposition', `${inline ? 'inline' : 'attachment'}; filename="${fileName}"`);
-      response.send(buffer);
-    } catch (err) {
-      console.error('File view/download error:', err);
-      response.status(500).json({ message: 'Failed to fetch file' });
-    }
-  }
-
-  private async handleDeleteFile(
-    memberId: string,
-    memberField: 'cvS3Key' | 'avatarS3Key' | 'bannerS3Key',
-    deleteFlag?: 'hasCV', // only needed for CV
-  ) {
-    const member = await this.memberRepository.findById(memberId);
-    const s3Key = (member as any)[memberField];
-
-    if (s3Key) {
-      await s3ServiceInstance.deleteFile(s3Key);
-
-      const updateData: any = { [memberField]: '' };
-      if (deleteFlag) {
-        updateData[deleteFlag] = false;
-      }
-
-      await this.memberRepository.updateById(memberId, updateData);
-    }
-  }
-
   @authorize({
     allowedRoles: [FsaeRole.MEMBER],
   })
@@ -255,7 +136,7 @@ export class MemberController {
     },
   })
   async uploadCV(@inject(RestBindings.Http.RESPONSE) response: Response): Promise<any> {
-    return this.handleUpload('cv', 'cvS3Key', response, true);
+    return this.fileHandler.handleUpload(this.memberRepository, this.currentUserProfile, this.req, 'cv', 'cvS3Key', response, true);
   }
 
   @authorize({
@@ -280,7 +161,7 @@ export class MemberController {
   })
   @response(404, { description: 'CV not found' })
   async downloadCV(@param.path.string('id') id: string, @inject(RestBindings.Http.RESPONSE) response: Response) {
-    return this.handleViewFile(id, 'cvS3Key', response, true);
+    return this.fileHandler.handleViewFile(this.memberRepository, id, 'cvS3Key', response, true);
   }
 
   @authorize({ allowedRoles: [FsaeRole.MEMBER, FsaeRole.ADMIN] })
@@ -288,7 +169,7 @@ export class MemberController {
   @patch('/user/member/{id}/delete-cv')
   @response(204, { description: 'CV deleted successfully' })
   async deleteCV(@param.path.string('id') id: string) {
-    return this.handleDeleteFile(id, 'cvS3Key', 'hasCV');
+    return this.fileHandler.handleDeleteFile(this.memberRepository, id, 'cvS3Key', 'hasCV');
   }
 
   @post('user/member/{id}/upload-avatar')
@@ -296,7 +177,7 @@ export class MemberController {
   @authorize({ allowedRoles: [FsaeRole.MEMBER] })
   @response(200, { description: 'Avatar uploaded successfully' })
   async uploadAvatar(@inject(RestBindings.Http.RESPONSE) response: Response) {
-    return this.handleUpload('avatar', 'avatarS3Key', response);
+    return this.fileHandler.handleUpload(this.memberRepository, this.currentUserProfile, this.req, 'avatar', 'avatarS3Key', response);
   }
 
   @authenticate('fsae-jwt')
@@ -305,7 +186,7 @@ export class MemberController {
   })
   @get('/user/member/{id}/avatar')
   async viewAvatar(@param.path.string('id') id: string, @inject(RestBindings.Http.RESPONSE) response: Response) {
-    return this.handleViewFile(id, 'avatarS3Key', response, true);
+    return this.fileHandler.handleViewFile(this.memberRepository, id, 'avatarS3Key', response, true);
   }
 
   @authenticate('fsae-jwt')
@@ -314,7 +195,7 @@ export class MemberController {
   })
   @patch('/user/member/{id}/delete-avatar')
   async deleteAvatar(@param.path.string('id') id: string) {
-    return this.handleDeleteFile(id, 'avatarS3Key');
+    return this.fileHandler.handleDeleteFile(this.memberRepository, id, 'avatarS3Key');
   }
 
   @authenticate('fsae-jwt')
@@ -322,7 +203,7 @@ export class MemberController {
   @post('user/member/{id}/upload-banner')
   @response(200, { description: 'Banner uploaded successfully' })
   async uploadBanner(@inject(RestBindings.Http.RESPONSE) response: Response) {
-    return this.handleUpload('banner', 'bannerS3Key', response);
+    return this.fileHandler.handleUpload(this.memberRepository, this.currentUserProfile, this.req, 'banner', 'bannerS3Key', response);
   }
 
   @authenticate('fsae-jwt')
@@ -331,7 +212,7 @@ export class MemberController {
   })
   @get('/user/member/{id}/banner')
   async viewBanner(@param.path.string('id') id: string, @inject(RestBindings.Http.RESPONSE) response: Response) {
-    return this.handleViewFile(id, 'bannerS3Key', response, true);
+    return this.fileHandler.handleViewFile(this.memberRepository, id, 'bannerS3Key', response, true);
   }
 
   @authenticate('fsae-jwt')
@@ -340,7 +221,7 @@ export class MemberController {
   })
   @patch('/user/member/{id}/delete-banner')
   async deleteBanner(@param.path.string('id') id: string) {
-    return this.handleDeleteFile(id, 'bannerS3Key');
+    return this.fileHandler.handleDeleteFile(this.memberRepository, id, 'bannerS3Key');
   }  
 
   @authorize({ allowedRoles: [FsaeRole.MEMBER, FsaeRole.ADMIN] })

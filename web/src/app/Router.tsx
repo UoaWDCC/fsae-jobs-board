@@ -4,7 +4,6 @@ import { Login } from './pages/General/Login.page';
 import { ForgotPassword } from './pages/General/ForgotPassword.page';
 import { ResetPassword } from './pages/General/ResetPassword.page';
 import { Verify } from './pages/General/Verify.page';
-import { ProfileCompletionPage } from './pages/General/ProfileCompletion.page';
 import { StudentProfile } from './pages/Student/StudentProfile.page';
 import { SponsorProfile } from './pages/Sponsor/SponsorProfile.page';
 import { AlumniProfile } from './pages/Alumni/AlumniProfile.page';
@@ -94,16 +93,6 @@ const router = createBrowserRouter([
         element: <NotFound />,
       },
     ],
-  },
-  {
-    path: '/complete-profile',
-    element: (
-      <AppLayout>
-        <ProtectedRoute allowedRoles={['member', 'alumni', 'sponsor']}>
-          <ProfileCompletionPage />
-        </ProtectedRoute>
-      </AppLayout>
-    ),
   },
   {
     path: '/verify',
