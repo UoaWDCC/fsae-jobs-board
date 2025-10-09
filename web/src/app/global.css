@@ -2,3 +2,7 @@ body {
   color: white;
   background-color: black;
 }
+
+.mantine-Grid-inner {
+  max-width: 100% !important;
+}
