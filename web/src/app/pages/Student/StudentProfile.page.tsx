@@ -380,11 +380,11 @@ export function StudentProfile() {
             display="flex"
             style={{ justifyContent: 'space-between', alignItems: 'flex-start' }}
           >
-            <Box>
-              <Title order={5}>Education</Title>
+            {userData?.education && userData.education.length > 0 && (
+              <Box>
+                <Title order={5}>Education</Title>
 
-              <Box pl={15} mt={10} className={styles.box}>
-                {userData?.education && (
+                <Box pl={15} mt={10} className={styles.box}>
                   <>
                     {showMoreEducation
                       ? userData.education.map((education) => (
@@ -417,10 +417,9 @@ export function StudentProfile() {
                       </Button>
                     )}
                   </>
-                )}
-                {!userData?.education && <Loader color="blue" />}
+                </Box>
               </Box>
-            </Box>
+            )}
 
             {userData?.hasCV && (
               <ActionIcon variant="transparent" color="#ffffff" size={200} mt={-40}
