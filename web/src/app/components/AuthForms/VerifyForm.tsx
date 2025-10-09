@@ -86,9 +86,9 @@ export function VerifyForm() {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const verificationCode = code.join("");
-
+    console.log(location.state.email, location.state.oldEmail);
     try {
-      const response = await fetch('http://localhost:3000/verify', {
+      const response = await fetch('http://127.0.0.1:3000/verify', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -96,6 +96,7 @@ export function VerifyForm() {
         body: JSON.stringify({
           email: location.state.email,
           verification_code: verificationCode,
+          oldEmail: location.state.oldEmail,
         }),
       });
 
@@ -128,12 +129,12 @@ export function VerifyForm() {
       localStorage.setItem('timerStartTime', Date.now().toString()); // Save timer start time
 
       try {
-        const response = await fetch('http://localhost:3000/resend-verification', {
+        const response = await fetch('http://127.0.0.1:3000/resend-verification', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ email: location.state.email }),
+          body: JSON.stringify({ email: location.state.email, oldEmail: location.state.oldEmail }),
         });
 
         const result = await response.json();

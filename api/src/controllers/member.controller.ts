@@ -24,7 +24,28 @@ import multer from 'multer';
 import { s3Service, s3ServiceInstance } from '../services/s3.service';
 import { MemberProfileDto, MemberProfileDtoFields } from '../dtos/member-profile.dto';
 import { ownerOnly } from '../decorators/owner-only.decorator';
+import { validateEmail } from '../utils/validateEmail';
 import { FileHandlerService } from '../services/file-handling.service';
+
+const storage = multer.memoryStorage();
+const upload = multer({
+  storage,
+  limits: { fileSize: 16 * 1024 * 1024 }, // 16MB max size
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = [
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'image/jpeg',
+      'image/png'
+    ];
+    if (allowedTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Invalid file type.'));
+    }
+  }
+});
 
 @authenticate('fsae-jwt')
 export class MemberController {
@@ -82,6 +103,15 @@ export class MemberController {
     })
     memberDto: Partial<MemberProfileDto>,
   ): Promise<void> {
+    if ('email' in memberDto) {
+      console.log('Validating email:', memberDto.email);
+      const { valid, message } = validateEmail(memberDto);
+      if (!valid) {
+        console.log('Email validation failed:', message);
+        throw new HttpErrors.BadRequest(message);
+      }
+      console.log('Email validation passed');
+    }
     await this.memberRepository.updateById(id, memberDto);
   }
 
