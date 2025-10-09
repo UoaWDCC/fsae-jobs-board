@@ -8,9 +8,10 @@ import { RootState } from '@/app/store';
 
 interface EditBannerModalProps {
   banner: string;
+  role: string;
 }
 
-export const EditBannerModal = ({ banner }: EditBannerModalProps) => {
+export const EditBannerModal = ({ banner, role }: EditBannerModalProps) => {
   const user = useSelector((state: RootState) => state.user);
   const memberID = user.id;
   const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -27,7 +28,7 @@ export const EditBannerModal = ({ banner }: EditBannerModalProps) => {
 
     try {
       const token = localStorage.getItem('accessToken');
-      const response = await fetch(`http://localhost:3000/user/member/${memberID}/banner`, {
+      const response = await fetch(`http://localhost:3000/user/${role}/${memberID}/banner`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -47,7 +48,7 @@ export const EditBannerModal = ({ banner }: EditBannerModalProps) => {
     setClearing(true);
     const token = localStorage.getItem('accessToken');
     try {
-      const response = await fetch(`http://localhost:3000/user/member/${memberID}/delete-banner`, {
+      const response = await fetch(`http://localhost:3000/user/${role}/${memberID}/delete-banner`, {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -91,7 +92,7 @@ export const EditBannerModal = ({ banner }: EditBannerModalProps) => {
       const formData = new FormData();
       formData.append('banner', selectedFile);
 
-      const response = await fetch(`http://localhost:3000/user/member/${memberID}/upload-banner`, {
+      const response = await fetch(`http://localhost:3000/user/${role}/${memberID}/upload-banner`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
