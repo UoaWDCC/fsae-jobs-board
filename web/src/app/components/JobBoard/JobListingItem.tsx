@@ -1,8 +1,9 @@
 // JobListingItem.ts
-import { Card, Text, Button, Flex } from '@mantine/core';
+import { Card, Text, Button, Flex, Avatar } from '@mantine/core';
 import { FC } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Job } from '@/models/job.model';
+import { useUserAvatar } from '@/hooks/useUserAvatar';
 
 interface JobListingItemProps {
   id: Job['id'];
@@ -15,6 +16,7 @@ interface JobListingItemProps {
 
 const JobListingItem: FC<JobListingItemProps> = ({ id, title, description, company, location, logo }) => {
   const navigate = useNavigate();
+  const { avatarUrl: posterAvatar } = useUserAvatar(company);
 
   const handleViewDetails = () => {
     navigate(`/jobs/${id}`);
@@ -28,7 +30,7 @@ const JobListingItem: FC<JobListingItemProps> = ({ id, title, description, compa
           <Text color="dimmed" size="sm">{company} ・ {location}</Text>
           <Text size="sm" lineClamp={3}>{description}</Text>
         </Flex>
-        <img src={logo || "/WDCCLogo.png"} alt="Company Logo" width={60} height={60} style={{ borderRadius: '50%' }} />
+        <Avatar src={posterAvatar} alt={"Company Logo"} size={60} style={{ borderRadius: '50%' }} />
       </Flex>
       <Flex justify="flex-end" mt="md">
         <Button variant="light" color="blue" size="sm" onClick={handleViewDetails}>

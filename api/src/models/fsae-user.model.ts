@@ -72,7 +72,7 @@ export class FsaeUser extends Entity {
   @property({
     type: 'string',
     required: false,
-    default: ""
+    default: "/default_banner.png"
   })
   bannerURL: string;
 

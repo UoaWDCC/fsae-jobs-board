@@ -81,7 +81,7 @@ const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields, search }) 
             title={job.title}
             description={job.description}
             location={job.specialisation}
-            company={""}
+            company={job.publisherID}
             logo={""} 
           />
         ))}

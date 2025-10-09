@@ -492,20 +492,22 @@ export function AlumniProfile() {
         </Grid.Col>
       </Grid>
 
-      <EditModal
-        opened={openProfileModal}
-        close={() => {
-          setOpenProfileModal(false);
-          if (modalType === 'avatar') {
-            fetchAvatar();
-          }
-          if (modalType === 'banner') {
-            fetchBanner();
-          }
-        }}
-        content={modalContent}
-        title={modalTitle}
-      ></EditModal>
+      {isLocalProfile && (
+        <EditModal
+          opened={openProfileModal}
+          close={() => {
+            setOpenProfileModal(false);
+            if (modalType === 'avatar') {
+              fetchAvatar();
+            }
+            if (modalType === 'banner') {
+              fetchBanner();
+            }
+          }}
+          content={modalContent}
+          title={modalTitle}
+        ></EditModal>
+      )}
 
       <JobEditorModal
         opened={openJobEditorModal}

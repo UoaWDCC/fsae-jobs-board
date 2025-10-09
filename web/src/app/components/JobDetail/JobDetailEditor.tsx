@@ -1,4 +1,4 @@
-import { TextInput, Textarea, Button, Select, Group } from '@mantine/core';
+import { TextInput, Textarea, Button, Select, Group, Avatar } from '@mantine/core';
 import { useState, useEffect } from 'react';
 import styles from './JobDetail.module.css';
 import { Job } from '@/models/job.model';
@@ -6,6 +6,7 @@ import { createJob, updateJob } from '@/api/job';
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
+import { useUserAvatar } from '@/hooks/useUserAvatar';
 
 
 interface JobEditorModalProps {
@@ -40,6 +41,8 @@ export function JobDetailEditor({onSave, onCancel, initialData, mode}: JobEditor
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   
+  const { avatarUrl: posterAvatar } = useUserAvatar(initialData?.publisherID);
+  
   const userRole = useSelector((state: RootState) => state.user.role);
   const userId = useSelector((state: RootState) => state.user.id);
 
@@ -48,7 +51,6 @@ export function JobDetailEditor({onSave, onCancel, initialData, mode}: JobEditor
   const isOwner = initialData && userId && initialData.publisherID === userId;
   const isEditMode = mode === 'edit';
 
-  // Initialize form with existing data if editing
   useEffect(() => {
     if (initialData && mode === 'edit') {
       // Convert ISO date to YYYY-MM-DD for input[type="date"]
@@ -250,7 +252,7 @@ export function JobDetailEditor({onSave, onCancel, initialData, mode}: JobEditor
       <form className={styles.contentWrapper} onSubmit={(e) => handleSubmit(e)}>
         {/* Left Column */}
         <div className={styles.leftColumn}>
-          <img src="/WDCCLogo.png" alt="Company Logo" className={styles.companyLogo} />
+          <Avatar src={posterAvatar} alt={"Company Logo"} className={styles.companyLogo} />
           <div className={styles.leftFields}>
             <TextInput 
               label="Salary" 
