@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "The backend for FSAE job board",
   "private": true,
-  "author": "fsit869 <62918263+fsit869@users.noreply.github.com>",
+  "author": "wdcc development team<fsae.co.nz>",
   "license": "UNLICESED",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

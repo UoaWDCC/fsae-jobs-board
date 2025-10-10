@@ -393,25 +393,7 @@ export function AlumniProfile() {
             <Box pl={15} mt={10} className={styles.box}>
               {userData ? (
                 <>
-                  <EditableField
-                    size="md"
-                    value={userData.email}
-                    placeholder="Email"
-                    fieldName="email"
-                    userId={id as string}
-                    userRole="alumni"
-                    type="email"
-                    onUpdate={(_, value) => {
-                      setUserData({ ...userData, email: value });
-                    }}
-                    editable={isLocalProfile}
-                    required
-                    validation={(value) => {
-                      const emailPattern = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i;
-                      if (!emailPattern.test(value)) return 'Please enter a valid email';
-                      return null;
-                    }}
-                  />
+                  <p>{userData.email}</p>
                   <EditableField
                     size="lg"
                     value={userData.phoneNumber}
