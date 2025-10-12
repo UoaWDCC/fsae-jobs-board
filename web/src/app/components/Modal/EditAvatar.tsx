@@ -9,9 +9,10 @@ import { RootState } from '@/app/store';
 
 interface EditAvatarProps {
   avatar: string;
+  role: string;
 }
 
-export const EditAvatar = ({ avatar }: EditAvatarProps) => {
+export const EditAvatar = ({ avatar, role }: EditAvatarProps) => {
   const user = useSelector((state: RootState) => state.user);
   const memberID = user.id;
   const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -28,7 +29,7 @@ export const EditAvatar = ({ avatar }: EditAvatarProps) => {
 
     try {
       const token = localStorage.getItem('accessToken');
-      const response = await fetch(`http://localhost:3000/user/member/${memberID}/avatar`, {
+      const response = await fetch(`http://localhost:3000/user/${role}/${memberID}/avatar`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -69,7 +70,7 @@ export const EditAvatar = ({ avatar }: EditAvatarProps) => {
       const formData = new FormData();
       formData.append('avatar', selectedFile);
 
-      const response = await fetch(`http://localhost:3000/user/member/${memberID}/upload-avatar`, {
+      const response = await fetch(`http://localhost:3000/user/${role}/${memberID}/upload-avatar`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
@@ -98,7 +99,7 @@ export const EditAvatar = ({ avatar }: EditAvatarProps) => {
     setClearing(true);
     const token = localStorage.getItem('accessToken');
     try {
-      const response = await fetch(`http://localhost:3000/user/member/${memberID}/delete-avatar`, {
+      const response = await fetch(`http://localhost:3000/user/${role}/${memberID}/delete-avatar`, {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${token}` },
       });

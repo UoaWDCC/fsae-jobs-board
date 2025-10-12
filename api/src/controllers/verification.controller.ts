@@ -8,7 +8,12 @@ import {
   SponsorRepository,
   AdminRepository,
 } from '../repositories';
-import {ResendService, GeneratorService} from '../services';
+import {
+  ResendService,
+  GeneratorService,
+  PasswordHasherService,
+} from '../services';
+import {BindingKeys} from '../constants/binding-keys';
 
 export class VerificationController {
   constructor(
@@ -20,6 +25,8 @@ export class VerificationController {
     private verificationRepository: VerificationRepository,
     @inject('services.generator') private generator: GeneratorService,
     @inject('services.resendService') private resendService: ResendService,
+    @inject(BindingKeys.PASSWORD_HASHER)
+    private passwordHasher: PasswordHasherService,
   ) {}
 
   @post('/verify')
@@ -32,6 +39,7 @@ export class VerificationController {
             properties: {
               email: {type: 'string'},
               verification_code: {type: 'string'},
+              oldEmail: {type: 'string'},
             },
             required: ['email', 'verification_code'],
           },
@@ -41,12 +49,14 @@ export class VerificationController {
     verificationDto: {
       email: string;
       verification_code: string;
+      oldEmail?: string;
     },
   ): Promise<boolean> {
-    const {email, verification_code} = verificationDto;
+    const {email, verification_code, oldEmail} = verificationDto;
 
     const verification = await this.verificationRepository.findOne({
       where: {email},
+      order: ['createdAt DESC'],
     });
 
     console.log(verification);
@@ -75,14 +85,25 @@ export class VerificationController {
       throw new HttpErrors.InternalServerError('User role invalid');
     }
 
+    const userEmail = oldEmail ? oldEmail : email;
+
     const user = await roleRepository.findOne({
-      where: {email: verification.email},
+      where: {email: userEmail},
     });
     if (!user) {
       throw new HttpErrors.NotFound('User not found');
     }
 
-    await roleRepository.updateById(user.id, {verified: true});
+    if (userEmail == email) {
+      // if email is same, mark new user as verified
+      await roleRepository.updateById(user.id, {verified: true});
+    } else {
+      // if oldEmail is provided, this is a re-verification for email change
+      // update email and keep verified as true
+      await roleRepository.updateById(user.id, {email: email});
+    }
+
+    // delete the verification record
     await this.verificationRepository.deleteById(verification.id);
 
     return true;
@@ -97,6 +118,7 @@ export class VerificationController {
             type: 'object',
             properties: {
               email: {type: 'string'},
+              oldEmail: {type: 'string'},
             },
             required: ['email'],
           },
@@ -105,14 +127,17 @@ export class VerificationController {
     })
     verificationDto: {
       email: string;
+      oldEmail?: string;
     },
   ): Promise<boolean> {
-    const {email} = verificationDto;
+    const {email, oldEmail} = verificationDto;
 
     // Find the existing verification entry
     const verification = await this.verificationRepository.findOne({
       where: {email},
     });
+
+    console.log(verification);
 
     if (!verification) {
       throw new HttpErrors.NotFound('Verification record not found');
@@ -126,7 +151,12 @@ export class VerificationController {
       throw new HttpErrors.InternalServerError('Role repository not found');
     }
 
-    const user = await roleRepository.findOne({where: {email}});
+    // determine which email to use to find user
+    // if oldEmail is provided, use that to find user for re-verification
+    // otherwise use the new email for new user verification
+    const userEmail = oldEmail ? oldEmail : email;
+
+    const user = await roleRepository.findOne({where: {email: userEmail}});
 
     if (!user) {
       throw new HttpErrors.NotFound('User not found');
@@ -177,6 +207,119 @@ export class VerificationController {
     });
 
     return true;
+  }
+
+  @post('/send-reverification')
+  async sendReverification(
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              email: {type: 'string'},
+              role: {type: 'string'},
+              firstName: {type: 'string'},
+            },
+            required: ['email', 'role', 'firstName'],
+          },
+        },
+      },
+    })
+    body: {
+      email: string;
+      role: 'member' | 'alumni' | 'sponsor' | 'admin';
+      firstName: string;
+    },
+  ): Promise<boolean> {
+    const {email, role, firstName} = body;
+
+    const {verificationCode} = await this.sendVerificationEmail(
+      email,
+      firstName,
+    );
+
+    if (!verificationCode) {
+      throw new HttpErrors.InternalServerError(
+        'Failed to generate verification code',
+      );
+    }
+
+    // delete any existing verification records for this email
+    try {
+      await this.verificationRepository.deleteAll({email});
+    } catch (err) {
+      throw new HttpErrors.InternalServerError(
+        'Failed to clear old verification records',
+      );
+    }
+    // create a new verification record
+    try {
+      await this.verificationRepository.create({
+        email: email,
+        role: role,
+        createdAt: Date.now(),
+        expiresAt: Date.now() + 1000 * 60 * 10,
+        verificationCode: verificationCode,
+        resentOnce: true,
+      });
+    } catch (err) {
+      throw new HttpErrors.InternalServerError(
+        'Failed to create new verification record',
+      );
+    }
+    return true;
+  }
+
+  @post('/verify-password')
+  async verifyPassword(
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              email: {type: 'string'},
+              password: {type: 'string'},
+              role: {type: 'string'},
+            },
+            required: ['email', 'password', 'role'],
+          },
+        },
+      },
+    })
+    body: {
+      email: string;
+      password: string;
+      role: 'member' | 'alumni' | 'sponsor' | 'admin';
+    },
+  ): Promise<boolean> {
+    const {email, password, role} = body;
+
+    const roleRepository =
+      this.repositoryMap[
+        role as 'member' | 'alumni' | 'sponsor' | 'admin'
+      ];
+    if (!roleRepository) {
+      throw new HttpErrors.InternalServerError('Role repository not found');
+    }
+
+    const user = await roleRepository.findOne({
+      where: {email},
+    });
+
+    if (!user) {
+      throw new HttpErrors.NotFound('Member not found');
+    }
+    try {
+      const isPasswordValid = await this.passwordHasher.comparePassword(
+        password,
+        user.password,
+      );
+      return isPasswordValid;
+    } catch (err) {
+      throw new HttpErrors.InternalServerError('Password verification failed');
+    }
   }
 
   async sendVerificationEmail(email: string, firstName: string) {

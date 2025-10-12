@@ -9,6 +9,8 @@ import {authorize} from '@loopback/authorization';
 import {HttpErrors} from '@loopback/rest';
 import {FsaeRole} from '../models';
 import { AdminLogRepository } from '../repositories/admin.logs.repository';
+import { AdminLogService } from '../services/admin-log.service';
+import {service} from '@loopback/core';
 import { ownerOnly } from '../decorators/owner-only.decorator';
 
 @authenticate('fsae-jwt')
@@ -16,6 +18,7 @@ export class JobController {
   constructor(
     @repository(JobAdRepository) public jobAdRepository : JobAdRepository,
     @inject(AuthenticationBindings.CURRENT_USER) private currentUserProfile: UserProfile,
+    @service(AdminLogService) private adminLogService: AdminLogService
   ) {
     if(!this.jobAdRepository) {
       throw new HttpErrors.InternalServerError('JobAdRepository is not available');
@@ -36,15 +39,22 @@ export class JobController {
         'application/json': {
           schema: getModelSchemaRef(JobAd, {
             title: 'NewJobAd',
-            exclude: ['id', 'publisherID'],
+            exclude: ['id', 'publisherID', 'isPostedByAlumni'],
           }),
         },
       },
     })
-    jobAdData: Omit<JobAd, 'id' | 'publisherID'>,
+    jobAdData: Omit<JobAd, 'id' | 'publisherID' | 'isPostedByAlumni'>,
   ): Promise<JobAd> {
     const jobAd = new JobAd(jobAdData);
     jobAd.publisherID = this.currentUserProfile.id.toString();
+
+    // Check if current poster is an alumni
+    const userRole = this.currentUserProfile.role || "";
+    console.log('Current user role:', userRole);
+    jobAd.isPostedByAlumni = userRole.includes(FsaeRole.ALUMNI);
+    console.log(`isPostedByAlumni set to: ${jobAd.isPostedByAlumni}`);
+    
     return this.jobAdRepository.create(jobAd);
   }
 
@@ -165,5 +175,18 @@ export class JobController {
     }
 
     await this.jobAdRepository.deleteById(id);
+
+    if (isAdmin) {
+      await this.adminLogService.createAdminLog(
+        currentUserId,
+        {
+          message: 'Job post deleted by admin',
+          jobId: id,
+          jobTitle: job.title,
+          publisherId: job.publisherID,
+          ...(body?.reason ? {reason: body.reason} : {}),
+        },
+      );
+    }
   }
 }

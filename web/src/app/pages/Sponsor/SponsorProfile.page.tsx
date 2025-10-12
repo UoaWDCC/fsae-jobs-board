@@ -21,6 +21,8 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../app/store';
 import { jwtDecode } from 'jwt-decode';
 import DeactivateAccountModal from '../../components/Modal/DeactivateAccountModal';
+import { ActivateDeactivateAccountButton } from '@/app/components/AdminDashboard/ActivateDeactivateAccountButton';
+import { FsaeRole } from '@/models/roles';
 import { editSponsorById } from '@/api/sponsor';
 
 export function SponsorProfile() {
@@ -48,20 +50,20 @@ export function SponsorProfile() {
   
   const userRole = useSelector((state: RootState) => state.user.role); // the id of the local user
   const userId = useSelector((state: RootState) => state.user.id); // the id of the local user
-/*
+
   const handleAvatarChange = () => {
     setModalType('avatar');
-    setModalContent(<EditAvatar avatar={userData?.avatar} />);
+    setModalContent(<EditAvatar avatar={""} role={"sponsor"} />);
     setModalTitle('Profile Photo');
     setOpenProfileModal(true);
   };
 
   const handleBannerChange = () => {
     setModalType('banner');
-    setModalContent(<EditBannerModal banner={userData?.banner} />);
+    setModalContent(<EditBannerModal banner={""} role={"sponsor"} />);
     setModalTitle('Banner Photo');
     setOpenProfileModal(true);
-  };*/
+  };
 
   const handleProfileChange = () => {
     setModalType('profile');
@@ -81,6 +83,38 @@ export function SponsorProfile() {
   const handleDeactivateUserChange = () => {
     setModalType('deactivateUser');
     setOpenModal(true);
+  };
+
+  const fetchAvatar = async () => {
+    if (!id) return;
+    const token = localStorage.getItem('accessToken');
+    if (!token) return;
+    const res = await fetch(`http://localhost:3000/user/sponsor/${id}/avatar`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (res.ok) {
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      setUserData(prev => prev ? { ...prev, avatarURL: url } : prev);
+    } else {
+      setUserData(prev => prev ? { ...prev, avatarURL: '' } : prev);
+    }
+  };
+
+  const fetchBanner = async () => {
+    if (!id) return;
+    const token = localStorage.getItem('accessToken');
+    if (!token) return;
+    const res = await fetch(`http://localhost:3000/user/sponsor/${id}/banner`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (res.ok) {
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      setUserData(prev => prev ? { ...prev, bannerURL: url } : prev);
+    } else {
+      setUserData(prev => prev ? { ...prev, bannerURL: '' } : prev);
+    }
   };
 
   // Fetch jobs from the database
@@ -126,15 +160,38 @@ export function SponsorProfile() {
   };
 
   useEffect(() => {
+    let isMounted = true;
     const fetchUserData = async () => {
       try {
-        const userData = await fetchSponsorById(id as string);
+        // Fetch user data, avatar, and banner
+        const token = localStorage.getItem('accessToken');
+        const userPromise = fetchSponsorById(id as string);
+        let avatarPromise = Promise.resolve<string | undefined>(undefined);
+        let bannerPromise = Promise.resolve<string | undefined>(undefined);
+
+        if (token) {
+          avatarPromise = fetch(`http://localhost:3000/user/sponsor/${id}/avatar`, { headers: { Authorization: `Bearer ${token}` } })
+            .then(res => res.ok ? res.blob() : null)
+            .then(blob => blob ? URL.createObjectURL(blob) : undefined);
+
+          bannerPromise = fetch(`http://localhost:3000/user/sponsor/${id}/banner`, { headers: { Authorization: `Bearer ${token}` } })
+            .then(res => res.ok ? res.blob() : null)
+          .then(blob => blob ? URL.createObjectURL(blob) : undefined);
+        }
+
+        const userData = await userPromise;
         if (!userData) {
           navigate("/404");
           return;
         }
-        setUserData(userData);
-        setIsLocalProfile(userData.id == userId);
+        if (isMounted) {
+          setUserData(userData);
+          setIsLocalProfile(userData.id == userId);
+        }
+        const [avatarURL, bannerURL] = await Promise.all([avatarPromise, bannerPromise]);
+        if (isMounted) {
+          setUserData(prev => prev ? { ...prev, avatarURL: avatarURL || "", bannerURL: bannerURL || "" } : prev);
+        }
         const jobs: Job[] = await fetchJobsByPublisherId(id as string);
         const jobsForJobCard = jobs.map((thisJob) => {
           return {
@@ -155,7 +212,7 @@ export function SponsorProfile() {
       }
     };
     if (id) fetchUserData();
-  }, [id]);
+  }, [id, navigate, userId]);
 
   useEffect(() => {
     loadJobs();
@@ -247,7 +304,7 @@ export function SponsorProfile() {
         <Card.Section
           h={250}
           className={styles.banner}
-          //onClick={handleBannerChange}
+          onClick={handleBannerChange}
           style={{ backgroundImage: `url(${userData?.bannerURL})` }}
         />
         <Box className={styles.name} pl={170} pt={140}>
@@ -279,7 +336,7 @@ export function SponsorProfile() {
           mt={-100}
           ml={10}
           className={styles.avatar}
-          //onClick={handleAvatarChange}
+          onClick={handleAvatarChange}
         />
         <Box mt={-30} ml={170} className={styles.text}>
           <EditableField
@@ -297,6 +354,15 @@ export function SponsorProfile() {
             size="lg"
           />
         </Box>
+        {userRole === "admin" && (
+          <Box style={{ position: 'absolute', top: 20, right: 20 }}>
+            <ActivateDeactivateAccountButton 
+              userId={id} 
+              role={FsaeRole.SPONSOR}
+              activated={userData?.activated}
+            />
+          </Box>
+        )}
       </Card>
 
       <Flex className={styles.profileBtn}>
@@ -412,12 +478,23 @@ export function SponsorProfile() {
           </Box>
         </Grid.Col>
       </Grid>
-      <EditModal
-        opened={openProfileModal}
-        close={() => setOpenProfileModal(false)}
-        content={modalContent}
-        title={modalTitle}
-      ></EditModal>
+
+      {isLocalProfile && (
+        <EditModal
+          opened={openProfileModal}
+          close={() => {
+            setOpenProfileModal(false);
+            if (modalType === 'avatar') {
+              fetchAvatar();
+            }
+            if (modalType === 'banner') {
+              fetchBanner();
+            }
+          }}
+          content={modalContent}
+          title={modalTitle}
+        ></EditModal>
+      )}
 
       <JobEditorModal
         opened={openJobEditorModal}
