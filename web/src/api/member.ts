@@ -1,5 +1,6 @@
 import { apiInstance } from "@/api/ApiInstance";
 import { Member } from "@/models/member.model";
+import { MemberListEntry } from "@/models/memberlistentry.model";
 
 export async function fetchMembers(): Promise<Member[]> {
   try {
@@ -27,5 +28,18 @@ export async function editMemberById(id: string, newMember: Partial<Member>) {
     await apiInstance.patch(`user/member/${id}`, newMember);
   } catch (e) {
     throw Error(`An unknown error occurred trying to edit member profile by id: ${id}\n${e}`);
+  }
+}
+
+export async function fetchMemberList(lookingFor?: string, subGroup?: string): Promise<MemberListEntry[]> {
+  try {
+    const params: any = {};
+    if (lookingFor) params.lookingFor = lookingFor;
+    if (subGroup) params.subGroup = subGroup;
+
+    const res = await apiInstance.get("user/member", { params });
+    return res.data as MemberListEntry[];
+  } catch (e) {
+    throw Error(`An unknown error occurred trying to fetch member list: ${e}`);
   }
 }
