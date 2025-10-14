@@ -26,7 +26,7 @@ const Filter: FC<FilterProps> = ({
   useRoles = true,
 }) => {
   const roles = [
-    { value: 'NOT_FOR_HIRE', label: 'Not Looking' },
+    { value: 'NOT_FOR_HIRE', label: 'None' },
     { value: 'INTERNSHIP', label: 'Internship' },
     { value: 'PART_TIME', label: 'Part Time' },
     { value: 'GRAD_ROLE', label: 'Graduate Roles' },
