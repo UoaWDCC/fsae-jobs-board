@@ -31,11 +31,11 @@ export async function editMemberById(id: string, newMember: Partial<Member>) {
   }
 }
 
-export async function fetchMemberList(lookingFor?: string, subGroup?: string): Promise<MemberListEntry[]> {
+export async function fetchMemberList(lookingFor?: string | string[], subGroup?: string | string[]): Promise<MemberListEntry[]> {
   try {
     const params: any = {};
-    if (lookingFor) params.lookingFor = lookingFor;
-    if (subGroup) params.subGroup = subGroup;
+    if (lookingFor) params.lookingFor = Array.isArray(lookingFor) ? lookingFor.join(',') : lookingFor;
+    if (subGroup) params.subGroup = Array.isArray(subGroup) ? subGroup.join(',') : subGroup;
 
     const res = await apiInstance.get("user/member", { params });
     return res.data as MemberListEntry[];

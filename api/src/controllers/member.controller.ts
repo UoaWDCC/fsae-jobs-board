@@ -86,12 +86,22 @@ export class MemberController {
     },
   })
   async fetchUserList(
-    @param.query.string('lookingFor') lookingFor?: string,
-    @param.query.string('subGroup') subGroup?: string,
+    @param.query.string('lookingFor') lookingFor?: string | string[],
+    @param.query.string('subGroup') subGroup?: string | string[],
   ) {
     const where: any = {};
-    if (lookingFor) where.lookingFor = lookingFor;
-    if (subGroup) where.subGroup = subGroup;
+
+    const normalize = (v?: string | string[]): string[] => {
+      if (!v) return [];
+      if (Array.isArray(v)) return v.map(s => String(s).trim()).filter(Boolean);
+      return String(v).split(',').map(s => s.trim()).filter(Boolean);
+    };
+
+    const lookingForArr = normalize(lookingFor);
+    const subGroupArr = normalize(subGroup);
+
+    if (lookingForArr.length) where.lookingFor = {inq: lookingForArr};
+    if (subGroupArr.length) where.subGroup = {inq: subGroupArr};
 
     const members = await this.memberRepository.find({
       where,
