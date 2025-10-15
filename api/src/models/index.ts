@@ -14,3 +14,4 @@ export * from './verification.model';
 export * from './passwordresets.model';
 export * from './application.model';
 export * from './subgroup.model';
+export * from './invite-code.model';
