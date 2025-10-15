@@ -4,3 +4,14 @@
     cursor: default;
   }
 }
+
+/* esnures scroll wont block the job cards anymore*/
+.root {
+  position: relative;
+  padding-bottom: 3rem;
+}
+
+.indicators {
+  bottom: 0;
+  transform: translateY(0.6rem);
+}

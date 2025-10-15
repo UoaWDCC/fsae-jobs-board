@@ -2,3 +2,15 @@
   position: relative;
   color: var(--mantine-color-customWhite-1);
 }
+
+/* ensures all jobcards are consistent height regardless of howeverlong the job descriptions are */
+.description {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 20px;
+  min-height: 60px; 
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
