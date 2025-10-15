@@ -2,7 +2,7 @@
 
 // import {inject} from '@loopback/core';
 
-import {repository} from '@loopback/repository';
+import { repository } from '@loopback/repository';
 import {
   AdminRepository,
   AlumniRepository,
@@ -10,14 +10,14 @@ import {
   SponsorRepository,
   VerificationRepository,
 } from '../repositories';
-import {HttpErrors, post, requestBody} from '@loopback/rest';
-import {getModelSchemaRef} from '@loopback/rest';
-import {Admin, Alumni, FsaeRole, Member, Sponsor} from '../models';
-import {inject, service} from '@loopback/core';
-import {FsaeUserService, PasswordHasherService} from '../services';
-import {BindingKeys} from '../constants/binding-keys';
-import {ResendService} from '../services/resend.service';
-import {GeneratorService} from '../services/generator.service';
+import { HttpErrors, post, requestBody } from '@loopback/rest';
+import { getModelSchemaRef } from '@loopback/rest';
+import { Admin, Alumni, FsaeRole, Member, Sponsor, AdminStatus } from '../models';
+import { inject, service } from '@loopback/core';
+import { FsaeUserService, PasswordHasherService, InviteCodeService } from '../services';
+import { BindingKeys } from '../constants/binding-keys';
+import { ResendService } from '../services/resend.service';
+import { GeneratorService } from '../services/generator.service';
 import {
   CreateAdminDTO,
   CreateAlumniDTO,
@@ -38,7 +38,8 @@ export class RegisterController {
     private passwordHasher: PasswordHasherService,
     @inject('services.generator') private generator: GeneratorService,
     @inject('services.resendService') private resendService: ResendService,
-  ) {}
+    @service(InviteCodeService) private inviteCodeService: InviteCodeService,
+  ) { }
   @post('/register-admin')
   // Todo authorize only admin to register admin
   async registerAdmin(
@@ -97,6 +98,10 @@ export class RegisterController {
     if (await this.fsaeUserService.doesUserExist(createMemberDTO.email)) {
       throw new HttpErrors.Conflict('Email already exists');
     }
+
+    // Handle invite code if provided
+    let adminStatus = await this.handleInviteCode(createMemberDTO.inviteCode);
+
     let hashedPassword = await this.passwordHasher.hashPassword(
       createMemberDTO.password,
     );
@@ -114,6 +119,7 @@ export class RegisterController {
       lookingFor: createMemberDTO.lookingFor,
       education: createMemberDTO.education,
       skills: createMemberDTO.skills,
+      adminStatus: adminStatus,
     });
 
     await this.initiateVerification(
@@ -141,6 +147,10 @@ export class RegisterController {
     if (await this.fsaeUserService.doesUserExist(createSponsorDTO.email)) {
       throw new HttpErrors.Conflict('Email already exists');
     }
+
+    // Handle invite code if provided
+    let adminStatus = await this.handleInviteCode(createSponsorDTO.inviteCode);
+
     let hashedPassword = await this.passwordHasher.hashPassword(
       createSponsorDTO.password,
     );
@@ -156,6 +166,7 @@ export class RegisterController {
       companyName: createSponsorDTO.companyName,
       websiteURL: createSponsorDTO.websiteURL,
       industry: createSponsorDTO.industry,
+      adminStatus: adminStatus,
     });
 
     await this.initiateVerification(
@@ -183,6 +194,10 @@ export class RegisterController {
     if (await this.fsaeUserService.doesUserExist(createAlumniDTO.email)) {
       throw new HttpErrors.Conflict('Email already exists');
     }
+
+    // Handle invite code if provided
+    let adminStatus = await this.handleInviteCode(createAlumniDTO.inviteCode);
+
     let hashedPassword = await this.passwordHasher.hashPassword(
       createAlumniDTO.password,
     );
@@ -198,6 +213,7 @@ export class RegisterController {
       firstName: createAlumniDTO.firstName,
       lastName: createAlumniDTO.lastName,
       companyName: createAlumniDTO.companyName,
+      adminStatus: adminStatus,
     });
 
     await this.initiateVerification(
@@ -209,12 +225,35 @@ export class RegisterController {
     return newAlumni;
   }
 
+  /**
+   * Helper method to handle invite code validation during registration.
+   * If a valid code is provided, it will be consumed and APPROVED status returned.
+   * If no code or invalid code, returns PENDING status.
+   */
+  private async handleInviteCode(inviteCode?: string): Promise<AdminStatus> {
+    if (!inviteCode || inviteCode.trim() === '') {
+      // No invite code provided, default to PENDING
+      return this.inviteCodeService.determineAdminStatus(false);
+    }
+
+    try {
+      // Validate and consume the invite code
+      await this.inviteCodeService.validateAndConsumeCode(inviteCode);
+      // Code is valid, return APPROVED status
+      return this.inviteCodeService.determineAdminStatus(true);
+    } catch (error) {
+      // Invalid code provided, default to PENDING (don't block registration)
+      console.warn(`Invalid invite code provided during registration: ${inviteCode}`);
+      return this.inviteCodeService.determineAdminStatus(false);
+    }
+  }
+
   async initiateVerification(
     email: string,
     name: string,
     role: FsaeRole,
   ): Promise<void> {
-    const {verification, verificationCode} = await this.sendVerificationEmail(
+    const { verification, verificationCode } = await this.sendVerificationEmail(
       email,
       name,
     );
@@ -236,6 +275,6 @@ export class RegisterController {
       firstName,
       verificationCode,
     );
-    return {verification, verificationCode};
+    return { verification, verificationCode };
   }
 }

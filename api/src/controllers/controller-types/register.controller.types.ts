@@ -1,4 +1,4 @@
-import {model, property} from '@loopback/repository';
+import { model, property } from '@loopback/repository';
 import { JobType } from '../../models/job-type';
 import { Education } from '../../models/education.model';
 
@@ -41,6 +41,12 @@ export class CreateFsaeUserDTO {
     required: false
   })
   description?: string;
+
+  @property({
+    type: 'string',
+    required: false
+  })
+  inviteCode?: string;
 }
 
 @model()
@@ -73,21 +79,21 @@ export class CreateMemberDTO extends CreateFsaeUserDTO {
   lastName: string;
 
   @property({
-    type: 'string', 
+    type: 'string',
     required: false,
     jsonSchema: {
       enum: Object.values(JobType),
     },
   })
   lookingFor?: JobType;
-  
+
   @property({
     type: 'array',
     itemType: Education,
     required: false
   })
   education?: Education[];
-  
+
   @property({
     type: 'array',
     itemType: 'string',
@@ -99,19 +105,19 @@ export class CreateMemberDTO extends CreateFsaeUserDTO {
 @model()
 export class CreateSponsorDTO extends CreateFsaeUserDTO {
   @property({
-    type: 'string', 
+    type: 'string',
     required: true
   })
   companyName: string;
 
   @property({
-    type: 'string', 
+    type: 'string',
     required: false
   })
   websiteURL?: string;
 
   @property({
-    type: 'string', 
+    type: 'string',
     required: false
   })
   industry?: string;
@@ -120,19 +126,19 @@ export class CreateSponsorDTO extends CreateFsaeUserDTO {
 @model()
 export class CreateAlumniDTO extends CreateFsaeUserDTO {
   @property({
-    type: 'string', 
+    type: 'string',
     required: true
   })
   firstName: string;
 
   @property({
-    type: 'string', 
+    type: 'string',
     required: true
   })
   lastName: string;
 
   @property({
-    type: 'string', 
+    type: 'string',
     required: false
   })
   companyName?: string;
