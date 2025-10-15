@@ -36,9 +36,25 @@ const JobListing: FC<JobListingProps> = ({ filterRoles, filterFields, search, po
     fetchData();
   }, [search]);
 
+  // Step 0: Exlude expired jobs
+  const activeJobs = jobListings.filter(job => {
+    if (!job.applicationDeadline) {
+      return true; // Keep if no deadline
+    }
+    const parsed = Date.parse(job.applicationDeadline);
+    if (isNaN(parsed)) {
+      return true;
+    }
+
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+
+    return parsed >= startOfToday.getTime(); // include if deadline is today or in future
+  });
+
   // Carl : Filter job listings based on role type
   // Step 1: apply role/field filters
-  const byFilter = jobListings.filter(job =>
+  const byFilter = activeJobs.filter(job =>
     job.roleType &&
     (filterRoles.length === 0 ||
       filterRoles.includes(job.roleType.toLowerCase()))
