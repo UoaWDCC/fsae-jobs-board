@@ -41,10 +41,9 @@ export function JobDetailEditor({onSave, onCancel, initialData, mode}: JobEditor
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   
-  const { avatarUrl: posterAvatar } = useUserAvatar(initialData?.publisherID);
-  
   const userRole = useSelector((state: RootState) => state.user.role);
   const userId = useSelector((state: RootState) => state.user.id);
+  const { avatarUrl: posterAvatar } = useUserAvatar(userId);
 
   // Check if user can edit this job
   const canEdit = userRole === 'sponsor' || userRole === 'alumni';
