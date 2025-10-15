@@ -7,7 +7,7 @@ export interface Job {
     id: string;
     title: string;
     applicationDeadline: string;
-    applicationLink: string;
+    applicationLink?: string; // Optional - jobs can use Tally form instead
     datePosted: string;
     specialisation: string;
     description: string;

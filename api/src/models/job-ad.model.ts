@@ -23,9 +23,9 @@ export class JobAd extends Entity {
 
   @property({
     type: 'string',
-    required: true,
+    required: false,
   })
-  applicationLink: string;
+  applicationLink?: string;
 
   @property({
     type: 'date',

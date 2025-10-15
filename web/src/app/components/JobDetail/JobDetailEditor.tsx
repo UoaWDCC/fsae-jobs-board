@@ -79,6 +79,11 @@ export function JobDetailEditor({onSave, onCancel, initialData, mode}: JobEditor
         applicationDeadline: deadline,
         applicationLink: initialData.applicationLink || '',
       });
+
+      // Set Tally form state based on existing job data
+      if (initialData.tallyFormId) {
+        setEnableTallyForm(true);
+      }
     } else if (mode === 'create') {
       // Reset form for creating new job
       setFormData({
@@ -122,8 +127,13 @@ export function JobDetailEditor({onSave, onCancel, initialData, mode}: JobEditor
       newErrors.applicationDeadline = 'Application deadline is required';
     }
 
-    if (!formData.applicationLink.trim()) {
-      newErrors.applicationLink = 'Application link is required';
+    // Either applicationLink OR enableTallyForm must be set (not both, not neither)
+    if (!enableTallyForm && !formData.applicationLink.trim()) {
+      newErrors.applicationLink = 'Application link is required when not using Tally form';
+    }
+
+    if (enableTallyForm && formData.applicationLink.trim()) {
+      newErrors.applicationLink = 'Clear this field when using Tally form';
     }
 
     setErrors(newErrors);
@@ -243,10 +253,14 @@ export function JobDetailEditor({onSave, onCancel, initialData, mode}: JobEditor
           description: formData.description.trim(),
           roleType: formData.roleType.trim(),
           applicationDeadline: new Date(formData.applicationDeadline).toISOString(),
-          applicationLink: formData.applicationLink.trim(),
           datePosted: new Date().toISOString(),
           // Note: publisherID is automatically set by the backend from the current user
         };
+
+        // Only include applicationLink if NOT using Tally form
+        if (!enableTallyForm && formData.applicationLink.trim()) {
+          jobData.applicationLink = formData.applicationLink.trim();
+        }
 
         // Only include salary if it's not empty
         if (formData.salary && formData.salary.trim()) {
@@ -374,34 +388,45 @@ export function JobDetailEditor({onSave, onCancel, initialData, mode}: JobEditor
               value={formData.salary}
               onChange={(e) => handleInputChange('salary', e.currentTarget.value)}
             />
-            <TextInput 
-              label="Application Deadline" 
+            <TextInput
+              label="Application Deadline"
               type="date"
-              placeholder="Enter application deadline" 
+              placeholder="Enter application deadline"
               className={styles.detailItem}
               value={formData.applicationDeadline}
               onChange={(e) => handleInputChange('applicationDeadline', e.currentTarget.value)}
               error={errors.applicationDeadline}
               required
             />
-            <TextInput
-              label="Application Link"
-              placeholder="https://company.com/apply"
-              className={styles.detailItem}
-              value={formData.applicationLink}
-              onChange={(e) => handleInputChange('applicationLink', e.currentTarget.value)}
-              error={errors.applicationLink}
-              required
-            />
+
+            {/* Only show application link field when NOT using Tally form */}
+            {!enableTallyForm && (
+              <TextInput
+                label="Application Link"
+                placeholder="https://company.com/apply"
+                description="External URL where applicants can apply"
+                className={styles.detailItem}
+                value={formData.applicationLink}
+                onChange={(e) => handleInputChange('applicationLink', e.currentTarget.value)}
+                error={errors.applicationLink}
+                required
+              />
+            )}
 
             {/* Tally Form Creation Option (Create mode only) */}
             {mode === 'create' && (
               <Stack gap="sm" className={styles.detailItem}>
                 <Checkbox
-                  label="Create application form"
-                  description="Collect applications directly on your platform with a custom form"
+                  label="Use integrated application form"
+                  description="Collect applications directly on your platform (replaces external link)"
                   checked={enableTallyForm}
-                  onChange={(e) => setEnableTallyForm(e.currentTarget.checked)}
+                  onChange={(e) => {
+                    setEnableTallyForm(e.currentTarget.checked);
+                    // Clear external link when enabling Tally form
+                    if (e.currentTarget.checked && formData.applicationLink) {
+                      handleInputChange('applicationLink', '');
+                    }
+                  }}
                 />
                 {enableTallyForm && (
                   <Button
@@ -491,6 +516,7 @@ export function JobDetailEditor({onSave, onCancel, initialData, mode}: JobEditor
       >
         <TallyFormBuilder
           initialFormTitle={formTitle}
+          initialFields={formFields}
           onSave={handleFormBuilderSave}
           onCancel={handleFormBuilderCancel}
         />

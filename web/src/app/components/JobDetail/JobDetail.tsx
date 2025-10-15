@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Text, Button, Badge, Avatar, Loader } from '@mantine/core';
+import { Text, Button, Badge, Avatar, Loader, Modal } from '@mantine/core';
 import styles from './JobDetail.module.css';
 import { Job } from '@/models/job.model';
 import { adminApi } from '@/api/admin';
@@ -22,6 +22,7 @@ interface JobDetailProps {
 
 export function JobDetail({ job }: JobDetailProps) {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [applyModalOpen, setApplyModalOpen] = useState(false);
   const [tallyFormData, setTallyFormData] = useState<TallyApplicationFormResponse | null>(null);
   const [loadingForm, setLoadingForm] = useState(false);
   const [publisherRole, setPublisherRole] = useState<string>('');
@@ -131,13 +132,28 @@ export function JobDetail({ job }: JobDetailProps) {
       console.error('User does not have permission to edit jobs');
       return;
     }
-    
+
     if (!isOwner) {
       console.error('User can only edit their own job posts');
       return;
     }
-    
+
     navigate(`/job-editor/${job.id}`);
+  };
+
+  const handleApplyClick = () => {
+    // If job has Tally form, open modal
+    if (job.tallyFormId && tallyFormData?.has_form) {
+      setApplyModalOpen(true);
+    }
+    // If job has external link, redirect
+    else if (job.applicationLink) {
+      window.open(job.applicationLink, '_blank', 'noopener,noreferrer');
+    }
+    // Fallback: no application method available
+    else {
+      console.error('No application method available for this job');
+    }
   };
 
   return (
@@ -177,8 +193,32 @@ export function JobDetail({ job }: JobDetailProps) {
               </Button>
             ) : (
               <>
-                {canApply && !isOwner && (<Button>Apply ↗</Button>)}
-                {canApply && !isOwner && (<Button variant="outline">Save</Button>)}
+                {canApply && !isOwner && (
+                  <>
+                    {/* Apply Button - Opens modal for Tally form or redirects to external link */}
+                    {!loadingForm && !tallyFormData?.already_applied && (
+                      <Button
+                        onClick={handleApplyClick}
+                        disabled={loadingForm}
+                      >
+                        {job.tallyFormId ? 'Apply' : 'Apply ↗'}
+                      </Button>
+                    )}
+
+                    {/* Already Applied - Disabled button */}
+                    {!loadingForm && tallyFormData?.already_applied && (
+                      <Button
+                        disabled
+                        c="green"
+                      >
+                        ✓ Already Applied
+                      </Button>
+                    )}
+
+                    {/* Save button */}
+                    <Button variant="outline">Save</Button>
+                  </>
+                )}
                 {canEdit && isOwner && (
                   <Button variant="light" onClick={handleEditJob}>
                     Edit Job
@@ -193,45 +233,6 @@ export function JobDetail({ job }: JobDetailProps) {
           </Text>
           <Text>{job.description}</Text>
 
-          {/* Tally Application Form */}
-          {canApply && !isOwner && (
-            <div style={{ marginTop: '2rem' }}>
-              <Text size="2rem" fw={700} mb="md">
-                Apply for this Position
-              </Text>
-
-              {loadingForm && <Loader />}
-
-              {!loadingForm && tallyFormData?.already_applied && (
-                <Text color="green" size="lg">
-                  ✓ You have already applied for this position on{' '}
-                  {tallyFormData.submission_date
-                    ? new Date(tallyFormData.submission_date).toLocaleDateString()
-                    : 'a previous date'}
-                </Text>
-              )}
-
-              {!loadingForm && tallyFormData?.has_form && !tallyFormData.already_applied && tallyFormData.embed_url && (
-                <iframe
-                  src={tallyFormData.embed_url}
-                  width="100%"
-                  height="600"
-                  frameBorder="0"
-                  marginHeight={0}
-                  marginWidth={0}
-                  title="Application Form"
-                  style={{ border: 'none' }}
-                />
-              )}
-
-              {!loadingForm && !tallyFormData?.has_form && (
-                <Text color="dimmed">
-                  No application form available. Please use the external application link if provided.
-                </Text>
-              )}
-            </div>
-          )}
-
           {/* Submissions Section for Job Owners */}
           {isOwner && job.tallyFormId && (
             <div style={{ marginTop: '3rem' }}>
@@ -240,6 +241,59 @@ export function JobDetail({ job }: JobDetailProps) {
           )}
         </div>
       </div>
+
+      {/* Application Modal */}
+      <Modal
+        opened={applyModalOpen}
+        onClose={() => setApplyModalOpen(false)}
+        title="Apply for this Position"
+        size="xl"
+        centered
+        styles={{
+          body: { minHeight: '600px' },
+        }}
+      >
+        {loadingForm && (
+          <div style={{ display: 'flex', justifyContent: 'center', padding: '3rem' }}>
+            <Loader color="blue" size="lg" />
+          </div>
+        )}
+
+        {!loadingForm && tallyFormData?.already_applied && (
+          <div style={{ padding: '2rem', textAlign: 'center' }}>
+            <Text c="green" size="lg" fw={600}>
+              ✓ You have already applied for this position
+            </Text>
+            <Text c="dimmed" mt="sm">
+              Application submitted on{' '}
+              {tallyFormData.submission_date
+                ? new Date(tallyFormData.submission_date).toLocaleDateString()
+                : 'a previous date'}
+            </Text>
+          </div>
+        )}
+
+        {!loadingForm && tallyFormData?.has_form && !tallyFormData.already_applied && tallyFormData.embed_url && (
+          <iframe
+            src={tallyFormData.embed_url}
+            width="100%"
+            height="650"
+            frameBorder="0"
+            marginHeight={0}
+            marginWidth={0}
+            title="Application Form"
+            style={{ border: 'none' }}
+          />
+        )}
+
+        {!loadingForm && !tallyFormData?.has_form && (
+          <div style={{ padding: '2rem', textAlign: 'center' }}>
+            <Text c="dimmed">
+              No application form available. Please contact the employer directly.
+            </Text>
+          </div>
+        )}
+      </Modal>
 
       <DeletePostModal
         opened={deleteModalOpen}

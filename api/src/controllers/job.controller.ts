@@ -46,6 +46,10 @@ export class JobController {
     })
     jobAdData: Omit<JobAd, 'id' | 'publisherID' | 'isPostedByAlumni'>,
   ): Promise<JobAd> {
+    // Skip validation during creation - Tally form will be created immediately after
+    // If form creation fails, the job is rolled back (deleted) by the frontend
+    // Validation is enforced during updates (PATCH) to ensure jobs don't end up in invalid state
+
     const jobAd = new JobAd(jobAdData);
     jobAd.publisherID = this.currentUserProfile.id.toString();
 
@@ -54,7 +58,7 @@ export class JobController {
     console.log('Current user role:', userRole);
     jobAd.isPostedByAlumni = userRole.includes(FsaeRole.ALUMNI);
     console.log(`isPostedByAlumni set to: ${jobAd.isPostedByAlumni}`);
-    
+
     return this.jobAdRepository.create(jobAd);
   }
 
@@ -128,6 +132,22 @@ export class JobController {
     // required since we risk overwriting the publisherID
     if ('publisherID' in jobAd) {
       jobAd.publisherID = existingjobAd.publisherID;
+    }
+
+    // Merge update with existing job to get complete picture for validation
+    const mergedJob = {...existingjobAd, ...jobAd};
+
+    // Validate either/or: must have applicationLink OR tallyFormId (not both, not neither)
+    if (!mergedJob.applicationLink && !mergedJob.tallyFormId) {
+      throw new HttpErrors.BadRequest(
+        'Job must have either an application link or a Tally form'
+      );
+    }
+
+    if (mergedJob.applicationLink && mergedJob.tallyFormId) {
+      throw new HttpErrors.BadRequest(
+        'Job cannot have both an external application link and a Tally form'
+      );
     }
 
     await this.jobAdRepository.updateById(id, jobAd);

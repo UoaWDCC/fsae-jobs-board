@@ -23,19 +23,21 @@ export interface FormField {
 
 interface TallyFormBuilderProps {
   initialFormTitle?: string;
+  initialFields?: FormField[];
   onSave: (formTitle: string, fields: FormField[]) => void;
   onCancel: () => void;
 }
 
 export function TallyFormBuilder({
   initialFormTitle = 'Job Application Form',
+  initialFields,
   onSave,
   onCancel
 }: TallyFormBuilderProps) {
   const [formTitle, setFormTitle] = useState(initialFormTitle);
 
   // Default fields for job applications (v1 - validated types only)
-  const [fields, setFields] = useState<FormField[]>([
+  const defaultFields: FormField[] = [
     {
       id: '1',
       type: 'INPUT_TEXT',
@@ -57,7 +59,12 @@ export function TallyFormBuilder({
       required: false,
       groupType: 'QUESTION'
     },
-  ]);
+  ];
+
+  // Use initialFields if provided, otherwise use defaults
+  const [fields, setFields] = useState<FormField[]>(
+    initialFields && initialFields.length > 0 ? initialFields : defaultFields
+  );
 
   const addField = () => {
     setFields([...fields, {
