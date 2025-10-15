@@ -3,6 +3,7 @@ import styles from './StudentBoard.module.css';
 import { useState, useEffect, FC } from 'react';
 import Student from './Student';
 import { Link } from 'react-router-dom';
+import { JobType } from '@/models/job-type';
 
 type StudentEntry = {
   id?: string;
@@ -17,6 +18,23 @@ type StudentEntry = {
 
 interface StudentListingProp {
   students: StudentEntry[]; // provided list (state lives here, passed down)
+}
+
+const jobTypeDisplayStrings = {
+  'NOT_FOR_HIRE': 'Not for hire',
+  'INTERNSHIP': 'Looking for Internship',
+  'PART_TIME': 'Looking for Part Time',
+  'GRAD_ROLE': 'Looking for Graduate Role',
+}
+
+const subGroupDisplayStrings = {
+  'UNKNOWN': 'Member',
+  'BUSINESS': 'Business Team',
+  'COMPOSITES': 'Composites',
+  'MECHANICAL': 'Mechanical',
+  'ELECTRICAL': 'Electrical',
+  'AUTONOMOUS': 'Autonomous',
+  'RACE_TEAM': 'Race Team'
 }
 
 const StudentListing: FC<StudentListingProp> = ({ students }) => {
@@ -78,8 +96,8 @@ const StudentListing: FC<StudentListingProp> = ({ students }) => {
                 name={student.firstName + " " + student.lastName}
                 role={student.role ?? ''}
                 education={student.education ?? ''}
-                lookingFor={student.lookingFor ?? ''}
-                subGroup={student.subGroup ?? ''}
+                lookingFor={jobTypeDisplayStrings[(student.lookingFor ?? 'NOT_FOR_HIRE') as keyof typeof jobTypeDisplayStrings] }
+                subGroup={subGroupDisplayStrings[(student.subGroup ?? 'UNKNOWN') as keyof typeof subGroupDisplayStrings]}
                 avatarURL={student.avatarURL ?? defaultAvatar}
               />
             </Link>
