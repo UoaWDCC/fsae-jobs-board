@@ -2,6 +2,7 @@ import { Grid, Flex, Pagination } from '@mantine/core';
 import styles from './StudentBoard.module.css';
 import { useState, useEffect, FC } from 'react';
 import Student from './Student';
+import { Link } from 'react-router-dom';
 
 type StudentEntry = {
   id?: string;
@@ -72,14 +73,16 @@ const StudentListing: FC<StudentListingProp> = ({ students }) => {
             key={student.id ?? index}
             className={styles.studentCard}
           >
-            <Student
-              name={student.firstName + " " + student.lastName}
-              role={student.role ?? ''}
-              education={student.education ?? ''}
-              lookingFor={student.lookingFor ?? ''}
-              subGroup={student.subGroup ?? ''}
-              avatarURL={student.avatarURL ?? defaultAvatar}
-            />
+            <Link to={"/profile/member/" + student.id} style={{ textDecoration: 'none', color: 'inherit' }}>
+              <Student
+                name={student.firstName + " " + student.lastName}
+                role={student.role ?? ''}
+                education={student.education ?? ''}
+                lookingFor={student.lookingFor ?? ''}
+                subGroup={student.subGroup ?? ''}
+                avatarURL={student.avatarURL ?? defaultAvatar}
+              />
+            </Link>
           </Grid.Col>
         ))}
       </Grid>
