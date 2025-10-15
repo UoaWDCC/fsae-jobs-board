@@ -21,7 +21,7 @@ export interface TallySubmission {
   id: string;
   job_id: string;
   job_title: string;
-  submission_date: string;
+  submitted_at: string;
   status: string;
 }
 

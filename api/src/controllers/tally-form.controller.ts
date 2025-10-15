@@ -706,6 +706,7 @@ export class TallyFormController {
                 type: 'object',
                 properties: {
                   id: {type: 'string'},
+                  job_id: {type: 'string'},
                   job_title: {type: 'string'},
                   status: {type: 'string'},
                   submitted_at: {type: 'string'},
@@ -751,6 +752,7 @@ export class TallyFormController {
 
           return {
             id: sub.id!,
+            job_id: form.jobId,
             job_title: job.title,
             status: sub.status,
             submitted_at: sub.submittedAt.toISOString(),

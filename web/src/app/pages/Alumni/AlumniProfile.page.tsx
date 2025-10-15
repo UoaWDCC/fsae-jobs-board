@@ -23,6 +23,7 @@ import { subGroupDisplayMap } from '@/app/utils/field-display-maps';
 import { SubGroup } from '@/models/subgroup.model';
 import { ActivateDeactivateAccountButton } from '@/app/components/AdminDashboard/ActivateDeactivateAccountButton';
 import { FsaeRole } from '@/models/roles';
+import { ApplicationHistory } from '@/app/components/ApplicationHistory';
 
 export function AlumniProfile() {
   // UseState for future modal implementation
@@ -489,6 +490,15 @@ export function AlumniProfile() {
               </Flex>
             </Box>
           </Box>
+
+          {isLocalProfile && (
+            <Box ml={20} mt={30}>
+              <Title order={5}>My Applications</Title>
+              <Box pl={15} mt={10} className={styles.box}>
+                <ApplicationHistory userId={id as string} />
+              </Box>
+            </Box>
+          )}
         </Grid.Col>
       </Grid>
 

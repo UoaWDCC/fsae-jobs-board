@@ -18,7 +18,7 @@ import { SubGroup } from '@/models/subgroup.model';
 import { jobTypeDisplayMap, subGroupDisplayMap } from '@/app/utils/field-display-maps';
 import { ActivateDeactivateAccountButton } from '@/app/components/AdminDashboard/ActivateDeactivateAccountButton';
 import { FsaeRole } from '@/models/roles';
-        
+import { ApplicationHistory } from '@/app/components/ApplicationHistory';
 
 
 
@@ -450,15 +450,24 @@ export function StudentProfile() {
               <ActionIcon variant="transparent" color="#ffffff" size={200} mt={-40}
               onClick={handleOpenCV}
               style={{ cursor: 'pointer' }}>
-                <img 
-                  src="/cv_white.png" 
-                  alt="CV Icon" 
-                  width={90} 
+                <img
+                  src="/cv_white.png"
+                  alt="CV Icon"
+                  width={90}
                   height={90}
                 />
               </ActionIcon>
             )}
           </Box>
+
+          {isLocalProfile && (
+            <Box ml={20} mt={30}>
+              <Title order={5}>My Applications</Title>
+              <Box pl={15} mt={10} className={styles.box}>
+                <ApplicationHistory userId={id as string} />
+              </Box>
+            </Box>
+          )}
         </Grid.Col>
       </Grid>
 
