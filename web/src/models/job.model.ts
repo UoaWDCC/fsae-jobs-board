@@ -18,6 +18,7 @@ export interface Job {
     location?: string;
     roleType: string; // Required in backend, must be 'Internship' | 'Graduate' | 'Junior'
     isPostedByAlumni?: boolean;
+    tallyFormId?: string; // ID of associated Tally form (if job has application form)
 }
 
 //! If this changes, make sure to update the JobDetail component in web/src/app/components/JobDetail/JobDetail.tsx

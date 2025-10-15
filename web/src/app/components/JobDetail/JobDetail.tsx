@@ -10,6 +10,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../app/store';
 import { getJobApplicationForm, TallyApplicationFormResponse } from '@/api/tally';
 import { useUserAvatar } from '@/hooks/useUserAvatar';
+import { SubmissionsSection } from '../SubmissionsSection';
 
 interface JwtPayload {
   role?: string;
@@ -176,8 +177,8 @@ export function JobDetail({ job }: JobDetailProps) {
               </Button>
             ) : (
               <>
-                {canApply && (<Button>Apply ↗</Button>)}
-                {canApply && (<Button variant="outline">Save</Button>)}
+                {canApply && !isOwner && (<Button>Apply ↗</Button>)}
+                {canApply && !isOwner && (<Button variant="outline">Save</Button>)}
                 {canEdit && isOwner && (
                   <Button variant="light" onClick={handleEditJob}>
                     Edit Job
@@ -193,7 +194,7 @@ export function JobDetail({ job }: JobDetailProps) {
           <Text>{job.description}</Text>
 
           {/* Tally Application Form */}
-          {canApply && (
+          {canApply && !isOwner && (
             <div style={{ marginTop: '2rem' }}>
               <Text size="2rem" fw={700} mb="md">
                 Apply for this Position
@@ -228,6 +229,13 @@ export function JobDetail({ job }: JobDetailProps) {
                   No application form available. Please use the external application link if provided.
                 </Text>
               )}
+            </div>
+          )}
+
+          {/* Submissions Section for Job Owners */}
+          {isOwner && job.tallyFormId && (
+            <div style={{ marginTop: '3rem' }}>
+              <SubmissionsSection jobId={job.id} formId={job.tallyFormId} />
             </div>
           )}
         </div>

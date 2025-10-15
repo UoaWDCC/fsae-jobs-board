@@ -1,0 +1,14 @@
+.submissionsContainer {
+  padding: 2rem;
+  background-color: #1a1b1e;
+  border: 1px solid #373a40;
+  border-radius: 12px;
+}
+
+/* Status badge colors are handled by Mantine Badge component */
+
+@media (max-width: 768px) {
+  .submissionsContainer {
+    padding: 1rem;
+  }
+}

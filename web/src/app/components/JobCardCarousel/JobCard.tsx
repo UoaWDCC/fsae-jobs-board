@@ -1,4 +1,4 @@
-import { ActionIcon, Text, Button, Paper, Flex, Stack, Badge } from '@mantine/core';
+import { ActionIcon, Text, Button, Paper, Flex, Stack, Badge, Group } from '@mantine/core';
 import styles from './JobCard.module.css';
 import { IconTrash, IconEdit } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
@@ -79,7 +79,7 @@ export function JobCard({ data, onJobDeleted, onEditJob }: {
 
   const getSponsorElements = (element: string) => {
     const isOwner = userId && data.publisherID === userId;
-    
+
     switch (element) {
       case 'deleteBtn':
         return isOwner ? (
@@ -87,23 +87,34 @@ export function JobCard({ data, onJobDeleted, onEditJob }: {
             variant="transparent"
             color="white"
             onClick={handleDeleteJob}>
-            <IconTrash 
+            <IconTrash
             aria-label = "Delete Job"/>
           </ActionIcon>
         ) : null;
       case 'jobBtn':
         return isOwner ? (
-          <Button
-            color="blue"
-            mt="xs"
-            mr="md"
-            radius="lg"
-            size="compact-md"
-            onClick={handleEditJob}
-            leftSection={<IconEdit size={14} />}
-          >
-            Edit Job
-          </Button>
+          <Group gap="xs">
+            <Button
+              color="blue"
+              mt="xs"
+              radius="lg"
+              size="compact-md"
+              onClick={handleViewJob}
+            >
+              View Job
+            </Button>
+            <Button
+              color="blue"
+              mt="xs"
+              radius="lg"
+              size="compact-md"
+              variant="light"
+              onClick={handleEditJob}
+              leftSection={<IconEdit size={14} />}
+            >
+              Edit
+            </Button>
+          </Group>
         ) : (
           <Button
             color="blue"
@@ -141,7 +152,7 @@ export function JobCard({ data, onJobDeleted, onEditJob }: {
 
   const getAlumniElements = (element: string) => {
     const isOwner = userId && data.publisherID === userId;
-    
+
     switch (element) {
       case 'deleteBtn':
         return isOwner ? (
@@ -149,23 +160,34 @@ export function JobCard({ data, onJobDeleted, onEditJob }: {
             variant="transparent"
             color="white"
             onClick={handleDeleteJob}>
-            <IconTrash 
+            <IconTrash
             aria-label = "Delete Job"/>
           </ActionIcon>
         ) : null;
       case 'jobBtn':
         return isOwner ? (
-          <Button
-            color="blue"
-            mt="xs"
-            mr="md"
-            radius="lg"
-            size="compact-md"
-            onClick={handleEditJob}
-            leftSection={<IconEdit size={14} />}
-          >
-            Edit Job
-          </Button>
+          <Group gap="xs">
+            <Button
+              color="blue"
+              mt="xs"
+              radius="lg"
+              size="compact-md"
+              onClick={handleViewJob}
+            >
+              View Job
+            </Button>
+            <Button
+              color="blue"
+              mt="xs"
+              radius="lg"
+              size="compact-md"
+              variant="light"
+              onClick={handleEditJob}
+              leftSection={<IconEdit size={14} />}
+            >
+              Edit
+            </Button>
+          </Group>
         ) : (
           <Button
             color="blue"

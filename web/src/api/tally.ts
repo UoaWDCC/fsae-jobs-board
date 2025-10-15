@@ -21,12 +21,11 @@ export interface TallySubmission {
   id: string;
   job_id: string;
   job_title: string;
-  company_name: string;
   submission_date: string;
   status: string;
 }
 
-export interface MemberSubmissionsResponse {
+export interface ApplicantSubmissionsResponse {
   submissions: TallySubmission[];
   total_count: number;
 }
@@ -86,26 +85,28 @@ export async function getJobApplicationForm(
   }
 }
 
-// Get member's submission history
-export async function getMemberSubmissions(
-  memberId: string
-): Promise<MemberSubmissionsResponse> {
+// Get applicant's submission history (members and alumni)
+export async function getApplicantSubmissions(
+  applicantId: string
+): Promise<ApplicantSubmissionsResponse> {
   try {
-    const res = await apiInstance.get(`/api/members/${memberId}/submissions`);
-    return res.data as MemberSubmissionsResponse;
+    const res = await apiInstance.get(`/api/applicants/${applicantId}/submissions`);
+    return res.data as ApplicantSubmissionsResponse;
   } catch (e: any) {
     throw Error(
-      `Failed to get member submissions: ${e.response?.data?.error?.message || e.message}`
+      `Failed to get applicant submissions: ${e.response?.data?.error?.message || e.message}`
     );
   }
 }
 
 // Get form submissions (for sponsors viewing applicants)
 export async function getFormSubmissions(
-  formId: string
+  formId: string,
+  statusFilter?: string
 ): Promise<FormSubmissionsResponse> {
   try {
-    const res = await apiInstance.get(`/api/sponsors/forms/${formId}/submissions`);
+    const queryParam = statusFilter ? `?status=${statusFilter}` : '';
+    const res = await apiInstance.get(`/api/sponsors/forms/${formId}/submissions${queryParam}`);
     return res.data as FormSubmissionsResponse;
   } catch (e: any) {
     throw Error(
