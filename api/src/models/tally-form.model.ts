@@ -60,9 +60,9 @@ export class TallyForm extends Entity {
   @property({
     type: 'string',
     required: true,
-    default: 'platform-member-id-hidden-field',
+    default: 'platform-applicant-auth-token',
   })
-  memberIdBlockUuid: string;
+  applicantAuthFieldName: string;
 
   @property({
     type: 'date',

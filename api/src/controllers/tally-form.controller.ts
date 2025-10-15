@@ -3,7 +3,7 @@ import {
   post,
   param,
   get,
-  put,
+  patch,
   requestBody,
   response,
   HttpErrors,
@@ -20,6 +20,7 @@ import {
   TallySubmissionRepository,
   ApplicationNonceRepository,
   MemberRepository,
+  AlumniRepository,
 } from '../repositories';
 import {TallyService} from '../services/tally.service';
 import {validateCreateFormRequest} from '../middleware/tally-validation.middleware';
@@ -54,6 +55,8 @@ export class TallyFormController {
     public applicationNonceRepository: ApplicationNonceRepository,
     @repository(MemberRepository)
     public memberRepository: MemberRepository,
+    @repository(AlumniRepository)
+    public alumniRepository: AlumniRepository,
     @inject('services.TallyService')
     public tallyService: TallyService,
     @inject(AuthenticationBindings.CURRENT_USER)
@@ -148,32 +151,32 @@ export class TallyFormController {
         ? (formTitleBlock.payload.html as string)
         : 'Application Form';
 
-      // Auto-inject hidden member ID field (for secure member linking)
-      const MEMBER_ID_FIELD_KEY = 'platform-member-id-hidden-field';  // Key in webhook submissions
-      const MEMBER_ID_FIELD_UUID = crypto.randomUUID();  // Hidden field UUID
-      const MEMBER_ID_BLOCK_UUID = crypto.randomUUID();  // Block UUID
-      const MEMBER_ID_GROUP_UUID = crypto.randomUUID();  // Group UUID
+      // Auto-inject hidden applicant authentication field (JWT token for member/alumni verification)
+      const APPLICANT_AUTH_FIELD_KEY = 'platform-applicant-auth-token';  // Key in webhook submissions
+      const APPLICANT_AUTH_FIELD_UUID = crypto.randomUUID();  // Hidden field UUID
+      const APPLICANT_AUTH_BLOCK_UUID = crypto.randomUUID();  // Block UUID
+      const APPLICANT_AUTH_GROUP_UUID = crypto.randomUUID();  // Group UUID
 
-      const memberIdHiddenField = {
-        uuid: MEMBER_ID_BLOCK_UUID,
+      const applicantAuthField = {
+        uuid: APPLICANT_AUTH_BLOCK_UUID,
         type: 'HIDDEN_FIELDS',  // Correct type (plural)
-        groupUuid: MEMBER_ID_GROUP_UUID,
+        groupUuid: APPLICANT_AUTH_GROUP_UUID,
         groupType: 'HIDDEN_FIELDS',  // Correct groupType (plural)
         payload: {
           hiddenFields: [  // Correct payload structure
             {
-              uuid: MEMBER_ID_FIELD_UUID,
-              name: MEMBER_ID_FIELD_KEY  // Key that appears in webhook submissions
+              uuid: APPLICANT_AUTH_FIELD_UUID,
+              name: APPLICANT_AUTH_FIELD_KEY  // Key that appears in webhook submissions
             }
           ]
         },
       };
 
       // Insert hidden field at position 1 (right after FORM_TITLE at position 0)
-      // This ensures: blocks[0] = FORM_TITLE, blocks[1] = hidden member ID, blocks[2+] = user fields
-      const blocksWithMemberId = [
+      // This ensures: blocks[0] = FORM_TITLE, blocks[1] = hidden auth token, blocks[2+] = user fields
+      const blocksWithAuthField = [
         validatedFormData.blocks[0], // FORM_TITLE (must be first)
-        memberIdHiddenField,          // Hidden member ID (always position 1)
+        applicantAuthField,          // Hidden applicant auth token (always position 1)
         ...validatedFormData.blocks.slice(1), // User-configured fields (position 2+)
       ];
 
@@ -181,7 +184,7 @@ export class TallyFormController {
       const tallyFormResponse = await this.tallyService.createForm({
         name: formTitle,
         status: validatedFormData.status,
-        blocks: blocksWithMemberId,
+        blocks: blocksWithAuthField,
       });
 
       // Generate URLs and embed code
@@ -322,7 +325,7 @@ export class TallyFormController {
   }
 
   @authorize({
-    allowedRoles: [FsaeRole.MEMBER],
+    allowedRoles: [FsaeRole.MEMBER, FsaeRole.ALUMNI],
   })
   @get('/api/jobs/{jobId}/apply')
   @response(200, {
@@ -353,15 +356,9 @@ export class TallyFormController {
     submission_date?: Date;
   }> {
     try {
-      // Get authenticated member info
-      const memberId = this.currentUserProfile.id;
-
-      // Fetch member from database to get email (not in JWT payload)
-      const member = await this.memberRepository.findById(memberId);
-      if (!member) {
-        throw new HttpErrors.NotFound('Member not found');
-      }
-      const memberEmail = member.email;
+      // Get authenticated user info (can be member or alumni)
+      const applicantId = this.currentUserProfile.id;
+      const userRole = this.currentUserProfile.role;
 
       // Verify job exists
       const job = await this.jobAdRepository.findById(jobId);
@@ -383,9 +380,9 @@ export class TallyFormController {
         };
       }
 
-      // Check if member already applied
+      // Check if applicant already applied
       const existingSubmission = await this.tallySubmissionRepository.findOne({
-        where: {memberId: memberId, formId: form.id},
+        where: {applicantId: applicantId, formId: form.id},
       });
 
       if (existingSubmission) {
@@ -398,7 +395,7 @@ export class TallyFormController {
         };
       }
 
-      // Generate JWT token with nonce for secure member linking
+      // Generate JWT token with nonce for secure applicant linking
       const nonce = crypto.randomBytes(16).toString('hex');
       const tokenSecret = process.env.APPLICATION_TOKEN_SECRET;
 
@@ -410,8 +407,8 @@ export class TallyFormController {
 
       const token = jwt.sign(
         {
-          memberId,
-          memberEmail,
+          applicantId,
+          applicantRole: userRole,
           jobId,
           formId: form.id,
           nonce,
@@ -424,13 +421,13 @@ export class TallyFormController {
       await this.applicationNonceRepository.create({
         nonce,
         status: 'pending',
-        memberId,
+        applicantId: applicantId,
         jobId,
         expiresAt: new Date(Date.now() + 86400000), // 24 hours in ms
       });
 
       // Return embed URL with token parameter (hidden field auto-population)
-      const embedUrl = `https://tally.so/embed/${form.tallyFormId}?platform-member-id-hidden-field=${token}`;
+      const embedUrl = `https://tally.so/embed/${form.tallyFormId}?platform-applicant-auth-token=${token}`;
 
       return {
         form_title: form.formTitle,
@@ -566,7 +563,7 @@ export class TallyFormController {
   @authorize({
     allowedRoles: [FsaeRole.ALUMNI, FsaeRole.SPONSOR],
   })
-  @put('/api/sponsors/submissions/{submissionId}')
+  @patch('/api/sponsors/submissions/{submissionId}')
   @response(200, {
     description: 'Update submission status and notes',
     content: {
@@ -693,7 +690,7 @@ export class TallyFormController {
   }
 
   @authorize({
-    allowedRoles: [FsaeRole.MEMBER],
+    allowedRoles: [FsaeRole.MEMBER, FsaeRole.ALUMNI],
   })
   @get('/api/applicants/{applicantId}/submissions')
   @response(200, {
@@ -710,7 +707,6 @@ export class TallyFormController {
                 properties: {
                   id: {type: 'string'},
                   job_title: {type: 'string'},
-                  company_name: {type: 'string'},
                   status: {type: 'string'},
                   submitted_at: {type: 'string'},
                 },
@@ -727,7 +723,6 @@ export class TallyFormController {
     submissions: Array<{
       id: string;
       job_title: string;
-      company_name: string;
       status: string;
       submitted_at: string;
       form_title: string;
@@ -740,11 +735,10 @@ export class TallyFormController {
         throw new HttpErrors.Forbidden('You can only view your own submissions');
       }
 
-      // Get all submissions for this applicant (matching by email)
-      const userEmail = this.currentUserProfile.email;
+      // Get all submissions for this applicant (matching by immutable user ID)
       const submissions = await this.tallySubmissionRepository.find({
         where: {
-          applicantEmail: userEmail,
+          applicantId: userId,
         },
         order: ['submittedAt DESC'],
       });
@@ -758,7 +752,6 @@ export class TallyFormController {
           return {
             id: sub.id!,
             job_title: job.title,
-            company_name: job.publisherID, // TODO: Fetch actual company name from publisher profile
             status: sub.status,
             submitted_at: sub.submittedAt.toISOString(),
             form_title: form.formTitle,

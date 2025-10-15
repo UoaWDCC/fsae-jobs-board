@@ -13,6 +13,7 @@ import {
   TallySubmissionRepository,
   ApplicationNonceRepository,
   MemberRepository,
+  AlumniRepository,
 } from '../repositories';
 import * as jwt from 'jsonwebtoken';
 
@@ -57,6 +58,8 @@ export class ApplicationWebhookController {
     public applicationNonceRepository: ApplicationNonceRepository,
     @repository(MemberRepository)
     public memberRepository: MemberRepository,
+    @repository(AlumniRepository)
+    public alumniRepository: AlumniRepository,
     @inject(RestBindings.Http.REQUEST)
     private request: Request,
   ) {}
@@ -150,18 +153,18 @@ export class ApplicationWebhookController {
         };
       }
 
-      // Extract and validate JWT token from hidden member ID field
+      // Extract and validate JWT token from hidden applicant auth field
       // Note: Tally sends the hidden field's name in the 'label' property, not 'key'
-      const memberIdField = payload.data.fields.find(
-        f => f.label === 'platform-member-id-hidden-field' && f.type === 'HIDDEN_FIELDS'
+      const applicantAuthField = payload.data.fields.find(
+        f => f.label === 'platform-applicant-auth-token' && f.type === 'HIDDEN_FIELDS'
       );
 
-      if (!memberIdField || !memberIdField.value) {
-        console.error('Missing member ID token in submission');
-        throw new HttpErrors.BadRequest('Invalid submission: missing member authentication');
+      if (!applicantAuthField || !applicantAuthField.value) {
+        console.error('Missing applicant auth token in submission');
+        throw new HttpErrors.BadRequest('Invalid submission: missing applicant authentication');
       }
 
-      const token = memberIdField.value;
+      const token = applicantAuthField.value;
       const tokenSecret = process.env.APPLICATION_TOKEN_SECRET;
 
       if (!tokenSecret) {
@@ -177,8 +180,8 @@ export class ApplicationWebhookController {
         throw new HttpErrors.Unauthorized('Invalid or expired application token');
       }
 
-      // Validate token fields
-      if (!decodedToken.memberId || !decodedToken.nonce || !decodedToken.memberEmail) {
+      // Validate token fields (updated for new JWT structure)
+      if (!decodedToken.applicantId || !decodedToken.nonce || !decodedToken.applicantRole) {
         throw new HttpErrors.BadRequest('Invalid token structure');
       }
 
@@ -201,33 +204,46 @@ export class ApplicationWebhookController {
         throw new HttpErrors.Unauthorized('Application token expired');
       }
 
-      // Verify member exists and email matches
-      const member = await this.memberRepository.findById(decodedToken.memberId);
+      // Verify applicant exists and fetch current profile data (role-based lookup)
+      let applicantEmail: string;
+      let applicantName: string;
 
-      if (!member) {
-        console.error(`Member not found: ${decodedToken.memberId}`);
-        throw new HttpErrors.Unauthorized('Invalid member in token');
+      if (decodedToken.applicantRole === 'member') {
+        const member = await this.memberRepository.findById(decodedToken.applicantId);
+
+        if (!member) {
+          console.error(`Member not found: ${decodedToken.applicantId}`);
+          throw new HttpErrors.Unauthorized('Invalid member in token');
+        }
+
+        applicantEmail = member.email;
+        applicantName = `${member.firstName} ${member.lastName}`;
+      } else if (decodedToken.applicantRole === 'alumni') {
+        const alumni = await this.alumniRepository.findById(decodedToken.applicantId);
+
+        if (!alumni) {
+          console.error(`Alumni not found: ${decodedToken.applicantId}`);
+          throw new HttpErrors.Unauthorized('Invalid alumni in token');
+        }
+
+        applicantEmail = alumni.email;
+        applicantName = `${alumni.firstName} ${alumni.lastName}`;
+      } else {
+        console.error(`Invalid applicant role: ${decodedToken.applicantRole}`);
+        throw new HttpErrors.Unauthorized('Invalid applicant role in token');
       }
-
-      if (member.email !== decodedToken.memberEmail) {
-        console.error(`Email mismatch for member ${decodedToken.memberId}`);
-        throw new HttpErrors.Unauthorized('Token email mismatch');
-      }
-
-      // Extract applicant information from member record
-      const applicantEmail = member.email;
-      const applicantName = `${member.firstName} ${member.lastName}`;
 
       // Mark nonce as used
       await this.applicationNonceRepository.updateById(decodedToken.nonce, {
         status: 'used',
       });
 
-      // Create submission record with validated member ID
+      // Create submission record with validated applicant ID and role
       const submission = await this.tallySubmissionRepository.create({
         formId: form.id!,
         tallySubmissionId: payload.data.submissionId,
-        memberId: decodedToken.memberId,
+        applicantId: decodedToken.applicantId,
+        applicantRole: decodedToken.applicantRole,
         applicantEmail: applicantEmail,
         applicantName: applicantName,
         submissionData: payload.data,

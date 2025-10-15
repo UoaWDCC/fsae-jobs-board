@@ -25,7 +25,16 @@ export class TallySubmission extends Entity {
     type: 'string',
     required: true,
   })
-  memberId: string;
+  applicantId: string;
+
+  @property({
+    type: 'string',
+    required: true,
+    jsonSchema: {
+      enum: ['member', 'alumni'],
+    },
+  })
+  applicantRole: string;
 
   @property({
     type: 'string',

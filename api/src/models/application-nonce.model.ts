@@ -22,7 +22,7 @@ export class ApplicationNonce extends Entity {
     type: 'string',
     required: true,
   })
-  memberId: string;
+  applicantId: string;
 
   @property({
     type: 'string',
