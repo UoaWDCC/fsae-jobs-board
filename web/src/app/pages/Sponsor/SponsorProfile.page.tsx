@@ -282,16 +282,7 @@ export function SponsorProfile() {
   const getAdminElements = (element: string) => {
     switch (element) {
       case 'profileBtn':
-        return (
-          <Button
-            onClick={handleDeactivateUserChange}
-            classNames={{
-              root: styles.button_admin_root,
-            }}
-          >
-            Deactivate User
-          </Button>
-        );
+        return null; // Removed duplicate deactivate button - ActivateDeactivateAccountButton handles this
       case 'addNewBtn':
         return null;
     }

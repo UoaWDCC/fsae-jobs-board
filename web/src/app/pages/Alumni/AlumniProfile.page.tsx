@@ -275,16 +275,7 @@ export function AlumniProfile() {
   const getAdminElements = (element: string) => {
     switch (element) {
       case 'profileBtn':
-        return (
-          <Button
-            onClick={handleDeactivateUserChange}
-            classNames={{
-              root: styles.button_admin_root,
-            }}
-          >
-            Deactivate User
-          </Button>
-        );
+        return null; // Removed duplicate deactivate button - ActivateDeactivateAccountButton handles this
       case 'addNewBtn':
         return null;
     }
@@ -302,43 +293,26 @@ export function AlumniProfile() {
         />
         <Box className={styles.name} pl={170} pt={140}>
           <EditableField
-            value={userData?.firstName || ''}
-            placeholder="First name"
-            fieldName="firstName"
+            value={`${userData?.firstName || ''} ${userData?.lastName || ''}`.trim()}
+            placeholder="Full name"
+            fieldName="fullName"
             userId={id as string}
             userRole="alumni"
             onUpdate={(_, value) => {
               if (userData) {
-                setUserData({ ...userData, firstName: value });
+                const nameParts = value.trim().split(' ');
+                const firstName = nameParts[0] || '';
+                const lastName = nameParts.slice(1).join(' ') || '';
+                setUserData({ ...userData, firstName, lastName });
               }
             }}
             editable={isLocalProfile}
             required
             validation={(value) => {
-              if (!value.trim()) return 'First name is required';
+              if (!value.trim()) return 'Name is required';
               return null;
             }}
-            className={styles.firstName}
-            size={undefined}
-          />
-          <EditableField
-            value={userData?.lastName || ''}
-            placeholder="Last name"
-            fieldName="lastName"
-            userId={id as string}
-            userRole="alumni"
-            onUpdate={(_, value) => {
-              if (userData) {
-                setUserData({ ...userData, lastName: value });
-              }
-            }}
-            editable={isLocalProfile}
-            required
-            validation={(value) => {
-              if (!value.trim()) return 'Last name is required';
-              return null;
-            }}
-            className={styles.lastName}
+            className={styles.fullName}
             size={undefined}
           />
         </Box>

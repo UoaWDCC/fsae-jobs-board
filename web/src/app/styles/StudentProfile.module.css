@@ -1,6 +1,6 @@
 .container {
   background-color: var(--mantine-color-background-1);
-  height: 100vh;
+  min-height: calc(100vh - 80px);
   color: var(--mantine-color-customWhite-1);
   overflow-x: hidden;
   max-width: 100%;
