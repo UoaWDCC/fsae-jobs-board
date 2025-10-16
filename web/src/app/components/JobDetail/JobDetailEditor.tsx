@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import { useUserAvatar } from '@/hooks/useUserAvatar';
+import { useNavigate } from 'react-router-dom';
 
 
 interface JobEditorModalProps {
@@ -41,15 +42,15 @@ export function JobDetailEditor({onSave, onCancel, initialData, mode}: JobEditor
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   
-  const { avatarUrl: posterAvatar } = useUserAvatar(initialData?.publisherID);
-  
   const userRole = useSelector((state: RootState) => state.user.role);
   const userId = useSelector((state: RootState) => state.user.id);
+  const { avatarUrl: posterAvatar } = useUserAvatar(userId);
 
   // Check if user can edit this job
   const canEdit = userRole === 'sponsor' || userRole === 'alumni';
   const isOwner = initialData && userId && initialData.publisherID === userId;
   const isEditMode = mode === 'edit';
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (initialData && mode === 'edit') {
@@ -179,6 +180,10 @@ export function JobDetailEditor({onSave, onCancel, initialData, mode}: JobEditor
         console.log('Updating job with data:', updateData);
         await updateJob(initialData.id, updateData);
         toast.success('Job updated successfully!');
+        // Redirect to profile after a short delay
+        setTimeout(() => {
+          navigate('/profile/' + userRole + '/' + userId);
+        }, 1000);
       } else {
         // Create new job - ensure all required fields are properly set
         const jobData: any = {
@@ -200,6 +205,10 @@ export function JobDetailEditor({onSave, onCancel, initialData, mode}: JobEditor
         console.log('Creating job with data:', jobData);
         await createJob(jobData);
         toast.success('Job created successfully!');
+        // Redirect to profile after a short delay
+        setTimeout(() => {
+          navigate('/profile/' + userRole + '/' + userId);
+        }, 1000);
       }
       
     } catch (error: any) {

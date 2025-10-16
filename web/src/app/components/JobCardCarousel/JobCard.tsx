@@ -28,6 +28,38 @@ export function JobCard({ data, onJobDeleted, onEditJob }: {
   const role = useSelector((state: RootState) => state.user.role);
   const userId = useSelector((state: RootState) => state.user.id);
   
+  const timeSince = (past: Date) => {
+    const now = new Date();
+    let seconds = Math.floor((now.getTime() - past.getTime()) / 1000);
+    const intervals = [
+      { label: 'year', seconds: 31536000 },
+      { label: 'month', seconds: 2592000 },
+      { label: 'day', seconds: 86400 },
+      { label: 'hour', seconds: 3600 },
+      { label: 'minute', seconds: 60 },
+    ];
+    for (const it of intervals) {
+      const count = Math.floor(seconds / it.seconds);
+      if (count >= 1) {
+        return `${count} ${it.label}${count > 1 ? 's' : ''} ago`;
+      }
+    }
+    return 'just now';
+  };
+
+  let isExpired = false;
+  let expiredLabel = '';
+  if (data.applicationDeadline) {
+    const parsed = Date.parse(data.applicationDeadline);
+    if (!isNaN(parsed)) {
+      const startOfToday = new Date();
+      startOfToday.setHours(0, 0, 0, 0);
+      if (parsed < startOfToday.getTime()) {
+        isExpired = true;
+        expiredLabel = `Expired ${timeSince(new Date(parsed))}`;
+      }
+    }
+  }
 
   const handleDeleteJob = async () => {
     if (window.confirm(`Are you sure you want to delete the job "${data.title}"?`)) {
@@ -187,7 +219,7 @@ export function JobCard({ data, onJobDeleted, onEditJob }: {
   };
 
   return (
-    <Paper p="md" radius="md">
+    <Paper p="md" radius="md" style={{ opacity: isExpired ? 0.75 : 1 }}>
       <Flex direction="column">
         <Stack gap="xs">
           <Flex justify={'space-between'}>
@@ -209,6 +241,12 @@ export function JobCard({ data, onJobDeleted, onEditJob }: {
                 {data.salary}
               </Badge>
             )}
+            {isExpired && (
+              <Badge color="red" variant="filled">
+                {expiredLabel}
+              </Badge>
+            )}
+            
           </Flex>
 
           <Text fw={700} size="sm" className={styles.text} lineClamp={3}>
