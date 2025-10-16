@@ -33,7 +33,6 @@ export default function App() {
 
   return (
     <MantineProvider theme={theme} defaultColorScheme="dark">
-      <Router />
       <ToastContainer
         position="bottom-right"
         autoClose={5000}
@@ -45,6 +44,8 @@ export default function App() {
         draggable
         pauseOnHover
       />
+      <Router />
+      
     </MantineProvider>
   );
 }
