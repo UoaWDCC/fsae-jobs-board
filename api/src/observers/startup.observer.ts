@@ -22,10 +22,10 @@ export class StartupObserver implements LifeCycleObserver {
           'services.PasswordHasherService'
         );
 
-        const hashedPassword = await passwordHasherService.hashPassword('admin');
+        const hashedPassword = await passwordHasherService.hashPassword(String(process.env.DEFAULT_ADMIN_PASSWORD));
 
         await this.admins.create({
-          email: 'admin@admin.com',
+          email: String(process.env.DEFAULT_ADMIN_EMAIL),
           firstName: 'Default',
           lastName: 'Admin',
           phoneNumber: '0',
@@ -37,7 +37,7 @@ export class StartupObserver implements LifeCycleObserver {
           createdAt: new Date(),
         } as Partial<Admin>);
 
-        console.info('Default admin created: admin@admin.com (password: admin)');
+        console.info(`Default admin created. Email: ${process.env.DEFAULT_ADMIN_EMAIL} Password: ${process.env.DEFAULT_ADMIN_PASSWORD}`);
       } catch (err) {
         console.error('Failed to create default admin account', err);
       }
