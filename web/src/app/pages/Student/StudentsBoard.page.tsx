@@ -54,7 +54,7 @@ export function StudentsBoard() {
     <Grid justify="center" align="center">
       {!isPortrait ? (
         <>
-          <Grid.Col span={2} className={styles.filterContainer} mt={120} pl={10}>
+          <Grid.Col span={2} className={styles.filterContainer} pl={10}>
             <Filter
               filterRoles={filterRoles}
               setFilterRoles={setFilterRoles}
@@ -67,7 +67,6 @@ export function StudentsBoard() {
               orientation="vertical"
               size="sm"
               style={{ height: '80%' }}
-              mt={160}
               color={theme.colors.customWhite[0]}
             />
           </Grid.Col>

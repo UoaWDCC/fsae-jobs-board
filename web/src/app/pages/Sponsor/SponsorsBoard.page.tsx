@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import Filter from '../../components/Filter/Filter';
 import SearchBar from '../../components/SearchBar/SearchBar';
 import SponsorListing from '../../components/SponsorBoard/SponsorListing';
+import styles from '../../components/StudentBoard/StudentBoard.module.css';
+import { ToTopButton } from '../../components/BackToTopButton/BackToTopButton';
 export function SponsorsBoard() {
   
   const [filterRoles, setFilterRoles] = useState<string[]>([]);
@@ -25,10 +27,10 @@ export function SponsorsBoard() {
   const [search, setSearch] = useState<string>('');
 
   return (
-    <Grid justify="center" align="flex-start">
+    <Grid justify="center" align="center">
       {!isPortrait ? (
         <>
-          <Grid.Col span={2} mt={120} pl={10}>
+          <Grid.Col span={2} className={styles.filterContainer} pl={10}>
             <Filter
               filterRoles={filterRoles}
               setFilterRoles={setFilterRoles}
@@ -43,7 +45,6 @@ export function SponsorsBoard() {
               orientation="vertical"
               size="sm"
               style={{ height: '80%' }}
-              mt={160}
               color={theme.colors.customWhite[0]}
             />
           </Grid.Col>
@@ -51,19 +52,20 @@ export function SponsorsBoard() {
             <SearchBar
               search={search}
               setSearch={setSearch}
-              title={'Sponsors Board'}
-              placeholder={'Search Sponsors'}
+              title="Sponsors Board"
+              placeholder="Search sponsors"
             />
             <SponsorListing filterRoles={filterRoles} filterFields={filterFields} />
           </Grid.Col>
+          <ToTopButton />
         </>
       ) : (
         <Grid.Col span={12}>
           <SearchBar
             search={search}
             setSearch={setSearch}
-            title={'SPONSORS'}
-            placeholder={'Search Sponsors'}
+            title="Sponsors"
+            placeholder="Search sponsors"
           />
           <Filter
             filterRoles={filterRoles}
