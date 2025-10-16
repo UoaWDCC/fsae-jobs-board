@@ -1,6 +1,6 @@
 import { FC } from 'react';
-import { Flex, Avatar, Box, Text } from '@mantine/core';
-import styles from '../StudentBoard/StudentBoard.module.css';
+import { Avatar, Text } from '@mantine/core';
+import styles from './AlumniBoard.module.css';
 
 interface AlumniProps {
   name: string;
@@ -10,16 +10,16 @@ interface AlumniProps {
 }
 
 const AlumniCard: FC<AlumniProps> = ({ name, role, avatarURL, company }) => (
-  <Flex direction="column" align="center" py={10} px={10} className={styles.singleStudent}>
+  <div className={styles.singleAlumni}>
     <Avatar src={avatarURL} alt={name} className={styles.avatar} />
-    <Box mt={10} px={0} className={styles.innerText}>
-      <Text size="lg">{name}</Text>
-      <Text size="md">{company}</Text>
-      <Text size="md" className={styles.studentCardRoleText}>
+    <div className={styles.alumniTextContainer}>
+      <Text className={styles.alumniName}>{name}</Text>
+      <Text className={styles.alumniCompany}>{company}</Text>
+      <Text className={styles.alumniRole}>
         {role.charAt(0).toUpperCase() + role.slice(1)}
       </Text>
-    </Box>
-  </Flex>
+    </div>
+  </div>
 );
 
 export default AlumniCard;

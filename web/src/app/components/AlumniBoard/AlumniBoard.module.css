@@ -1,25 +1,5 @@
-/* Student Board specific styling */
-.filterContainer {
-  display: flex;
-  align-self: flex-start;
-}
-
-.searchBar {
-  width: 60%;
-  align-self: flex-end;
-}
-
-.studentTitle {
-  background-color: var(--mantine-color-customAzureBlue-1);
-  padding: 4px 8px;
-  width: fit-content;
-  border-radius: 16px;
-  font-size: 0.75rem;
-  font-weight: 500;
-}
-
-/* Student Board Card Styling */
-.studentCard {
+/* Alumni Board specific styling */
+.alumniCard {
   background-color: var(--mantine-color-customCharcoalGrey-1);
   border-radius: 12px;
   margin: 0.5rem;
@@ -30,18 +10,18 @@
   flex-direction: column;
 }
 
-.studentCard:hover {
+.alumniCard:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-.studentCardContainer {
+.alumniCardContainer {
   height: auto;
   margin-top: 1rem;
   margin-bottom: 2rem;
 }
 
-.singleStudent {
+.singleAlumni {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -57,7 +37,7 @@
   margin-bottom: 8px;
 }
 
-.innerText {
+.alumniTextContainer {
   width: 100%;
   text-align: center;
   flex-grow: 1;
@@ -66,26 +46,28 @@
   justify-content: space-between;
 }
 
-.name {
+.alumniName {
   font-size: 1rem;
   font-weight: 600;
   margin-bottom: 4px;
   line-height: 1.2;
 }
 
-.studentCardRoleText {
+.alumniCompany {
+  font-size: 0.8rem;
+  color: var(--mantine-color-gray-6);
+  line-height: 1.3;
+  margin-bottom: 4px;
+  font-weight: 500;
+  color: var(--mantine-color-gray-7);
+}
+
+.alumniRole {
   color: var(--mantine-color-customAzureBlue-1);
   font-style: italic;
   font-size: 0.875rem;
   margin-bottom: 4px;
   line-height: 1.2;
-}
-
-.details {
-  font-size: 0.8rem;
-  color: var(--mantine-color-gray-6);
-  line-height: 1.3;
-  margin-bottom: 4px;
 }
 
 .paginationContainer {
@@ -96,13 +78,9 @@
   margin-top: 1rem;
 }
 
-/* Mobile view adjustments for students */
+/* Alumni-specific mobile adjustments */
 @media (max-width: 768px) {
-  .studentRow {
-    grid-template-columns: 1fr;
-  }
-
-  .singleStudent {
+  .singleAlumni {
     display: grid;
     grid-template-columns: auto 1fr;
     gap: 0.75rem;
@@ -111,17 +89,13 @@
     padding: 8px;
   }
 
-  .studentBox {
-    margin-bottom: 0.5%;
-  }
-
   .avatar {
     max-width: 5rem;
     height: 5rem;
     border-radius: 50%;
   }
 
-  .innerText {
+  .alumniTextContainer {
     min-height: 100%;
     text-align: left;
   }

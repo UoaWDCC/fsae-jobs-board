@@ -89,22 +89,23 @@ const StudentListing: FC<StudentListingProp> = ({ students }) => {
           <Grid.Col
             span={{ base: 12, sm: 4, md: 3, lg: 2.5 }}
             key={student.id ?? index}
-            className={styles.studentCard}
           >
             <Link to={"/profile/member/" + student.id} style={{ textDecoration: 'none', color: 'inherit' }}>
-              <Student
-                name={student.firstName + " " + student.lastName}
-                role={student.role ?? ''}
-                education={student.education ?? ''}
-                lookingFor={jobTypeDisplayStrings[(student.lookingFor ?? 'NOT_FOR_HIRE') as keyof typeof jobTypeDisplayStrings] }
-                subGroup={subGroupDisplayStrings[(student.subGroup ?? 'UNKNOWN') as keyof typeof subGroupDisplayStrings]}
-                avatarURL={student.avatarURL ?? defaultAvatar}
-              />
+              <div className={styles.studentCard}>
+                <Student
+                  name={student.firstName + " " + student.lastName}
+                  role={student.role ?? ''}
+                  education={student.education ?? ''}
+                  lookingFor={jobTypeDisplayStrings[(student.lookingFor ?? 'NOT_FOR_HIRE') as keyof typeof jobTypeDisplayStrings] }
+                  subGroup={subGroupDisplayStrings[(student.subGroup ?? 'UNKNOWN') as keyof typeof subGroupDisplayStrings]}
+                  avatarURL={student.avatarURL ?? defaultAvatar}
+                />
+              </div>
             </Link>
           </Grid.Col>
         ))}
       </Grid>
-      <Flex align="flex-end" justify="center">
+      <div className={styles.paginationContainer}>
         <Pagination
           total={Math.max(1, Math.ceil(studentList.length / studentPerPage))}
           value={activePage}
@@ -112,7 +113,7 @@ const StudentListing: FC<StudentListingProp> = ({ students }) => {
           size="lg"
           mb="md"
         />
-      </Flex>
+      </div>
     </>
   );
 };

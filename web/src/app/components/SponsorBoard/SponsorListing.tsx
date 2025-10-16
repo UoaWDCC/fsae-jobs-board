@@ -1,11 +1,10 @@
-import { Pagination, Container, Flex, SimpleGrid, rem } from '@mantine/core';
+import { Pagination, Grid } from '@mantine/core';
 import styles from './SponsorBoard.module.css';
 import { FC, useEffect, useState } from 'react';
-import { chunk } from 'lodash';
 import SponsorBoardCard, { SponsorBoardCardProps } from './SponsorBoardCard';
-import { useMediaQuery } from '@mantine/hooks';
 import { Sponsor } from '@/models/sponsor.model';
 import { fetchSponsors } from '@/api/sponsor';
+import { Link } from 'react-router-dom';
 
 interface JobListingProps {
   filterRoles: string[];
@@ -13,18 +12,16 @@ interface JobListingProps {
 }
 const SponsorListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
   const [activePage, setPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState<number>(4);
-  const isBase = useMediaQuery('(max-width: 48em)'); // check if screen size is base
-  const [isOneColumn, setIsOneColumn] = useState<boolean>(false);
-  const [jobListings, setJobListings] = useState<SponsorBoardCardProps[]>([]);
+  const [sponsorsPerPage, setSponsorsPerPage] = useState<number>(16);
+  const [isPortrait, setIsPortrait] = useState(window.innerHeight > window.innerWidth);
+  const [sponsorList, setSponsorList] = useState<SponsorBoardCardProps[]>([]);
 
   const updateItemsPerPage = () => {
-    if (window.innerWidth > 1920) {
-      setItemsPerPage(15);
-    } else if (window.innerWidth > 1080) {
-      setItemsPerPage(12);
+    setIsPortrait(window.innerHeight > window.innerWidth);
+    if (window.innerWidth > 1080) {
+      setSponsorsPerPage(16);
     } else {
-      setItemsPerPage(6);
+      setSponsorsPerPage(10);
     }
   };
 
@@ -38,49 +35,49 @@ const SponsorListing: FC<JobListingProps> = ({ filterRoles, filterFields }) => {
     };
   }, []);
 
-  // just checks if SimpleGrid has to be one column or not
   useEffect(() => {
-    if (isBase === undefined) setIsOneColumn(false);
-    else setIsOneColumn(isBase);
-  }, [isBase]);
+    fetchSponsors().then(data => {
+      setSponsorList(data);
+    });
+  }, []);
 
-    useEffect(() => {
-      fetchSponsors().then(data => {
-        setJobListings(data);
-      });
-    }, []);
+  // Calculate the indices for slicing the sponsor list
+  const startIndex = (activePage - 1) * sponsorsPerPage;
+  const endIndex = startIndex + sponsorsPerPage;
 
+  // Slice the sponsor list to only include the sponsors for the current page
+  const paginatedSponsors = sponsorList.slice(startIndex, endIndex);
 
-  // chunk all listings into respective count according to screen size for per page display
-  // TODO: filter the jobListings before chunking
-  const chunkedJobListings = chunk(jobListings, itemsPerPage);
-
-  const currentPageListings = chunkedJobListings[activePage - 1] ?? [];
-  const jobListingItems = currentPageListings.map((item, idx) => (
-    <div key={idx} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-      <SponsorBoardCard data={item} isOneColumn={isOneColumn} />
-    </div>
-  ));
   return (
-    <Flex justify="flex-start" align="flex-start" direction="column" gap="md" ml="md" mr="md">
-      <SimpleGrid
-        cols={{ base: 1, sm: 2, lg: 3, xl: itemsPerPage > 14 ? 5 : itemsPerPage > 9 ? 4 : 3 }}
-        spacing={{ base: rem(20), sm: rem(25), lg: rem(30), xl: rem(40) }}
-        verticalSpacing={{ base: rem(15), sm: rem(25), lg: rem(30), xl: rem(40) }}
+    <>
+      <Grid
+        gutter={{ base: 5, xs: 'md', md: 'xl', xl: 50 }}
+        justify="center"
+        className={styles.sponsorCardContainer}
       >
-        {jobListingItems}
-      </SimpleGrid>
-      <Container className={styles.paginationContainer}>
+        {paginatedSponsors.map((sponsor, index) => (
+          <Grid.Col
+            span={{ base: 12, sm: 4, md: 3, lg: 2.5 }}
+            key={sponsor.id ?? index}
+          >
+            <Link to={`/profile/sponsor/${sponsor.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+              <div className={styles.sponsorCard}>
+                <SponsorBoardCard data={sponsor} />
+              </div>
+            </Link>
+          </Grid.Col>
+        ))}
+      </Grid>
+      <div className={styles.paginationContainer}>
         <Pagination
-          total={Math.ceil(jobListings.length / itemsPerPage)}
+          total={Math.max(1, Math.ceil(sponsorList.length / sponsorsPerPage))}
           value={activePage}
           onChange={setPage}
           size="lg"
           mb="md"
-          color={'customAzureBlue.1'}
         />
-      </Container>
-    </Flex>
+      </div>
+    </>
   );
 };
 

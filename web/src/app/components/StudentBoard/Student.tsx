@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Flex, Avatar, Box, Text } from '@mantine/core';
+import { Avatar, Text } from '@mantine/core';
 import styles from './StudentBoard.module.css';
 
 interface StudentProps {
@@ -12,18 +12,18 @@ interface StudentProps {
 }
 
 const Student: FC<StudentProps> = ({ name, education, lookingFor, subGroup, avatarURL }) => (
-  <Flex direction="column" align="center" py={10} px={10} className={styles.singleStudent}>
+  <div className={styles.singleStudent}>
     <Avatar src={avatarURL} alt={name} className={styles.avatar} />
-    <Box mt={10} px={0} className={styles.innerText}>
-      <Text size="lg">{name}</Text>
-      <Text size="md" className={styles.studentCardRoleText}>
+    <div className={styles.innerText}>
+      <Text className={styles.name}>{name}</Text>
+      <Text className={styles.studentCardRoleText}>
         {subGroup}
       </Text>
-      <Text size="sm">
+      <Text className={styles.details}>
         {lookingFor}
       </Text>
-    </Box>
-  </Flex>
+    </div>
+  </div>
 );
 
 export default Student;

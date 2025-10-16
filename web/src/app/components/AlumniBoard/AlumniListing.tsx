@@ -1,5 +1,5 @@
-import { Grid, Flex, Pagination } from '@mantine/core';
-import styles from '../StudentBoard/StudentBoard.module.css';
+import { Grid, Pagination } from '@mantine/core';
+import styles from './AlumniBoard.module.css';
 import { useState, useEffect, FC } from 'react';
 import AlumniCard from './Alumni'
 import { fetchAlumni } from '@/api/alumni';
@@ -51,46 +51,35 @@ const AlumniListing: FC<AlumniListingProp> = ({}) => {
       <Grid
         gutter={{ base: 5, xs: 'md', md: 'xl', xl: 50 }}
         justify="center"
-        className={styles.studentCardContainer}
+        className={styles.alumniCardContainer}
       >
         {paginatedAlumni.map((alumni, index) => (
           <Grid.Col
             span={{ base: 12, sm: 4, md: 3, lg: 2.5 }}
             key={index}
-            className={styles.studentCard}
           >
-           <Link to={`/alumni/${alumni.id}`} style={{ textDecoration: 'none' }}>
-              <AlumniCard
-                name={`${alumni.firstName} ${alumni.lastName}`}
-                company={alumni.companyName}
-                role={alumni.role}
-                avatarURL={alumni.avatarURL}
-              />
+           <Link to={`/alumni/${alumni.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+              <div className={styles.alumniCard}>
+                <AlumniCard
+                  name={`${alumni.firstName} ${alumni.lastName}`}
+                  company={alumni.companyName}
+                  role={alumni.role}
+                  avatarURL={alumni.avatarURL}
+                />
+              </div>
             </Link>
           </Grid.Col>
         ))}
       </Grid>
-      <Flex align="flex-end" justify="center">
-        {!isPortrait ? (
-          <Pagination
-            total={Math.ceil(alumniList.length / alumniPerPage)}
-            value={activePage}
-            onChange={setActivePage}
-            size="lg"
-            mb="md"
-          />
-        ) : (
-          <Pagination
-            total={Math.ceil(alumniList.length / alumniPerPage)}
-            boundaries={1}
-            siblings={0}
-            value={activePage}
-            onChange={setActivePage}
-            size="lg"
-            mb="md"
-          />
-        )}
-      </Flex>
+      <div className={styles.paginationContainer}>
+        <Pagination
+          total={Math.max(1, Math.ceil(alumniList.length / alumniPerPage))}
+          value={activePage}
+          onChange={setActivePage}
+          size="lg"
+          mb="md"
+        />
+      </div>
     </>
   );
 };
