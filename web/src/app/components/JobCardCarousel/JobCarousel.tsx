@@ -11,8 +11,16 @@ export interface JobCarouselProps {
 }
 
 export function JobCarousel(data: JobCarouselProps) {
+  // Sort jobs by application deadline (latest first)
+  const sortedJobs = data.jobs.sort((a, b) => {
+    const dateA = new Date(a.applicationDeadline).getTime();
+    const dateB = new Date(b.applicationDeadline).getTime();
+
+    return dateB - dateA; // Latest application deadline first
+  });
+
   // Map over the job data and create a JobCard for each job
-  const jobCards = data.jobs.map((job, idx) => (
+  const jobCards = sortedJobs.map((job, idx) => (
     <JobCard 
       key={job.id + idx} 
       data={job} 
