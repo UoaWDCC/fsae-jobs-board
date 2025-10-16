@@ -166,7 +166,7 @@ export class JobController {
     const job = await this.jobAdRepository.findById(id);
 
     const currentUserId = this.currentUserProfile.id.toString();
-    const isAdmin = this.currentUserProfile.roles?.includes(FsaeRole.ADMIN);
+    const isAdmin = this.currentUserProfile.role == FsaeRole.ADMIN;
 
     const isOwner = job.publisherID.toString() === currentUserId;
 

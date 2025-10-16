@@ -17,13 +17,10 @@ const Student: FC<StudentProps> = ({ name, education, lookingFor, subGroup, avat
     <Box mt={10} px={0} className={styles.innerText}>
       <Text size="lg">{name}</Text>
       <Text size="md" className={styles.studentCardRoleText}>
-        {education}
+        {subGroup}
       </Text>
       <Text size="sm">
         {lookingFor}
-      </Text>
-      <Text size="sm" className={styles.subGroup}>
-        {subGroup}
       </Text>
     </Box>
   </Flex>

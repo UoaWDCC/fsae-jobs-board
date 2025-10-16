@@ -214,19 +214,24 @@ export class RegisterController {
     name: string,
     role: FsaeRole,
   ): Promise<void> {
-    const {verification, verificationCode} = await this.sendVerificationEmail(
-      email,
-      name,
-    );
-
-    await this.verificationRepository.create({
-      email: email,
-      verificationCode: verificationCode,
-      createdAt: Date.now(),
-      expiresAt: Date.now() + 1000 * 60 * 10,
-      role,
-      resentOnce: false,
-    });
+    // try catch block to stop db transactions if the verification email fails to send
+    try {
+      const {verification, verificationCode} = await this.sendVerificationEmail(
+        email,
+        name,
+      );
+  
+      await this.verificationRepository.create({
+        email: email,
+        verificationCode: verificationCode,
+        createdAt: Date.now(),
+        expiresAt: Date.now() + 1000 * 60 * 10,
+        role,
+        resentOnce: false,
+      });
+    } catch (err) {
+      throw new HttpErrors.InternalServerError(err);
+    }
   }
 
   async sendVerificationEmail(email: string, firstName: string) {

@@ -190,21 +190,26 @@ export class VerificationController {
     } else if ('companyName' in user) {
       nameForVerificationEmail = user.companyName;
     }
+    // try catch block to stop db transactions if the verification email fails to send
+    try {
+      const {verificationCode} = await this.sendVerificationEmail(
+        verification.email,
+        nameForVerificationEmail,
+      );
+  
+      // Create a new verification record
+      await this.verificationRepository.create({
+        email: verification.email,
+        role: verification.role,
+        createdAt: Date.now(),
+        expiresAt: Date.now() + 1000 * 60 * 10,
+        verificationCode: verificationCode,
+        resentOnce: true,
+      });
+    } catch (err) {
+      throw new HttpErrors.InternalServerError(err);
+    }
 
-    const {verificationCode} = await this.sendVerificationEmail(
-      verification.email,
-      nameForVerificationEmail,
-    );
-
-    // Create a new verification record
-    await this.verificationRepository.create({
-      email: verification.email,
-      role: verification.role,
-      createdAt: Date.now(),
-      expiresAt: Date.now() + 1000 * 60 * 10,
-      verificationCode: verificationCode,
-      resentOnce: true,
-    });
 
     return true;
   }
@@ -239,34 +244,39 @@ export class VerificationController {
       firstName,
     );
 
-    if (!verificationCode) {
-      throw new HttpErrors.InternalServerError(
-        'Failed to generate verification code',
-      );
-    }
-
-    // delete any existing verification records for this email
+    // try catch block to stop db transactions if the verification email fails to send
     try {
-      await this.verificationRepository.deleteAll({email});
+      if (!verificationCode) {
+        throw new HttpErrors.InternalServerError(
+          'Failed to generate verification code',
+        );
+      }
+  
+      // delete any existing verification records for this email
+      try {
+        await this.verificationRepository.deleteAll({email});
+      } catch (err) {
+        throw new HttpErrors.InternalServerError(
+          'Failed to clear old verification records',
+        );
+      }
+      // create a new verification record
+      try {
+        await this.verificationRepository.create({
+          email: email,
+          role: role,
+          createdAt: Date.now(),
+          expiresAt: Date.now() + 1000 * 60 * 10,
+          verificationCode: verificationCode,
+          resentOnce: true,
+        });
+      } catch (err) {
+        throw new HttpErrors.InternalServerError(
+          'Failed to create new verification record',
+        );
+      }
     } catch (err) {
-      throw new HttpErrors.InternalServerError(
-        'Failed to clear old verification records',
-      );
-    }
-    // create a new verification record
-    try {
-      await this.verificationRepository.create({
-        email: email,
-        role: role,
-        createdAt: Date.now(),
-        expiresAt: Date.now() + 1000 * 60 * 10,
-        verificationCode: verificationCode,
-        resentOnce: true,
-      });
-    } catch (err) {
-      throw new HttpErrors.InternalServerError(
-        'Failed to create new verification record',
-      );
+      throw new HttpErrors.InternalServerError(err)
     }
     return true;
   }

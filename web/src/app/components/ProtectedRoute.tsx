@@ -1,8 +1,7 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -33,12 +32,7 @@ function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) {
     }
 
     // 4. If Authorised, Render Protected Content
-    return (
-      <>
-        {children}
-        <ToastContainer />
-      </>
-    );
+    return <>{children}</>;
   } catch (error) {
     // Invalid token or decoding error
     toast.error('Invalid or expired token. Please log in again.');
