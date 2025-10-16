@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import { useUserAvatar } from '@/hooks/useUserAvatar';
+import { useNavigate } from 'react-router-dom';
 
 
 interface JobEditorModalProps {
@@ -49,6 +50,7 @@ export function JobDetailEditor({onSave, onCancel, initialData, mode}: JobEditor
   const canEdit = userRole === 'sponsor' || userRole === 'alumni';
   const isOwner = initialData && userId && initialData.publisherID === userId;
   const isEditMode = mode === 'edit';
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (initialData && mode === 'edit') {
@@ -178,6 +180,10 @@ export function JobDetailEditor({onSave, onCancel, initialData, mode}: JobEditor
         console.log('Updating job with data:', updateData);
         await updateJob(initialData.id, updateData);
         toast.success('Job updated successfully!');
+        // Redirect to profile after a short delay
+        setTimeout(() => {
+          navigate('/profile/' + userRole + '/' + userId);
+        }, 1000);
       } else {
         // Create new job - ensure all required fields are properly set
         const jobData: any = {
@@ -199,6 +205,10 @@ export function JobDetailEditor({onSave, onCancel, initialData, mode}: JobEditor
         console.log('Creating job with data:', jobData);
         await createJob(jobData);
         toast.success('Job created successfully!');
+        // Redirect to profile after a short delay
+        setTimeout(() => {
+          navigate('/profile/' + userRole + '/' + userId);
+        }, 1000);
       }
       
     } catch (error: any) {
