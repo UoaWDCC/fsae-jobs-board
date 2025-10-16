@@ -61,6 +61,66 @@ export class MemberController {
   }
 
   @authorize({
+    allowedRoles: [FsaeRole.ADMIN, FsaeRole.ALUMNI, FsaeRole.SPONSOR],
+  })
+  @get('/user/member')
+  @response(200, {
+    description: 'Get member list (flat, filtered, selected fields only)',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              id: {type: 'string'},
+              firstName: {type: 'string'},
+              lastName: {type: 'string'},
+              lookingFor: {type: 'string'},
+              subGroup: {type: 'string'},
+              avatarURL: {type: 'string'},
+            },
+          },
+        },
+      },
+    },
+  })
+  async fetchUserList(
+    @param.query.string('lookingFor') lookingFor?: string | string[],
+    @param.query.string('subGroup') subGroup?: string | string[],
+  ) {
+    const where: any = {};
+
+    const normalize = (v?: string | string[]): string[] => {
+      if (!v) return [];
+      if (Array.isArray(v)) return v.map(s => String(s).trim()).filter(Boolean);
+      return String(v).split(',').map(s => s.trim()).filter(Boolean);
+    };
+
+    const lookingForArr = normalize(lookingFor);
+    const subGroupArr = normalize(subGroup);
+
+    if (lookingForArr.length) where.lookingFor = {inq: lookingForArr};
+    if (subGroupArr.length) where.subGroup = {inq: subGroupArr};
+
+    const members = await this.memberRepository.find({
+      where,
+      order: ['id DESC'],
+      fields: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        lookingFor: true,
+        subGroup: true,
+        avatarURL: true,
+      },
+    });
+
+    return members;
+  }
+
+
+  @authorize({
     allowedRoles: [FsaeRole.MEMBER, FsaeRole.SPONSOR, FsaeRole.ALUMNI, FsaeRole.ADMIN],
   })
   @get('/user/member/{id}')
