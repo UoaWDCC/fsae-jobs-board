@@ -149,7 +149,7 @@ export function JobDetail({ job }: JobDetailProps) {
           </div>
 
           <div className={styles.buttonRow}>
-            {role === 'admin' ? (
+            {userRole === 'admin' ? (
               <Button color="red" onClick={() => setDeleteModalOpen(true)} radius="xl">
                 Delete Post
               </Button>
