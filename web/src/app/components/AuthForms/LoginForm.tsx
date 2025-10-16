@@ -108,7 +108,7 @@ export function LoginForm() {
         </Button>
         <Text ta="center" mt="xl">
           Don&apos;t have an account?{' '}
-          <NavLink to="/" className={styles.link}>
+          <NavLink to="/signup/member" className={styles.link}>
             Sign up
           </NavLink>
         </Text>
