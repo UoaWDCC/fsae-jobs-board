@@ -1,4 +1,5 @@
-import { TextInput, Textarea, Button, Select, Group, Checkbox, Stack, Modal, Avatar } from '@mantine/core';
+import { TextInput, Textarea, Button, Select, Group, Checkbox, Stack, Modal, Avatar, Alert } from '@mantine/core';
+import { IconInfoCircle } from '@tabler/icons-react';
 import { useState, useEffect } from 'react';
 import styles from './JobDetail.module.css';
 import { Job } from '@/models/job.model';
@@ -411,6 +412,20 @@ export function JobDetailEditor({onSave, onCancel, initialData, mode}: JobEditor
                 error={errors.applicationLink}
                 required
               />
+            )}
+
+            {/* Show info message when editing job with Tally form */}
+            {mode === 'edit' && enableTallyForm && (
+              <Alert
+                icon={<IconInfoCircle size={16} />}
+                title="Application Form Active"
+                color="blue"
+                variant="light"
+                className={styles.detailItem}
+              >
+                This job uses an integrated application form. The form configuration cannot be modified after creation.
+                You can view submissions in the job details page.
+              </Alert>
             )}
 
             {/* Tally Form Creation Option (Create mode only) */}
