@@ -4,12 +4,14 @@ import {AdminRepository} from '../repositories';
 import {Admin, FsaeRole} from '../models';
 import { AdminStatus } from '../models/admin.status';
 import { PasswordHasherService } from '../services/password-hasher.service';
+import {MongoDbDataSource} from '../datasources';
 
 @lifeCycleObserver('startup') // group name is arbitrary, helps ordering if needed
 export class StartupObserver implements LifeCycleObserver {
   constructor(
     @repository(AdminRepository) private admins: AdminRepository,
     @inject(CoreBindings.APPLICATION_INSTANCE) private app: Application,
+    @inject('datasources.mongoDB') private dataSource: MongoDbDataSource,
   ) {}
 
   async start(): Promise<void> {
@@ -41,6 +43,31 @@ export class StartupObserver implements LifeCycleObserver {
       } catch (err) {
         console.error('Failed to create default admin account', err);
       }
+    }
+
+    // Ensure TTL index on ApplicationNonce for automatic cleanup of expired nonces
+    await this.ensureNonceTTLIndex();
+  }
+
+  /**
+   * Ensures TTL index exists on ApplicationNonce.expiresAt for automatic cleanup.
+   * Idempotent - safe to run on every startup.
+   */
+  private async ensureNonceTTLIndex(): Promise<void> {
+    try {
+      const connector = (this.dataSource as any).connector;
+      const collection = connector.collection('ApplicationNonce');
+
+      // TTL index: auto-delete at expiresAt timestamp, non-blocking creation
+      await collection.createIndex(
+        {expiresAt: 1},
+        {expireAfterSeconds: 0, background: true}
+      );
+
+      console.info('TTL index ensured on ApplicationNonce.expiresAt');
+    } catch (error) {
+      // Non-fatal: nonces still work, just won't auto-delete
+      console.error('Failed to create TTL index on ApplicationNonce:', error);
     }
   }
 
