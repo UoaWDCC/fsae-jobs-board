@@ -250,7 +250,23 @@ export function JobDetail({ job }: JobDetailProps) {
         size="xl"
         centered
         styles={{
-          body: { minHeight: '600px' },
+          body: {
+            minHeight: '600px',
+            backgroundColor: 'white',
+          },
+          content: {
+            borderRadius: '12px',
+            border: '1px solid #228be6',
+          },
+          header: {
+            backgroundColor: 'white',
+            borderBottom: '1px solid #e9ecef',
+          },
+          title: {
+            color: '#212529',
+            fontSize: '1.25rem',
+            fontWeight: 600,
+          },
         }}
       >
         {loadingForm && (
