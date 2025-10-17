@@ -1,5 +1,6 @@
-import { Paper, Select, TextInput, Checkbox, Group, ActionIcon, Stack, Button, Text, NumberInput } from '@mantine/core';
+import { Paper, Select, TextInput, Checkbox, Group, ActionIcon, Stack, Button, Text, RangeSlider } from '@mantine/core';
 import { IconArrowUp, IconArrowDown, IconTrash, IconPlus } from '@tabler/icons-react';
+import { toast } from 'react-toastify';
 import { FormField } from './TallyFormBuilder';
 
 // v1: Only validated field types from backend schemas
@@ -33,7 +34,20 @@ export function FieldEditor({
   const needsOptions = field.type === 'MULTIPLE_CHOICE_OPTION' || field.type === 'CHECKBOX';
   const needsRequired = ['INPUT_TEXT', 'CHECKBOX', 'MULTIPLE_CHOICE_OPTION'].includes(field.type);
   const isStaticField = ['TEXT', 'LABEL'].includes(field.type);
-  const isCheckboxList = field.type === 'CHECKBOX' && field.options && field.options.length > 0;
+
+  // Static marks for fixed 1-10 RangeSlider
+  const sliderMarks = [
+    { value: 1, label: '1' },
+    { value: 2, label: '2' },
+    { value: 3, label: '3' },
+    { value: 4, label: '4' },
+    { value: 5, label: '5' },
+    { value: 6, label: '6' },
+    { value: 7, label: '7' },
+    { value: 8, label: '8' },
+    { value: 9, label: '9' },
+    { value: 10, label: '10' }
+  ];
 
   const handleTypeChange = (value: string | null) => {
     if (!value) return;
@@ -95,6 +109,12 @@ export function FieldEditor({
 
   // Option management helper functions
   const addOption = () => {
+    // Enforce 10 option limit
+    if ((field.options || []).length >= 10) {
+      toast.warning('Maximum 10 options allowed for this field type');
+      return;
+    }
+
     onUpdate({
       options: [...(field.options || []), '']
     });
@@ -210,38 +230,36 @@ export function FieldEditor({
       )}
 
       {field.type === 'CHECKBOX' && field.options && field.options.length > 0 && (
-        <Group grow gap="md" mt="sm">
-          <NumberInput
-            label="Min Choices (optional)"
-            description="Minimum selections required"
-            value={field.minChoices || ''}
-            onChange={(value) => onUpdate({ minChoices: typeof value === 'number' ? value : undefined })}
-            placeholder="e.g., 2"
+        <Stack gap="xs" mt="sm">
+          <Text size="sm" fw={500}>Selection Range (optional)</Text>
+          <Text size="xs" c="dimmed">
+            Drag handles or click marks (1-10) to set min/max choices. Handles at edges = no constraint.
+          </Text>
+          <RangeSlider
+            key={`checkbox-${field.id}`}
             min={1}
-            max={field.options.length}
-            error={
-              field.minChoices && field.maxChoices && field.minChoices > field.maxChoices
-                ? 'Min cannot exceed max'
-                : field.minChoices && field.minChoices > field.options.length
-                ? `Cannot exceed ${field.options.length} options`
-                : undefined
-            }
+            max={10}
+            step={1}
+            minRange={0}
+            defaultValue={[field.minChoices || 1, field.maxChoices || 10]}
+            onChangeEnd={([min, max]) => {
+              onUpdate({
+                minChoices: min === 1 ? undefined : min,
+                maxChoices: max === 10 ? undefined : max
+              });
+            }}
+            marks={sliderMarks}
+            mt="xs"
           />
-          <NumberInput
-            label="Max Choices (optional)"
-            description="Maximum selections allowed"
-            value={field.maxChoices || ''}
-            onChange={(value) => onUpdate({ maxChoices: typeof value === 'number' ? value : undefined })}
-            placeholder="e.g., 5"
-            min={1}
-            max={field.options.length}
-            error={
-              field.maxChoices && field.maxChoices > field.options.length
-                ? `Cannot exceed ${field.options.length} options`
-                : undefined
-            }
-          />
-        </Group>
+          <Group justify="space-between" mt="xs">
+            <Text size="xs" c={field.minChoices ? 'blue' : 'dimmed'}>
+              Min: {field.minChoices || 'None'}
+            </Text>
+            <Text size="xs" c={field.maxChoices ? 'blue' : 'dimmed'}>
+              Max: {field.maxChoices || 'None'}
+            </Text>
+          </Group>
+        </Stack>
       )}
 
       {field.type === 'MULTIPLE_CHOICE_OPTION' && field.options && field.options.length > 0 && (
@@ -255,38 +273,36 @@ export function FieldEditor({
       )}
 
       {field.type === 'MULTIPLE_CHOICE_OPTION' && field.allowMultiple && field.options && field.options.length > 0 && (
-        <Group grow gap="md" mt="sm">
-          <NumberInput
-            label="Min Choices (optional)"
-            description="Minimum selections required"
-            value={field.minChoices || ''}
-            onChange={(value) => onUpdate({ minChoices: typeof value === 'number' ? value : undefined })}
-            placeholder="e.g., 2"
+        <Stack gap="xs" mt="sm">
+          <Text size="sm" fw={500}>Selection Range (optional)</Text>
+          <Text size="xs" c="dimmed">
+            Drag handles or click marks (1-10) to set min/max choices. Handles at edges = no constraint.
+          </Text>
+          <RangeSlider
+            key={`multichoice-${field.id}`}
             min={1}
-            max={field.options.length}
-            error={
-              field.minChoices && field.maxChoices && field.minChoices > field.maxChoices
-                ? 'Min cannot exceed max'
-                : field.minChoices && field.minChoices > field.options.length
-                ? `Cannot exceed ${field.options.length} options`
-                : undefined
-            }
+            max={10}
+            step={1}
+            minRange={0}
+            defaultValue={[field.minChoices || 1, field.maxChoices || 10]}
+            onChangeEnd={([min, max]) => {
+              onUpdate({
+                minChoices: min === 1 ? undefined : min,
+                maxChoices: max === 10 ? undefined : max
+              });
+            }}
+            marks={sliderMarks}
+            mt="xs"
           />
-          <NumberInput
-            label="Max Choices (optional)"
-            description="Maximum selections allowed"
-            value={field.maxChoices || ''}
-            onChange={(value) => onUpdate({ maxChoices: typeof value === 'number' ? value : undefined })}
-            placeholder="e.g., 5"
-            min={1}
-            max={field.options.length}
-            error={
-              field.maxChoices && field.maxChoices > field.options.length
-                ? `Cannot exceed ${field.options.length} options`
-                : undefined
-            }
-          />
-        </Group>
+          <Group justify="space-between" mt="xs">
+            <Text size="xs" c={field.minChoices ? 'blue' : 'dimmed'}>
+              Min: {field.minChoices || 'None'}
+            </Text>
+            <Text size="xs" c={field.maxChoices ? 'blue' : 'dimmed'}>
+              Max: {field.maxChoices || 'None'}
+            </Text>
+          </Group>
+        </Stack>
       )}
 
       {needsOptions && (
@@ -349,9 +365,13 @@ export function FieldEditor({
             size="sm"
             leftSection={<IconPlus size={16} />}
             onClick={addOption}
+            disabled={(field.options || []).length >= 10}
           >
             Add Option
           </Button>
+          <Text size="xs" c="dimmed" mt="xs">
+            {(field.options || []).length}/10 options
+          </Text>
         </Stack>
       )}
     </Paper>
