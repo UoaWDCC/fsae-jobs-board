@@ -1,4 +1,5 @@
-import { Modal, Stack, Text, Group, Badge, Select, Paper, Divider } from '@mantine/core';
+import { Modal, Stack, Text, Group, Badge, Select, Paper, Divider, Box } from '@mantine/core';
+import { IconSquareCheck, IconSquare, IconCircleFilled, IconCircle } from '@tabler/icons-react';
 import { useState } from 'react';
 
 interface SubmissionDetailModalProps {
@@ -120,16 +121,19 @@ export function SubmissionDetailModal({
           {formFields.length > 0 ? (
             <Stack gap="lg">
               {formFields
-                .filter((field: any) => field.type !== 'HIDDEN_FIELDS')
+                .filter((field: any) =>
+                  field.type !== 'HIDDEN_FIELDS' &&
+                  !isIndividualCheckboxField(field.key)
+                )
                 .map((field: any, index: number) => (
                   <Paper key={index} p="md" withBorder>
                     <Stack gap="xs">
                       <Text size="sm" fw={600} c="dimmed">
                         {field.label || `Question ${index + 1}`}
                       </Text>
-                      <Text size="md">
+                      <Box>
                         {formatFieldValue(field)}
-                      </Text>
+                      </Box>
                     </Stack>
                   </Paper>
                 ))}
@@ -145,20 +149,93 @@ export function SubmissionDetailModal({
   );
 }
 
+// Helper function to detect individual checkbox boolean fields (duplicates)
+// These have keys like: question_OGGJgp_3bf416bb-63e3-4864-a404-0923de620651
+// Pattern: {parentKey}_{uuid}
+function isIndividualCheckboxField(key: string): boolean {
+  const uuidPattern = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  return uuidPattern.test(key);
+}
+
 // Helper function to format field values based on type
-function formatFieldValue(field: any): string {
-  if (!field.value) {
+function formatFieldValue(field: any): React.ReactNode {
+  if (!field.value && field.type !== 'CHECKBOXES' && field.type !== 'MULTIPLE_CHOICE') {
     return 'No answer provided';
   }
 
   // Handle different field types
   switch (field.type) {
     case 'CHECKBOXES':
-    case 'MULTIPLE_CHOICE':
-      if (Array.isArray(field.value)) {
-        return field.value.join(', ');
+      // Show checkboxes (square icons) for multiple selection
+      if (field.options && Array.isArray(field.options)) {
+        const selectedIds = Array.isArray(field.value) ? field.value : [];
+
+        return (
+          <Stack gap="xs">
+            {field.options.map((option: any) => {
+              const isSelected = selectedIds.includes(option.id);
+              return (
+                <Group key={option.id} gap="xs">
+                  {isSelected ? (
+                    <IconSquareCheck size={18} color="var(--mantine-color-green-6)" />
+                  ) : (
+                    <IconSquare size={18} color="var(--mantine-color-gray-6)" opacity={0.5} />
+                  )}
+                  <Text
+                    size="sm"
+                    fw={isSelected ? 500 : 400}
+                    c={isSelected ? 'bright' : 'dimmed'}
+                  >
+                    {option.text}
+                  </Text>
+                </Group>
+              );
+            })}
+          </Stack>
+        );
       }
-      return field.value.toString();
+
+      // Fallback: Show selected values as text if no options array
+      if (Array.isArray(field.value)) {
+        return field.value.join(', ') || 'No answer provided';
+      }
+      return field.value?.toString() || 'No answer provided';
+
+    case 'MULTIPLE_CHOICE':
+      // Show radio buttons (circle icons) for single selection
+      if (field.options && Array.isArray(field.options)) {
+        const selectedIds = Array.isArray(field.value) ? field.value : [];
+
+        return (
+          <Stack gap="xs">
+            {field.options.map((option: any) => {
+              const isSelected = selectedIds.includes(option.id);
+              return (
+                <Group key={option.id} gap="xs">
+                  {isSelected ? (
+                    <IconCircleFilled size={18} color="var(--mantine-color-green-6)" />
+                  ) : (
+                    <IconCircle size={18} color="var(--mantine-color-gray-6)" opacity={0.5} />
+                  )}
+                  <Text
+                    size="sm"
+                    fw={isSelected ? 500 : 400}
+                    c={isSelected ? 'bright' : 'dimmed'}
+                  >
+                    {option.text}
+                  </Text>
+                </Group>
+              );
+            })}
+          </Stack>
+        );
+      }
+
+      // Fallback: Show selected values as text if no options array
+      if (Array.isArray(field.value)) {
+        return field.value.join(', ') || 'No answer provided';
+      }
+      return field.value?.toString() || 'No answer provided';
 
     case 'FILE_UPLOAD':
       if (typeof field.value === 'object' && field.value.url) {
