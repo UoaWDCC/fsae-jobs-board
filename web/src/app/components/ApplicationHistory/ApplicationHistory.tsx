@@ -1,4 +1,4 @@
-import { Box, Title, Text, Badge, Stack, Loader, Paper, Anchor } from '@mantine/core';
+import { Box, Text, Stack, Loader, Paper, Anchor } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { getApplicantSubmissions, ApplicantSubmissionsResponse } from '@/api/tally';
 import { useNavigate } from 'react-router-dom';
@@ -6,13 +6,6 @@ import { useNavigate } from 'react-router-dom';
 interface ApplicationHistoryProps {
   userId: string;
 }
-
-const STATUS_COLORS: Record<string, string> = {
-  unread: 'blue',
-  reviewed: 'gray',
-  shortlisted: 'green',
-  rejected: 'red',
-};
 
 export function ApplicationHistory({ userId }: ApplicationHistoryProps) {
   const [submissions, setSubmissions] = useState<ApplicantSubmissionsResponse['submissions']>([]);
@@ -103,13 +96,6 @@ export function ApplicationHistory({ userId }: ApplicationHistoryProps) {
             >
               {submission.job_title}
             </Anchor>
-            <Badge
-              color={STATUS_COLORS[submission.status] || 'gray'}
-              size="sm"
-              variant="light"
-            >
-              {submission.status.charAt(0).toUpperCase() + submission.status.slice(1)}
-            </Badge>
             <Text size="xs" c="dimmed">
               {formatDate(submission.submitted_at)}
             </Text>

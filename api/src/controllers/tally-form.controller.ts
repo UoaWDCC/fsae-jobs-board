@@ -708,8 +708,8 @@ export class TallyFormController {
                   id: {type: 'string'},
                   job_id: {type: 'string'},
                   job_title: {type: 'string'},
-                  status: {type: 'string'},
                   submitted_at: {type: 'string'},
+                  form_title: {type: 'string'},
                 },
               },
             },
@@ -723,8 +723,8 @@ export class TallyFormController {
   ): Promise<{
     submissions: Array<{
       id: string;
+      job_id: string;
       job_title: string;
-      status: string;
       submitted_at: string;
       form_title: string;
     }>;
@@ -754,7 +754,7 @@ export class TallyFormController {
             id: sub.id!,
             job_id: form.jobId,
             job_title: job.title,
-            status: sub.status,
+            // status removed - not exposed to applicants for privacy
             submitted_at: sub.submittedAt.toISOString(),
             form_title: form.formTitle,
           };

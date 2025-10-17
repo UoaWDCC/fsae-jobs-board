@@ -22,7 +22,7 @@ export interface TallySubmission {
   job_id: string;
   job_title: string;
   submitted_at: string;
-  status: string;
+  form_title: string;
 }
 
 export interface ApplicantSubmissionsResponse {
