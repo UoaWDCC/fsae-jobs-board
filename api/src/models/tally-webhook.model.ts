@@ -65,6 +65,12 @@ export class TallyWebhook extends Entity {
   errorCount: number;
 
   @property({
+    type: 'string',
+    required: false,
+  })
+  lastErrorMessage?: string;
+
+  @property({
     type: 'date',
     defaultFn: 'now',
   })

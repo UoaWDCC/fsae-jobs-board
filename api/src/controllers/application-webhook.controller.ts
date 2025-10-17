@@ -1,16 +1,13 @@
-import {inject} from '@loopback/core';
 import {repository} from '@loopback/repository';
 import {
   post,
   requestBody,
   response,
-  HttpErrors,
-  Request,
-  RestBindings,
 } from '@loopback/rest';
 import {
   TallyFormRepository,
   TallySubmissionRepository,
+  TallyWebhookRepository,
   ApplicationNonceRepository,
   MemberRepository,
   AlumniRepository,
@@ -54,14 +51,14 @@ export class ApplicationWebhookController {
     public tallyFormRepository: TallyFormRepository,
     @repository(TallySubmissionRepository)
     public tallySubmissionRepository: TallySubmissionRepository,
+    @repository(TallyWebhookRepository)
+    public tallyWebhookRepository: TallyWebhookRepository,
     @repository(ApplicationNonceRepository)
     public applicationNonceRepository: ApplicationNonceRepository,
     @repository(MemberRepository)
     public memberRepository: MemberRepository,
     @repository(AlumniRepository)
     public alumniRepository: AlumniRepository,
-    @inject(RestBindings.Http.REQUEST)
-    private request: Request,
   ) {}
 
   /**
@@ -118,6 +115,8 @@ export class ApplicationWebhookController {
     })
     payload: TallyWebhookPayload,
   ): Promise<{success: boolean; submissionId: string}> {
+    let webhook: any = null;
+
     try {
       console.log('Received Tally webhook:', {
         eventType: payload.eventType,
@@ -135,8 +134,20 @@ export class ApplicationWebhookController {
 
       if (!form) {
         console.warn(`Form not found for Tally form ID: ${payload.data.formId}`);
-        throw new HttpErrors.NotFound('Form not found');
+        // Return 200 OK to prevent retries for unknown forms
+        return {
+          success: false,
+          submissionId: '',
+        };
       }
+
+      // Find webhook tracking record
+      webhook = await this.tallyWebhookRepository.findOne({
+        where: {
+          formId: form.id,
+          isActive: true,
+        },
+      });
 
       // Check if submission already exists (idempotency check)
       const existingSubmission = await this.tallySubmissionRepository.findOne({
@@ -160,15 +171,16 @@ export class ApplicationWebhookController {
       );
 
       if (!applicantAuthField || !applicantAuthField.value) {
-        console.error('Missing applicant auth token in submission');
-        throw new HttpErrors.BadRequest('Invalid submission: missing applicant authentication');
+        console.warn('Missing applicant auth token in submission - form submitted outside platform');
+        throw new Error('Invalid submission: missing applicant authentication');
       }
 
       const token = applicantAuthField.value;
       const tokenSecret = process.env.APPLICATION_TOKEN_SECRET;
 
       if (!tokenSecret) {
-        throw new HttpErrors.InternalServerError('Application token secret not configured');
+        console.error('Application token secret not configured');
+        throw new Error('Application token secret not configured');
       }
 
       // Verify and decode JWT token
@@ -176,32 +188,33 @@ export class ApplicationWebhookController {
       try {
         decodedToken = jwt.verify(token, tokenSecret);
       } catch (error) {
-        console.error('Invalid JWT token in submission:', error);
-        throw new HttpErrors.Unauthorized('Invalid or expired application token');
+        console.warn('Invalid JWT token in submission:', error);
+        throw new Error('Invalid or expired application token');
       }
 
       // Validate token fields (updated for new JWT structure)
       if (!decodedToken.applicantId || !decodedToken.nonce || !decodedToken.applicantRole) {
-        throw new HttpErrors.BadRequest('Invalid token structure');
+        console.warn('Invalid token structure:', decodedToken);
+        throw new Error('Invalid token structure');
       }
 
       // Check nonce is pending (not already used)
       const nonceRecord = await this.applicationNonceRepository.findById(decodedToken.nonce);
 
       if (!nonceRecord) {
-        console.error(`Nonce not found: ${decodedToken.nonce}`);
-        throw new HttpErrors.Unauthorized('Invalid application token (nonce not found)');
+        console.warn(`Nonce not found: ${decodedToken.nonce}`);
+        throw new Error('Invalid application token (nonce not found)');
       }
 
       if (nonceRecord.status !== 'pending') {
-        console.error(`Nonce already used: ${decodedToken.nonce}`);
-        throw new HttpErrors.Unauthorized('Application token already used');
+        console.warn(`Nonce already used: ${decodedToken.nonce}`);
+        throw new Error('Application token already used');
       }
 
       // Check nonce not expired
       if (nonceRecord.expiresAt < new Date()) {
-        console.error(`Nonce expired: ${decodedToken.nonce}`);
-        throw new HttpErrors.Unauthorized('Application token expired');
+        console.warn(`Nonce expired: ${decodedToken.nonce}`);
+        throw new Error('Application token expired');
       }
 
       // Verify applicant exists and fetch current profile data (role-based lookup)
@@ -212,8 +225,8 @@ export class ApplicationWebhookController {
         const member = await this.memberRepository.findById(decodedToken.applicantId);
 
         if (!member) {
-          console.error(`Member not found: ${decodedToken.applicantId}`);
-          throw new HttpErrors.Unauthorized('Invalid member in token');
+          console.warn(`Member not found: ${decodedToken.applicantId}`);
+          throw new Error('Invalid member in token - account may have been deleted');
         }
 
         applicantEmail = member.email;
@@ -222,15 +235,15 @@ export class ApplicationWebhookController {
         const alumni = await this.alumniRepository.findById(decodedToken.applicantId);
 
         if (!alumni) {
-          console.error(`Alumni not found: ${decodedToken.applicantId}`);
-          throw new HttpErrors.Unauthorized('Invalid alumni in token');
+          console.warn(`Alumni not found: ${decodedToken.applicantId}`);
+          throw new Error('Invalid alumni in token - account may have been deleted');
         }
 
         applicantEmail = alumni.email;
         applicantName = `${alumni.firstName} ${alumni.lastName}`;
       } else {
-        console.error(`Invalid applicant role: ${decodedToken.applicantRole}`);
-        throw new HttpErrors.Unauthorized('Invalid applicant role in token');
+        console.warn(`Invalid applicant role: ${decodedToken.applicantRole}`);
+        throw new Error('Invalid applicant role in token');
       }
 
       // Mark nonce as used
@@ -259,6 +272,14 @@ export class ApplicationWebhookController {
 
       console.log(`Successfully stored submission ${submission.id} for form ${form.id}`);
 
+      // Track successful webhook processing
+      if (webhook) {
+        await this.tallyWebhookRepository.updateById(webhook.id, {
+          deliveryCount: (webhook.deliveryCount || 0) + 1,
+          lastSyncedAt: new Date(),
+        });
+      }
+
       return {
         success: true,
         submissionId: submission.id!,
@@ -266,36 +287,26 @@ export class ApplicationWebhookController {
     } catch (error) {
       console.error('Error processing Tally webhook:', error);
 
-      // Return 200 even on error to prevent Tally from retrying
-      // (except for validation errors which should be retried)
-      if (error instanceof HttpErrors.NotFound) {
-        throw error;
+      // Update webhook error tracking if webhook was found
+      if (webhook) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        try {
+          await this.tallyWebhookRepository.updateById(webhook.id, {
+            errorCount: (webhook.errorCount || 0) + 1,
+            lastErrorMessage: errorMessage.substring(0, 500), // Limit to 500 chars
+            lastSyncedAt: new Date(), // Track when last webhook was received (even if failed)
+          });
+        } catch (updateError) {
+          console.error('Failed to update webhook error count:', updateError);
+        }
       }
 
-      // Log error but return success to avoid webhook retries for our internal errors
+      // Always return 200 OK to prevent Tally from retrying
+      // We handle all errors gracefully and track them in the database
       return {
         success: false,
         submissionId: '',
       };
     }
-  }
-
-  /**
-   * Validates webhook signature to ensure request is from Tally
-   * TODO: Implement when signing secret is available
-   */
-  private validateWebhookSignature(
-    payload: TallyWebhookPayload,
-    signature?: string | string[],
-  ): void {
-    // Implementation would use HMAC-SHA256 with signing secret
-    // const expectedSignature = crypto
-    //   .createHmac('sha256', signingSecret)
-    //   .update(JSON.stringify(payload))
-    //   .digest('hex');
-    //
-    // if (signature !== expectedSignature) {
-    //   throw new HttpErrors.Unauthorized('Invalid webhook signature');
-    // }
   }
 }
