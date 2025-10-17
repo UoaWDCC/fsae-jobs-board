@@ -24,6 +24,7 @@ import {
 } from '../repositories';
 import {TallyService} from '../services/tally.service';
 import {validateCreateFormRequest} from '../middleware/tally-validation.middleware';
+import {generateWebhookSecret} from '../utils/webhook-signature.util';
 import * as crypto from 'crypto';
 import * as jwt from 'jsonwebtoken';
 
@@ -211,23 +212,31 @@ export class TallyFormController {
 
       // Create webhook for form submissions
       const webhookUrl = `${process.env.API_BASE_URL || 'http://localhost:3000'}/api/applications`;
+
+      // Generate secure webhook signing secret for signature validation
+      const webhookSecret = generateWebhookSecret();
+
       const webhookData = {
         formId: tallyFormResponse.id,
         url: webhookUrl,
         eventTypes: ['FORM_RESPONSE'],
+        signingSecret: webhookSecret,
       };
 
       try {
         const webhookResponse = await this.tallyService.createWebhook(webhookData);
 
-        // Store webhook metadata
+        // Store webhook metadata (including secret for signature verification)
         await this.tallyWebhookRepository.create({
           formId: formRecord.id!,
           tallyWebhookId: webhookResponse.id,
           callbackUrl: webhookUrl,
+          secret: webhookSecret,
           eventTypes: ['FORM_RESPONSE'],
           isActive: true,
         });
+
+        console.log(`Webhook created with signature validation enabled for form ${formRecord.id}`);
       } catch (webhookError) {
         console.warn('Failed to create webhook, but form creation succeeded:', webhookError);
       }
@@ -913,26 +922,28 @@ export class TallyFormController {
       const callbackUrl = webhookConfig.callback_url ||
         `${process.env.API_BASE_URL || 'http://localhost:3000'}/api/applications`;
 
+      // Auto-generate secret if not provided (for security best practices)
+      const webhookSecret = webhookConfig.secret || generateWebhookSecret();
+
       if (existingWebhook) {
         // Update existing webhook via Tally API
         const webhookData: any = {
           formId: form.tallyFormId,
           url: callbackUrl,
           eventTypes: ['FORM_RESPONSE'],
+          signingSecret: webhookSecret,
         };
-
-        if (webhookConfig.secret) {
-          webhookData.signingSecret = webhookConfig.secret;
-        }
 
         await this.tallyService.createWebhook(webhookData);
 
         // Update local record
         await this.tallyWebhookRepository.updateById(existingWebhook.id, {
           callbackUrl: callbackUrl,
-          secret: webhookConfig.secret,
+          secret: webhookSecret,
           updatedAt: new Date(),
         });
+
+        console.log(`Webhook updated with signature validation for form ${formId}`);
 
         return {
           success: true,
@@ -945,11 +956,8 @@ export class TallyFormController {
           formId: form.tallyFormId,
           url: callbackUrl,
           eventTypes: ['FORM_RESPONSE'],
+          signingSecret: webhookSecret,
         };
-
-        if (webhookConfig.secret) {
-          webhookData.signingSecret = webhookConfig.secret;
-        }
 
         const webhookResponse = await this.tallyService.createWebhook(webhookData);
 
@@ -958,10 +966,12 @@ export class TallyFormController {
           formId: formId,
           tallyWebhookId: webhookResponse.id,
           callbackUrl: callbackUrl,
-          secret: webhookConfig.secret,
+          secret: webhookSecret,
           eventTypes: ['FORM_RESPONSE'],
           isActive: true,
         });
+
+        console.log(`Webhook created with signature validation for form ${formId}`);
 
         return {
           success: true,

@@ -29,9 +29,9 @@ export class TallyWebhook extends Entity {
 
   @property({
     type: 'string',
-    required: false,
+    required: true,
   })
-  secret?: string;
+  secret: string;
 
   @property({
     type: 'array',

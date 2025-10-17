@@ -3,7 +3,10 @@ import {
   post,
   requestBody,
   response,
+  Request,
+  RestBindings,
 } from '@loopback/rest';
+import {inject} from '@loopback/core';
 import {
   TallyFormRepository,
   TallySubmissionRepository,
@@ -13,6 +16,7 @@ import {
   AlumniRepository,
 } from '../repositories';
 import * as jwt from 'jsonwebtoken';
+import {verifyTallySignature} from '../utils/webhook-signature.util';
 
 /**
  * Tally webhook payload structure for FORM_RESPONSE events
@@ -65,6 +69,11 @@ export class ApplicationWebhookController {
    * Webhook endpoint called by Tally when a form submission is received
    * This endpoint is publicly accessible (no authentication required)
    * as it's called by Tally's servers
+   *
+   * Security:
+   * - Layer 1: Tally signature validation (validates webhook source)
+   * - Layer 2: JWT token validation (validates applicant identity)
+   * - Layer 3: Nonce validation (prevents replay attacks)
    */
   @post('/api/applications')
   @response(200, {
@@ -114,6 +123,7 @@ export class ApplicationWebhookController {
       },
     })
     payload: TallyWebhookPayload,
+    @inject(RestBindings.Http.REQUEST) request: Request,
   ): Promise<{success: boolean; submissionId: string}> {
     let webhook: any = null;
 
@@ -149,6 +159,75 @@ export class ApplicationWebhookController {
         },
       });
 
+      // SECURITY LAYER 1: Verify Tally webhook signature (MANDATORY)
+      // This validates that the request genuinely came from Tally's servers
+      // All webhooks MUST have signing secrets - no exceptions
+
+      // Check webhook secret exists (required for security)
+      if (!webhook || !webhook.secret) {
+        console.error('Webhook missing required signing secret:', {
+          formId: payload.data.formId,
+          submissionId: payload.data.submissionId,
+          webhookExists: !!webhook,
+          hasSecret: webhook?.secret ? true : false,
+        });
+
+        // Track security configuration error
+        if (webhook) {
+          try {
+            await this.tallyWebhookRepository.updateById(webhook.id, {
+              errorCount: webhook.errorCount + 1,
+              lastErrorMessage: 'Webhook missing required signing secret - security misconfiguration',
+              lastSyncedAt: new Date(),
+            });
+          } catch (updateError) {
+            console.error('Failed to update webhook error count:', updateError);
+          }
+        }
+
+        // Always return 200 OK to prevent retries, but don't process the request
+        return {
+          success: false,
+          submissionId: '',
+        };
+      }
+
+      // Extract and verify signature
+      const tallySignature = request.headers['tally-signature'] as string | undefined;
+
+      const isValidSignature = verifyTallySignature(
+        payload,
+        tallySignature,
+        webhook.secret,
+      );
+
+      if (!isValidSignature) {
+        console.warn('Invalid Tally webhook signature:', {
+          formId: payload.data.formId,
+          submissionId: payload.data.submissionId,
+          hasSignature: !!tallySignature,
+        });
+
+        // Track signature validation failure
+        try {
+          await this.tallyWebhookRepository.updateById(webhook.id, {
+            errorCount: webhook.errorCount + 1,
+            lastErrorMessage: 'Invalid webhook signature - possible forgery attempt',
+            lastSyncedAt: new Date(),
+          });
+        } catch (updateError) {
+          console.error('Failed to update webhook error count:', updateError);
+        }
+
+        // Always return 200 OK to prevent retries, but don't process the request
+        return {
+          success: false,
+          submissionId: '',
+        };
+      }
+
+      console.log('Tally webhook signature verified successfully');
+
       // Check if submission already exists (idempotency check)
       const existingSubmission = await this.tallySubmissionRepository.findOne({
         where: {
@@ -164,7 +243,8 @@ export class ApplicationWebhookController {
         };
       }
 
-      // Extract and validate JWT token from hidden applicant auth field
+      // SECURITY LAYER 2: Extract and validate JWT token from hidden applicant auth field
+      // This validates the applicant's identity and authorization
       // Note: Tally sends the hidden field's name in the 'label' property, not 'key'
       const applicantAuthField = payload.data.fields.find(
         f => f.label === 'platform-applicant-auth-token' && f.type === 'HIDDEN_FIELDS'
@@ -198,7 +278,8 @@ export class ApplicationWebhookController {
         throw new Error('Invalid token structure');
       }
 
-      // Check nonce is pending (not already used)
+      // SECURITY LAYER 3: Check nonce is pending (not already used)
+      // This prevents replay attacks
       const nonceRecord = await this.applicationNonceRepository.findById(decodedToken.nonce);
 
       if (!nonceRecord) {
@@ -275,7 +356,7 @@ export class ApplicationWebhookController {
       // Track successful webhook processing
       if (webhook) {
         await this.tallyWebhookRepository.updateById(webhook.id, {
-          deliveryCount: (webhook.deliveryCount || 0) + 1,
+          deliveryCount: webhook.deliveryCount + 1,
           lastSyncedAt: new Date(),
         });
       }
@@ -292,7 +373,7 @@ export class ApplicationWebhookController {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
         try {
           await this.tallyWebhookRepository.updateById(webhook.id, {
-            errorCount: (webhook.errorCount || 0) + 1,
+            errorCount: webhook.errorCount + 1,
             lastErrorMessage: errorMessage.substring(0, 500), // Limit to 500 chars
             lastSyncedAt: new Date(), // Track when last webhook was received (even if failed)
           });
