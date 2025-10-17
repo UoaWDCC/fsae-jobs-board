@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Text, Button, Badge, Avatar, Loader, Modal } from '@mantine/core';
+import { IconInfoCircle } from '@tabler/icons-react';
 import styles from './JobDetail.module.css';
 import { Job } from '@/models/job.model';
 import { adminApi } from '@/api/admin';
@@ -8,7 +9,7 @@ import DeletePostModal from '../Modal/DeletePostModal';
 import { jwtDecode } from 'jwt-decode';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../app/store';
-import { getJobApplicationForm, TallyApplicationFormResponse } from '@/api/tally';
+import { getJobApplicationForm, TallyApplicationFormResponse, getJobFormPreview, FormPreviewResponse } from '@/api/tally';
 import { useUserAvatar } from '@/hooks/useUserAvatar';
 import { SubmissionsSection } from '../SubmissionsSection';
 
@@ -23,8 +24,11 @@ interface JobDetailProps {
 export function JobDetail({ job }: JobDetailProps) {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [applyModalOpen, setApplyModalOpen] = useState(false);
+  const [previewModalOpen, setPreviewModalOpen] = useState(false);
   const [tallyFormData, setTallyFormData] = useState<TallyApplicationFormResponse | null>(null);
+  const [previewFormData, setPreviewFormData] = useState<FormPreviewResponse | null>(null);
   const [loadingForm, setLoadingForm] = useState(false);
+  const [loadingPreview, setLoadingPreview] = useState(false);
   const [publisherRole, setPublisherRole] = useState<string>('');
   const navigate = useNavigate();
 
@@ -156,6 +160,21 @@ export function JobDetail({ job }: JobDetailProps) {
     }
   };
 
+  const handlePreviewClick = async () => {
+    if (!job.id) return;
+
+    setLoadingPreview(true);
+    try {
+      const previewData = await getJobFormPreview(job.id);
+      setPreviewFormData(previewData);
+      setPreviewModalOpen(true);
+    } catch (error) {
+      console.error('Error fetching form preview:', error);
+    } finally {
+      setLoadingPreview(false);
+    }
+  };
+
   return (
     <main className={styles.jobDetailPageWrapper}>
       <div className={styles.contentWrapper}>
@@ -220,9 +239,20 @@ export function JobDetail({ job }: JobDetailProps) {
                   </>
                 )}
                 {canEdit && isOwner && (
-                  <Button variant="light" onClick={handleEditJob}>
-                    Edit Job
-                  </Button>
+                  <>
+                    <Button variant="light" onClick={handleEditJob}>
+                      Edit Job
+                    </Button>
+                    {job.tallyFormId && (
+                      <Button
+                        variant="outline"
+                        onClick={handlePreviewClick}
+                        loading={loadingPreview}
+                      >
+                        Preview Form
+                      </Button>
+                    )}
+                  </>
                 )}
               </>
             )}
@@ -308,6 +338,69 @@ export function JobDetail({ job }: JobDetailProps) {
               No application form available. Please contact the employer directly.
             </Text>
           </div>
+        )}
+      </Modal>
+
+      {/* Preview Modal (for job creators) */}
+      <Modal
+        opened={previewModalOpen}
+        onClose={() => setPreviewModalOpen(false)}
+        title="Preview Application Form"
+        size="xl"
+        centered
+        styles={{
+          body: {
+            minHeight: '600px',
+            backgroundColor: 'white',
+          },
+          content: {
+            borderRadius: '12px',
+            border: '1px solid #228be6',
+          },
+          header: {
+            backgroundColor: 'white',
+            borderBottom: '1px solid #e9ecef',
+          },
+          title: {
+            color: '#212529',
+            fontSize: '1.25rem',
+            fontWeight: 600,
+          },
+        }}
+      >
+        {/* Compact Preview Banner */}
+        <div style={{
+          padding: '8px 16px',
+          backgroundColor: '#d0ebff',
+          borderRadius: '4px',
+          marginBottom: '12px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px'
+        }}>
+          <IconInfoCircle size={16} color="#1864ab" />
+          <Text size="sm" c="#1864ab" fw={500}>
+            Preview mode - submissions will not be recorded
+          </Text>
+        </div>
+
+        {loadingPreview && (
+          <div style={{ display: 'flex', justifyContent: 'center', padding: '3rem' }}>
+            <Loader color="blue" size="lg" />
+          </div>
+        )}
+
+        {!loadingPreview && previewFormData?.preview_embed_url && (
+          <iframe
+            src={previewFormData.preview_embed_url}
+            width="100%"
+            height="600"
+            frameBorder="0"
+            marginHeight={0}
+            marginWidth={0}
+            title="Application Form Preview"
+            style={{ border: 'none' }}
+          />
         )}
       </Modal>
 

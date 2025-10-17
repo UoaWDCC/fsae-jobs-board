@@ -448,6 +448,74 @@ export class TallyFormController {
   @authorize({
     allowedRoles: [FsaeRole.ALUMNI, FsaeRole.SPONSOR],
   })
+  @get('/api/sponsors/jobs/{jobId}/form/preview')
+  @response(200, {
+    description: 'Get form preview embed URL (for job creators)',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'object',
+          properties: {
+            preview_embed_url: {type: 'string'},
+            form_title: {type: 'string'},
+            is_preview: {type: 'boolean'},
+          },
+        },
+      },
+    },
+  })
+  async getJobFormPreview(
+    @param.path.string('jobId') jobId: string,
+  ): Promise<{
+    preview_embed_url: string;
+    form_title: string;
+    is_preview: boolean;
+  }> {
+    try {
+      // Get authenticated user info
+      const userId = this.currentUserProfile.id.toString().trim();
+
+      // Verify job exists
+      const job = await this.jobAdRepository.findById(jobId);
+      if (!job) {
+        throw new HttpErrors.NotFound('Job not found');
+      }
+
+      // Verify user is the job owner
+      const publisherId = job.publisherID.toString().trim();
+      if (userId !== publisherId) {
+        throw new HttpErrors.Forbidden('You can only preview forms for your own jobs');
+      }
+
+      // Find active form for this job
+      const form = await this.tallyFormRepository.findOne({
+        where: {jobId: jobId, isActive: true},
+      });
+
+      if (!form) {
+        throw new HttpErrors.NotFound('No active form found for this job');
+      }
+
+      // Return clean embed URL (no token, no nonce)
+      const previewEmbedUrl = `https://tally.so/embed/${form.tallyFormId}`;
+
+      return {
+        preview_embed_url: previewEmbedUrl,
+        form_title: form.formTitle,
+        is_preview: true,
+      };
+    } catch (error) {
+      console.error('Error getting form preview:', error);
+      if (error instanceof HttpErrors.HttpError) {
+        throw error;
+      }
+      throw new HttpErrors.InternalServerError('Failed to get form preview');
+    }
+  }
+
+  @authorize({
+    allowedRoles: [FsaeRole.ALUMNI, FsaeRole.SPONSOR],
+  })
   @get('/api/sponsors/forms/{formId}/submissions')
   @response(200, {
     description: 'Get all submissions for a form',

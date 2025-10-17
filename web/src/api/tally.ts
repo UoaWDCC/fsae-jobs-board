@@ -148,3 +148,21 @@ export async function checkJobHasForm(jobId: string): Promise<boolean> {
     );
   }
 }
+
+// Get form preview (for job creators)
+export interface FormPreviewResponse {
+  preview_embed_url: string;
+  form_title: string;
+  is_preview: boolean;
+}
+
+export async function getJobFormPreview(jobId: string): Promise<FormPreviewResponse> {
+  try {
+    const res = await apiInstance.get(`/api/sponsors/jobs/${jobId}/form/preview`);
+    return res.data as FormPreviewResponse;
+  } catch (e: any) {
+    throw Error(
+      `Failed to get form preview: ${e.response?.data?.error?.message || e.message}`
+    );
+  }
+}
