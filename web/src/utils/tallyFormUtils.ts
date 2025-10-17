@@ -26,15 +26,16 @@ export function convertToTallyBlocks(formTitle: string, fields: FormField[]) {
 
   // 2. User-configured fields
   fields.forEach(field => {
-    // INPUT_TEXT: Requires TITLE + INPUT_TEXT pair (shared groupUuid)
+    // INPUT_TEXT: Requires TITLE + INPUT_TEXT pair (separate groupUuids)
     if (field.type === 'INPUT_TEXT') {
-      const sharedGroupUuid = crypto.randomUUID();
+      const titleGroupUuid = crypto.randomUUID();
+      const inputGroupUuid = crypto.randomUUID();
 
       // TITLE block with question text
       blocks.push({
         uuid: crypto.randomUUID(),
         type: 'TITLE',
-        groupUuid: sharedGroupUuid,
+        groupUuid: titleGroupUuid,
         groupType: 'QUESTION',
         payload: {
           html: field.label
@@ -45,8 +46,8 @@ export function convertToTallyBlocks(formTitle: string, fields: FormField[]) {
       blocks.push({
         uuid: crypto.randomUUID(),
         type: 'INPUT_TEXT',
-        groupUuid: sharedGroupUuid,
-        groupType: 'QUESTION',
+        groupUuid: inputGroupUuid,
+        groupType: 'INPUT_TEXT',
         payload: {
           isRequired: field.required,
           placeholder: field.placeholder || ''

@@ -6,7 +6,6 @@ import { FormField } from './TallyFormBuilder';
 // v1: Only validated field types from backend schemas
 const FIELD_TYPES_PHASE_1A = [
   { value: 'TEXT', label: 'Text (instructions/static text)', groupType: 'TEXT' },
-  { value: 'LABEL', label: 'Section Label (organize form)', groupType: 'LABEL' },
   { value: 'INPUT_TEXT', label: 'Text Input (short answer)', groupType: 'QUESTION' },
   { value: 'CHECKBOX', label: 'Checkbox (single or list)', groupType: 'QUESTION' },
   { value: 'MULTIPLE_CHOICE_OPTION', label: 'Multiple Choice (radio buttons)', groupType: 'QUESTION' },
@@ -33,7 +32,7 @@ export function FieldEditor({
 }: FieldEditorProps) {
   const needsOptions = field.type === 'MULTIPLE_CHOICE_OPTION' || field.type === 'CHECKBOX';
   const needsRequired = ['INPUT_TEXT', 'CHECKBOX', 'MULTIPLE_CHOICE_OPTION'].includes(field.type);
-  const isStaticField = ['TEXT', 'LABEL'].includes(field.type);
+  const isStaticField = field.type === 'TEXT';
 
   // Static marks for fixed 1-10 RangeSlider
   const sliderMarks = [
