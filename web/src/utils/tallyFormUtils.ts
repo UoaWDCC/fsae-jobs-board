@@ -55,6 +55,64 @@ export function convertToTallyBlocks(formTitle: string, fields: FormField[]) {
       });
     }
 
+    // TEXTAREA: Same pattern as INPUT_TEXT (TITLE + TEXTAREA pair with separate groupUuids)
+    else if (field.type === 'TEXTAREA') {
+      const titleGroupUuid = crypto.randomUUID();
+      const textareaGroupUuid = crypto.randomUUID();
+
+      // TITLE block with question text
+      blocks.push({
+        uuid: crypto.randomUUID(),
+        type: 'TITLE',
+        groupUuid: titleGroupUuid,
+        groupType: 'QUESTION',
+        payload: {
+          html: field.label
+        }
+      });
+
+      // TEXTAREA block with configuration
+      blocks.push({
+        uuid: crypto.randomUUID(),
+        type: 'TEXTAREA',
+        groupUuid: textareaGroupUuid,
+        groupType: 'TEXTAREA',  // CRITICAL: Must be 'TEXTAREA', not 'QUESTION'
+        payload: {
+          isRequired: field.required,
+          placeholder: field.placeholder || ''
+        }
+      });
+    }
+
+    // INPUT_EMAIL: Same pattern as INPUT_TEXT (TITLE + INPUT_EMAIL pair with separate groupUuids)
+    else if (field.type === 'INPUT_EMAIL') {
+      const titleGroupUuid = crypto.randomUUID();
+      const inputEmailGroupUuid = crypto.randomUUID();
+
+      // TITLE block with question text
+      blocks.push({
+        uuid: crypto.randomUUID(),
+        type: 'TITLE',
+        groupUuid: titleGroupUuid,
+        groupType: 'QUESTION',
+        payload: {
+          html: field.label
+        }
+      });
+
+      // INPUT_EMAIL block with configuration
+      blocks.push({
+        uuid: crypto.randomUUID(),
+        type: 'INPUT_EMAIL',
+        groupUuid: inputEmailGroupUuid,
+        groupType: 'INPUT_EMAIL',  // CRITICAL: Must be 'INPUT_EMAIL', not 'QUESTION'
+        payload: {
+          isRequired: field.required,
+          placeholder: field.placeholder || ''
+        }
+      });
+    }
+
     // CHECKBOX: Single checkbox OR checkbox list (with optional TITLE)
     else if (field.type === 'CHECKBOX') {
       const checkboxGroupUuid = crypto.randomUUID();

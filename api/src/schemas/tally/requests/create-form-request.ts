@@ -6,6 +6,8 @@ import { TitlePayload } from "../payloads/title-payload/v1";
 import { TextPayload } from "../payloads/text-payload/v1";
 import { LabelPayload } from "../payloads/label-payload/v1";
 import { InputTextPayload } from "../payloads/input-text-payload/v2";  // Using v2 (empirically validated)
+import { TextareaPayload } from "../payloads/textarea-payload/v1";
+import { InputEmailPayload } from "../payloads/input-email-payload/v1";
 import { MultipleChoiceOptionPayload } from "../payloads/multiple-choice-option-payload/v2";  // Using v2 (empirically validated)
 import { CheckboxPayload } from "../payloads/checkbox-payload/v2";  // Using v2 (empirically validated)
 
@@ -62,6 +64,20 @@ const Block = z.discriminatedUnion("type", [
     groupType: GroupType,  // Strict validation of known groupType values
     payload: InputTextPayload,  // Using v2 schema (reverse engineered from real API)
   }).passthrough(),  // Allow undocumented fields from Tally API
+  z.object({
+    uuid: Uuid,
+    type: z.literal("TEXTAREA"),
+    groupUuid: Uuid,
+    groupType: GroupType,
+    payload: TextareaPayload,
+  }).passthrough(),
+  z.object({
+    uuid: Uuid,
+    type: z.literal("INPUT_EMAIL"),
+    groupUuid: Uuid,
+    groupType: GroupType,
+    payload: InputEmailPayload,
+  }).passthrough(),
   z.object({
     uuid: Uuid,
     type: z.literal("MULTIPLE_CHOICE_OPTION"),

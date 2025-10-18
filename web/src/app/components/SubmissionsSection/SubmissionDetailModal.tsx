@@ -131,7 +131,7 @@ export function SubmissionDetailModal({
                       <Text size="sm" fw={600} c="dimmed">
                         {field.label || `Question ${index + 1}`}
                       </Text>
-                      <Box>
+                      <Box style={{ whiteSpace: 'pre-wrap' }}>
                         {formatFieldValue(field)}
                       </Box>
                     </Stack>
