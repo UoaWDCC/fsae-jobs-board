@@ -2,13 +2,52 @@ import { Grid, Flex, Pagination } from '@mantine/core';
 import styles from './StudentBoard.module.css';
 import { useState, useEffect, FC } from 'react';
 import Student from './Student';
+import { Link } from 'react-router-dom';
+import { JobType } from '@/models/job-type';
 
-interface StudentListingProp {}
+type StudentEntry = {
+  id?: string;
+  firstName?: string;
+  lastName?: string;
+  role?: string;
+  education?: string;
+  lookingFor?: string;
+  subGroup?: string;
+  avatarURL?: string;
+};
 
-const StudentListing: FC<StudentListingProp> = ({}) => {
+interface StudentListingProp {
+  students: StudentEntry[]; // provided list (state lives here, passed down)
+}
+
+const jobTypeDisplayStrings = {
+  'NOT_FOR_HIRE': 'Not for hire',
+  'INTERNSHIP': 'Looking for Internship',
+  'PART_TIME': 'Looking for Part Time',
+  'GRAD_ROLE': 'Looking for Graduate Role',
+}
+
+const subGroupDisplayStrings = {
+  'UNKNOWN': 'Member',
+  'BUSINESS': 'Business Team',
+  'COMPOSITES': 'Composites',
+  'MECHANICAL': 'Mechanical',
+  'ELECTRICAL': 'Electrical',
+  'AUTONOMOUS': 'Autonomous',
+  'RACE_TEAM': 'Race Team'
+}
+
+const StudentListing: FC<StudentListingProp> = ({ students }) => {
   const [studentPerPage, setStudentPerPage] = useState<number>(16);
   const [activePage, setActivePage] = useState(1);
   const [isPortrait, setIsPortrait] = useState(window.innerHeight > window.innerWidth);
+
+  // Local copy so we can paginate / mutate locally if needed
+  const [studentList, setStudentList] = useState<StudentEntry[]>(students ?? []);
+
+  useEffect(() => {
+    setStudentList(students ?? []);
+  }, [students]);
 
   const updateItemsPerPage = () => {
     setIsPortrait(window.innerHeight > window.innerWidth);
@@ -29,31 +68,15 @@ const StudentListing: FC<StudentListingProp> = ({}) => {
     };
   }, []);
 
-  const baseStudent = {
-    name: '',
-    role: '',
-    education: '',
-    lookingFor: '',
-    subGroup: '',
-    avatarURL:
-      'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png',
-  };
-
-  const studentList = Array.from({ length: 70 }, (_, index) => ({
-    ...baseStudent,
-    name: index < 10 ? `John Doe${index + 1}` : `Student ${index + 1}`,
-    role: index < 10 ? `Race Engineer${index + 1}` : ` Research & development Leader`,
-    education: index < 10 ? ` BEng. Software` : ` BSc. Computer Science`,
-    lookingFor: index < 10 ? `Year ${index + 1}` : ` Year 2`,
-    subGroup: index < 10 ? `Subgroup ${index + 1}` : ` Subgroup A`,
-  }));
-
   // Calculate the indices for slicing the student list
   const startIndex = (activePage - 1) * studentPerPage;
   const endIndex = startIndex + studentPerPage;
 
   // Slice the student list to only include the students for the current page
   const paginatedStudents = studentList.slice(startIndex, endIndex);
+
+  const defaultAvatar =
+    'https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png';
 
   return (
     <>
@@ -65,23 +88,25 @@ const StudentListing: FC<StudentListingProp> = ({}) => {
         {paginatedStudents.map((student, index) => (
           <Grid.Col
             span={{ base: 12, sm: 4, md: 3, lg: 2.5 }}
-            key={index}
+            key={student.id ?? index}
             className={styles.studentCard}
           >
-            <Student
-              name={student.name}
-              role={student.role}
-              education={student.education}
-              lookingFor={student.lookingFor}
-              subGroup={student.subGroup}
-              avatarURL={student.avatarURL}
-            />
+            <Link to={"/profile/member/" + student.id} style={{ textDecoration: 'none', color: 'inherit' }}>
+              <Student
+                name={student.firstName + " " + student.lastName}
+                role={student.role ?? ''}
+                education={student.education ?? ''}
+                lookingFor={jobTypeDisplayStrings[(student.lookingFor ?? 'NOT_FOR_HIRE') as keyof typeof jobTypeDisplayStrings] }
+                subGroup={subGroupDisplayStrings[(student.subGroup ?? 'UNKNOWN') as keyof typeof subGroupDisplayStrings]}
+                avatarURL={student.avatarURL ?? defaultAvatar}
+              />
+            </Link>
           </Grid.Col>
         ))}
       </Grid>
       <Flex align="flex-end" justify="center">
         <Pagination
-          total={Math.ceil(studentList.length / studentPerPage)}
+          total={Math.max(1, Math.ceil(studentList.length / studentPerPage))}
           value={activePage}
           onChange={setActivePage}
           size="lg"

@@ -26,18 +26,19 @@ const Filter: FC<FilterProps> = ({
   useRoles = true,
 }) => {
   const roles = [
-    { value: 'internship', label: 'Internship' },
-    { value: 'graduate', label: 'Graduate Roles' },
-    { value: 'junior', label: 'Junior Roles' },
+    { value: 'NOT_FOR_HIRE', label: 'None' },
+    { value: 'INTERNSHIP', label: 'Internship' },
+    { value: 'PART_TIME', label: 'Part Time' },
+    { value: 'GRAD_ROLE', label: 'Graduate Roles' },
   ];
 
   const fields = [
-    { value: 'auto', label: 'Automation' },
-    { value: 'electrical', label: 'Electrical' },
-    { value: 'mechanical', label: 'Mechanical' },
-    { value: 'mechatronics', label: 'Mechatronics' },
-    { value: 'software', label: 'Software' },
-    { value: 'other', label: 'Other' },
+    { value: 'BUSINESS', label: 'Business' },
+    { value: 'COMPOSITES', label: 'Composites' },
+    { value: 'MECHANICAL', label: 'Mechanical' },
+    { value: 'ELECTRICAL', label: 'Electrical' },
+    { value: 'AUTONOMOUS', label: 'Autonomous' },
+    { value: 'RACE_TEAM', label: 'Race Team' },
   ];
   const [isModalOpen, setIsModalOpen] = useState(false);
   const openModal = () => setIsModalOpen(true);

@@ -13,6 +13,7 @@ import { CreateFormRequest } from '@/schemas/tally/requests/create-form-request'
 import { ZodError } from 'zod';
 import { convertToTallyBlocks } from '@/utils/tallyFormUtils';
 import { useUserAvatar } from '@/hooks/useUserAvatar';
+import { useNavigate } from 'react-router-dom';
 
 
 interface JobEditorModalProps {
@@ -53,15 +54,15 @@ export function JobDetailEditor({onSave, onCancel, initialData, mode}: JobEditor
   const [formTitle, setFormTitle] = useState('Job Application Form');
   const [formFields, setFormFields] = useState<FormField[]>([]);
 
-  const { avatarUrl: posterAvatar } = useUserAvatar(initialData?.publisherID);
-
   const userRole = useSelector((state: RootState) => state.user.role);
   const userId = useSelector((state: RootState) => state.user.id);
+  const { avatarUrl: posterAvatar } = useUserAvatar(userId);
 
   // Check if user can edit this job
   const canEdit = userRole === 'sponsor' || userRole === 'alumni';
   const isOwner = initialData && userId && initialData.publisherID === userId;
   const isEditMode = mode === 'edit';
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (initialData && mode === 'edit') {
@@ -246,6 +247,10 @@ export function JobDetailEditor({onSave, onCancel, initialData, mode}: JobEditor
         console.log('Updating job with data:', updateData);
         await updateJob(initialData.id, updateData);
         toast.success('Job updated successfully!');
+        // Redirect to profile after a short delay
+        setTimeout(() => {
+          navigate('/profile/' + userRole + '/' + userId);
+        }, 1000);
       } else {
         // Create new job - ensure all required fields are properly set
         const jobData: any = {
@@ -323,6 +328,11 @@ export function JobDetailEditor({onSave, onCancel, initialData, mode}: JobEditor
             }
           }
         }
+
+        // Redirect to profile after a short delay
+        setTimeout(() => {
+          navigate('/profile/' + userRole + '/' + userId);
+        }, 1000);
       }
 
       // Call onSave callback if provided

@@ -277,14 +277,7 @@ export function AlumniProfile() {
     switch (element) {
       case 'profileBtn':
         return (
-          <Button
-            onClick={handleDeactivateUserChange}
-            classNames={{
-              root: styles.button_admin_root,
-            }}
-          >
-            Deactivate User
-          </Button>
+          null
         );
       case 'addNewBtn':
         return null;
