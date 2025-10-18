@@ -9,6 +9,7 @@ const FIELD_TYPES_PHASE_1A = [
   { value: 'INPUT_TEXT', label: 'Text Input (short answer)', groupType: 'QUESTION' },
   { value: 'TEXTAREA', label: 'Long Answer (paragraph text)', groupType: 'QUESTION' },
   { value: 'INPUT_EMAIL', label: 'Email Address', groupType: 'QUESTION' },
+  { value: 'INPUT_PHONE_NUMBER', label: 'Phone Number', groupType: 'QUESTION' },
   { value: 'CHECKBOX', label: 'Checkbox (single or list)', groupType: 'QUESTION' },
   { value: 'MULTIPLE_CHOICE_OPTION', label: 'Multiple Choice (radio buttons)', groupType: 'QUESTION' },
 ];
@@ -33,7 +34,7 @@ export function FieldEditor({
   onMoveDown
 }: FieldEditorProps) {
   const needsOptions = field.type === 'MULTIPLE_CHOICE_OPTION' || field.type === 'CHECKBOX';
-  const needsRequired = ['INPUT_TEXT', 'TEXTAREA', 'INPUT_EMAIL', 'CHECKBOX', 'MULTIPLE_CHOICE_OPTION'].includes(field.type);
+  const needsRequired = ['INPUT_TEXT', 'TEXTAREA', 'INPUT_EMAIL', 'INPUT_PHONE_NUMBER', 'CHECKBOX', 'MULTIPLE_CHOICE_OPTION'].includes(field.type);
   const isStaticField = field.type === 'TEXT';
 
   // Static marks for fixed 1-10 RangeSlider
@@ -103,6 +104,8 @@ export function FieldEditor({
         return 'Describe your experience in detail';
       case 'INPUT_EMAIL':
         return 'Enter your email address';
+      case 'INPUT_PHONE_NUMBER':
+        return 'e.g., 21 123 4567';
       case 'CHECKBOX':
         return 'I agree to the terms and conditions';
       case 'MULTIPLE_CHOICE_OPTION':
@@ -202,7 +205,7 @@ export function FieldEditor({
         />
       )}
 
-      {(field.type === 'INPUT_TEXT' || field.type === 'TEXTAREA' || field.type === 'INPUT_EMAIL') && (
+      {(field.type === 'INPUT_TEXT' || field.type === 'TEXTAREA' || field.type === 'INPUT_EMAIL' || field.type === 'INPUT_PHONE_NUMBER') && (
         <TextInput
           label="Placeholder Text"
           description="Hint text shown inside the empty input field"

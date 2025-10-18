@@ -12,6 +12,7 @@ import { RootState } from '../../../app/store';
 import { getJobApplicationForm, TallyApplicationFormResponse, getJobFormPreview, FormPreviewResponse } from '@/api/tally';
 import { useUserAvatar } from '@/hooks/useUserAvatar';
 import { SubmissionsSection } from '../SubmissionsSection';
+import { toast } from 'react-toastify';
 
 interface JwtPayload {
   role?: string;
@@ -124,6 +125,68 @@ export function JobDetail({ job }: JobDetailProps) {
         });
     }
   }, [canApply, job.id]);
+
+  // Listen for Tally form submission events from iframe
+  useEffect(() => {
+    const handleTallyMessage = async (event: MessageEvent) => {
+      // Security: Validate event origin
+      if (event.origin !== 'https://tally.so') return;
+
+      // Check if it's a form submission event
+      if (event?.data?.includes('Tally.FormSubmitted')) {
+        // GUARD 1: Only process if user can apply (not job owner)
+        if (!canApply || isOwner) {
+          console.log('Ignoring Tally submission - user cannot apply to this job');
+          return;
+        }
+
+        // GUARD 2: Only process if apply modal is open (not preview modal)
+        if (!applyModalOpen) {
+          console.log('Ignoring Tally submission - apply modal not open');
+          return;
+        }
+
+        try {
+          const data = JSON.parse(event.data);
+          const submissionId = data.payload.id;
+
+          console.log('Tally application form submitted:', submissionId);
+
+          // 1. IMMEDIATE: Optimistic UI update for instant feedback
+          setTallyFormData(prev => prev ? {
+            ...prev,
+            already_applied: true,
+            submission_date: new Date().toISOString()
+          } : null);
+
+          // 2. Close modal
+          setApplyModalOpen(false);
+
+          // 3. User feedback
+          toast.success('Application submitted successfully!');
+
+          // 4. CONFIRMATION: Verify with backend after webhook processes
+          // Wait 2 seconds to allow webhook to process and update database
+          setTimeout(async () => {
+            try {
+              if (job.id) {
+                const confirmed = await getJobApplicationForm(job.id);
+                setTallyFormData(confirmed); // Overwrite optimistic update with truth
+              }
+            } catch (error) {
+              console.error('Failed to confirm submission with backend:', error);
+            }
+          }, 2000);
+
+        } catch (error) {
+          console.error('Error parsing Tally submission event:', error);
+        }
+      }
+    };
+
+    window.addEventListener('message', handleTallyMessage);
+    return () => window.removeEventListener('message', handleTallyMessage);
+  }, [job.id, applyModalOpen, canApply, isOwner]);
 
   const handleConfirmDelete = async (reason: string) => {
     await adminApi.deleteJob(job.id, reason); // optionally pass reason to backend

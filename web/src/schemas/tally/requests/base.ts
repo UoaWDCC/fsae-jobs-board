@@ -126,6 +126,7 @@ export const SupportedBlockTypes = z.enum([
   "INPUT_TEXT",
   "TEXTAREA",
   "INPUT_EMAIL",
+  "INPUT_PHONE_NUMBER",
   "MULTIPLE_CHOICE_OPTION",
   "CHECKBOX",
 ]);

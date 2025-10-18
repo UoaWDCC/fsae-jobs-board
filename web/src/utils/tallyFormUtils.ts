@@ -113,6 +113,37 @@ export function convertToTallyBlocks(formTitle: string, fields: FormField[]) {
       });
     }
 
+    // INPUT_PHONE_NUMBER: Same pattern as INPUT_EMAIL (TITLE + INPUT_PHONE_NUMBER pair with separate groupUuids)
+    else if (field.type === 'INPUT_PHONE_NUMBER') {
+      const titleGroupUuid = crypto.randomUUID();
+      const inputPhoneGroupUuid = crypto.randomUUID();
+
+      // TITLE block with question text
+      blocks.push({
+        uuid: crypto.randomUUID(),
+        type: 'TITLE',
+        groupUuid: titleGroupUuid,
+        groupType: 'QUESTION',
+        payload: {
+          html: field.label
+        }
+      });
+
+      // INPUT_PHONE_NUMBER block with configuration
+      blocks.push({
+        uuid: crypto.randomUUID(),
+        type: 'INPUT_PHONE_NUMBER',
+        groupUuid: inputPhoneGroupUuid,
+        groupType: 'INPUT_PHONE_NUMBER',  // CRITICAL: Must be 'INPUT_PHONE_NUMBER', not 'QUESTION'
+        payload: {
+          isRequired: field.required,
+          internationalFormat: true,        // HARDCODED: Always show country dropdown
+          defaultCountryCode: "NZ",         // HARDCODED: Pre-select New Zealand for UoA
+          placeholder: field.placeholder || ''
+        }
+      });
+    }
+
     // CHECKBOX: Single checkbox OR checkbox list (with optional TITLE)
     else if (field.type === 'CHECKBOX') {
       const checkboxGroupUuid = crypto.randomUUID();
