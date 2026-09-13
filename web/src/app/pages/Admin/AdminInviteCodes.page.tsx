@@ -11,6 +11,7 @@ import Filter from '@/app/components/Filter/Filter';
 import { FsaeRole } from '@/models/roles';
 import { Role } from '@/app/type/role';
 import { InviteCodeModal } from '@/app/components/Modal/InviteCodeModal';
+import { API_BASE_URL } from '@/api/ApiInstance';
 
 interface InviteCode {
   id: string;
@@ -31,7 +32,7 @@ export function AdminInviteCodes() {
     const token = localStorage.getItem('accessToken');
     if (!token) throw new Error('No access token found');
 
-    const response = await fetch('http://localhost:3000/admin/invite-codes', {
+    const response = await fetch(`${API_BASE_URL}/admin/invite-codes`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

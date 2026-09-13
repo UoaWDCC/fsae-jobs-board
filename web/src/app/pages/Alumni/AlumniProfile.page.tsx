@@ -12,6 +12,7 @@ import { EditBannerModal } from '../../components/Modal/EditBannerModal';
 import { JobEditorModal } from '@/app/components/Modal/EditJob';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchAlumniById } from '@/api/alumni';
+import { API_BASE_URL } from '@/api/ApiInstance';
 import { fetchJobsByPublisherId } from '@/api/job';
 import { Alumni } from '@/models/alumni.model';
 import { Job } from "@/models/job.model";
@@ -87,7 +88,7 @@ export function AlumniProfile() {
     if (!id) return;
     const token = localStorage.getItem('accessToken');
     if (!token) return;
-    const res = await fetch(`http://localhost:3000/user/alumni/${id}/avatar`, {
+    const res = await fetch(`${API_BASE_URL}/user/alumni/${id}/avatar`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     if (res.ok) {
@@ -103,7 +104,7 @@ export function AlumniProfile() {
     if (!id) return;
     const token = localStorage.getItem('accessToken');
     if (!token) return;
-    const res = await fetch(`http://localhost:3000/user/alumni/${id}/banner`, {
+    const res = await fetch(`${API_BASE_URL}/user/alumni/${id}/banner`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     if (res.ok) {
@@ -159,11 +160,11 @@ export function AlumniProfile() {
         let bannerPromise = Promise.resolve<string | undefined>(undefined);
 
         if (token) {
-          avatarPromise = fetch(`http://localhost:3000/user/alumni/${id}/avatar`, { headers: { Authorization: `Bearer ${token}` } })
+          avatarPromise = fetch(`${API_BASE_URL}/user/alumni/${id}/avatar`, { headers: { Authorization: `Bearer ${token}` } })
             .then(res => res.ok ? res.blob() : null)
             .then(blob => blob ? URL.createObjectURL(blob) : undefined);
 
-          bannerPromise = fetch(`http://localhost:3000/user/alumni/${id}/banner`, { headers: { Authorization: `Bearer ${token}` } })
+          bannerPromise = fetch(`${API_BASE_URL}/user/alumni/${id}/banner`, { headers: { Authorization: `Bearer ${token}` } })
             .then(res => res.ok ? res.blob() : null)
           .then(blob => blob ? URL.createObjectURL(blob) : undefined);
         }

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { API_BASE_URL } from '@/api/ApiInstance';
 
 export const useUserAvatar = (publisherId: string | undefined) => {
   const [avatarUrl, setAvatarUrl] = useState<string>('');
@@ -12,13 +13,13 @@ export const useUserAvatar = (publisherId: string | undefined) => {
       const token = localStorage.getItem('accessToken');
       
       // Try sponsor endpoint first
-      let response = await fetch(`http://localhost:3000/user/sponsor/${userId}/avatar`, {
+      let response = await fetch(`${API_BASE_URL}/user/sponsor/${userId}/avatar`, {
         headers: { 'Authorization': `Bearer ${token}` },
       });
 
       // If sponsor avatar not found, try alumni endpoint
       if (!response.ok) {
-        response = await fetch(`http://localhost:3000/user/alumni/${userId}/avatar`, {
+        response = await fetch(`${API_BASE_URL}/user/alumni/${userId}/avatar`, {
           headers: { 'Authorization': `Bearer ${token}` },
         });
       }

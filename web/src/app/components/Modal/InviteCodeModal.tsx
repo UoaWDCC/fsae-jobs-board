@@ -2,6 +2,7 @@ import { Modal, Stack, TextInput, Checkbox, NumberInput, Group, Button } from '@
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { Toast } from 'react-toastify/dist/components';
+import { API_BASE_URL } from '@/api/ApiInstance';
 
 interface InviteCode {
   id: string;
@@ -34,7 +35,7 @@ export function InviteCodeModal({ opened, onClose }: InviteCodeModalProps) {
   const handleSave = async () => {
     try {
       const token = localStorage.getItem('accessToken');
-      const response = await fetch('http://localhost:3000/admin/invite-codes', {
+      const response = await fetch(`${API_BASE_URL}/admin/invite-codes`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

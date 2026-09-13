@@ -55,6 +55,10 @@ export class FsaeApiApplication extends BootMixin(
         },
       ],
     });
+    // Mount all controller routes under /api so this app can share an origin
+    // with the frontend behind a Vercel Services rewrite (see /vercel.json).
+    this.basePath('/api');
+
     // Set up default home page
     this.static('/', path.join(__dirname, '../public'));
 

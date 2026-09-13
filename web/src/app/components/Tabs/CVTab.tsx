@@ -7,6 +7,7 @@ import { delay } from 'lodash';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/app/store';
 import { setCVStatus } from "@/app/features/user/userSlice";
+import { API_BASE_URL } from '@/api/ApiInstance';
 
 export const CVTab = () => {
   const dispatch = useDispatch();
@@ -29,7 +30,7 @@ export const CVTab = () => {
 
       try {
         const token = localStorage.getItem('accessToken');
-        const response = await fetch(`http://localhost:3000/user/member/${memberID}`, {
+        const response = await fetch(`${API_BASE_URL}/user/member/${memberID}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
@@ -94,7 +95,7 @@ export const CVTab = () => {
     const formData = new FormData();
     formData.append('cv', file);
 
-    const response = await fetch(`http://localhost:3000/user/member/${memberID}/upload-cv`, {
+    const response = await fetch(`${API_BASE_URL}/user/member/${memberID}/upload-cv`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -130,7 +131,7 @@ export const CVTab = () => {
 
     try {
       const token = localStorage.getItem('accessToken');
-      const response = await fetch(`http://localhost:3000/user/member/${memberID}/delete-cv`, {
+      const response = await fetch(`${API_BASE_URL}/user/member/${memberID}/delete-cv`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`,

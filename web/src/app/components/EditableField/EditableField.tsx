@@ -10,6 +10,7 @@ import { useState, useEffect } from 'react';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import { toast } from 'react-toastify';
 import styles from './EditableField.module.css';
+import { API_BASE_URL } from '@/api/ApiInstance';
 
 interface EditableFieldProps {
   value: string | undefined;
@@ -94,7 +95,7 @@ export function EditableField({
       }
 
       const endpoint = getEndpointByRole(userRole);
-      const response = await fetch(`http://localhost:3000${endpoint}/${userId}`, {
+      const response = await fetch(`${API_BASE_URL}${endpoint}/${userId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

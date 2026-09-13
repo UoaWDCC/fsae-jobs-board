@@ -1,0 +1,18 @@
+{
+  "services": {
+    "web": {
+      "root": "web/",
+      "runtime": "container",
+      "entrypoint": "Dockerfile"
+    },
+    "api": {
+      "root": "api/",
+      "runtime": "container",
+      "entrypoint": "Dockerfile"
+    }
+  },
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": { "service": "api" } },
+    { "source": "/(.*)", "destination": { "service": "web" } }
+  ]
+}

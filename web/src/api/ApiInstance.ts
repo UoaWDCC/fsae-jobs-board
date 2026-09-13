@@ -1,9 +1,10 @@
 import axios from "axios";
 
-const base_url = "http://localhost:3000/" // Todo: Move to env or config file file
+const API_ORIGIN = import.meta.env.VITE_API_URL || "http://localhost:3000";
+export const API_BASE_URL = `${API_ORIGIN}/api`;
 
 export const apiInstance = axios.create({
-  baseURL: base_url,
+  baseURL: `${API_BASE_URL}/`,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',

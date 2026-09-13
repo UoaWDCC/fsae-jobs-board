@@ -12,6 +12,7 @@ import { EditSponsorProfile } from '@/app/components/Modal/EditSponsorProfile';
 import EditModal from '@/app/components/Modal/EditModal';
 import { JobEditorModal } from '@/app/components/Modal/EditJob';
 import { loadJobsWithErrorHandling} from '@/api/job';
+import { API_BASE_URL } from '@/api/ApiInstance';
 import { fetchSponsorById } from '@/api/sponsor';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Sponsor } from '@/models/sponsor.model';
@@ -91,7 +92,7 @@ import { useMediaQuery } from '@mantine/hooks';
     if (!id) return;
     const token = localStorage.getItem('accessToken');
     if (!token) return;
-    const res = await fetch(`http://localhost:3000/user/sponsor/${id}/avatar`, {
+    const res = await fetch(`${API_BASE_URL}/user/sponsor/${id}/avatar`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     if (res.ok) {
@@ -107,7 +108,7 @@ import { useMediaQuery } from '@mantine/hooks';
     if (!id) return;
     const token = localStorage.getItem('accessToken');
     if (!token) return;
-    const res = await fetch(`http://localhost:3000/user/sponsor/${id}/banner`, {
+    const res = await fetch(`${API_BASE_URL}/user/sponsor/${id}/banner`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     if (res.ok) {
@@ -172,11 +173,11 @@ import { useMediaQuery } from '@mantine/hooks';
         let bannerPromise = Promise.resolve<string | undefined>(undefined);
 
         if (token) {
-          avatarPromise = fetch(`http://localhost:3000/user/sponsor/${id}/avatar`, { headers: { Authorization: `Bearer ${token}` } })
+          avatarPromise = fetch(`${API_BASE_URL}/user/sponsor/${id}/avatar`, { headers: { Authorization: `Bearer ${token}` } })
             .then(res => res.ok ? res.blob() : null)
             .then(blob => blob ? URL.createObjectURL(blob) : undefined);
 
-          bannerPromise = fetch(`http://localhost:3000/user/sponsor/${id}/banner`, { headers: { Authorization: `Bearer ${token}` } })
+          bannerPromise = fetch(`${API_BASE_URL}/user/sponsor/${id}/banner`, { headers: { Authorization: `Bearer ${token}` } })
             .then(res => res.ok ? res.blob() : null)
           .then(blob => blob ? URL.createObjectURL(blob) : undefined);
         }

@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/app/store';
+import { API_BASE_URL } from '@/api/ApiInstance';
 
 interface EditAvatarProps {
   avatar: string;
@@ -29,7 +30,7 @@ export const EditAvatar = ({ avatar, role }: EditAvatarProps) => {
 
     try {
       const token = localStorage.getItem('accessToken');
-      const response = await fetch(`http://localhost:3000/user/${role}/${memberID}/avatar`, {
+      const response = await fetch(`${API_BASE_URL}/user/${role}/${memberID}/avatar`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -70,7 +71,7 @@ export const EditAvatar = ({ avatar, role }: EditAvatarProps) => {
       const formData = new FormData();
       formData.append('avatar', selectedFile);
 
-      const response = await fetch(`http://localhost:3000/user/${role}/${memberID}/upload-avatar`, {
+      const response = await fetch(`${API_BASE_URL}/user/${role}/${memberID}/upload-avatar`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
@@ -99,7 +100,7 @@ export const EditAvatar = ({ avatar, role }: EditAvatarProps) => {
     setClearing(true);
     const token = localStorage.getItem('accessToken');
     try {
-      const response = await fetch(`http://localhost:3000/user/${role}/${memberID}/delete-avatar`, {
+      const response = await fetch(`${API_BASE_URL}/user/${role}/${memberID}/delete-avatar`, {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${token}` },
       });

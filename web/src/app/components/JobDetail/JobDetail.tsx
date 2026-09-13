@@ -4,6 +4,7 @@ import { IconInfoCircle } from '@tabler/icons-react';
 import styles from './JobDetail.module.css';
 import { Job } from '@/models/job.model';
 import { adminApi } from '@/api/admin';
+import { API_BASE_URL } from '@/api/ApiInstance';
 import { useNavigate } from 'react-router-dom';
 import DeletePostModal from '../Modal/DeletePostModal';
 import { jwtDecode } from 'jwt-decode';
@@ -48,7 +49,7 @@ export function JobDetail({ job }: JobDetailProps) {
       const token = localStorage.getItem('accessToken');
       
       // Try sponsor endpoint first
-      let response = await fetch(`http://localhost:3000/user/sponsor/${publisherId}`, {
+      let response = await fetch(`${API_BASE_URL}/user/sponsor/${publisherId}`, {
         headers: { 'Authorization': `Bearer ${token}` },
       });
 
@@ -58,7 +59,7 @@ export function JobDetail({ job }: JobDetailProps) {
       }
 
       // If sponsor not found, try alumni endpoint
-      response = await fetch(`http://localhost:3000/user/alumni/${publisherId}`, {
+      response = await fetch(`${API_BASE_URL}/user/alumni/${publisherId}`, {
         headers: { 'Authorization': `Bearer ${token}` },
       });
 

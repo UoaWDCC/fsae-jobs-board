@@ -5,6 +5,7 @@ import { IconTrash } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/app/store';
+import { API_BASE_URL } from '@/api/ApiInstance';
 
 interface EditBannerModalProps {
   banner: string;
@@ -28,7 +29,7 @@ export const EditBannerModal = ({ banner, role }: EditBannerModalProps) => {
 
     try {
       const token = localStorage.getItem('accessToken');
-      const response = await fetch(`http://localhost:3000/user/${role}/${memberID}/banner`, {
+      const response = await fetch(`${API_BASE_URL}/user/${role}/${memberID}/banner`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -48,7 +49,7 @@ export const EditBannerModal = ({ banner, role }: EditBannerModalProps) => {
     setClearing(true);
     const token = localStorage.getItem('accessToken');
     try {
-      const response = await fetch(`http://localhost:3000/user/${role}/${memberID}/delete-banner`, {
+      const response = await fetch(`${API_BASE_URL}/user/${role}/${memberID}/delete-banner`, {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -92,7 +93,7 @@ export const EditBannerModal = ({ banner, role }: EditBannerModalProps) => {
       const formData = new FormData();
       formData.append('banner', selectedFile);
 
-      const response = await fetch(`http://localhost:3000/user/${role}/${memberID}/upload-banner`, {
+      const response = await fetch(`${API_BASE_URL}/user/${role}/${memberID}/upload-banner`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: formData,

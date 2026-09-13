@@ -8,6 +8,7 @@ import { EditAvatar } from '../../components/Modal/EditAvatar';
 import { EditBannerModal } from '../../components/Modal/EditBannerModal';
 import { Member } from '@/models/member.model';
 import { fetchMemberById } from '@/api/member';
+import { API_BASE_URL } from '@/api/ApiInstance';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../app/store';
@@ -74,7 +75,7 @@ export function StudentProfile() {
       return;
     }
     try {
-      const response = await fetch(`http://localhost:3000/user/member/${id}/cv`, {
+      const response = await fetch(`${API_BASE_URL}/user/member/${id}/cv`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!response.ok) throw new Error('Failed to fetch CV');
@@ -97,7 +98,7 @@ export function StudentProfile() {
     if (!id) return;
     const token = localStorage.getItem('accessToken');
     if (!token) return;
-    const res = await fetch(`http://localhost:3000/user/member/${id}/avatar`, {
+    const res = await fetch(`${API_BASE_URL}/user/member/${id}/avatar`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     if (res.ok) {
@@ -113,7 +114,7 @@ export function StudentProfile() {
     if (!id) return;
     const token = localStorage.getItem('accessToken');
     if (!token) return;
-    const res = await fetch(`http://localhost:3000/user/member/${id}/banner`, {
+    const res = await fetch(`${API_BASE_URL}/user/member/${id}/banner`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     if (res.ok) {
@@ -138,11 +139,11 @@ export function StudentProfile() {
         let bannerPromise = Promise.resolve<string | undefined>(undefined);
 
         if (token) {
-          avatarPromise = fetch(`http://localhost:3000/user/member/${id}/avatar`, { headers: { Authorization: `Bearer ${token}` } })
+          avatarPromise = fetch(`${API_BASE_URL}/user/member/${id}/avatar`, { headers: { Authorization: `Bearer ${token}` } })
             .then(res => res.ok ? res.blob() : null)
             .then(blob => blob ? URL.createObjectURL(blob) : undefined);
 
-          bannerPromise = fetch(`http://localhost:3000/user/member/${id}/banner`, { headers: { Authorization: `Bearer ${token}` } })
+          bannerPromise = fetch(`${API_BASE_URL}/user/member/${id}/banner`, { headers: { Authorization: `Bearer ${token}` } })
             .then(res => res.ok ? res.blob() : null)
           .then(blob => blob ? URL.createObjectURL(blob) : undefined);
         }
